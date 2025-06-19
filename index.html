@@ -1,45 +1,137 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#facc15" />
-    <meta name="description" content="Panel Admin untuk Galeri Pulsa - Kelola menu transaksi, token PLN, paket internet, dan lainnya secara dinamis." />
-    <meta name="author" content="Mandiri Cell" />
+import React, { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import {
+  ServerIcon,
+  LayoutGridIcon,
+  ImageIcon,
+  FileTextIcon,
+  StarIcon,
+  UsersIcon,
+  PhoneIcon,
+  CreditCardIcon,
+  KeyIcon,
+} from "lucide-react";
 
-    <title>Web Panel Admin Galeri Pulsa</title>
+const menuItems = [
+  { label: "Setup Server", icon: <ServerIcon />, key: "server" },
+  { label: "Menu Transaksi", icon: <LayoutGridIcon />, key: "menu" },
+  { label: "Logo", icon: <ImageIcon />, key: "logo" },
+  { label: "Format Request", icon: <FileTextIcon />, key: "format" },
+  { label: "Poin", icon: <StarIcon />, key: "poin" },
+  { label: "Downline", icon: <UsersIcon />, key: "downline" },
+  { label: "Prabayar", icon: <PhoneIcon />, key: "prabayar" },
+  { label: "Pascabayar", icon: <CreditCardIcon />, key: "pascabayar" },
+  { label: "OTP", icon: <KeyIcon />, key: "otp" },
+];
 
-    <!-- Font dan Tailwind CDN (jika tidak menggunakan build pipeline) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
+export default function AdminPanel() {
+  const [selected, setSelected] = useState("server");
+  const [showModal, setShowModal] = useState(false);
+  const [subMenus, setSubMenus] = useState({
+    transaksi: { name: "Pulsa Reguler", icon: null },
+    akun: { name: "Voucer Game", icon: null },
+    cs: { name: "Token PLN", icon: null },
+  });
+  const [showSaved, setShowSaved] = useState(false);
 
-    <!-- Lucide Icons (optional jika tidak pakai bundler) -->
-    <!-- <script type="module" src="https://unpkg.com/lucide@latest"></script> -->
+  const handleCardClick = (key) => {
+    setSelected(key);
+    setShowModal(true);
+  };
 
-    <!-- Fallback untuk JS nonaktif -->
-    <noscript>
-      <style>
-        .no-js-message {
-          display: block;
-          padding: 1rem;
-          background: #f87171;
-          color: white;
-          text-align: center;
-          font-weight: bold;
-        }
-      </style>
-    </noscript>
-  </head>
+  const handleSubMenuChange = (key, field, value) => {
+    setSubMenus((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [field]: value,
+      },
+    }));
+  };
 
-  <body class="bg-gray-100 font-[Inter] text-sm">
-    <div class="no-js-message" style="display: none;">Harap aktifkan JavaScript untuk menjalankan panel admin ini.</div>
-    <div id="root"></div>
+  const handleIconUpload = (key, file) => {
+    const url = URL.createObjectURL(file);
+    setSubMenus((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        icon: url,
+      },
+    }));
+  };
 
-    <!-- Untuk proyek React Vite -->
-    <script type="module" src="/src/main.jsx"></script>
+  const handleAddSubMenu = () => {
+    const newKey = `menu${Date.now()}`;
+    setSubMenus((prev) => ({
+      ...prev,
+      [newKey]: { name: "", icon: null },
+    }));
+  };
 
-    <!-- Untuk Create React App (CRA), biasanya build script otomatis diinject -->
-    <!-- <script src="/static/js/bundle.js"></script> -->
-  </body>
-</html>
+  const handleSave = () => {
+    setShowSaved(true);
+    setTimeout(() => setShowSaved(false), 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Web Panel Admin Galeri Pulsa</h1>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+        {menuItems.map((item) => (
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} key={item.key}>
+            <Card
+              onClick={() => handleCardClick(item.key)}
+              className={`cursor-pointer text-center p-4 transition-all ${
+                selected === item.key ? "bg-yellow-300 shadow-lg ring-2 ring-yellow-400" : "bg-white"
+              }`}
+            >
+              <div className="flex justify-center mb-2 text-xl">{item.icon}</div>
+              <div className="font-medium text-sm">{item.label}</div>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      {showModal && selected === "menu" && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <h2 className="text-lg font-semibold mb-4">Pengaturan Menu</h2>
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+              {Object.entries(subMenus).map(([key, val]) => (
+                <div key={key} className="border rounded p-3">
+                  <label className="block font-medium text-sm mb-1">{key.toUpperCase()}</label>
+                  <input
+                    className="w-full mb-2 p-2 border rounded"
+                    value={val.name}
+                    onChange={(e) => handleSubMenuChange(key, "name", e.target.value)}
+                    placeholder="Nama menu"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleIconUpload(key, e.target.files[0])}
+                    className="mb-2"
+                  />
+                  {val.icon && (
+                    <img src={val.icon} alt="Icon" className="w-10 h-10 object-contain" />
+                  )}
+                </div>
+              ))}
+              <Button variant="outline" onClick={handleAddSubMenu}>Tambah Menu Baru</Button>
+              <div className="flex justify-end mt-4 gap-2">
+                <Button onClick={handleSave}>Simpan Perubahan</Button>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>Tutup</Button>
+              </div>
+              {showSaved && (
+                <p className="text-green-600 text-sm mt-2">Perubahan berhasil disimpan.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
