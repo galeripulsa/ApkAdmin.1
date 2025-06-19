@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mandiri Cell - Isi Pulsa & PPOB</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body class="bg-[#00ABDC] text-gray-800 font-sans">
-  <header class="bg-yellow-400 text-black p-6 shadow-md text-center">
-    <h1 class="text-3xl font-bold">Mandiri Cell</h1>
-    <p>Solusi Bisnis Pulsa Terpercaya Sejak 2018</p>
-    <marquee>Mandiri Cell Server Pulsa All Operator | Aplikasi Galeri Pulsa | Sistem Downline Menguntungkan</marquee>
-  </header>
-  <main class="p-4">
-    <h2 class="text-xl font-semibold">Selamat Datang di Mandiri Cell</h2>
-    <p>Website ini adalah versi HTML statis dari landing page Mandiri Cell.</p>
-  </main>
-  <footer class="bg-gray-900 text-white text-center py-4">
-    <p>&copy; 2025 Mandiri Cell. All rights reserved.</p>
-    <p>WhatsApp: 6281354506741</p>
-    <p>Telegram: @CSO_MandiriCell</p>
-  </footer>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#facc15" />
+    <meta name="description" content="Panel Admin untuk Galeri Pulsa - Kelola menu transaksi, token PLN, paket internet, dan lainnya secara dinamis." />
+    <meta name="author" content="Mandiri Cell" />
+
+    <title>Web Panel Admin Galeri Pulsa</title>
+
+    <!-- Font dan Tailwind CDN (jika tidak menggunakan build pipeline) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons (optional jika tidak pakai bundler) -->
+    <!-- <script type="module" src="https://unpkg.com/lucide@latest"></script> -->
+
+    <!-- Fallback untuk JS nonaktif -->
+    <noscript>
+      <style>
+        .no-js-message {
+          display: block;
+          padding: 1rem;
+          background: #f87171;
+          color: white;
+          text-align: center;
+          font-weight: bold;
+        }
+      </style>
+    </noscript>
+  </head>
+
+  <body class="bg-gray-100 font-[Inter] text-sm">
+    <div class="no-js-message" style="display: none;">Harap aktifkan JavaScript untuk menjalankan panel admin ini.</div>
+    <div id="root"></div>
+
+    <!-- Untuk proyek React Vite -->
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Untuk Create React App (CRA), biasanya build script otomatis diinject -->
+    <!-- <script src="/static/js/bundle.js"></script> -->
+  </body>
 </html>
