@@ -105,107 +105,106 @@
   <h2>Web Panel Admin Galeri Pulsa</h2>
   <div class="menu-grid" id="mainMenu">
     <div class="menu-button" onclick="showModal('transaksi')">Menu Transaksi</div>
-    <div class="menu-button">Setup Server</div>
-    <div class="menu-button">Logo</div>
-    <div class="menu-button">Format Request</div>
-    <div class="menu-button">Poin</div>
-    <div class="menu-button">Downline</div>
-    <div class="menu-button">Prabayar</div>
-    <div class="menu-button">Pascabayar</div>
-    <div class="menu-button">OTP</div>
-  </div>  <!-- MODAL TRANSAKSI -->  <div class="modal" id="modal-transaksi">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Pengaturan Menu & Kategori</h3>
-        <button class="close-btn" onclick="closeModal('transaksi')">TUTUP</button>
-      </div>
-      <div class="toolbar">
-        <button onclick="addMenuRow()">+ Menu</button>
-        <button onclick="addKategoriRow()">+ Kategori</button>
-        <button class="refresh-btn" id="refreshBtn" disabled>🔄 Refresh</button>
-      </div><div id="menuContainer"></div>
+    <div class="menu-button" onclick="showModal('prabayar')">Prabayar</div>
+    <div class="menu-button" onclick="showModal('pascabayar')">Pascabayar</div>
+    <div class="menu-button" onclick="showModal('server')">Setup Server</div>
+  </div>  <!-- TEMPLATE MODAL -->  <div id="modals"></div>  <script>
+    const modalTitles = {
+      transaksi: "Pengaturan Menu & Kategori",
+      prabayar: "Pengaturan Produk Prabayar",
+      pascabayar: "Pengaturan Produk Pascabayar",
+      server: "Setup Server IP & Jabber"
+    };
 
-  <div class="footer-summary" id="summary">Jumlah Menu: 0 | Aktif: 0 | Tidak Aktif: 0</div>
-  <div class="footer-btns">
-    <button class="save-btn" id="saveBtn" disabled onclick="saveChanges()">SAVE</button>
-  </div>
-</div>
+    const modalDefaults = {
+      transaksi: ["Pulsa Reguler", "Voucher Game", "PLN Prabayar"],
+      prabayar: ["Pulsa Reguler", "Paket Telpon dan SMS", "Paket Internet", "Pulsa Transfer", "Token Listrik", "E-wallet", "Voucher Game", "Voucher TV"],
+      pascabayar: ["Tagihan Listrik", "BPJS Kesehatan", "PDAM Grup", "Telkom Grup", "Multifinance", "TV Kabel", "PGN", "PPOB Lainnya"]
+    };
 
-  </div>  <script>
-    let changesMade = false;
-    let menuCount = 0;
+    function buildModal(id) {
+      const container = document.createElement('div');
+      container.className = 'modal';
+      container.id = `modal-${id}`;
+      container.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>${modalTitles[id]}</h3>
+            <button class="close-btn" onclick="closeModal('${id}')">TUTUP</button>
+          </div>
+          <div class="toolbar">
+            <button onclick="addRow('${id}', false)">+ Menu</button>
+            <button onclick="addRow('${id}', true)">+ Kategori</button>
+            <button class="refresh-btn" id="refreshBtn-${id}" disabled>🔄 Refresh</button>
+          </div>
+          <div id="menuContainer-${id}"></div>
+          <div class="footer-summary" id="summary-${id}">Jumlah Menu: 0 | Aktif: 0 | Tidak Aktif: 0</div>
+          <div class="footer-btns">
+            <button class="save-btn" id="saveBtn-${id}" disabled onclick="saveChanges('${id}')">SAVE</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modals').appendChild(container);
+
+      if (modalDefaults[id]) {
+        modalDefaults[id].forEach(n => addRow(id, false, n));
+      } else if (id === 'server') {
+        addRow(id, false, "Nama Center", true);
+        addRow(id, false, "Server Center", true);
+        addRow(id, false, "Host", true);
+      }
+    }
 
     function showModal(id) {
+      if (!document.getElementById(`modal-${id}`)) buildModal(id);
       document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('modal-' + id).style.display = 'block';
-      updateSummary();
+      document.getElementById(`modal-${id}`).style.display = 'block';
+      updateSummary(id);
     }
 
     function closeModal(id) {
-      if (changesMade) {
+      if (window[`changesMade_${id}`]) {
         if (!confirm("Perubahan belum disimpan. Yakin ingin keluar?")) return;
       }
-      changesMade = false;
-      document.getElementById('modal-' + id).style.display = 'none';
+      window[`changesMade_${id}`] = false;
+      document.getElementById(`modal-${id}`).style.display = 'none';
       document.getElementById('mainMenu').style.display = 'grid';
     }
 
-    function addMenuRow() {
-      const container = document.getElementById('menuContainer');
+    function addRow(id, isKategori = false, preset = '', isServer = false) {
+      const container = document.getElementById(`menuContainer-${id}`);
       const row = document.createElement('div');
       row.className = 'menu-row';
       row.innerHTML = `
-        <input type="checkbox" onchange="detectChange()">
-        <input type="text" placeholder="Nama Menu" oninput="detectChange()">
+        <input type="checkbox" onchange="detectChange('${id}')" checked>
+        <input type="text" placeholder="${isKategori ? 'Nama Kategori' : (isServer ? preset : 'Nama Menu')}" value="${preset}" oninput="detectChange('${id}')">
         <button class="icon-btn">+ Icon</button>
         <button class="drag-btn" draggable="true">⠿</button>
       `;
       container.appendChild(row);
-      menuCount++;
-      detectChange();
+      detectChange(id);
     }
 
-    function addKategoriRow() {
-      const container = document.getElementById('menuContainer');
-      const row = document.createElement('div');
-      row.className = 'menu-row';
-      row.innerHTML = `
-        <input type="checkbox" onchange="detectChange()">
-        <input type="text" placeholder="Nama Kategori" oninput="detectChange()">
-        <button class="icon-btn">+ Icon</button>
-        <button class="drag-btn" draggable="true">⠿</button>
-      `;
-      container.appendChild(row);
-      menuCount++;
-      detectChange();
+    function detectChange(id) {
+      window[`changesMade_${id}`] = true;
+      document.getElementById(`saveBtn-${id}`).disabled = false;
+      document.getElementById(`refreshBtn-${id}`).disabled = false;
+      updateSummary(id);
     }
 
-    function detectChange() {
-      changesMade = true;
-      document.getElementById('saveBtn').disabled = false;
-      document.getElementById('refreshBtn').disabled = false;
-      updateSummary();
-    }
-
-    function saveChanges() {
+    function saveChanges(id) {
       alert("Perubahan disimpan!");
-      changesMade = false;
-      document.getElementById('saveBtn').disabled = true;
-      document.getElementById('refreshBtn').disabled = true;
+      window[`changesMade_${id}`] = false;
+      document.getElementById(`saveBtn-${id}`).disabled = true;
+      document.getElementById(`refreshBtn-${id}`).disabled = true;
     }
 
-    function updateSummary() {
-      const rows = document.querySelectorAll('#menuContainer .menu-row');
+    function updateSummary(id) {
+      const rows = document.querySelectorAll(`#menuContainer-${id} .menu-row`);
       const total = rows.length;
       let aktif = 0;
       rows.forEach(r => { if (r.querySelector('input[type=checkbox]').checked) aktif++; });
-      document.getElementById('summary').innerText = `Jumlah Menu: ${total} | Aktif: ${aktif} | Tidak Aktif: ${total - aktif}`;
-    }
-
-    window.onpopstate = function() {
-      if (changesMade && !confirm("Perubahan belum disimpan. Yakin ingin keluar?")) {
-        history.pushState(null, null, document.URL);
-      }
+      document.getElementById(`summary-${id}`).innerText = `Jumlah Menu: ${total} | Aktif: ${aktif} | Tidak Aktif: ${total - aktif}`;
     }
   </script></body>
 </html>
