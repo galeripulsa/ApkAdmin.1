@@ -4,14 +4,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Web Panel Admin Galeri Pulsa</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f8f9fa; }
-    h2 { text-align: center; margin-bottom: 30px; }
+    body { font-family: sans-serif; margin: 0; background: #f8f9fa; }
+    h2 { text-align: center; padding: 20px 0; }
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 15px;
       max-width: 500px;
       margin: 0 auto;
+      padding: 0 20px;
     }
     .menu-button {
       padding: 15px;
@@ -28,94 +29,162 @@
       background-color: #ffe600;
       border-color: #ffcc00;
     }
-    .content-section { display: none; padding: 20px; max-width: 600px; margin: 30px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .label { font-weight: bold; margin-top: 10px; }
-    input[type="text"], input[type="file"] { width: 100%; padding: 8px; margin: 6px 0; }
-    button { margin: 10px 5px 0 0; padding: 10px 20px; font-size: 16px; }
-    .product-list div { margin: 5px 0; padding: 8px; background: #eef; border-radius: 6px; }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 95%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .menu-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .menu-row input[type="text"] {
+      flex-grow: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .menu-row input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+    .menu-row button, .icon-btn {
+      background: #eee;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .footer-btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .footer-btns button {
+      flex: 1;
+      margin: 0 5px;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .save-btn { background: royalblue; color: white; }
+    .refresh-btn { background: #ccc; }
+    .close-btn { background: tomato; color: white; }
   </style>
 </head>
 <body>
   <h2>Web Panel Admin Galeri Pulsa</h2>
-  <div class="menu-grid">
-    <div class="menu-button" onclick="showContent('setupServer', this)">Setup Server</div>
-    <div class="menu-button" onclick="showContent('menuTransaksi', this)">Menu Transaksi</div>
-    <div class="menu-button" onclick="showContent('logo', this)">Logo</div>
-    <div class="menu-button" onclick="showContent('formatRequest', this)">Format Request</div>
-    <div class="menu-button" onclick="showContent('poin', this)">Poin</div>
-    <div class="menu-button" onclick="showContent('downline', this)">Downline</div>
-    <div class="menu-button" onclick="showContent('prabayar', this)">Prabayar</div>
-    <div class="menu-button" onclick="showContent('pascabayar', this)">Pascabayar</div>
-    <div class="menu-button" onclick="showContent('otp', this)">OTP</div>
-  </div>  <div id="menuTransaksi" class="content-section">
-    <h3>Menu Transaksi</h3>
-    <label><input type="checkbox" /> Aktif ➕ Menu</label>
+  <div class="menu-grid" id="mainMenu">
+    <div class="menu-button" onclick="showModal('transaksi')">Menu Transaksi</div>
+    <div class="menu-button">Setup Server</div>
+    <div class="menu-button">Logo</div>
+    <div class="menu-button">Format Request</div>
+    <div class="menu-button">Poin</div>
+    <div class="menu-button">Downline</div>
+    <div class="menu-button">Prabayar</div>
+    <div class="menu-button">Pascabayar</div>
+    <div class="menu-button">OTP</div>
+  </div>  <!-- MODAL TRANSAKSI -->  <div class="modal" id="modal-transaksi">
+    <div class="modal-content">
+      <h3>Pengaturan Menu & Kategori <button class="icon-btn" onclick="resetForm()">🔄 Refresh</button></h3><div class="menu-row">
+    <input type="checkbox" checked>
+    <input type="text" value="Pulsa Reguler">
+    <button class="icon-btn">+ Icon</button>
+  </div>
+  <div class="menu-row">
+    <input type="checkbox" checked>
+    <input type="text" value="Voucher Game">
+    <button class="icon-btn">+ Icon</button>
+  </div>
+  <div class="menu-row">
+    <input type="checkbox" checked>
+    <input type="text" value="PLN Prabayar">
+    <button class="icon-btn">+ Icon</button>
+  </div>
+
+  <!-- Tambahan Input Kosong -->
+  <div class="menu-row">
+    <input type="checkbox">
     <input type="text" placeholder="Nama Menu">
-    <input type="file" accept="image/*">
-    <label><input type="checkbox" /> Aktif ➕ Kategori</label>
+    <button class="icon-btn">+ Icon</button>
+  </div>
+  <div class="menu-row">
+    <input type="checkbox">
+    <input type="text" placeholder="Nama Menu">
+    <button class="icon-btn">+ Icon</button>
+  </div>
+  <div class="menu-row">
+    <input type="checkbox">
+    <input type="text" placeholder="Nama Menu">
+    <button class="icon-btn">+ Icon</button>
+  </div>
+  <div class="menu-row">
+    <input type="checkbox">
     <input type="text" placeholder="Nama Kategori">
-    <button>🔄 Refresh</button>
-    <button>💾 Save</button>
-    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
-  </div>  <div id="prabayar" class="content-section">
-    <h3>Produk Prabayar</h3>
-    <div class="product-list">
-      <div>Pulsa Reguler</div>
-      <div>Paket Telpon dan SMS</div>
-      <div>Paket Internet</div>
-      <div>Pulsa Transfer</div>
-      <div>Token Listrik</div>
-      <div>E-Wallet</div>
-      <div>Voucher Game</div>
-      <div>Voucher TV</div>
-    </div>
-    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
-  </div>  <div id="pascabayar" class="content-section">
-    <h3>Produk Pascabayar</h3>
-    <div class="product-list">
-      <div>Tagihan Listrik</div>
-      <div>BPJS Kesehatan</div>
-      <div>PDAM Grup</div>
-      <div>Telkom Grup</div>
-      <div>Multifinance</div>
-      <div>TV Kabel</div>
-      <div>PGN</div>
-      <div>PPOB Lainnya</div>
-    </div>
-    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
-  </div>  <div id="setupServer" class="content-section">
-    <h3>Setup Server</h3>
-    <button onclick="toggleSection('ipFields')">🌐 Center IP</button>
-    <div id="ipFields" style="display:none">
-      <div class="label">Nama Center</div>
-      <input type="text" placeholder="Contoh: IP1">
-      <div class="label">Server Center</div>
-      <input type="text" placeholder="Contoh: 101.234.27.123:7878">
-      <div class="label">Host</div>
-      <input type="text" placeholder="Contoh: json">
-    </div>
-    <button onclick="toggleSection('jabberFields')">📡 Center Jabber</button>
-    <div id="jabberFields" style="display:none">
-      <div class="label">Nama Center</div>
-      <input type="text" placeholder="Contoh: Jabber1">
-      <div class="label">Server Jabber</div>
-      <input type="text" placeholder="Contoh: jabber.server.com">
-    </div>
-    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
+    <button class="icon-btn">+ Icon</button>
+  </div>
+
+  <div class="footer-btns">
+    <button onclick="addMenuRow()">+ Tambah Menu</button>
+    <button onclick="addKategoriRow()">+ Tambah Kategori</button>
+  </div>
+
+  <div class="footer-btns">
+    <button class="save-btn">SAVE</button>
+    <button class="close-btn" onclick="closeModal('transaksi')">TUTUP</button>
+  </div>
+</div>
+
   </div>  <script>
-    function showContent(id, el) {
-      document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
-      el.classList.add('active');
-      document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
+    function showModal(id) {
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('modal-' + id).style.display = 'flex';
     }
-    function hideAllContent() {
-      document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+    function closeModal(id) {
+      document.getElementById('modal-' + id).style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'grid';
     }
-    function toggleSection(id) {
-      const section = document.getElementById(id);
-      section.style.display = section.style.display === 'none' ? 'block' : 'none';
+    function resetForm() {
+      alert("Form akan di-refresh (simulasi)");
+    }
+    function addMenuRow() {
+      const modal = document.querySelector("#modal-transaksi .modal-content");
+      const row = document.createElement('div');
+      row.className = 'menu-row';
+      row.innerHTML = `
+        <input type="checkbox">
+        <input type="text" placeholder="Nama Menu">
+        <button class="icon-btn">+ Icon</button>
+      `;
+      modal.insertBefore(row, modal.querySelector('.footer-btns'));
+    }
+    function addKategoriRow() {
+      const modal = document.querySelector("#modal-transaksi .modal-content");
+      const row = document.createElement('div');
+      row.className = 'menu-row';
+      row.innerHTML = `
+        <input type="checkbox">
+        <input type="text" placeholder="Nama Kategori">
+        <button class="icon-btn">+ Icon</button>
+      `;
+      modal.insertBefore(row, modal.querySelector('.footer-btns'));
     }
   </script></body>
 </html>
