@@ -1,137 +1,172 @@
-import React, { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import {
-  ServerIcon,
-  LayoutGridIcon,
-  ImageIcon,
-  FileTextIcon,
-  StarIcon,
-  UsersIcon,
-  PhoneIcon,
-  CreditCardIcon,
-  KeyIcon,
-} from "lucide-react";
+import React, { useState, useRef, useEffect } from "react"; import { Card } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { motion } from "framer-motion"; import { ServerIcon, LayoutGridIcon, ImageIcon, FileTextIcon, StarIcon, UsersIcon, PhoneIcon, CreditCardIcon, KeyIcon, GripVerticalIcon, Trash2Icon, RefreshCcwIcon, XIcon, } from "lucide-react"; import { DndContext, closestCenter, useSensor, useSensors, PointerSensor } from "@dnd-kit/core"; import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable, } from "@dnd-kit/sortable"; import { CSS } from "@dnd-kit/utilities";
 
-const menuItems = [
-  { label: "Setup Server", icon: <ServerIcon />, key: "server" },
-  { label: "Menu Transaksi", icon: <LayoutGridIcon />, key: "menu" },
-  { label: "Logo", icon: <ImageIcon />, key: "logo" },
-  { label: "Format Request", icon: <FileTextIcon />, key: "format" },
-  { label: "Poin", icon: <StarIcon />, key: "poin" },
-  { label: "Downline", icon: <UsersIcon />, key: "downline" },
-  { label: "Prabayar", icon: <PhoneIcon />, key: "prabayar" },
-  { label: "Pascabayar", icon: <CreditCardIcon />, key: "pascabayar" },
-  { label: "OTP", icon: <KeyIcon />, key: "otp" },
-];
+const menuItems = [ { label: "Setup Server", icon: <ServerIcon />, key: "server" }, { label: "Menu Transaksi", icon: <LayoutGridIcon />, key: "menu" }, { label: "Logo", icon: <ImageIcon />, key: "logo" }, { label: "Format Request", icon: <FileTextIcon />, key: "format" }, { label: "Poin", icon: <StarIcon />, key: "poin" }, { label: "Downline", icon: <UsersIcon />, key: "downline" }, { label: "Prabayar", icon: <PhoneIcon />, key: "prabayar" }, { label: "Pascabayar", icon: <CreditCardIcon />, key: "pascabayar" }, { label: "OTP", icon: <KeyIcon />, key: "otp" }, ];
 
-export default function AdminPanel() {
-  const [selected, setSelected] = useState("server");
-  const [showModal, setShowModal] = useState(false);
-  const [subMenus, setSubMenus] = useState({
-    transaksi: { name: "Pulsa Reguler", icon: null },
-    akun: { name: "Voucer Game", icon: null },
-    cs: { name: "Token PLN", icon: null },
-  });
-  const [showSaved, setShowSaved] = useState(false);
+function SortableItem({ id, children, listeners, setActivatorNodeRef }) { const { attributes, setNodeRef, transform, transition } = useSortable({ id }); const style = { transform: CSS.Transform.toString(transform), transition, }; return ( <div ref={setNodeRef} style={style} {...attributes} className="touch-none select-none" > {children({ listeners, setActivatorNodeRef })} </div> ); }
 
-  const handleCardClick = (key) => {
-    setSelected(key);
-    setShowModal(true);
-  };
+function ModalConfirm({ open, message, onConfirm, onCancel }) { if (!open) return null; return ( <div className="fixed inset-0 bg-yellow bg-opacity-50 z-50 flex items-center justify-center"> <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-xs text-center"> <p className="mb-4 text-gray-800">{message}</p> <div className="flex justify-between gap-4"> <Button onClick={onConfirm}>Ya</Button> <Button variant="outline" onClick={onCancel}>Tidak</Button> </div> </div> </div> ); }
 
-  const handleSubMenuChange = (key, field, value) => {
-    setSubMenus((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        [field]: value,
-      },
-    }));
-  };
+export default function AdminPanel() { const [selected, setSelected] = useState("server"); const [showModal, setShowModal] = useState(false); const [subMenus, setSubMenus] = useState(() => { const saved = localStorage.getItem("subMenus"); return saved ? JSON.parse(saved) : [ {label: "transaksi", name: "Pulsa Reguler", icon: null, active: true, isCategory: false }, { key: "akun", name: "Voucer Game", icon: null, active: true, isCategory: false }, { key: "cs", name: "PLN Prabayar", icon: null, active: true, isCategory: false }, ]; }); const [tempSubMenus, setTempSubMenus] = useState([]); const [hasChanges, setHasChanges] = useState(false); const [showSaved, setShowSaved] = useState(false); const [swipedIndex, setSwipedIndex] = useState(null); const [confirmOpen, setConfirmOpen] = useState(false); const [confirmMessage, setConfirmMessage] = useState(""); const [confirmAction, setConfirmAction] = useState(() => {}); const sensors = useSensors(useSensor(PointerSensor));
 
-  const handleIconUpload = (key, file) => {
-    const url = URL.createObjectURL(file);
-    setSubMenus((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        icon: url,
-      },
-    }));
-  };
+useEffect(() => { setTempSubMenus(JSON.parse(JSON.stringify(subMenus))); }, []);
 
-  const handleAddSubMenu = () => {
-    const newKey = `menu${Date.now()}`;
-    setSubMenus((prev) => ({
-      ...prev,
-      [newKey]: { name: "", icon: null },
-    }));
-  };
+useEffect(() => { localStorage.setItem("subMenus", JSON.stringify(subMenus)); }, [subMenus]);
 
-  const handleSave = () => {
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 2000);
-  };
+const handleCardClick = (key) => { setSelected(key); setShowModal(true); };
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Web Panel Admin Galeri Pulsa</h1>
+const handleChange = (index, field, value) => { const updated = [...subMenus]; updated[index][field] = value; setSubMenus(updated); setHasChanges(true); };
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-        {menuItems.map((item) => (
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} key={item.key}>
-            <Card
-              onClick={() => handleCardClick(item.key)}
-              className={`cursor-pointer text-center p-4 transition-all ${
-                selected === item.key ? "bg-yellow-300 shadow-lg ring-2 ring-yellow-400" : "bg-white"
-              }`}
-            >
-              <div className="flex justify-center mb-2 text-xl">{item.icon}</div>
-              <div className="font-medium text-sm">{item.label}</div>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+const handleIconUpload = (index, file) => { const url = URL.createObjectURL(file); handleChange(index, "icon", url); };
 
-      {showModal && selected === "menu" && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-            <h2 className="text-lg font-semibold mb-4">Pengaturan Menu</h2>
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {Object.entries(subMenus).map(([key, val]) => (
-                <div key={key} className="border rounded p-3">
-                  <label className="block font-medium text-sm mb-1">{key.toUpperCase()}</label>
-                  <input
-                    className="w-full mb-2 p-2 border rounded"
-                    value={val.name}
-                    onChange={(e) => handleSubMenuChange(key, "name", e.target.value)}
-                    placeholder="Nama menu"
-                  />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleIconUpload(key, e.target.files[0])}
-                    className="mb-2"
-                  />
-                  {val.icon && (
-                    <img src={val.icon} alt="Icon" className="w-10 h-10 object-contain" />
-                  )}
-                </div>
-              ))}
-              <Button variant="outline" onClick={handleAddSubMenu}>Tambah Menu Baru</Button>
-              <div className="flex justify-end mt-4 gap-2">
-                <Button onClick={handleSave}>Simpan Perubahan</Button>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>Tutup</Button>
-              </div>
-              {showSaved && (
-                <p className="text-green-600 text-sm mt-2">Perubahan berhasil disimpan.</p>
-              )}
-            </div>
-          </div>
+const handleToggle = (index) => { handleChange(index, "active", !subMenus[index].active); };
+
+const handleAdd = (isCategory = false) => { setSubMenus((prev) => [ ...prev, { key: menu${Date.now()}, name: "", icon: null, active: false, isCategory }, ]); setHasChanges(true); };
+
+const handleSave = () => { setTempSubMenus(JSON.parse(JSON.stringify(subMenus))); setShowSaved(true); setHasChanges(false); localStorage.setItem("subMenus", JSON.stringify(subMenus)); setTimeout(() => setShowSaved(false), 2000); };
+
+const handleRefresh = () => { setSubMenus(JSON.parse(JSON.stringify(tempSubMenus))); setHasChanges(false); };
+
+const confirmDelete = (index) => { const menuName = subMenus[index].name || "menu ini"; setConfirmMessage(Apakah Anda yakin ingin menghapus \"${menuName}\"?); setConfirmAction(() => () => { setSubMenus(subMenus.filter((_, i) => i !== index)); setHasChanges(true); setSwipedIndex(null); setConfirmOpen(false); }); setConfirmOpen(true); };
+
+const confirmClose = () => { setConfirmMessage("Perubahan belum disimpan. Apakah Anda yakin ingin menutup tanpa menyimpan?"); setConfirmAction(() => () => { setSubMenus(JSON.parse(JSON.stringify(tempSubMenus))); setHasChanges(false); setShowModal(false); setConfirmOpen(false); }); setConfirmOpen(true); };
+
+const handleDragEnd = (event) => { const { active, over } = event; if (active && over && active.id !== over.id) { const oldIndex = subMenus.findIndex((m) => m.key === active.id); const newIndex = subMenus.findIndex((m) => m.key === over.id); setSubMenus((items) => arrayMove(items, oldIndex, newIndex)); setHasChanges(true); } };
+
+const handleSwipe = (index, direction) => { if (direction === "left") { setSwipedIndex(index); } else { setSwipedIndex(null); } };
+
+return ( <div className="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto"> <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
+
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+    {menuItems.map((item) => (
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} key={item.key}>
+        <Card
+          onClick={() => handleCardClick(item.key)}
+          className={`cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
+            selected === item.key ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"
+          }`}
+        >
+          <div className="flex justify-center mb-2 text-2xl text-gray-700">{item.icon}</div>
+          <div className="font-semibold text-sm text-gray-800">{item.label}</div>
+        </Card>
+      </motion.div>
+    ))}
+  </div>
+
+  {showModal && selected === "menu" && (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">Pengaturan Menu & Kategori</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={!hasChanges}
+            className="flex items-center gap-1"
+          >
+            <RefreshCcwIcon className="w-4 h-4" /> Refresh
+          </Button>
         </div>
-      )}
+
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={subMenus.map((m) => m.key)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {subMenus.map((menu, index) => (
+                <SortableItem key={menu.key} id={menu.key}>
+                  {({ listeners, setActivatorNodeRef }) => (
+                    <div
+                      className="flex items-center justify-between border rounded p-2 bg-white hover:shadow relative group"
+                      onTouchStart={(e) => {
+                        const startX = e.touches[0].clientX;
+                        const handleMove = (e2) => {
+                          const deltaX = e2.touches[0].clientX - startX;
+                          if (deltaX < -50) handleSwipe(index, "left");
+                          if (deltaX > 50) handleSwipe(index, "right");
+                        };
+                        const handleEnd = () => {
+                          document.removeEventListener("touchmove", handleMove);
+                          document.removeEventListener("touchend", handleEnd);
+                        };
+                        document.addEventListener("touchmove", handleMove);
+                        document.addEventListener("touchend", handleEnd);
+                      }}
+                    >
+                      <div className="flex items-center gap-3 flex-grow">
+                        <input
+                          type="checkbox"
+                          checked={menu.active}
+                          onChange={() => handleToggle(index)}
+                          className="accent-green-500 w-5 h-5"
+                        />
+                        <input
+                          className="flex-grow p-2 border rounded text-sm"
+                          value={menu.name}
+                          onChange={(e) => handleChange(index, "name", e.target.value)}
+                          placeholder={menu.isCategory ? "Nama Kategori" : "Nama Menu"}
+                        />
+                        {!menu.isCategory && (
+                          <label className="w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer">
+                            {menu.icon ? (
+                              <img src={menu.icon} alt="icon" className="w-10 h-10 rounded border" />
+                            ) : (
+                              "+ Icon"
+                            )}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleIconUpload(index, e.target.files[0])}
+                            />
+                          </label>
+                        )}
+                      </div>
+                      <div className="flex items-center ml-2 gap-2">
+                        <div ref={setActivatorNodeRef} {...listeners}>
+                          <GripVerticalIcon className="w-4 h-4 text-gray-400 cursor-pointer" />
+                        </div>
+                        {swipedIndex === index && (
+                          <Trash2Icon
+                            className="text-red-500 cursor-pointer"
+                            onClick={() => confirmDelete(index)}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </SortableItem>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+
+        <div className="flex justify-between mt-4 gap-2">
+          <Button variant="outline" onClick={() => handleAdd(false)} className="w-full">+ Tambah Menu</Button>
+          <Button variant="outline" onClick={() => handleAdd(true)} className="w-full">+ Tambah Kategori</Button>
+        </div>
+        <Button className="w-full bg-blue-500 hover:bg-blue-600 mt-3" onClick={handleSave}>SAVE</Button>
+        {showSaved && (
+          <p className="text-green-600 text-sm mt-2 text-center">Perubahan berhasil disimpan.</p>
+        )}
+        <div className="flex justify-end mt-2">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              if (hasChanges) confirmClose();
+              else setShowModal(false);
+            }}
+          >Tutup</Button>
+        </div>
+      </div>
     </div>
-  );
-}
+  )}
+
+  <ModalConfirm
+    open={confirmOpen}
+    message={confirmMessage}
+    onConfirm={confirmAction}
+    onCancel={() => setConfirmOpen(false)}
+  />
+</div>
+
+); }
+
