@@ -28,25 +28,94 @@
       background-color: #ffe600;
       border-color: #ffcc00;
     }
+    .content-section { display: none; padding: 20px; max-width: 600px; margin: 30px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .label { font-weight: bold; margin-top: 10px; }
+    input[type="text"], input[type="file"] { width: 100%; padding: 8px; margin: 6px 0; }
+    button { margin: 10px 5px 0 0; padding: 10px 20px; font-size: 16px; }
+    .product-list div { margin: 5px 0; padding: 8px; background: #eef; border-radius: 6px; }
   </style>
 </head>
 <body>
   <h2>Web Panel Admin Galeri Pulsa</h2>
   <div class="menu-grid">
-    <div class="menu-button" onclick="activateMenu(this)">Setup Server</div>
-    <div class="menu-button" onclick="activateMenu(this)">Menu Transaksi</div>
-    <div class="menu-button" onclick="activateMenu(this)">Logo</div>
-    <div class="menu-button" onclick="activateMenu(this)">Format Request</div>
-    <div class="menu-button" onclick="activateMenu(this)">Poin</div>
-    <div class="menu-button" onclick="activateMenu(this)">Downline</div>
-    <div class="menu-button" onclick="activateMenu(this)">Prabayar</div>
-    <div class="menu-button" onclick="activateMenu(this)">Pascabayar</div>
-    <div class="menu-button" onclick="activateMenu(this)">OTP</div>
+    <div class="menu-button" onclick="showContent('setupServer', this)">Setup Server</div>
+    <div class="menu-button" onclick="showContent('menuTransaksi', this)">Menu Transaksi</div>
+    <div class="menu-button" onclick="showContent('logo', this)">Logo</div>
+    <div class="menu-button" onclick="showContent('formatRequest', this)">Format Request</div>
+    <div class="menu-button" onclick="showContent('poin', this)">Poin</div>
+    <div class="menu-button" onclick="showContent('downline', this)">Downline</div>
+    <div class="menu-button" onclick="showContent('prabayar', this)">Prabayar</div>
+    <div class="menu-button" onclick="showContent('pascabayar', this)">Pascabayar</div>
+    <div class="menu-button" onclick="showContent('otp', this)">OTP</div>
+  </div>  <div id="menuTransaksi" class="content-section">
+    <h3>Menu Transaksi</h3>
+    <label><input type="checkbox" /> Aktif ➕ Menu</label>
+    <input type="text" placeholder="Nama Menu">
+    <input type="file" accept="image/*">
+    <label><input type="checkbox" /> Aktif ➕ Kategori</label>
+    <input type="text" placeholder="Nama Kategori">
+    <button>🔄 Refresh</button>
+    <button>💾 Save</button>
+    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
+  </div>  <div id="prabayar" class="content-section">
+    <h3>Produk Prabayar</h3>
+    <div class="product-list">
+      <div>Pulsa Reguler</div>
+      <div>Paket Telpon dan SMS</div>
+      <div>Paket Internet</div>
+      <div>Pulsa Transfer</div>
+      <div>Token Listrik</div>
+      <div>E-Wallet</div>
+      <div>Voucher Game</div>
+      <div>Voucher TV</div>
+    </div>
+    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
+  </div>  <div id="pascabayar" class="content-section">
+    <h3>Produk Pascabayar</h3>
+    <div class="product-list">
+      <div>Tagihan Listrik</div>
+      <div>BPJS Kesehatan</div>
+      <div>PDAM Grup</div>
+      <div>Telkom Grup</div>
+      <div>Multifinance</div>
+      <div>TV Kabel</div>
+      <div>PGN</div>
+      <div>PPOB Lainnya</div>
+    </div>
+    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
+  </div>  <div id="setupServer" class="content-section">
+    <h3>Setup Server</h3>
+    <button onclick="toggleSection('ipFields')">🌐 Center IP</button>
+    <div id="ipFields" style="display:none">
+      <div class="label">Nama Center</div>
+      <input type="text" placeholder="Contoh: IP1">
+      <div class="label">Server Center</div>
+      <input type="text" placeholder="Contoh: 101.234.27.123:7878">
+      <div class="label">Host</div>
+      <input type="text" placeholder="Contoh: json">
+    </div>
+    <button onclick="toggleSection('jabberFields')">📡 Center Jabber</button>
+    <div id="jabberFields" style="display:none">
+      <div class="label">Nama Center</div>
+      <input type="text" placeholder="Contoh: Jabber1">
+      <div class="label">Server Jabber</div>
+      <input type="text" placeholder="Contoh: jabber.server.com">
+    </div>
+    <button onclick="hideAllContent()">❌ Kembali / Tutup</button>
   </div>  <script>
-    function activateMenu(el) {
+    function showContent(id, el) {
       document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
       el.classList.add('active');
-      // Tambahkan logika tampilan konten halaman di sini jika perlu
+      document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+    function hideAllContent() {
+      document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+    }
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      section.style.display = section.style.display === 'none' ? 'block' : 'none';
     }
   </script></body>
 </html>
