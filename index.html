@@ -33,19 +33,27 @@
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: white;
       z-index: 1000;
-      justify-content: center;
-      align-items: center;
+      overflow-y: auto;
+      padding: 20px;
     }
     .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 95%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
+      max-width: 700px;
+      margin: auto;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h3 { margin: 0; }
+    .toolbar {
+      display: flex;
+      justify-content: start;
+      gap: 10px;
+      margin-bottom: 15px;
     }
     .menu-row {
       display: flex;
@@ -62,17 +70,21 @@
     .menu-row input[type="checkbox"] {
       transform: scale(1.2);
     }
-    .menu-row button, .icon-btn {
+    .icon-btn, .drag-btn {
       background: #eee;
       border: none;
       padding: 8px;
       border-radius: 6px;
       cursor: pointer;
     }
+    .footer-summary {
+      margin-top: 20px;
+      font-weight: bold;
+    }
     .footer-btns {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     .footer-btns button {
       flex: 1;
@@ -103,88 +115,97 @@
     <div class="menu-button">OTP</div>
   </div>  <!-- MODAL TRANSAKSI -->  <div class="modal" id="modal-transaksi">
     <div class="modal-content">
-      <h3>Pengaturan Menu & Kategori <button class="icon-btn" onclick="resetForm()">🔄 Refresh</button></h3><div class="menu-row">
-    <input type="checkbox" checked>
-    <input type="text" value="Pulsa Reguler">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-  <div class="menu-row">
-    <input type="checkbox" checked>
-    <input type="text" value="Voucher Game">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-  <div class="menu-row">
-    <input type="checkbox" checked>
-    <input type="text" value="PLN Prabayar">
-    <button class="icon-btn">+ Icon</button>
-  </div>
+      <div class="modal-header">
+        <h3>Pengaturan Menu & Kategori</h3>
+        <button class="close-btn" onclick="closeModal('transaksi')">TUTUP</button>
+      </div>
+      <div class="toolbar">
+        <button onclick="addMenuRow()">+ Menu</button>
+        <button onclick="addKategoriRow()">+ Kategori</button>
+        <button class="refresh-btn" id="refreshBtn" disabled>🔄 Refresh</button>
+      </div><div id="menuContainer"></div>
 
-  <!-- Tambahan Input Kosong -->
-  <div class="menu-row">
-    <input type="checkbox">
-    <input type="text" placeholder="Nama Menu">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-  <div class="menu-row">
-    <input type="checkbox">
-    <input type="text" placeholder="Nama Menu">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-  <div class="menu-row">
-    <input type="checkbox">
-    <input type="text" placeholder="Nama Menu">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-  <div class="menu-row">
-    <input type="checkbox">
-    <input type="text" placeholder="Nama Kategori">
-    <button class="icon-btn">+ Icon</button>
-  </div>
-
+  <div class="footer-summary" id="summary">Jumlah Menu: 0 | Aktif: 0 | Tidak Aktif: 0</div>
   <div class="footer-btns">
-    <button onclick="addMenuRow()">+ Tambah Menu</button>
-    <button onclick="addKategoriRow()">+ Tambah Kategori</button>
-  </div>
-
-  <div class="footer-btns">
-    <button class="save-btn">SAVE</button>
-    <button class="close-btn" onclick="closeModal('transaksi')">TUTUP</button>
+    <button class="save-btn" id="saveBtn" disabled onclick="saveChanges()">SAVE</button>
   </div>
 </div>
 
   </div>  <script>
+    let changesMade = false;
+    let menuCount = 0;
+
     function showModal(id) {
       document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('modal-' + id).style.display = 'flex';
+      document.getElementById('modal-' + id).style.display = 'block';
+      updateSummary();
     }
+
     function closeModal(id) {
+      if (changesMade) {
+        if (!confirm("Perubahan belum disimpan. Yakin ingin keluar?")) return;
+      }
+      changesMade = false;
       document.getElementById('modal-' + id).style.display = 'none';
       document.getElementById('mainMenu').style.display = 'grid';
     }
-    function resetForm() {
-      alert("Form akan di-refresh (simulasi)");
-    }
+
     function addMenuRow() {
-      const modal = document.querySelector("#modal-transaksi .modal-content");
+      const container = document.getElementById('menuContainer');
       const row = document.createElement('div');
       row.className = 'menu-row';
       row.innerHTML = `
-        <input type="checkbox">
-        <input type="text" placeholder="Nama Menu">
+        <input type="checkbox" onchange="detectChange()">
+        <input type="text" placeholder="Nama Menu" oninput="detectChange()">
         <button class="icon-btn">+ Icon</button>
+        <button class="drag-btn" draggable="true">⠿</button>
       `;
-      modal.insertBefore(row, modal.querySelector('.footer-btns'));
+      container.appendChild(row);
+      menuCount++;
+      detectChange();
     }
+
     function addKategoriRow() {
-      const modal = document.querySelector("#modal-transaksi .modal-content");
+      const container = document.getElementById('menuContainer');
       const row = document.createElement('div');
       row.className = 'menu-row';
       row.innerHTML = `
-        <input type="checkbox">
-        <input type="text" placeholder="Nama Kategori">
+        <input type="checkbox" onchange="detectChange()">
+        <input type="text" placeholder="Nama Kategori" oninput="detectChange()">
         <button class="icon-btn">+ Icon</button>
+        <button class="drag-btn" draggable="true">⠿</button>
       `;
-      modal.insertBefore(row, modal.querySelector('.footer-btns'));
+      container.appendChild(row);
+      menuCount++;
+      detectChange();
+    }
+
+    function detectChange() {
+      changesMade = true;
+      document.getElementById('saveBtn').disabled = false;
+      document.getElementById('refreshBtn').disabled = false;
+      updateSummary();
+    }
+
+    function saveChanges() {
+      alert("Perubahan disimpan!");
+      changesMade = false;
+      document.getElementById('saveBtn').disabled = true;
+      document.getElementById('refreshBtn').disabled = true;
+    }
+
+    function updateSummary() {
+      const rows = document.querySelectorAll('#menuContainer .menu-row');
+      const total = rows.length;
+      let aktif = 0;
+      rows.forEach(r => { if (r.querySelector('input[type=checkbox]').checked) aktif++; });
+      document.getElementById('summary').innerText = `Jumlah Menu: ${total} | Aktif: ${aktif} | Tidak Aktif: ${total - aktif}`;
+    }
+
+    window.onpopstate = function() {
+      if (changesMade && !confirm("Perubahan belum disimpan. Yakin ingin keluar?")) {
+        history.pushState(null, null, document.URL);
+      }
     }
   </script></body>
 </html>
