@@ -99,6 +99,21 @@
     .save-btn { background: royalblue; color: white; }
     .refresh-btn { background: #ccc; }
     .close-btn { background: tomato; color: white; }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .simple-button {
+      padding: 12px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -108,7 +123,7 @@
     <div class="menu-button" onclick="showModal('prabayar')">Prabayar</div>
     <div class="menu-button" onclick="showModal('pascabayar')">Pascabayar</div>
     <div class="menu-button" onclick="showModal('server')">Setup Server</div>
-  </div>  <!-- TEMPLATE MODAL -->  <div id="modals"></div>  <script>
+  </div>  <div id="modals"></div>  <script>
     const modalTitles = {
       transaksi: "Pengaturan Menu & Kategori",
       prabayar: "Pengaturan Produk Prabayar",
@@ -126,32 +141,47 @@
       const container = document.createElement('div');
       container.className = 'modal';
       container.id = `modal-${id}`;
-      container.innerHTML = `
+
+      let modalContent = `
         <div class="modal-content">
           <div class="modal-header">
             <h3>${modalTitles[id]}</h3>
             <button class="close-btn" onclick="closeModal('${id}')">TUTUP</button>
-          </div>
+          </div>`;
+
+      if (id === 'transaksi') {
+        modalContent += `
           <div class="toolbar">
             <button onclick="addRow('${id}', false)">+ Menu</button>
             <button onclick="addRow('${id}', true)">+ Kategori</button>
-            <button class="refresh-btn" id="refreshBtn-${id}" disabled>🔄 Refresh</button>
+            <button class="refresh-btn" id="refreshBtn-${id}" onclick="resetModal('${id}')" disabled>🔄 Refresh</button>
           </div>
           <div id="menuContainer-${id}"></div>
           <div class="footer-summary" id="summary-${id}">Jumlah Menu: 0 | Aktif: 0 | Tidak Aktif: 0</div>
           <div class="footer-btns">
             <button class="save-btn" id="saveBtn-${id}" disabled onclick="saveChanges('${id}')">SAVE</button>
-          </div>
-        </div>
-      `;
+          </div>`;
+      } else if (modalDefaults[id]) {
+        modalContent += '<div class="button-grid">';
+        modalDefaults[id].forEach(name => {
+          modalContent += `<div class="simple-button">${name}</div>`;
+        });
+        modalContent += '</div>';
+      } else if (id === 'server') {
+        modalContent += `
+          <div class="menu-row">
+            <input type="text" placeholder="Nama Center">
+            <input type="text" placeholder="Server Center">
+            <input type="text" placeholder="Host">
+          </div>`;
+      }
+
+      modalContent += `</div>`;
+      container.innerHTML = modalContent;
       document.getElementById('modals').appendChild(container);
 
-      if (modalDefaults[id]) {
+      if (id === 'transaksi') {
         modalDefaults[id].forEach(n => addRow(id, false, n));
-      } else if (id === 'server') {
-        addRow(id, false, "Nama Center", true);
-        addRow(id, false, "Server Center", true);
-        addRow(id, false, "Host", true);
       }
     }
 
@@ -159,7 +189,7 @@
       if (!document.getElementById(`modal-${id}`)) buildModal(id);
       document.getElementById('mainMenu').style.display = 'none';
       document.getElementById(`modal-${id}`).style.display = 'block';
-      updateSummary(id);
+      if (id === 'transaksi') updateSummary(id);
     }
 
     function closeModal(id) {
@@ -171,14 +201,14 @@
       document.getElementById('mainMenu').style.display = 'grid';
     }
 
-    function addRow(id, isKategori = false, preset = '', isServer = false) {
+    function addRow(id, isKategori = false, preset = '') {
       const container = document.getElementById(`menuContainer-${id}`);
       const row = document.createElement('div');
       row.className = 'menu-row';
       row.innerHTML = `
         <input type="checkbox" onchange="detectChange('${id}')" checked>
-        <input type="text" placeholder="${isKategori ? 'Nama Kategori' : (isServer ? preset : 'Nama Menu')}" value="${preset}" oninput="detectChange('${id}')">
-        <button class="icon-btn">+ Icon</button>
+        <input type="text" placeholder="${isKategori ? 'Nama Kategori' : 'Nama Menu'}" value="${preset}" oninput="detectChange('${id}')">
+        ${!isKategori ? '<button class="icon-btn">+ Icon</button>' : ''}
         <button class="drag-btn" draggable="true">⠿</button>
       `;
       container.appendChild(row);
@@ -197,6 +227,14 @@
       window[`changesMade_${id}`] = false;
       document.getElementById(`saveBtn-${id}`).disabled = true;
       document.getElementById(`refreshBtn-${id}`).disabled = true;
+    }
+
+    function resetModal(id) {
+      if (!confirm("Yakin ingin membatalkan semua perubahan?")) return;
+      document.getElementById(`modal-${id}`).remove();
+      buildModal(id);
+      updateSummary(id);
+      window[`changesMade_${id}`] = false;
     }
 
     function updateSummary(id) {
