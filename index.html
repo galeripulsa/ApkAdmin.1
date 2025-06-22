@@ -2,77 +2,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Admin RS - Menu Home</title>
+  <title>Web Panel Admin Galeri Pulsa</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-    h2, h3 { margin-top: 0; }
-    .section { margin: 20px 0; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    input, textarea, select, button {
-      display: block; margin: 10px 0; padding: 10px;
-      font-size: 16px; width: 100%; max-width: 500px;
+    body { font-family: sans-serif; padding: 20px; background: #f8f9fa; }
+    h2 { text-align: center; margin-bottom: 30px; }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
     }
-    .menu-item, .menu-product { margin: 8px 0; padding: 8px; background: #eef; border-radius: 6px; }
-    .label { font-weight: bold; margin-top: 10px; }
+    .menu-button {
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .menu-button.active {
+      background-color: #ffe600;
+      border-color: #ffcc00;
+    }
   </style>
 </head>
 <body>
-  <h2>Menu Home - Web Admin RS</h2>  <!-- Menu Transaksi -->  <div class="section">
-    <h3>Menu Transaksi</h3>
-    <label><input type="checkbox" /> Aktif ➕ Menu</label>
-    <input type="text" placeholder="Nama Menu" />
-    <input type="file" accept="image/*" /> <!-- Untuk upload icon --><label><input type="checkbox" /> Aktif ➕ Kategori</label>
-<input type="text" placeholder="Nama Kategori" />
-
-<button>🔄 Refresh</button>
-<button>💾 Save</button>
-<button>❌ Kembali / Tutup</button>
-
-  </div>  <!-- Menu Prabayar -->  <div class="section">
-    <h3>Menu Prabayar</h3>
-    <div class="menu-product">Pulsa Reguler</div>
-    <div class="menu-product">Paket Telpon dan SMS</div>
-    <div class="menu-product">Paket Internet</div>
-    <div class="menu-product">Pulsa Transfer</div>
-    <div class="menu-product">Token Listrik</div>
-    <div class="menu-product">E-wallet</div>
-    <div class="menu-product">Voucher Game</div>
-    <div class="menu-product">Voucher TV</div>
-  </div>  <!-- Menu Pascabayar -->  <div class="section">
-    <h3>Menu Pascabayar</h3>
-    <div class="menu-product">Tagihan Listrik</div>
-    <div class="menu-product">BPJS Kesehatan</div>
-    <div class="menu-product">PDAM Group</div>
-    <div class="menu-product">Telkom Group</div>
-    <div class="menu-product">Multifinance</div>
-    <div class="menu-product">TV Kabel</div>
-    <div class="menu-product">PGN</div>
-    <div class="menu-product">PPOB Lainnya</div>
-  </div>  <!-- Setup Server -->  <div class="section">
-    <h3>Setup Server</h3>
-    <button onclick="toggleIpSetup()">🖥️ Center IP</button>
-    <div id="ipSetup" style="display:none;">
-      <div class="label">Nama Center</div>
-      <input type="text" placeholder="Contoh: IP1" />
-      <div class="label">Server Center</div>
-      <input type="text" placeholder="Contoh: 101.234.27.123:7878" />
-      <div class="label">Host</div>
-      <input type="text" placeholder="Contoh: json" />
-    </div><button onclick="toggleJabberSetup()">📡 Center Jabber</button>
-<div id="jabberSetup" style="display:none;">
-  <div class="label">Nama Center</div>
-  <input type="text" placeholder="Contoh: Jabber1" />
-  <div class="label">Server Jabber</div>
-  <input type="text" placeholder="Contoh: jabber.server.com" />
-</div>
-
+  <h2>Web Panel Admin Galeri Pulsa</h2>
+  <div class="menu-grid">
+    <div class="menu-button" onclick="activateMenu(this)">Setup Server</div>
+    <div class="menu-button" onclick="activateMenu(this)">Menu Transaksi</div>
+    <div class="menu-button" onclick="activateMenu(this)">Logo</div>
+    <div class="menu-button" onclick="activateMenu(this)">Format Request</div>
+    <div class="menu-button" onclick="activateMenu(this)">Poin</div>
+    <div class="menu-button" onclick="activateMenu(this)">Downline</div>
+    <div class="menu-button" onclick="activateMenu(this)">Prabayar</div>
+    <div class="menu-button" onclick="activateMenu(this)">Pascabayar</div>
+    <div class="menu-button" onclick="activateMenu(this)">OTP</div>
   </div>  <script>
-    function toggleIpSetup() {
-      const el = document.getElementById("ipSetup");
-      el.style.display = el.style.display === "none" ? "block" : "none";
-    }
-    function toggleJabberSetup() {
-      const el = document.getElementById("jabberSetup");
-      el.style.display = el.style.display === "none" ? "block" : "none";
+    function activateMenu(el) {
+      document.querySelectorAll('.menu-button').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+      // Tambahkan logika tampilan konten halaman di sini jika perlu
     }
   </script></body>
 </html>
