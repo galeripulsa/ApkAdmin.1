@@ -150,6 +150,23 @@
       }
     }
 
+function createMenuItem(type = 'menu') {
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+      div.setAttribute('draggable', 'true');
+      div.innerHTML = `
+        <span class="drag-icon">↕</span>
+        <input type="checkbox">
+        <input type="text" class="form-control" placeholder="${type === 'menu' ? 'Nama Menu' : 'Nama Kategori'}">
+        ${type === 'menu' ? '<label class="btn btn-outline-secondary icon-button">+ Icon<input type="file" accept="image/*" hidden></label>' : ''}
+        <div class="delete-btn" onclick="this.parentElement.remove(); updateCount(); markChanged();">🗑️</div>
+      `;
+      enableSwipe(div);
+      document.getElementById('sortableMenu').appendChild(div);
+      updateCount();
+      markChanged();
+    }
+
     function addMenu() {
       const menu = document.createElement('div');
       menu.className = 'menu-item';
