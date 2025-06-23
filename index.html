@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Builder Menu Multi-Level</title>
+  <title>Builder Menu 1-Level</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -124,6 +124,14 @@
       cursor: pointer;
     }
 
+    .icon-preview {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      object-fit: cover;
+      margin-left: 6px;
+    }
+
     .drag-icon {
       font-size: 18px;
       padding: 0 10px;
@@ -148,15 +156,13 @@
       right: 10px;
     }
 
-    .submenu {
-      margin-left: 30px;
-    }
-
     .popup-modal {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background-color: rgba(0,0,0,0.6);
       justify-content: center;
       align-items: center;
@@ -191,40 +197,46 @@
       cursor: pointer;
     }
 
-    .yes-btn { background: #4CAF50; color: white; }
-    .no-btn  { background: #e74c3c; color: white; }
+    .yes-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .no-btn {
+      background: #e74c3c;
+      color: white;
+    }
   </style>
 </head>
 <body>
 
-<header>📡 Builder Menu Multi-Level</header>
+<header>📡 Builder Menu 1-Level</header>
 <div class="main">
-  <button class="button" onclick="bukaMenuTransaksi()">📋 Menu Transaksi</button>
+  <button class="button" onclick="bukaBuilder()">📋 Menu Transaksi</button>
 </div>
 
-<!-- Modal Fullscreen -->
+<!-- Modal -->
 <div class="modal-full" id="modalTransaksi" style="display:none;">
   <div class="modal-header">
-    <h2>Pengaturan Menu dan Submenu</h2>
+    <h2>Pengaturan Menu dan Kategori</h2>
     <div class="button-group">
-      <button onclick="tambahItem()">+Menu</button>
+      <button onclick="tambahItem('menu')">+Menu</button>
+      <button onclick="tambahItem('kategori')">+Kategori</button>
       <button onclick="simpanData()">💾 Save</button>
-      <button onclick="refreshData()">🔄 Refresh</button>
+      <button onclick="muatData()">🔄 Refresh</button>
     </div>
-    <button class="modal-close" onclick="tutupModal()">Tutup ✖</button>
+    <button class="modal-close" onclick="tutupBuilder()">Tutup ✖</button>
   </div>
-
   <div class="modal-body" id="builderList"></div>
-
   <div class="modal-footer">
-    <p id="statistik">Jumlah Menu: 0</p>
+    <p id="statistik">Jumlah Item: 0</p>
   </div>
 </div>
 
-<!-- Popup Modal -->
+<!-- Popup -->
 <div class="popup-modal" id="popupModal">
   <div class="popup-content">
-    <p id="popupMessage">Yakin?</p>
+    <p id="popupMessage">Yakin ingin menghapus?</p>
     <small id="popupSub"></small>
     <div id="popupActions">
       <button class="yes-btn" onclick="konfirmasiHapus()">Ya</button>
@@ -241,31 +253,22 @@ let itemPendingHapus = null;
 let namaPendingHapus = '';
 let popupAction = '';
 
-function bukaMenuTransaksi() {
+// Buka builder modal
+function bukaBuilder() {
   document.getElementById('modalTransaksi').style.display = 'flex';
-  loadFromStorage();
+  muatData();
 }
 
-function tutupModal() {
+// Tutup builder modal
+function tutupBuilder() {
   document.getElementById('modalTransaksi').style.display = 'none';
 }
 
-function tambahItem(nama = "Menu Baru", aktif = true, children = []) {
-  const row = buatRow(nama, aktif, false, children);
-  builderList.appendChild(row);
-  updateStatistik();
-}
-
-function tambahSubmenu(parentRow, nama = "Submenu", aktif = true) {
-  const submenu = buatRow(nama, aktif, true);
-  submenu.classList.add('submenu');
-  parentRow.appendChild(submenu);
-}
-
-function buatRow(nama, aktif, isSub = false, children = []) {
+// Tambah menu atau kategori
+function tambahItem(type = 'menu', name = '', active = true, icon = '') {
   const row = document.createElement('div');
   row.className = 'builder-item';
-  if (isSub) row.classList.add('submenu');
+  row.setAttribute('data-type', type);
 
   let startX = 0;
   row.addEventListener('touchstart', e => startX = e.touches[0].clientX);
@@ -280,30 +283,39 @@ function buatRow(nama, aktif, isSub = false, children = []) {
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.checked = aktif;
+  checkbox.checked = active;
 
   const input = document.createElement('input');
   input.type = 'text';
-  input.value = nama;
+  input.value = name || (type === 'menu' ? `Menu ${builderList.children.length + 1}` : `Kategori ${builderList.children.length + 1}`);
 
   row.appendChild(checkbox);
   row.appendChild(input);
 
-  if (!isSub) {
+  if (type === 'menu') {
     const iconBtn = document.createElement('button');
     iconBtn.innerText = '📁';
     iconBtn.onclick = () => {
       const file = document.createElement('input');
       file.type = 'file';
       file.accept = 'image/*';
+      file.onchange = () => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          iconImg.src = e.target.result;
+          iconImg.style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file.files[0]);
+      };
       file.click();
     };
     row.appendChild(iconBtn);
 
-    const addSub = document.createElement('button');
-    addSub.innerText = '+Submenu';
-    addSub.onclick = () => tambahSubmenu(row);
-    row.appendChild(addSub);
+    const iconImg = document.createElement('img');
+    iconImg.className = 'icon-preview';
+    iconImg.src = icon || '';
+    iconImg.style.display = icon ? 'inline-block' : 'none';
+    row.appendChild(iconImg);
   }
 
   const dragIcon = document.createElement('div');
@@ -313,7 +325,7 @@ function buatRow(nama, aktif, isSub = false, children = []) {
 
   const hapusBtn = document.createElement('button');
   hapusBtn.className = 'hapus-btn';
-  hapusBtn.innerHTML = '🗑️';
+  hapusBtn.innerText = '🗑️';
   hapusBtn.onclick = () => {
     itemPendingHapus = row;
     namaPendingHapus = input.value;
@@ -322,65 +334,48 @@ function buatRow(nama, aktif, isSub = false, children = []) {
   };
   row.appendChild(hapusBtn);
 
-  // Tambahkan children (submenus)
-  if (!isSub && children?.length) {
-    children.forEach(child => {
-      const sub = buatRow(child.name, child.active, true);
-      sub.classList.add('submenu');
-      row.appendChild(sub);
-    });
-  }
-
-  return row;
-}
-
-function simpanData() {
-  const data = [];
-
-  const allRows = Array.from(builderList.children);
-  allRows.forEach(row => {
-    if (!row.classList.contains('submenu')) {
-      const input = row.querySelector('input[type="text"]');
-      const checkbox = row.querySelector('input[type="checkbox"]');
-      const menu = {
-        name: input.value,
-        active: checkbox.checked,
-        children: []
-      };
-
-      const submenus = row.querySelectorAll('.submenu');
-      submenus.forEach(sub => {
-        const subInput = sub.querySelector('input[type="text"]');
-        const subCheck = sub.querySelector('input[type="checkbox"]');
-        menu.children.push({
-          name: subInput.value,
-          active: subCheck.checked
-        });
-      });
-
-      data.push(menu);
-    }
-  });
-
-  localStorage.setItem('menuData', JSON.stringify(data));
-  bukaPopup("Data berhasil disimpan ✅", '', true);
-}
-
-function refreshData() {
-  loadFromStorage();
-}
-
-function loadFromStorage() {
-  const data = JSON.parse(localStorage.getItem('menuData'));
-  builderList.innerHTML = '';
-  if (!data) return;
-  data.forEach(menu => tambahItem(menu.name, menu.active, menu.children));
+  builderList.appendChild(row);
   updateStatistik();
 }
 
+// Update statistik jumlah item
 function updateStatistik() {
-  const menuCount = builderList.querySelectorAll('.builder-item:not(.submenu)').length;
-  document.getElementById('statistik').innerText = `Jumlah Menu: ${menuCount}`;
+  const total = builderList.querySelectorAll('.builder-item').length;
+  document.getElementById('statistik').innerText = `Jumlah Item: ${total}`;
+}
+
+// Simpan ke localStorage
+function simpanData() {
+  const items = builderList.querySelectorAll('.builder-item');
+  const data = [];
+
+  items.forEach(item => {
+    const type = item.getAttribute('data-type');
+    const input = item.querySelector('input[type="text"]');
+    const checkbox = item.querySelector('input[type="checkbox"]');
+    const icon = item.querySelector('img')?.src || '';
+
+    data.push({
+      type,
+      name: input.value,
+      active: checkbox.checked,
+      icon: icon || ''
+    });
+  });
+
+  localStorage.setItem('menu1Level', JSON.stringify(data));
+  bukaPopup("Data berhasil disimpan ✅", '', true);
+}
+
+// Load dari localStorage
+function muatData() {
+  const data = JSON.parse(localStorage.getItem('menu1Level'));
+  builderList.innerHTML = '';
+  if (!data) return;
+  data.forEach(item => {
+    tambahItem(item.type, item.name, item.active, item.icon);
+  });
+  updateStatistik();
 }
 
 // Popup
@@ -404,6 +399,36 @@ function konfirmasiHapus() {
     updateStatistik();
   }
   tutupPopup();
+}
+
+// Drag & drop
+builderList.addEventListener('dragover', e => {
+  e.preventDefault();
+  const after = getDragAfterElement(e.clientY);
+  const dragging = document.querySelector('.dragging');
+  if (!after) builderList.appendChild(dragging);
+  else builderList.insertBefore(dragging, after);
+});
+
+builderList.addEventListener('dragstart', e => {
+  if (e.target.classList.contains('builder-item')) {
+    e.target.classList.add('dragging');
+  }
+});
+
+builderList.addEventListener('dragend', e => {
+  if (e.target.classList.contains('builder-item')) {
+    e.target.classList.remove('dragging');
+  }
+});
+
+function getDragAfterElement(y) {
+  const items = [...builderList.querySelectorAll('.builder-item:not(.dragging)')];
+  return items.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 </script>
 </body>
