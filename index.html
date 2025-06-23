@@ -15,101 +15,101 @@
       font-size: 18px; border-radius: 8px;
       cursor: pointer;
     }
-    .button:disabled { background-color: #777; cursor: not-allowed; }
 
     .modal-full {
-      display: none; position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: #1e1e2f; z-index: 1000;
-      flex-direction: column;
+      display: none; position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background-color: #1e1e2f;
+      z-index: 1000; flex-direction: column;
     }
 
     .modal-header {
-      background-color: #2d2f44; padding: 15px 20px;
-      border-bottom: 1px solid #444; position: relative;
+      background-color: #2d2f44;
+      padding: 15px 20px;
+      border-bottom: 1px solid #444;
+      position: relative;
     }
+
     .modal-header h2 { margin: 0 0 10px 0; font-size: 20px; color: #ccc; }
     .modal-header .button-group {
       display: flex; gap: 10px; flex-wrap: wrap;
     }
 
-    .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .modal-body {
+      flex: 1; overflow-y: auto; padding: 20px;
+    }
 
     .builder-item {
       display: flex; align-items: center;
       background: #393b5a; padding: 10px;
       margin-bottom: 10px; border-radius: 6px;
+      position: relative;
+      transition: transform 0.3s ease;
     }
+
+    .builder-item.dragging {
+      opacity: 0.5;
+    }
+
     .builder-item input[type="text"] {
       flex: 1; margin: 0 10px; padding: 6px;
       border-radius: 4px; border: none; font-size: 16px;
     }
+
     .builder-item button {
       background-color: #3498db;
       border: none; color: white; padding: 6px 10px;
       border-radius: 4px; font-size: 14px; cursor: pointer;
     }
+
     .drag-icon {
       font-size: 18px; padding: 0 10px;
       cursor: grab;
     }
 
-    .modal-footer {
-      padding: 40px 20px; background-color: #2d2f44;
-      border-top: 1px solid #444; text-align: center;
+    .hapus-btn {
+      position: absolute;
+      right: -100px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e74c3c;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      transition: right 0.3s ease;
     }
-    .modal-footer p { margin: 10px 0; font-size: 14px; color: #ccc; }
 
-    .modal-header button, .modal-footer button {
-      background-color: #4CAF50; border: none;
-      color: white; padding: 10px 16px;
-      font-size: 16px; border-radius: 6px; cursor: pointer;
+    .show-hapus .hapus-btn {
+      right: 10px;
     }
-    .modal-header button:disabled, .modal-footer button:disabled {
-      background-color: #555; cursor: not-allowed;
+
+    .modal-footer {
+      padding: 50px 20px;
+      background-color: #2d2f44;
+      border-top: 1px solid #444;
+      text-align: center;
+    }
+
+    .modal-footer p {
+      margin: 3px 0;
+      font-size: 14px;
+      color: #ccc;
     }
 
     .modal-close {
-      position: absolute; top: 10px; right: 15px;
-      background-color: #e74c3c; color: white;
-      border: none; padding: 8px 12px;
-      font-size: 14px; border-radius: 6px; cursor: pointer;
-    }
-
-    /* Pop-up modal konfirmasi */
-    .popup-modal {
-      display: none; position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.6);
-      justify-content: center; align-items: center;
-      z-index: 2000;
-    }
-
-    .popup-content {
-      background: #2d2f44;
-      padding: 20px 30px;
-      border-radius: 10px;
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-
-    .popup-content p {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    .popup-content button {
-      padding: 8px 14px;
-      margin: 0 10px;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background-color: #e74c3c;
+      color: white;
       border: none;
-      border-radius: 5px;
+      padding: 8px 12px;
       font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
     }
-
-    .yes-btn { background: #4CAF50; color: white; }
-    .no-btn { background: #e74c3c; color: white; }
   </style>
 </head>
 <body>
@@ -119,165 +119,111 @@
   <button class="button" onclick="bukaMenuTransaksi()">📋 Menu Transaksi</button>
 </div>
 
-<!-- Modal Fullscreen -->
 <div class="modal-full" id="modalTransaksi">
   <div class="modal-header">
     <h2>Pengaturan Menu dan Kategori</h2>
     <div class="button-group">
       <button onclick="tambahItem('menu')">+Menu</button>
       <button onclick="tambahItem('kategori')">+Kategori</button>
-      <button id="refreshBtn" onclick="resetBuilder()" disabled>🔄 Refresh</button>
     </div>
-    <button class="modal-close" onclick="konfirmasiTutup()">Tutup ✖</button>
+    <button class="modal-close" onclick="tutupModal()">Tutup ✖</button>
   </div>
 
-  <div class="modal-body" id="builderList"></div>
+  <div class="modal-body" id="builderList">
+    <!-- builder-item akan muncul di sini -->
+  </div>
 
   <div class="modal-footer">
     <p id="statistik">Jumlah Menu: 0 | Aktif: 0 | Nonaktif: 0</p>
-    <button id="saveBtn" onclick="simpanData()" disabled>💾 Save</button>
-  </div>
-</div>
-
-<!-- Pop-up Modal -->
-<div class="popup-modal" id="popupConfirm">
-  <div class="popup-content">
-    <p id="popupMessage">Yakin ingin keluar? Perubahan belum disimpan akan hilang.</p>
-    <button class="yes-btn" onclick="prosesKonfirmasi()">Ya</button>
-    <button class="no-btn" onclick="tutupPopup()">Batal</button>
+    <button id="saveBtn" onclick="alert('Disimpan!')">💾 Save</button>
   </div>
 </div>
 
 <script>
-  let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0, perubahan = false;
-  let pendingAction = null;
+  let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0;
 
   function bukaMenuTransaksi() {
     document.getElementById('modalTransaksi').style.display = 'flex';
-    history.pushState(null, null, location.href); // untuk tangkap tombol "back"
-  }
-
-  function konfirmasiTutup() {
-    if (perubahan) {
-      pendingAction = 'tutup';
-      bukaPopup("Yakin ingin keluar? Perubahan belum disimpan akan hilang.");
-    } else {
-      tutupModal();
-    }
   }
 
   function tutupModal() {
     document.getElementById('modalTransaksi').style.display = 'none';
-    document.getElementById('builderList').innerHTML = '';
-    totalMenu = aktifMenu = nonaktifMenu = 0;
-    perubahan = false;
-    updateStatistik();
-    disableSaveRefresh();
   }
 
   function tambahItem(type) {
     const container = document.getElementById('builderList');
     const row = document.createElement('div');
     row.className = 'builder-item';
+    row.draggable = true;
+
+    // Gesture swipe
+    let startX = 0;
+    row.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+    row.addEventListener('touchmove', e => {
+      const deltaX = e.touches[0].clientX - startX;
+      if (deltaX < -50) row.classList.add('show-hapus');
+      else if (deltaX > 50) row.classList.remove('show-hapus');
+    });
+
+    row.addEventListener('dragstart', () => row.classList.add('dragging'));
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = true;
-    checkbox.onchange = () => { hitungStatistik(); markPerubahan(); };
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.value = (type === 'menu') ? `Menu ${totalMenu + 1}` : `Kategori ${totalMenu + 1}`;
-    input.oninput = () => { markPerubahan(); };
+    input.value = type === 'menu' ? `Menu ${++totalMenu}` : `Kategori ${++totalMenu}`;
+
+    const drag = document.createElement('div');
+    drag.className = 'drag-icon';
+    drag.innerText = '↕️';
 
     row.appendChild(checkbox);
     row.appendChild(input);
-
     if (type === 'menu') {
       const iconBtn = document.createElement('button');
-      iconBtn.textContent = '+Icon';
+      iconBtn.innerText = '+Icon';
       row.appendChild(iconBtn);
     }
+    row.appendChild(drag);
 
-    const dragIcon = document.createElement('div');
-    dragIcon.className = 'drag-icon';
-    dragIcon.textContent = '↕️';
-    row.appendChild(dragIcon);
+    const hapusBtn = document.createElement('button');
+    hapusBtn.className = 'hapus-btn';
+    hapusBtn.innerText = 'Hapus';
+    hapusBtn.onclick = () => row.remove();
 
+    row.appendChild(hapusBtn);
     container.appendChild(row);
-    totalMenu++;
-    aktifMenu++;
-    hitungStatistik();
-    markPerubahan();
   }
 
-  function hitungStatistik() {
-    const checkboxes = document.querySelectorAll('#builderList input[type="checkbox"]');
-    aktifMenu = 0;
-    nonaktifMenu = 0;
-    checkboxes.forEach(cb => cb.checked ? aktifMenu++ : nonaktifMenu++);
-    totalMenu = checkboxes.length;
+  // Drag & drop urutan
+  const builderList = document.getElementById('builderList');
 
-    updateStatistik();
-  }
-
-  function updateStatistik() {
-    document.getElementById('statistik').innerText =
-      `Jumlah Menu: ${totalMenu} | Aktif: ${aktifMenu} | Nonaktif: ${nonaktifMenu}`;
-  }
-
-  function markPerubahan() {
-    perubahan = true;
-    document.getElementById('saveBtn').disabled = false;
-    document.getElementById('refreshBtn').disabled = false;
-  }
-
-  function disableSaveRefresh() {
-    document.getElementById('saveBtn').disabled = true;
-    document.getElementById('refreshBtn').disabled = true;
-  }
-
-  function resetBuilder() {
-    bukaPopup("Semua perubahan yang belum disimpan akan dihapus. Lanjutkan?", 'reset');
-  }
-
-  function simpanData() {
-    perubahan = false;
-    disableSaveRefresh();
-    bukaPopup("Data berhasil disimpan!");
-  }
-
-  function bukaPopup(message, action = null) {
-    pendingAction = action || pendingAction;
-    document.getElementById('popupMessage').innerText = message;
-    document.getElementById('popupConfirm').style.display = 'flex';
-  }
-
-  function tutupPopup() {
-    pendingAction = null;
-    document.getElementById('popupConfirm').style.display = 'none';
-  }
-
-  function prosesKonfirmasi() {
-    if (pendingAction === 'reset') {
-      document.getElementById('builderList').innerHTML = '';
-      totalMenu = aktifMenu = nonaktifMenu = 0;
-      perubahan = false;
-      updateStatistik();
-      disableSaveRefresh();
-    } else if (pendingAction === 'tutup') {
-      tutupModal();
-    }
-    tutupPopup();
-  }
-
-  // Tangkap tombol kembali di HP
-  window.addEventListener("popstate", function () {
-    if (document.getElementById('modalTransaksi').style.display === 'flex') {
-      konfirmasiTutup();
-      history.pushState(null, null, location.href);
+  builderList.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = document.querySelector('.dragging');
+    const after = getDragAfterElement(e.clientY);
+    if (after == null) {
+      builderList.appendChild(dragging);
+    } else {
+      builderList.insertBefore(dragging, after);
     }
   });
+
+  function getDragAfterElement(y) {
+    const items = [...builderList.querySelectorAll('.builder-item:not(.dragging)')];
+    return items.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
 </script>
 
 </body>
