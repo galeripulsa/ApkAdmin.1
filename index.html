@@ -237,12 +237,20 @@
     row.draggable = true;
 
     let startX = 0;
-    row.addEventListener('touchstart', e => startX = e.touches[0].clientX);
     row.addEventListener('touchmove', e => {
-      const delta = e.touches[0].clientX - startX;
-      document.querySelectorAll('.builder-item').forEach(item => item.classList.remove('show-hapus'));
-      if (delta < -50) row.classList.add('show-hapus');
-    });
+  const delta = e.touches[0].clientX - startX;
+  // Hapus class show-hapus dari semua item lain
+  document.querySelectorAll('.builder-item').forEach(item => {
+    if (item !== row) item.classList.remove('show-hapus');
+  });
+
+  // Tampilkan hanya jika digeser cukup jauh ke kiri
+  if (delta < -30) {
+    row.classList.add('show-hapus');
+  } else if (delta > 50) {
+    row.classList.remove('show-hapus');
+  }
+});
 
     row.addEventListener('dragstart', () => row.classList.add('dragging'));
     row.addEventListener('dragend', () => row.classList.remove('dragging'));
@@ -335,22 +343,20 @@
   }
 
   function konfirmasiHapus() {
-    if (popupAction === 'hapus' && itemPendingHapus) {
-      itemPendingHapus.remove();
-      updateStatistik();
-      setPerubahan();
-    } else if (popupAction === 'tutup') {
-      tutupModal();
-    } else if (popupAction === 'refresh') {
-      localStorage.removeItem('builderData');
-      document.getElementById('builderList').innerHTML = '';
-      totalMenu = aktifMenu = nonaktifMenu = 0;
-      perubahan = false;
-      updateStatistik();
-      toggleSave(false);
-    }
-    tutupPopup();
+  if (popupAction === 'hapus' && itemPendingHapus) {
+    itemPendingHapus.remove();
+    updateStatistik();
+    setPerubahan();
+  } else if (popupAction === 'tutup') {
+    tutupModal();
+  } else if (popupAction === 'refresh') {
+    // Restore dari localStorage, bukan hapus semua
+    loadDataFromStorage();
+    perubahan = false;
+    toggleSave(false);
   }
+  tutupPopup();
+}
 
   // Tombol kembali HP
   window.addEventListener('popstate', function () {
