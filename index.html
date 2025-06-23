@@ -1,74 +1,103 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web Panel Admin Galeri Pulsa</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Panel Admin Galeri Pulsa</title>
+    <link href="https:                                                                                    
+    <style>
+        body {
+            background-color:         
+        }
+
+        .modal-fullscreen {
+            padding: 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: grab;
+        }
+
+        .menu-item input[type="text"] {
+            flex-grow: 1;
+        }
+
+        .menu-actions {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-save {
+            width: 100%;
+        }
+
+                  
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-  <div class="max-w-screen-md mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-6 text-center">Web Panel Admin Galeri Pulsa</h1>
-
-    <!-- Menu Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-xl shadow-md text-center hover:ring-2 ring-yellow-400 cursor-pointer">
-        <div class="text-2xl mb-2">⚙️</div>
-        <div class="font-semibold text-sm">Setup Server</div>
-      </div>
-      <div class="bg-yellow-300 p-4 rounded-xl shadow-md text-center ring-2 ring-yellow-400 cursor-pointer">
-        <div class="text-2xl mb-2">📋</div>
-        <div class="font-semibold text-sm">Menu Transaksi</div>
-      </div>
-      <!-- Tambahkan item lainnya jika perlu -->
-    </div>
-
-    <!-- Modal Simulasi -->
-    <div class="bg-white rounded-lg shadow-xl p-6 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
-        <button class="bg-gray-200 text-sm px-3 py-1 rounded hover:bg-yellow-200">🔁 Refresh</button>
-      </div>
-
-      <!-- Daftar Menu -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between border p-2 rounded bg-white shadow">
-          <div class="flex items-center gap-3 flex-grow">
-            <input type="checkbox" checked class="accent-green-500 w-5 h-5" />
-            <input class="flex-grow p-2 border rounded text-sm" value="Pulsa Reguler" />
-            <label class="w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer">+ Icon</label>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="text-gray-400 cursor-pointer">⠿</div>
-          </div>
+<body>
+    <div class="container py-4">
+        <h2 class="text-center mb-4">Web Panel Admin Galeri Pulsa</h2>
+        <!-- Menu utama -->
+        <div class="d-grid gap-3">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transaksiModal">Menu Transaksi</button>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="                                 
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pascabayarModal">Pascabayar</button>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="                                        
         </div>
-
-        <div class="flex items-center justify-between border p-2 rounded bg-white shadow">
-          <div class="flex items-center gap-3 flex-grow">
-            <input type="checkbox" checked class="accent-green-500 w-5 h-5" />
-            <input class="flex-grow p-2 border rounded text-sm" value="Voucer Game" />
-            <label class="w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer">+ Icon</label>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="text-gray-400 cursor-pointer">⠿</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tombol Tambah -->
-      <div class="flex justify-between mt-4 gap-2">
-        <button class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Menu</button>
-        <button class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Kategori</button>
-      </div>
-
-      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded mt-3">SAVE</button>
-      <p class="text-green-600 text-sm mt-2 text-center hidden">Perubahan berhasil disimpan.</p>
-
-      <div class="flex justify-end mt-2">
-        <button class="text-sm text-gray-500 hover:text-red-600">Tutup</button>
-      </div>
     </div>
-  </div>
-</body>
-</html>
+    <!-- Modal Menu Transaksi -->
+    <div class="modal fade" id="transaksiModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header d-flex flex-column align-items-start">
+                    <div class="w-100 d-flex justify-content-between align-items-center">
+                        <h5 class="modal-title">Pengaturan Menu & Kategori</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="confirmClose(event)"></button>
+                    </div>
+                    <div class="menu-actions mt-3">
+                        <button class="btn btn-success" onclick="addMenu()">+ Menu</button>
+                        <button class="btn btn-info" onclick="addCategory()">+ Kategori</button>
+                        <button class="btn btn-secondary" id="refreshBtn" onclick="resetChanges()" disabled>Refresh</button>
+                    </div>
+                    <p id="summary">Jumlah Menu: <span id="totalMenu">2</span> | Aktif: <span id="totalAktif">2</span> | Tidak Aktif: <span id="totalNonAktif">0</span></p>
+                </div>
+                <div class="modal-body">
+                    <div id="sortableMenu">
+                        <div class="menu-item" draggable="true">
+                            <input type="checkbox" checked>
+                            <input type="text" class="form-control" value="Pulsa Reguler">
+                            <button class="btn btn-outline-secondary">+ Icon</button>
+                        </div>
+                        <div class="menu-item" draggable="true">
+                            <input type="checkbox" checked>
+                            <input type="text" class="form-control" value="Voucher Game">
+                            <button class="btn btn-outline-secondary">+ Icon</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-save" id="saveBtn" disabled>SAVE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Konfirmasi Tutup -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Perubahan belum disimpan. Yakin ingin keluar?</p>
+                </div>
+                <div class
