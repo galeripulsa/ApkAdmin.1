@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menu Transaksi</title>
+  <title>Admin Pulsa – Menu Transaksi</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -38,11 +38,9 @@
       background-color: #4CAF50; border: none; color: white; padding: 8px 12px;
       border-radius: 4px; cursor: pointer; font-weight: bold;
     }
+    .modal-footer div { margin-right: 10px; }
     .modal-header button:hover, .modal-footer button:hover {
       background-color: #45a049;
-    }
-    .modal-footer div {
-      margin-right: 10px;
     }
 
     table {
@@ -80,14 +78,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <div>
-          <button>+Menu</button>
-          <button>+Kategori</button>
+          <button onclick="tambahMenu()">+Menu</button>
+          <button onclick="tambahKategori()">+Kategori</button>
         </div>
         <button onclick="refreshModal()">🔄 Refresh</button>
       </div>
 
       <!-- Tabel Menu Transaksi -->
-      <table>
+      <table id="menuTable">
         <thead>
           <tr>
             <th>Nama</th>
@@ -95,44 +93,16 @@
             <th>+Icon</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Kategori -->
-          <tr class="kategori">
-            <td>📁 Pulsa Prabayar</td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-          <!-- Menu Produk -->
-          <tr>
-            <td>Pulsa 5.000</td>
-            <td><button class="toggle-btn aktif">Aktif</button></td>
-            <td><button class="add-icon-btn">+Icon</button></td>
-          </tr>
-          <tr>
-            <td>Pulsa 10.000</td>
-            <td><button class="toggle-btn nonaktif">Nonaktif</button></td>
-            <td><button class="add-icon-btn">+Icon</button></td>
-          </tr>
-
-          <!-- Kategori lain -->
-          <tr class="kategori">
-            <td>📁 Paket Data</td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-          <tr>
-            <td>Data 1GB</td>
-            <td><button class="toggle-btn aktif">Aktif</button></td>
-            <td><button class="add-icon-btn">+Icon</button></td>
-          </tr>
+        <tbody id="menuBody">
+          <!-- Isi dinamis -->
         </tbody>
       </table>
 
       <div class="modal-footer">
-        <div>
-          <span>Jumlah menu: <strong>4</strong></span><br>
-          <span>Aktif: <strong>3</strong></span> | 
-          <span>Nonaktif: <strong>1</strong></span>
+        <div id="statistik">
+          <span>Jumlah menu: <strong>0</strong></span><br>
+          <span>Aktif: <strong>0</strong></span> |
+          <span>Nonaktif: <strong>0</strong></span>
         </div>
         <div>
           <button>💾 Save</button>
@@ -143,14 +113,75 @@
   </div>
 
   <script>
+    let menuCount = 0;
+    let aktifCount = 0;
+    let nonaktifCount = 0;
+
     function openModal() {
       document.getElementById("transaksiModal").style.display = "flex";
     }
+
     function closeModal() {
       document.getElementById("transaksiModal").style.display = "none";
     }
+
     function refreshModal() {
       alert("Data diperbarui.");
+    }
+
+    function tambahKategori() {
+      const kategoriNama = prompt("Nama Kategori:");
+      if (kategoriNama) {
+        const row = document.createElement("tr");
+        row.className = "kategori";
+        row.innerHTML = `
+          <td>📁 ${kategoriNama}</td>
+          <td>-</td>
+          <td>-</td>
+        `;
+        document.getElementById("menuBody").appendChild(row);
+      }
+    }
+
+    function tambahMenu() {
+      const menuNama = prompt("Nama Produk:");
+      if (menuNama) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${menuNama}</td>
+          <td><button class="toggle-btn aktif" onclick="toggleStatus(this)">Aktif</button></td>
+          <td><button class="add-icon-btn">+Icon</button></td>
+        `;
+        document.getElementById("menuBody").appendChild(row);
+        menuCount++;
+        aktifCount++;
+        updateStatistik();
+      }
+    }
+
+    function toggleStatus(btn) {
+      if (btn.classList.contains("aktif")) {
+        btn.classList.remove("aktif");
+        btn.classList.add("nonaktif");
+        btn.innerText = "Nonaktif";
+        aktifCount--;
+        nonaktifCount++;
+      } else {
+        btn.classList.remove("nonaktif");
+        btn.classList.add("aktif");
+        btn.innerText = "Aktif";
+        aktifCount++;
+        nonaktifCount--;
+      }
+      updateStatistik();
+    }
+
+    function updateStatistik() {
+      document.getElementById("statistik").innerHTML = `
+        <span>Jumlah menu: <strong>${menuCount}</strong></span><br>
+        <span>Aktif: <strong>${aktifCount}</strong></span> |
+        <span>Nonaktif: <strong>${nonaktifCount}</strong></span>
+      `;
     }
   </script>
 
