@@ -1,166 +1,167 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel Galeri Pulsa</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <style>
-    .scrollable-content {
-      max-height: 65vh;
-      overflow-y: auto;
-    }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-screen-md mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-6 text-center">Web Panel Admin Galeri Pulsa</h1>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-xl shadow-md text-center hover:ring-2 ring-yellow-400 cursor-pointer">
-        <div class="text-2xl mb-2">⚙️</div>
-        <div class="font-semibold text-sm">Setup Server</div>
-      </div>
-      <div class="bg-yellow-300 p-4 rounded-xl shadow-md text-center ring-2 ring-yellow-400 cursor-pointer">
-        <div class="text-2xl mb-2">📋</div>
-        <div class="font-semibold text-sm">Menu Transaksi</div>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]">
-      <div class="flex justify-between items-center px-4 py-3 border-b">
-        <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
-        <button onclick="resetChanges()" class="bg-gray-200 text-sm px-3 py-1 rounded hover:bg-yellow-200">🔁 Refresh</button>
-      </div>
-
-      <!-- List Scrollable -->
-      <div id="menu-list" class="scrollable-content px-4 py-3 space-y-3"></div>
-
-      <!-- Kontrol Bawah -->
-      <div class="border-t px-4 py-3 space-y-2">
-        <div class="flex gap-2">
-          <button onclick="addMenu()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Menu</button>
-          <button onclick="addKategori()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Kategori</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel Galeri Pulsa</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+      .scrollable-content {
+        max-height: 65vh;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="max-w-screen-md mx-auto p-4">
+      <h1 class="text-2xl font-bold mb-6 text-center">Web Panel Admin Galeri Pulsa</h1>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-xl shadow-md text-center hover:ring-2 ring-yellow-400 cursor-pointer">
+          <div class="text-2xl mb-2">⚙️</div>
+          <div class="font-semibold text-sm">Setup Server</div>
         </div>
-        <button onclick="saveData()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">SAVE</button>
-        <div class="flex justify-end">
-          <button onclick="handleClose()" class="text-sm text-gray-500 hover:text-red-600">Tutup</button>
+        <div class="bg-yellow-300 p-4 rounded-xl shadow-md text-center ring-2 ring-yellow-400 cursor-pointer">
+          <div class="text-2xl mb-2">📋</div>
+          <div class="font-semibold text-sm">Menu Transaksi</div>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center px-4 py-3 border-b">
+          <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
+          <button onclick="resetChanges()" class="bg-gray-200 text-sm px-3 py-1 rounded hover:bg-yellow-200">🔁 Refresh</button>
+        </div>
+        <div id="menu-list" class="scrollable-content px-4 py-3 space-y-3"></div>
+        <div class="border-t px-4 py-3 space-y-2">
+          <div class="flex gap-2">
+            <button onclick="addMenu()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Menu</button>
+            <button onclick="addKategori()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Kategori</button>
+          </div>
+          <button onclick="saveData()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">SAVE</button>
+          <div class="flex justify-end">
+            <button onclick="handleClose()" class="text-sm text-gray-500 hover:text-red-600">Tutup</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    let sortable = null;
+    <script>
+      // Ambil data dari localStorage jika tersedia
+      let data = JSON.parse(localStorage.getItem("menuData")) || [
+        { id: "1", nama: "Pulsa Reguler", kategori: false, icon: "", aktif: true },
+        { id: "2", nama: "Voucer Game", kategori: false, icon: "", aktif: true },
+        { id: "3", nama: "PLN Prabayar", kategori: false, icon: "", aktif: true },
+      ];
 
-    let data = JSON.parse(localStorage.getItem("menuData")) || [
-      { id: "1", nama: "Pulsa Reguler", kategori: false, icon: "", aktif: true },
-      { id: "2", nama: "Voucer Game", kategori: false, icon: "", aktif: true },
-      { id: "3", nama: "PLN Prabayar", kategori: false, icon: "", aktif: true },
-    ];
+      const listEl = document.getElementById("menu-list");
 
-    const listEl = document.getElementById("menu-list");
+      // Render ulang daftar menu berdasarkan data
+      function renderList() {
+        listEl.innerHTML = "";
+        data.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "flex items-center justify-between border p-2 rounded bg-white shadow group";
+          div.dataset.id = item.id;
 
-    function renderList() {
-      listEl.innerHTML = "";
-      data.forEach((item) => {
-        const div = document.createElement("div");
-        div.className = "flex items-center justify-between border p-2 rounded bg-white shadow";
-        div.dataset.id = item.id;
+          div.innerHTML = `
+            <div class="flex items-center gap-3 flex-grow">
+              <input type="checkbox" ${item.aktif ? "checked" : ""} onchange="toggleAktif('${item.id}')" class="accent-green-500 w-5 h-5" />
+              <input class="flex-grow p-2 border rounded text-sm" value="${item.nama}" onchange="editNama('${item.id}', this.value)" />
+              ${item.kategori ? "" : `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon</label>`}
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="deleteItem('${item.id}')" class="hidden group-hover:block text-red-500 px-2">🗑️</button>
+              <div class="cursor-grab text-gray-400">⠿</div>
+            </div>
+          `;
+          listEl.appendChild(div);
+        });
 
-        div.innerHTML = `
-          <div class="flex items-center gap-3 flex-grow">
-            <input type="checkbox" ${item.aktif ? "checked" : ""} onchange="toggleAktif('${item.id}')" class="accent-green-500 w-5 h-5" />
-            <input class="flex-grow p-2 border rounded text-sm" value="${item.nama}" onchange="editNama('${item.id}', this.value)" />
-            ${item.kategori ? "" : `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon</label>`}
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="deleteItem('${item.id}')" class="text-red-500 px-2">🗑️</button>
-            <div class="cursor-grab text-gray-400">⠿</div>
-          </div>
-        `;
-        listEl.appendChild(div);
-      });
+        // Aktifkan fitur drag & drop menggunakan SortableJS
+        Sortable.create(listEl, {
+          animation: 150,
+          handle: ".cursor-grab",
+          onEnd: function (evt) {
+            const newData = [];
+            listEl.querySelectorAll("div[data-id]").forEach((el) => {
+              const found = data.find((item) => item.id === el.dataset.id);
+              if (found) newData.push(found);
+            });
+            data = newData;
+            saveTemp();
+          },
+        });
+      }
 
-      // Destroy Sortable instance jika ada
-      if (sortable) sortable.destroy();
+      // Simpan data ke localStorage tanpa notifikasi
+      function saveTemp() {
+        localStorage.setItem("menuData", JSON.stringify(data));
+      }
 
-      // Inisialisasi ulang
-      sortable = Sortable.create(listEl, {
-        animation: 150,
-        handle: ".cursor-grab",
-        onEnd: function () {
-          const newData = [];
-          listEl.querySelectorAll("div[data-id]").forEach((el) => {
-            const found = data.find((item) => item.id === el.dataset.id);
-            if (found) newData.push(found);
-          });
-          data = newData;
+      // Simpan data permanen
+      function saveData() {
+        alert("Perubahan berhasil disimpan.");
+        saveTemp();
+      }
+
+      // Tambah menu baru
+      function addMenu() {
+        const id = Date.now().toString();
+        data.push({ id, nama: "Menu Baru", kategori: false, icon: "", aktif: true });
+        renderList();
+      }
+
+      // Tambah kategori baru
+      function addKategori() {
+        const id = Date.now().toString();
+        data.push({ id, nama: "Kategori Baru", kategori: true, icon: "", aktif: true });
+        renderList();
+      }
+
+      // Hapus item dengan konfirmasi
+      function deleteItem(id) {
+        if (confirm("Yakin ingin menghapus menu ini?")) {
+          data = data.filter((d) => d.id !== id);
+          renderList();
+        }
+      }
+
+      // Toggle status aktif menu
+      function toggleAktif(id) {
+        const item = data.find((d) => d.id === id);
+        if (item) {
+          item.aktif = !item.aktif;
           saveTemp();
-        },
-      });
-    }
+        }
+      }
 
-    function saveTemp() {
-      localStorage.setItem("menuData", JSON.stringify(data));
-    }
+      // Edit nama menu
+      function editNama(id, val) {
+        const item = data.find((d) => d.id === id);
+        if (item) {
+          item.nama = val;
+          saveTemp();
+        }
+      }
 
-    function saveData() {
-      alert("Perubahan berhasil disimpan.");
-      saveTemp();
-    }
+      // Kembalikan perubahan ke kondisi awal
+      function resetChanges() {
+        if (confirm("Batalkan semua perubahan?")) {
+          data = JSON.parse(localStorage.getItem("menuData")) || [];
+          renderList();
+        }
+      }
 
-    function addMenu() {
-      const id = Date.now().toString();
-      data.push({ id, nama: "Menu Baru", kategori: false, icon: "", aktif: true });
+      // Tutup modal dengan konfirmasi jika ada perubahan
+      function handleClose() {
+        if (confirm("Keluar tanpa menyimpan perubahan?")) {
+          location.reload();
+        }
+      }
+
+      // Render pertama kali saat halaman dibuka
       renderList();
-    }
-
-    function addKategori() {
-      const id = Date.now().toString();
-      data.push({ id, nama: "Kategori Baru", kategori: true, icon: "", aktif: true });
-      renderList();
-    }
-
-    function deleteItem(id) {
-      if (confirm("Yakin ingin menghapus menu ini?")) {
-        data = data.filter((d) => d.id !== id);
-        renderList();
-      }
-    }
-
-    function toggleAktif(id) {
-      const item = data.find((d) => d.id === id);
-      if (item) {
-        item.aktif = !item.aktif;
-        saveTemp();
-      }
-    }
-
-    function editNama(id, val) {
-      const item = data.find((d) => d.id === id);
-      if (item) {
-        item.nama = val;
-        saveTemp();
-      }
-    }
-
-    function resetChanges() {
-      if (confirm("Batalkan semua perubahan?")) {
-        data = JSON.parse(localStorage.getItem("menuData")) || [];
-        renderList();
-      }
-    }
-
-    function handleClose() {
-      if (confirm("Keluar tanpa menyimpan perubahan?")) {
-        location.reload();
-      }
-    }
-
-    renderList();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
