@@ -17,7 +17,7 @@
     .button:disabled { background: #555; cursor: not-allowed; }
 
     .modal-full {
-      display: none; flex-direction: column;
+      display: flex; flex-direction: column;
       position: fixed; top: 0; left: 0;
       width: 100vw; height: 98vh;
       background: #1e1e2f; z-index: 999;
@@ -38,7 +38,7 @@
     }
 
     .modal-body {
-      flex: 1; overflow-y: auto; padding: 20px;
+      flex: 1; overflow-y: auto; padding: 20px; min-height: 0;
     }
 
     .builder-item {
