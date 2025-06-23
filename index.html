@@ -239,13 +239,11 @@
     let startX = 0;
     row.addEventListener('touchmove', e => {
   const delta = e.touches[0].clientX - startX;
-  // Hapus class show-hapus dari semua item lain
   document.querySelectorAll('.builder-item').forEach(item => {
     if (item !== row) item.classList.remove('show-hapus');
   });
 
-  // Tampilkan hanya jika digeser cukup jauh ke kiri
-  if (delta < -30) {
+  if (delta < -50) {
     row.classList.add('show-hapus');
   } else if (delta > 50) {
     row.classList.remove('show-hapus');
