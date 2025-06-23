@@ -1,226 +1,166 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web Panel Admin Galeri Pulsa</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Admin Panel Galeri Pulsa</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .modal-fullscreen {
-      padding: 1rem;
-    }
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      cursor: grab;
-    }
-    .menu-item input[type="text"] {
-      flex-grow: 1;
-    }
-    .icon-button {
-      padding: 3px 6px;
-      font-size: 10px;
-    }
-    .menu-actions {
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 10px;
-    }
-    .btn-save {
-      width: 100%;
-    }
-    #summary {
-      font-weight: bold;
-      margin: 0.5rem 0;
-    }
-    .drag-icon {
-      cursor: move;
-      user-select: none;
+    .scrollable-content {
+      max-height: 65vh;
+      overflow-y: auto;
     }
   </style>
 </head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-screen-md mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-6 text-center">Web Panel Admin Galeri Pulsa</h1>
 
-<body>
-  <div class="container py-4">
-    <h2 class="text-center mb-4">Web Panel Admin Galeri Pulsa</h2>
-
-    <!-- Menu utama -->
-    <div class="d-grid gap-3">
-      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transaksiModal">Menu Transaksi</button>
-      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#prabayarModal">Prabayar</button>
-      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pascabayarModal">Pascabayar</button>
-      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#setupServerModal">Setup Server</button>
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-xl shadow-md text-center hover:ring-2 ring-yellow-400 cursor-pointer">
+        <div class="text-2xl mb-2">⚙️</div>
+        <div class="font-semibold text-sm">Setup Server</div>
+      </div>
+      <div class="bg-yellow-300 p-4 rounded-xl shadow-md text-center ring-2 ring-yellow-400 cursor-pointer">
+        <div class="text-2xl mb-2">📋</div>
+        <div class="font-semibold text-sm">Menu Transaksi</div>
+      </div>
     </div>
-  </div>
 
-  <!-- Modal Menu Transaksi -->
-  <div class="modal fade" id="transaksiModal" tabindex="-1">
-    <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content">
-        <div class="modal-header d-flex flex-column align-items-start">
-          <div class="w-100 d-flex justify-content-between align-items-center">
-            <h5 class="modal-title">Pengaturan Menu & Kategori</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="confirmClose(event)"></button>
-          </div>
-          <div class="menu-actions mt-3">
-            <button class="btn btn-success" onclick="addMenu()">+ Menu</button>
-            <button class="btn btn-info" onclick="addCategory()">+ Kategori</button>
-            <button class="btn btn-secondary" id="refreshBtn" onclick="resetChanges()" disabled>Refresh</button>
-          </div>
-          <p id="summary">Jumlah Menu: <span id="totalMenu">2</span> | Aktif: <span id="totalAktif">2</span> | Tidak Aktif: <span id="totalNonAktif">0</span></p>
-        </div>
-        <div class="modal-body">
-          <div id="sortableMenu">
-            <div class="menu-item" draggable="true">
-              <input type="checkbox" checked>
-              <input type="text" class="form-control" placeholder="Pulsa Reguler">
-              <button class="btn btn-outline-secondary">+ Icon</button>
-            </div>
+    <!-- Modal -->
+    <div class="bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center px-4 py-3 border-b">
+        <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
+        <button onclick="resetChanges()" class="bg-gray-200 text-sm px-3 py-1 rounded hover:bg-yellow-200">🔁 Refresh</button>
+      </div>
 
-            <div class="menu-item" draggable="true">
-              <input type="checkbox" checked>
-              <input type="text" class="form-control" placeholder="Voucher Game">
-              <button class="btn btn-outline-secondary">+ Icon</button>
-            </div>
-          </div>
+      <!-- List Scrollable -->
+      <div id="menu-list" class="scrollable-content px-4 py-3 space-y-3"></div>
+
+      <!-- Kontrol Bawah -->
+      <div class="border-t px-4 py-3 space-y-2">
+        <div class="flex gap-2">
+          <button onclick="addMenu()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Menu</button>
+          <button onclick="addKategori()" class="w-full bg-gray-200 py-2 rounded hover:bg-gray-300">+ Tambah Kategori</button>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary btn-save" id="saveBtn" disabled>SAVE</button>
+        <button onclick="saveData()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded">SAVE</button>
+        <div class="flex justify-end">
+          <button onclick="handleClose()" class="text-sm text-gray-500 hover:text-red-600">Tutup</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Konfirmasi Tutup -->
-  <div class="modal fade" id="confirmModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Konfirmasi</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p>Perubahan belum disimpan. Yakin ingin keluar?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button class="btn btn-danger" onclick="forceClose()">Keluar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    let hasChanges = false;
+    let sortable = null;
 
-    function markChanged() {
-      hasChanges = true;
-      document.getElementById('saveBtn').disabled = false;
-      document.getElementById('refreshBtn').disabled = false;
+    let data = JSON.parse(localStorage.getItem("menuData")) || [
+      { id: "1", nama: "Pulsa Reguler", kategori: false, icon: "", aktif: true },
+      { id: "2", nama: "Voucer Game", kategori: false, icon: "", aktif: true },
+      { id: "3", nama: "PLN Prabayar", kategori: false, icon: "", aktif: true },
+    ];
+
+    const listEl = document.getElementById("menu-list");
+
+    function renderList() {
+      listEl.innerHTML = "";
+      data.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "flex items-center justify-between border p-2 rounded bg-white shadow";
+        div.dataset.id = item.id;
+
+        div.innerHTML = `
+          <div class="flex items-center gap-3 flex-grow">
+            <input type="checkbox" ${item.aktif ? "checked" : ""} onchange="toggleAktif('${item.id}')" class="accent-green-500 w-5 h-5" />
+            <input class="flex-grow p-2 border rounded text-sm" value="${item.nama}" onchange="editNama('${item.id}', this.value)" />
+            ${item.kategori ? "" : `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon</label>`}
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="deleteItem('${item.id}')" class="text-red-500 px-2">🗑️</button>
+            <div class="cursor-grab text-gray-400">⠿</div>
+          </div>
+        `;
+        listEl.appendChild(div);
+      });
+
+      // Destroy Sortable instance jika ada
+      if (sortable) sortable.destroy();
+
+      // Inisialisasi ulang
+      sortable = Sortable.create(listEl, {
+        animation: 150,
+        handle: ".cursor-grab",
+        onEnd: function () {
+          const newData = [];
+          listEl.querySelectorAll("div[data-id]").forEach((el) => {
+            const found = data.find((item) => item.id === el.dataset.id);
+            if (found) newData.push(found);
+          });
+          data = newData;
+          saveTemp();
+        },
+      });
     }
 
-    document.addEventListener('input', function (e) {
-      if (e.target.closest('#sortableMenu')) markChanged();
-    });
+    function saveTemp() {
+      localStorage.setItem("menuData", JSON.stringify(data));
+    }
 
-    function confirmClose(event) {
-      if (hasChanges) {
-        event.preventDefault();
-        new bootstrap.Modal(document.getElementById('confirmModal')).show();
+    function saveData() {
+      alert("Perubahan berhasil disimpan.");
+      saveTemp();
+    }
+
+    function addMenu() {
+      const id = Date.now().toString();
+      data.push({ id, nama: "Menu Baru", kategori: false, icon: "", aktif: true });
+      renderList();
+    }
+
+    function addKategori() {
+      const id = Date.now().toString();
+      data.push({ id, nama: "Kategori Baru", kategori: true, icon: "", aktif: true });
+      renderList();
+    }
+
+    function deleteItem(id) {
+      if (confirm("Yakin ingin menghapus menu ini?")) {
+        data = data.filter((d) => d.id !== id);
+        renderList();
       }
     }
 
-    function forceClose() {
-      hasChanges = false;
-      document.getElementById('saveBtn').disabled = true;
-      document.getElementById('refreshBtn').disabled = true;
-      bootstrap.Modal.getInstance(document.getElementById('transaksiModal')).hide();
+    function toggleAktif(id) {
+      const item = data.find((d) => d.id === id);
+      if (item) {
+        item.aktif = !item.aktif;
+        saveTemp();
+      }
+    }
+
+    function editNama(id, val) {
+      const item = data.find((d) => d.id === id);
+      if (item) {
+        item.nama = val;
+        saveTemp();
+      }
     }
 
     function resetChanges() {
-      if (confirm('Yakin ingin menghapus perubahan yang belum disimpan?')) {
+      if (confirm("Batalkan semua perubahan?")) {
+        data = JSON.parse(localStorage.getItem("menuData")) || [];
+        renderList();
+      }
+    }
+
+    function handleClose() {
+      if (confirm("Keluar tanpa menyimpan perubahan?")) {
         location.reload();
       }
     }
 
-function createMenuItem(type = 'menu') {
-      const div = document.createElement('div');
-      div.className = 'menu-item';
-      div.setAttribute('draggable', 'true');
-      div.innerHTML = `
-        <span class="drag-icon">↕</span>
-        <input type="checkbox">
-        <input type="text" class="form-control" placeholder="${type === 'menu' ? 'Nama Menu' : 'Nama Kategori'}">
-        ${type === 'menu' ? '<label class="btn btn-outline-secondary icon-button">+ Icon<input type="file" accept="image/*" hidden></label>' : ''}
-        <div class="delete-btn" onclick="this.parentElement.remove(); updateCount(); markChanged();">🗑️</div>
-      `;
-      enableSwipe(div);
-      document.getElementById('sortableMenu').appendChild(div);
-      updateCount();
-      markChanged();
-    }
-
-    function addMenu() {
-      const menu = document.createElement('div');
-      menu.className = 'menu-item';
-      menu.setAttribute('draggable', 'true');
-      menu.innerHTML = `
-        <input type="checkbox">
-        <input type="text" class="form-control" placeholder="Nama Menu">
-        <button class="btn btn-outline-secondary">+ Icon</button>
-      `;
-      document.getElementById('sortableMenu').appendChild(menu);
-      updateCount();
-      markChanged();
-    }
-
-    function addCategory() {
-      const category = document.createElement('div');
-      category.className = 'menu-item';
-      category.setAttribute('draggable', 'true');
-      category.innerHTML = `
-        <input type="checkbox">
-        <input type="text" class="form-control" placeholder="Nama Kategori">
-      `;
-      document.getElementById('sortableMenu').appendChild(category);
-      updateCount();
-      markChanged();
-    }
-
-    function updateCount() {
-      const items = document.querySelectorAll('#sortableMenu .menu-item');
-      const aktif = Array.from(items).filter(el => el.querySelector('input[type="checkbox"]').checked).length;
-      document.getElementById('totalMenu').textContent = items.length;
-      document.getElementById('totalAktif').textContent = aktif;
-      document.getElementById('totalNonAktif').textContent = items.length - aktif;
-    }
-
-    // Drag & drop
-    const container = document.getElementById('sortableMenu');
-    let dragged;
-
-    container.addEventListener('dragstart', (e) => {
-      dragged = e.target;
-    });
-
-    container.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      const afterElement = [...container.querySelectorAll('.menu-item')].find(el => {
-        const box = el.getBoundingClientRect();
-        return e.clientY < box.top + box.height / 2;
-      });
-      if (afterElement && dragged !== afterElement) container.insertBefore(dragged, afterElement);
-      else container.appendChild(dragged);
-      markChanged();
-    });
+    renderList();
   </script>
 </body>
-
 </html>
