@@ -9,7 +9,7 @@
     header { background: #27293d; padding: 20px; text-align: center; font-size: 24px; }
     .main { padding: 20px; text-align: center; }
     .button {
-      background: #ffd200; color: black; border: none;
+      background: #ffd200; color: #1e1e2f; border: none;
       padding: 15px 25px; font-size: 18px;
       border-radius: 6px; cursor: pointer;
     }
@@ -58,7 +58,7 @@
 
     .builder-item button {
       background: #ccc; border: none;
-      color: white; padding: 8px 8px;
+      color: #1e1e2f; padding: 8px;
       border-radius: 10px; font-size: 14px; cursor: pointer;
     }
 
@@ -68,18 +68,18 @@
     }
 
     .hapus-btn {
-      position: absolute; right: -10px; top: 50%;
+      position: absolute; right: -50px; top: 50%;
       transform: translateY(-50%);
       background: #e74c3c; border: none;
-      padding: 8px 14px; border-radius: 5px;
+      padding: 8px 10px; border-radius: 5px;
       color: white; cursor: pointer;
       transition: right 0.3s ease;
     }
 
-    .show-hapus .hapus-btn { right: 5px; }
+    .show-hapus .hapus-btn { right: 10px; }
 
     .modal-footer {
-      padding: 45px 15px;
+      padding: 20px 15px;
       background: #2d2f44;
       border-top: 1px solid #444;
       text-align: center;
@@ -92,7 +92,8 @@
     }
 
     .popup-modal {
-      display: none; position: fixed;
+      display: none;
+      position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       background-color: rgba(0,0,0,0.6);
       justify-content: center; align-items: center;
@@ -110,7 +111,12 @@
 
     .popup-content p {
       font-size: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+
+    .popup-content small {
+      font-size: 13px;
+      color: #aaa;
     }
 
     .popup-content button {
@@ -127,44 +133,48 @@
   </style>
 </head>
 <body>
-  <header>📡 Admin Pulsa</header>
-  <div class="main">
-    <button class="button" onclick="bukaMenuTransaksi()">📋 Menu Transaksi</button>
+
+<header>📡 Admin Pulsa</header>
+<div class="main">
+  <button class="button" onclick="bukaMenuTransaksi()">📋 Menu Transaksi</button>
+</div>
+
+<!-- Modal Fullscreen -->
+<div class="modal-full" id="modalTransaksi">
+  <div class="modal-header">
+    <h2>Pengaturan Menu dan Kategori</h2>
+    <div class="button-group">
+      <button onclick="tambahItem('menu')">+Menu</button>
+      <button onclick="tambahItem('kategori')">+Kategori</button>
+      <button id="refreshBtn" onclick="konfirmasiRefresh()" disabled>🔄 Refresh</button>
+    </div>
+    <button class="modal-close" onclick="konfirmasiTutup()">Tutup ✖</button>
   </div>
 
-  <!-- Modal Fullscreen -->
-  <div class="modal-full" id="modalTransaksi">
-    <div class="modal-header">
-      <h2>Pengaturan Menu dan Kategori</h2>
-      <div class="button-group">
-        <button onclick="tambahItem('menu')">+Menu</button>
-        <button onclick="tambahItem('kategori')">+Kategori</button>
-        <button id="refreshBtn" onclick="konfirmasiRefresh()" disabled>🔄 Refresh</button>
-      </div>
-      <button class="modal-close" onclick="konfirmasiTutup()">Tutup ✖</button>
+  <div class="modal-body" id="builderList"></div>
+
+  <div class="modal-footer">
+    <p id="statistik">Jumlah Menu: 0 | Aktif: 0 | Nonaktif: 0</p>
+    <button id="saveBtn" onclick="simpanData()" disabled>💾 Save</button>
+  </div>
+</div>
+
+<!-- Modal Popup Konfirmasi -->
+<div class="popup-modal" id="popupModal">
+  <div class="popup-content">
+    <p id="popupMessage">Yakin?</p>
+    <small id="popupSub" style="display:block; color:#aaa; margin-bottom:10px;"></small>
+    <div id="popupActions">
+      <button class="yes-btn" onclick="konfirmasiHapus()">Ya</button>
+      <button class="no-btn" onclick="tutupPopup()">Batal</button>
     </div>
-    <div class="modal-body" id="builderList"></div>
-    <div class="modal-footer">
-      <p id="statistik">Jumlah Menu: 0 | Aktif: 0 | Nonaktif: 0</p>
-      <button id="saveBtn" onclick="simpanData()" disabled>💾 Save</button>
+    <div id="popupOK" style="display:none;">
+      <button class="yes-btn" onclick="tutupPopup()">OK</button>
     </div>
   </div>
+</div>
 
-  <!-- Modal Popup -->
-  <div class="popup-modal" id="popupModal">
-    <div class="popup-content">
-      <p id="popupMessage">Yakin?</p>
-      <div id="popupActions">
-        <button class="yes-btn" onclick="konfirmasiHapus()">Ya</button>
-        <button class="no-btn" onclick="tutupPopup()">Batal</button>
-      </div>
-      <div id="popupOK" style="display:none;">
-        <button class="yes-btn" onclick="tutupPopup()">OK</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
+<script>
 let perubahan = false;
 let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0;
 let popupAction = '';
@@ -202,7 +212,7 @@ function simpanData() {
   items.forEach(item => {
     const checkbox = item.querySelector('input[type="checkbox"]');
     const input = item.querySelector('input[type="text"]');
-    const isMenu = item.querySelector('button')?.innerText === '📁';
+    const isMenu = item.querySelector('button')?.innerText === '+icon';
 
     data.push({
       type: isMenu ? 'menu' : 'kategori',
@@ -244,11 +254,8 @@ function tambahItem(type, nama = '', aktif = true) {
       if (item !== row) item.classList.remove('show-hapus');
     });
 
-    if (delta < -50) {
-      row.classList.add('show-hapus');
-    } else if (delta > 50) {
-      row.classList.remove('show-hapus');
-    }
+    if (delta < -50) row.classList.add('show-hapus');
+    else if (delta > 50) row.classList.remove('show-hapus');
   });
 
   row.addEventListener('dragstart', () => row.classList.add('dragging'));
@@ -269,7 +276,7 @@ function tambahItem(type, nama = '', aktif = true) {
 
   if (type === 'menu') {
     const iconBtn = document.createElement('button');
-    iconBtn.innerText = '📁';
+    iconBtn.innerText = '+icon';
     iconBtn.onclick = () => {
       const inputFile = document.createElement('input');
       inputFile.type = 'file';
@@ -383,5 +390,6 @@ function getDragAfterElement(y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 </script>
+
 </body>
 </html>
