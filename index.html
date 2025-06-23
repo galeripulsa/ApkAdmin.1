@@ -178,13 +178,14 @@
   }
 
   function konfirmasiTutup() {
-    if (perubahan) {
-      popupAction = 'tutup';
-      bukaPopup("Yakin ingin keluar? Perubahan belum disimpan.");
-    } else {
-      tutupModal();
-    }
+  if (perubahan) {
+    popupAction = 'tutup';
+    bukaPopup("Yakin ingin keluar? Perubahan belum disimpan.");
+  } else {
+    // LANGSUNG TUTUP tanpa popup
+    document.getElementById('modalTransaksi').style.display = 'none';
   }
+}
 
   function konfirmasiRefresh() {
     popupAction = 'refresh';
