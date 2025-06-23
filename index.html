@@ -2,115 +2,130 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Builder Menu RS</title>
+  <title>Menu Transaksi – Admin Pulsa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #1e1e2f; color: white; margin: 0;
+      margin: 0;
+      background-color: #1e1e2f;
+      color: white;
     }
+
     header {
-      background: #27293d; padding: 20px; text-align: center; font-size: 24px;
+      background-color: #27293d;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
     }
-    .menu { padding: 20px; }
+
+    .main {
+      padding: 20px;
+      text-align: center;
+    }
+
     .button {
-      background-color: #4CAF50; color: white;
-      border: none; padding: 10px 20px;
-      font-size: 16px; border-radius: 6px;
-      cursor: pointer; margin-bottom: 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
     }
-    .builder-container {
-      background: #2d2f44; padding: 15px; border-radius: 8px;
-      max-width: 700px; margin: auto;
+
+    .modal-full {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: #1e1e2f;
+      z-index: 1000;
+      flex-direction: column;
     }
-    .builder-item {
-      display: flex; align-items: center;
-      background: #393b5a; padding: 10px;
-      margin-bottom: 10px; border-radius: 6px;
-      cursor: move;
+
+    .modal-header {
+      background-color: #2d2f44;
+      padding: 15px 20px;
+      border-bottom: 1px solid #444;
     }
-    .builder-item input[type="text"] {
-      flex: 1; margin: 0 10px; padding: 6px;
-      border-radius: 4px; border: none;
+
+    .modal-header h2 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      font-weight: normal;
+      color: #ccc;
+    }
+
+    .modal-header .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-header button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 16px;
       font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
     }
-    .builder-item button {
-      background-color: #3498db;
-      color: white; border: none;
-      padding: 6px 10px; border-radius: 4px;
-      font-size: 14px; cursor: pointer;
+
+    .modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      color: #aaa;
+      font-style: italic;
     }
-    .drag-icon {
-      font-size: 18px; padding: 0 10px;
-      cursor: grab;
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<header>🎛️ Builder Menu Aplikasi RS</header>
-<div class="menu" style="text-align:center;">
-  <button class="button" onclick="tambahBuilderMenu()">+Menu</button>
+<header>📡 Admin Pulsa</header>
+<div class="main">
+  <button class="button" onclick="bukaMenuTransaksi()">📋 Menu Transaksi</button>
 </div>
 
-<div class="builder-container" id="builderList">
-  <!-- Builder menu akan ditambahkan di sini -->
+<!-- Modal Fullscreen -->
+<div class="modal-full" id="modalTransaksi">
+  <div class="modal-header">
+    <h2>Pengaturan Menu dan Kategori</h2>
+    <div class="button-group">
+      <button onclick="alert('Tambah Menu')">+Menu</button>
+      <button onclick="alert('Tambah Kategori')">+Kategori</button>
+      <button onclick="alert('Refresh Data')">🔄 Refresh</button>
+    </div>
+    <button class="modal-close" onclick="tutupModal()">Tutup ✖</button>
+  </div>
+  <div class="modal-body">
+    <!-- Konten selanjutnya bisa diisi builder menu -->
+    <p>👈 Di sini nanti akan muncul daftar menu/kategori yang bisa di-drag & drop, diaktifkan, dll.</p>
+  </div>
 </div>
 
 <script>
-  let menuCounter = 1;
-
-  function tambahBuilderMenu() {
-    const container = document.getElementById('builderList');
-    
-    const row = document.createElement('div');
-    row.className = 'builder-item';
-    row.draggable = true;
-
-    row.innerHTML = `
-      <input type="checkbox" checked title="Aktif / Nonaktif">
-      <input type="text" value="Menu ${menuCounter++}" />
-      <button>+Icon</button>
-      <div class="drag-icon">↕️</div>
-    `;
-
-    // Tambahkan fungsi drag
-    row.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('text/plain', '');
-      row.classList.add('dragging');
-    });
-
-    row.addEventListener('dragend', () => {
-      row.classList.remove('dragging');
-    });
-
-    container.appendChild(row);
+  function bukaMenuTransaksi() {
+    document.getElementById('modalTransaksi').style.display = 'flex';
   }
 
-  // Drag and drop logic
-  const builderList = document.getElementById('builderList');
-
-  builderList.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    const dragging = document.querySelector('.dragging');
-    const afterElement = getDragAfterElement(builderList, e.clientY);
-    if (afterElement == null) {
-      builderList.appendChild(dragging);
-    } else {
-      builderList.insertBefore(dragging, afterElement);
-    }
-  });
-
-  function getDragAfterElement(container, y) {
-    const items = [...container.querySelectorAll('.builder-item:not(.dragging)')];
-    return items.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
-      } else {
-        return closest;
-      }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  function tutupModal() {
+    document.getElementById('modalTransaksi').style.display = 'none';
   }
 </script>
 
