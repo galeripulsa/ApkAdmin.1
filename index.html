@@ -2,188 +2,117 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Pulsa – Menu Transaksi</title>
+  <title>Builder Menu RS</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      margin: 0; background-color: #1e1e2f; color: white;
+      background-color: #1e1e2f; color: white; margin: 0;
     }
     header {
-      background-color: #27293d; padding: 20px; text-align: center;
-      font-size: 24px;
+      background: #27293d; padding: 20px; text-align: center; font-size: 24px;
     }
     .menu { padding: 20px; }
     .button {
-      background-color: #3a3c5a; color: white;
-      border: none; padding: 15px; width: 100%;
-      font-size: 18px; border-radius: 8px;
-      cursor: pointer;
+      background-color: #4CAF50; color: white;
+      border: none; padding: 10px 20px;
+      font-size: 16px; border-radius: 6px;
+      cursor: pointer; margin-bottom: 15px;
     }
-    .button:hover { background-color: #4d4f6e; }
-
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center;
+    .builder-container {
+      background: #2d2f44; padding: 15px; border-radius: 8px;
+      max-width: 700px; margin: auto;
     }
-    .modal-content {
-      background: #2d2f44; width: 90%; max-width: 700px; padding: 20px;
-      border-radius: 10px; position: relative;
+    .builder-item {
+      display: flex; align-items: center;
+      background: #393b5a; padding: 10px;
+      margin-bottom: 10px; border-radius: 6px;
+      cursor: move;
     }
-    .modal-header, .modal-footer {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 15px;
+    .builder-item input[type="text"] {
+      flex: 1; margin: 0 10px; padding: 6px;
+      border-radius: 4px; border: none;
+      font-size: 16px;
     }
-    .modal-header button, .modal-footer button {
-      background-color: #4CAF50; border: none; color: white; padding: 8px 12px;
-      border-radius: 4px; cursor: pointer; font-weight: bold;
-    }
-    .modal-footer div { margin-right: 10px; }
-    .modal-header button:hover, .modal-footer button:hover {
-      background-color: #45a049;
-    }
-
-    table {
-      width: 100%; border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      padding: 12px; text-align: left;
-      border-bottom: 1px solid #444;
-    }
-    .kategori {
-      background-color: #393b5a; font-weight: bold;
-    }
-    .toggle-btn {
-      padding: 5px 10px; border-radius: 5px;
-      border: none; cursor: pointer; font-size: 14px;
-    }
-    .aktif { background-color: #2ecc71; color: white; }
-    .nonaktif { background-color: #e74c3c; color: white; }
-    .add-icon-btn {
-      background-color: #3498db; border: none;
-      color: white; padding: 5px 10px; border-radius: 5px;
+    .builder-item button {
+      background-color: #3498db;
+      color: white; border: none;
+      padding: 6px 10px; border-radius: 4px;
       font-size: 14px; cursor: pointer;
+    }
+    .drag-icon {
+      font-size: 18px; padding: 0 10px;
+      cursor: grab;
     }
   </style>
 </head>
 <body>
 
-  <header>📡 Admin Pulsa</header>
-  <div class="menu">
-    <button class="button" onclick="openModal()">📋 Menu Transaksi</button>
-  </div>
+<header>🎛️ Builder Menu Aplikasi RS</header>
+<div class="menu" style="text-align:center;">
+  <button class="button" onclick="tambahBuilderMenu()">+Menu</button>
+</div>
 
-  <div class="modal" id="transaksiModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <button onclick="tambahMenu()">+Menu</button>
-          <button onclick="tambahKategori()">+Kategori</button>
-        </div>
-        <button onclick="refreshModal()">🔄 Refresh</button>
-      </div>
+<div class="builder-container" id="builderList">
+  <!-- Builder menu akan ditambahkan di sini -->
+</div>
 
-      <!-- Tabel Menu Transaksi -->
-      <table id="menuTable">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Status</th>
-            <th>+Icon</th>
-          </tr>
-        </thead>
-        <tbody id="menuBody">
-          <!-- Isi dinamis -->
-        </tbody>
-      </table>
+<script>
+  let menuCounter = 1;
 
-      <div class="modal-footer">
-        <div id="statistik">
-          <span>Jumlah menu: <strong>0</strong></span><br>
-          <span>Aktif: <strong>0</strong></span> |
-          <span>Nonaktif: <strong>0</strong></span>
-        </div>
-        <div>
-          <button>💾 Save</button>
-          <button onclick="closeModal()">❌ Tutup</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  function tambahBuilderMenu() {
+    const container = document.getElementById('builderList');
+    
+    const row = document.createElement('div');
+    row.className = 'builder-item';
+    row.draggable = true;
 
-  <script>
-    let menuCount = 0;
-    let aktifCount = 0;
-    let nonaktifCount = 0;
+    row.innerHTML = `
+      <input type="checkbox" checked title="Aktif / Nonaktif">
+      <input type="text" value="Menu ${menuCounter++}" />
+      <button>+Icon</button>
+      <div class="drag-icon">↕️</div>
+    `;
 
-    function openModal() {
-      document.getElementById("transaksiModal").style.display = "flex";
+    // Tambahkan fungsi drag
+    row.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', '');
+      row.classList.add('dragging');
+    });
+
+    row.addEventListener('dragend', () => {
+      row.classList.remove('dragging');
+    });
+
+    container.appendChild(row);
+  }
+
+  // Drag and drop logic
+  const builderList = document.getElementById('builderList');
+
+  builderList.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const dragging = document.querySelector('.dragging');
+    const afterElement = getDragAfterElement(builderList, e.clientY);
+    if (afterElement == null) {
+      builderList.appendChild(dragging);
+    } else {
+      builderList.insertBefore(dragging, afterElement);
     }
+  });
 
-    function closeModal() {
-      document.getElementById("transaksiModal").style.display = "none";
-    }
-
-    function refreshModal() {
-      alert("Data diperbarui.");
-    }
-
-    function tambahKategori() {
-      const kategoriNama = prompt("Nama Kategori:");
-      if (kategoriNama) {
-        const row = document.createElement("tr");
-        row.className = "kategori";
-        row.innerHTML = `
-          <td>📁 ${kategoriNama}</td>
-          <td>-</td>
-          <td>-</td>
-        `;
-        document.getElementById("menuBody").appendChild(row);
-      }
-    }
-
-    function tambahMenu() {
-      const menuNama = prompt("Nama Produk:");
-      if (menuNama) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${menuNama}</td>
-          <td><button class="toggle-btn aktif" onclick="toggleStatus(this)">Aktif</button></td>
-          <td><button class="add-icon-btn">+Icon</button></td>
-        `;
-        document.getElementById("menuBody").appendChild(row);
-        menuCount++;
-        aktifCount++;
-        updateStatistik();
-      }
-    }
-
-    function toggleStatus(btn) {
-      if (btn.classList.contains("aktif")) {
-        btn.classList.remove("aktif");
-        btn.classList.add("nonaktif");
-        btn.innerText = "Nonaktif";
-        aktifCount--;
-        nonaktifCount++;
+  function getDragAfterElement(container, y) {
+    const items = [...container.querySelectorAll('.builder-item:not(.dragging)')];
+    return items.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
       } else {
-        btn.classList.remove("nonaktif");
-        btn.classList.add("aktif");
-        btn.innerText = "Aktif";
-        aktifCount++;
-        nonaktifCount--;
+        return closest;
       }
-      updateStatistik();
-    }
-
-    function updateStatistik() {
-      document.getElementById("statistik").innerHTML = `
-        <span>Jumlah menu: <strong>${menuCount}</strong></span><br>
-        <span>Aktif: <strong>${aktifCount}</strong></span> |
-        <span>Nonaktif: <strong>${nonaktifCount}</strong></span>
-      `;
-    }
-  </script>
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+</script>
 
 </body>
 </html>
