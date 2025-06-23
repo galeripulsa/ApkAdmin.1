@@ -1,102 +1,27 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web Panel Admin Galeri Pulsa</title>
-    <link href="https:                                                                                    
-    <style>
-        body {
-            background-color:         
-        }
-
-        .modal-fullscreen {
-            padding: 1rem;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            cursor: grab;
-        }
-
-        .menu-item input[type="text"] {
-            flex-grow: 1;
-        }
-
-        .menu-actions {
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-save {
-            width: 100%;
-        }
-
-                  
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Pulsa</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #1e1e2f; color: #fff; margin: 0; }
+    header { background-color: #27293d; padding: 20px; text-align: center; font-size: 24px; }
+    .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+    .item { background: #2d2f44; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .item:hover { background: #3a3c5a; }
+  </style>
 </head>
 <body>
-    <div class="container py-4">
-        <h2 class="text-center mb-4">Web Panel Admin Galeri Pulsa</h2>
-        <!-- Menu utama -->
-        <div class="d-grid gap-3">
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#transaksiModal">Menu Transaksi</button>
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="                                 
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#pascabayarModal">Pascabayar</button>
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="                                        
-        </div>
-    </div>
-    <!-- Modal Menu Transaksi -->
-    <div class="modal fade" id="transaksiModal" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header d-flex flex-column align-items-start">
-                    <div class="w-100 d-flex justify-content-between align-items-center">
-                        <h5 class="modal-title">Pengaturan Menu & Kategori</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="confirmClose(event)"></button>
-                    </div>
-                    <div class="menu-actions mt-3">
-                        <button class="btn btn-success" onclick="addMenu()">+ Menu</button>
-                        <button class="btn btn-info" onclick="addCategory()">+ Kategori</button>
-                        <button class="btn btn-secondary" id="refreshBtn" onclick="resetChanges()" disabled>Refresh</button>
-                    </div>
-                    <p id="summary">Jumlah Menu: <span id="totalMenu">2</span> | Aktif: <span id="totalAktif">2</span> | Tidak Aktif: <span id="totalNonAktif">0</span></p>
-                </div>
-                <div class="modal-body">
-                    <div id="sortableMenu">
-                        <div class="menu-item" draggable="true">
-                            <input type="checkbox" checked>
-                            <input type="text" class="form-control" value="Pulsa Reguler">
-                            <button class="btn btn-outline-secondary">+ Icon</button>
-                        </div>
-                        <div class="menu-item" draggable="true">
-                            <input type="checkbox" checked>
-                            <input type="text" class="form-control" value="Voucher Game">
-                            <button class="btn btn-outline-secondary">+ Icon</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary btn-save" id="saveBtn" disabled>SAVE</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal Konfirmasi Tutup -->
-    <div class="modal fade" id="confirmModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Konfirmasi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Perubahan belum disimpan. Yakin ingin keluar?</p>
-                </
+  <header>📡 Admin Pulsa</header>
+  <div class="menu">
+    <div class="item">📊 Dashboard</div>
+    <div class="item">🧾 Format Pesan</div>
+    <div class="item">📦 Manajemen Produk</div>
+    <div class="item">🎨 Desain Tampilan RS</div>
+    <div class="item">👥 Manajemen Reseller</div>
+    <div class="item">📜 Log Aktivitas</div>
+    <div class="item">⚙️ Pengaturan</div>
+  </div>
+</body>
+</html>
