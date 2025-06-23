@@ -5,148 +5,81 @@
   <title>Menu Transaksi – Admin Pulsa</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background-color: #1e1e2f;
-      color: white;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #1e1e2f; color: white; }
+    header { background-color: #27293d; padding: 20px; text-align: center; font-size: 24px; }
 
-    header {
-      background-color: #27293d;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-    }
-
-    .main {
-      padding: 20px;
-      text-align: center;
-    }
-
+    .main { padding: 20px; text-align: center; }
     .button {
       background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 15px 25px;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
+      color: white; border: none;
+      padding: 15px 25px; font-size: 18px;
+      border-radius: 8px; cursor: pointer;
     }
+    .button:disabled { background-color: #777; cursor: not-allowed; }
 
     .modal-full {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-color: #1e1e2f;
-      z-index: 1000;
-      flex-direction: column;
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh; background-color: #1e1e2f;
+      z-index: 1000; flex-direction: column;
     }
 
     .modal-header {
       background-color: #2d2f44;
-      padding: 15px 20px;
-      border-bottom: 1px solid #444;
+      padding: 15px 20px; border-bottom: 1px solid #444;
     }
 
-    .modal-header h2 {
-      margin: 0 0 10px 0;
-      font-size: 20px;
-      color: #ccc;
-    }
-
+    .modal-header h2 { margin: 0 0 10px 0; font-size: 20px; color: #ccc; }
     .modal-header .button-group {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      display: flex; gap: 10px; flex-wrap: wrap;
     }
 
-    .modal-header button {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
+    .modal-header button, .modal-footer button {
+      background-color: #4CAF50; border: none; color: white;
+      padding: 10px 16px; font-size: 16px;
+      border-radius: 6px; cursor: pointer;
+    }
+    .modal-header button:disabled, .modal-footer button:disabled {
+      background-color: #555; cursor: not-allowed;
     }
 
     .modal-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
+      flex: 1; overflow-y: auto; padding: 20px;
     }
 
     .builder-item {
-      display: flex;
-      align-items: center;
-      background: #393b5a;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
+      display: flex; align-items: center;
+      background: #393b5a; padding: 10px;
+      margin-bottom: 10px; border-radius: 6px;
     }
 
     .builder-item input[type="text"] {
-      flex: 1;
-      margin: 0 10px;
-      padding: 6px;
-      border-radius: 4px;
-      border: none;
-      font-size: 16px;
+      flex: 1; margin: 0 10px; padding: 6px;
+      border-radius: 4px; border: none; font-size: 16px;
     }
 
     .builder-item button {
       background-color: #3498db;
-      border: none;
-      color: white;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 14px;
+      border: none; color: white; padding: 6px 10px;
+      border-radius: 4px; font-size: 14px;
       cursor: pointer;
     }
 
     .drag-icon {
-      font-size: 18px;
-      padding: 0 10px;
+      font-size: 18px; padding: 0 10px;
       cursor: grab;
     }
 
     .modal-footer {
-      padding: 15px 20px;
-      background-color: #2d2f44;
-      border-top: 1px solid #444;
-      text-align: center;
+      padding: 15px 20px; background-color: #2d2f44;
+      border-top: 1px solid #444; text-align: center;
     }
-
-    .modal-footer p {
-      margin: 6px 0;
-      font-size: 14px;
-      color: #ccc;
-    }
-
-    .modal-footer button {
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    .modal-footer p { margin: 6px 0; font-size: 14px; color: #ccc; }
 
     .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background-color: #e74c3c;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
+      position: absolute; top: 10px; right: 15px;
+      background-color: #e74c3c; color: white;
+      border: none; padding: 8px 12px;
+      font-size: 14px; border-radius: 6px; cursor: pointer;
     }
   </style>
 </head>
@@ -162,29 +95,25 @@
   <div class="modal-header">
     <h2>Pengaturan Menu dan Kategori</h2>
     <div class="button-group">
-      <button onclick="tambahMenu()">+Menu</button>
-      <button onclick="alert('+Kategori akan ditambahkan nanti')">+Kategori</button>
-      <button onclick="alert('Data disegarkan')">🔄 Refresh</button>
+      <button onclick="tambahItem('menu')">+Menu</button>
+      <button onclick="tambahItem('kategori')">+Kategori</button>
+      <button id="refreshBtn" onclick="resetBuilder()" disabled>🔄 Refresh</button>
     </div>
     <button class="modal-close" onclick="tutupModal()">Tutup ✖</button>
   </div>
 
   <div class="modal-body" id="builderList">
-    <!-- Builder items akan muncul di sini -->
+    <!-- Item builder muncul di sini -->
   </div>
 
-  <div class="modal-footer" id="statistik">
-    <p>Jumlah Menu: <strong>0</strong></p>
-    <p>Aktif: <strong>0</strong> | Nonaktif: <strong>0</strong></p>
-    <button onclick="alert('Data disimpan')">💾 Save</button>
+  <div class="modal-footer">
+    <p id="statistik">Jumlah Menu: 0 | Aktif: 0 | Nonaktif: 0</p>
+    <button id="saveBtn" onclick="simpanData()" disabled>💾 Save</button>
   </div>
 </div>
 
 <script>
-  let jumlahMenu = 0;
-  let aktifMenu = 0;
-  let nonaktifMenu = 0;
-  let menuIndex = 1;
+  let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0, perubahan = false;
 
   function bukaMenuTransaksi() {
     document.getElementById('modalTransaksi').style.display = 'flex';
@@ -194,54 +123,76 @@
     document.getElementById('modalTransaksi').style.display = 'none';
   }
 
-  function tambahMenu() {
+  function tambahItem(type) {
     const container = document.getElementById('builderList');
-
     const row = document.createElement('div');
     row.className = 'builder-item';
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = true;
-    checkbox.addEventListener('change', updateStatistik);
+    checkbox.onchange = () => { hitungStatistik(); markPerubahan(); };
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.value = `Menu ${menuIndex++}`;
-
-    const iconBtn = document.createElement('button');
-    iconBtn.textContent = '+Icon';
-
-    const drag = document.createElement('div');
-    drag.className = 'drag-icon';
-    drag.textContent = '↕️';
+    input.value = (type === 'menu') ? `Menu ${totalMenu + 1}` : `Kategori ${totalMenu + 1}`;
+    input.oninput = () => { markPerubahan(); };
 
     row.appendChild(checkbox);
     row.appendChild(input);
-    row.appendChild(iconBtn);
-    row.appendChild(drag);
+
+    if (type === 'menu') {
+      const iconBtn = document.createElement('button');
+      iconBtn.textContent = '+Icon';
+      row.appendChild(iconBtn);
+    }
+
+    const dragIcon = document.createElement('div');
+    dragIcon.className = 'drag-icon';
+    dragIcon.textContent = '↕️';
+    row.appendChild(dragIcon);
 
     container.appendChild(row);
 
-    jumlahMenu++;
+    totalMenu++;
     aktifMenu++;
-    updateStatistik();
+    hitungStatistik();
+    markPerubahan();
   }
 
-  function updateStatistik() {
+  function hitungStatistik() {
     const checkboxes = document.querySelectorAll('#builderList input[type="checkbox"]');
     aktifMenu = 0;
     nonaktifMenu = 0;
-    checkboxes.forEach(cb => {
-      if (cb.checked) aktifMenu++;
-      else nonaktifMenu++;
-    });
+    checkboxes.forEach(cb => cb.checked ? aktifMenu++ : nonaktifMenu++);
+    totalMenu = checkboxes.length;
 
-    document.getElementById('statistik').innerHTML = `
-      <p>Jumlah Menu: <strong>${checkboxes.length}</strong></p>
-      <p>Aktif: <strong>${aktifMenu}</strong> | Nonaktif: <strong>${nonaktifMenu}</strong></p>
-      <button onclick="alert('Data disimpan')">💾 Save</button>
-    `;
+    document.getElementById('statistik').innerText =
+      `Jumlah Menu: ${totalMenu} | Aktif: ${aktifMenu} | Nonaktif: ${nonaktifMenu}`;
+  }
+
+  function markPerubahan() {
+    perubahan = true;
+    document.getElementById('saveBtn').disabled = false;
+    document.getElementById('refreshBtn').disabled = false;
+  }
+
+  function resetBuilder() {
+    if (confirm('Semua perubahan yang belum disimpan akan dihapus. Lanjutkan?')) {
+      document.getElementById('builderList').innerHTML = '';
+      totalMenu = aktifMenu = nonaktifMenu = 0;
+      perubahan = false;
+      hitungStatistik();
+      document.getElementById('saveBtn').disabled = true;
+      document.getElementById('refreshBtn').disabled = true;
+    }
+  }
+
+  function simpanData() {
+    alert("Perubahan disimpan!");
+    perubahan = false;
+    document.getElementById('saveBtn').disabled = true;
+    document.getElementById('refreshBtn').disabled = true;
   }
 </script>
 
