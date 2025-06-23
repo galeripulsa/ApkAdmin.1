@@ -165,189 +165,219 @@
   </div>
 
   <script>
-    let perubahan = false;
-    let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0;
-    let popupAction = '';
-    let itemPendingHapus = null;
+  let perubahan = false;
+  let totalMenu = 0, aktifMenu = 0, nonaktifMenu = 0;
+  let popupAction = '';
+  let itemPendingHapus = null;
+  let namaPendingHapus = '';
 
-    function bukaMenuTransaksi() {
-      document.getElementById('modalTransaksi').style.display = 'flex';
-      history.pushState(null, '', location.href);
+  function bukaMenuTransaksi() {
+    document.getElementById('modalTransaksi').style.display = 'flex';
+    history.pushState(null, '', location.href);
+    loadDataFromStorage();
+  }
+
+  function konfirmasiTutup() {
+    if (perubahan) {
+      popupAction = 'tutup';
+      bukaPopup("Yakin ingin keluar? Perubahan belum disimpan.");
+    } else {
+      tutupModal();
+    }
+  }
+
+  function konfirmasiRefresh() {
+    popupAction = 'refresh';
+    bukaPopup("Semua perubahan belum disimpan akan dihapus. Lanjutkan?");
+  }
+
+  function tutupModal() {
+    document.getElementById('modalTransaksi').style.display = 'none';
+  }
+
+  function simpanData() {
+    const items = document.querySelectorAll('.builder-item');
+    const data = [];
+
+    items.forEach(item => {
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      const input = item.querySelector('input[type="text"]');
+      const isMenu = item.querySelector('button')?.innerText === '📁';
+
+      data.push({
+        type: isMenu ? 'menu' : 'kategori',
+        name: input.value,
+        active: checkbox.checked
+      });
+    });
+
+    localStorage.setItem('builderData', JSON.stringify(data));
+    perubahan = false;
+    toggleSave(false);
+    bukaPopup("Data berhasil disimpan ✅", 'ok');
+  }
+
+  function loadDataFromStorage() {
+    const data = JSON.parse(localStorage.getItem('builderData'));
+    const container = document.getElementById('builderList');
+    container.innerHTML = '';
+    if (!data) return;
+
+    totalMenu = aktifMenu = nonaktifMenu = 0;
+
+    data.forEach(item => tambahItem(item.type, item.name, item.active));
+    updateStatistik();
+    toggleSave(false);
+  }
+
+  function tambahItem(type, nama = '', aktif = true) {
+    const container = document.getElementById('builderList');
+    const row = document.createElement('div');
+    row.className = 'builder-item';
+    row.draggable = true;
+
+    let startX = 0;
+    row.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+    row.addEventListener('touchmove', e => {
+      const delta = e.touches[0].clientX - startX;
+      document.querySelectorAll('.builder-item').forEach(item => item.classList.remove('show-hapus'));
+      if (delta < -50) row.classList.add('show-hapus');
+    });
+
+    row.addEventListener('dragstart', () => row.classList.add('dragging'));
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = aktif;
+    checkbox.onchange = () => { updateStatistik(); setPerubahan(); };
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = nama || (type === 'menu' ? `Menu ${totalMenu + 1}` : `Kategori ${totalMenu + 1}`);
+    input.oninput = () => setPerubahan();
+
+    row.appendChild(checkbox);
+    row.appendChild(input);
+
+    if (type === 'menu') {
+      const iconBtn = document.createElement('button');
+      iconBtn.innerText = '📁';
+      iconBtn.onclick = () => {
+        const inputFile = document.createElement('input');
+        inputFile.type = 'file';
+        inputFile.accept = 'image/*';
+        inputFile.click();
+        inputFile.onchange = () => {
+          bukaPopup("📷 Icon dipilih (simulasi)", 'ok');
+          setPerubahan();
+        };
+      };
+      row.appendChild(iconBtn);
     }
 
-    function konfirmasiTutup() {
-      if (perubahan) {
-        popupAction = 'tutup';
-        bukaPopup("Yakin ingin keluar? Perubahan belum disimpan.");
-      } else {
-        tutupModal();
-      }
-    }
+    const dragIcon = document.createElement('div');
+    dragIcon.className = 'drag-icon';
+    dragIcon.innerText = '↕️';
+    row.appendChild(dragIcon);
 
-    function konfirmasiRefresh() {
-      popupAction = 'refresh';
-      bukaPopup("Semua perubahan belum disimpan akan dihapus. Lanjutkan?");
-    }
+    const hapusBtn = document.createElement('button');
+    hapusBtn.className = 'hapus-btn';
+    hapusBtn.innerHTML = '🗑️';
+    hapusBtn.onclick = () => {
+      itemPendingHapus = row;
+      namaPendingHapus = input.value;
+      popupAction = 'hapus';
+      bukaPopup("Yakin ingin menghapus item ini?", 'confirm', namaPendingHapus);
+    };
+    row.appendChild(hapusBtn);
 
-    function tutupModal() {
-      document.getElementById('modalTransaksi').style.display = 'none';
+    container.appendChild(row);
+    updateStatistik();
+    setPerubahan();
+  }
+
+  function updateStatistik() {
+    const checkboxes = document.querySelectorAll('#builderList input[type="checkbox"]');
+    aktifMenu = 0;
+    nonaktifMenu = 0;
+    checkboxes.forEach(cb => cb.checked ? aktifMenu++ : nonaktifMenu++);
+    totalMenu = checkboxes.length;
+
+    document.getElementById('statistik').innerText =
+      `Jumlah Menu: ${totalMenu} | Aktif: ${aktifMenu} | Nonaktif: ${nonaktifMenu}`;
+  }
+
+  function setPerubahan() {
+    perubahan = true;
+    toggleSave(true);
+  }
+
+  function toggleSave(status) {
+    document.getElementById('saveBtn').disabled = !status;
+    document.getElementById('refreshBtn').disabled = !status;
+  }
+
+  function bukaPopup(pesan, tipe = 'confirm', sub = '') {
+    document.getElementById('popupMessage').innerText = pesan;
+    document.getElementById('popupModal').style.display = 'flex';
+    document.getElementById('popupActions').style.display = tipe === 'confirm' ? 'block' : 'none';
+    document.getElementById('popupOK').style.display = tipe === 'ok' ? 'block' : 'none';
+    document.getElementById('popupSub').innerText = sub ? `(${sub})` : '';
+  }
+
+  function tutupPopup() {
+    document.getElementById('popupModal').style.display = 'none';
+    popupAction = '';
+    itemPendingHapus = null;
+    namaPendingHapus = '';
+    document.getElementById('popupSub').innerText = '';
+  }
+
+  function konfirmasiHapus() {
+    if (popupAction === 'hapus' && itemPendingHapus) {
+      itemPendingHapus.remove();
+      updateStatistik();
+      setPerubahan();
+    } else if (popupAction === 'tutup') {
+      tutupModal();
+    } else if (popupAction === 'refresh') {
+      localStorage.removeItem('builderData');
       document.getElementById('builderList').innerHTML = '';
       totalMenu = aktifMenu = nonaktifMenu = 0;
       perubahan = false;
       updateStatistik();
       toggleSave(false);
     }
+    tutupPopup();
+  }
 
-    function tambahItem(type) {
-      const container = document.getElementById('builderList');
-      const row = document.createElement('div');
-      row.className = 'builder-item';
-      row.draggable = true;
-
-      let startX = 0;
-      row.addEventListener('touchstart', e => startX = e.touches[0].clientX);
-      row.addEventListener('touchmove', e => {
-        const delta = e.touches[0].clientX - startX;
-        document.querySelectorAll('.builder-item').forEach(item => item.classList.remove('show-hapus'));
-        if (delta < -50) row.classList.add('show-hapus');
-      });
-
-      row.addEventListener('dragstart', () => row.classList.add('dragging'));
-      row.addEventListener('dragend', () => row.classList.remove('dragging'));
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.checked = true;
-      checkbox.onchange = () => { updateStatistik(); setPerubahan(); };
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = type === 'menu' ? `Menu ${totalMenu + 1}` : `Kategori ${totalMenu + 1}`;
-      input.oninput = () => setPerubahan();
-
-      row.appendChild(checkbox);
-      row.appendChild(input);
-
-      if (type === 'menu') {
-        const iconBtn = document.createElement('button');
-        iconBtn.innerText = '📁';
-        iconBtn.onclick = () => {
-          const inputFile = document.createElement('input');
-          inputFile.type = 'file';
-          inputFile.accept = 'image/*';
-          inputFile.click();
-          inputFile.onchange = () => {
-            bukaPopup("📷 Icon dipilih (simulasi)", 'ok');
-            setPerubahan();
-          };
-        };
-        row.appendChild(iconBtn);
-      }
-
-      const dragIcon = document.createElement('div');
-      dragIcon.className = 'drag-icon';
-      dragIcon.innerText = '↕️';
-      row.appendChild(dragIcon);
-
-      const hapusBtn = document.createElement('button');
-      hapusBtn.className = 'hapus-btn';
-      hapusBtn.innerHTML = '🗑️';
-      hapusBtn.onclick = () => {
-        itemPendingHapus = row;
-        bukaPopup("Yakin ingin menghapus item ini?", 'confirm');
-      };
-      row.appendChild(hapusBtn);
-
-      container.appendChild(row);
-      updateStatistik();
-      setPerubahan();
+  // Tombol kembali HP
+  window.addEventListener('popstate', function () {
+    if (document.getElementById('modalTransaksi').style.display === 'flex') {
+      konfirmasiTutup();
+      history.pushState(null, '', location.href);
     }
+  });
 
-    function updateStatistik() {
-      const checkboxes = document.querySelectorAll('#builderList input[type="checkbox"]');
-      aktifMenu = 0;
-      nonaktifMenu = 0;
-      checkboxes.forEach(cb => cb.checked ? aktifMenu++ : nonaktifMenu++);
-      totalMenu = checkboxes.length;
+  // Drag & drop urutan
+  const builderList = document.getElementById('builderList');
+  builderList.addEventListener('dragover', e => {
+    e.preventDefault();
+    const after = getDragAfterElement(e.clientY);
+    const dragging = document.querySelector('.dragging');
+    if (!after) builderList.appendChild(dragging);
+    else builderList.insertBefore(dragging, after);
+  });
 
-      document.getElementById('statistik').innerText =
-        `Jumlah Menu: ${totalMenu} | Aktif: ${aktifMenu} | Nonaktif: ${nonaktifMenu}`;
-    }
-
-    function setPerubahan() {
-      perubahan = true;
-      toggleSave(true);
-    }
-
-    function toggleSave(status) {
-      document.getElementById('saveBtn').disabled = !status;
-      document.getElementById('refreshBtn').disabled = !status;
-    }
-
-    function simpanData() {
-      perubahan = false;
-      toggleSave(false);
-      bukaPopup("Data berhasil disimpan ✅", 'ok');
-    }
-
-    function bukaPopup(msg, type = 'confirm') {
-      document.getElementById('popupMessage').innerText = msg;
-      document.getElementById('popupModal').style.display = 'flex';
-      document.getElementById('popupActions').style.display = type === 'confirm' ? 'block' : 'none';
-      document.getElementById('popupOK').style.display = type === 'ok' ? 'block' : 'none';
-    }
-
-    function tutupPopup() {
-      document.getElementById('popupModal').style.display = 'none';
-      popupAction = '';
-      itemPendingHapus = null;
-    }
-
-    function konfirmasiHapus() {
-      if (itemPendingHapus) {
-        itemPendingHapus.remove();
-        updateStatistik();
-        setPerubahan();
-      }
-      tutupPopup();
-    }
-
-    function prosesPopup() {
-      if (popupAction === 'tutup') tutupModal();
-      else if (popupAction === 'refresh') {
-        document.getElementById('builderList').innerHTML = '';
-        totalMenu = aktifMenu = nonaktifMenu = 0;
-        perubahan = false;
-        updateStatistik();
-        toggleSave(false);
-      }
-      tutupPopup();
-    }
-
-    window.addEventListener('popstate', function () {
-      if (document.getElementById('modalTransaksi').style.display === 'flex') {
-        konfirmasiTutup();
-        history.pushState(null, '', location.href);
-      }
-    });
-
-    const builderList = document.getElementById('builderList');
-    builderList.addEventListener('dragover', e => {
-      e.preventDefault();
-      const after = getDragAfterElement(e.clientY);
-      const dragging = document.querySelector('.dragging');
-      if (!after) builderList.appendChild(dragging);
-      else builderList.insertBefore(dragging, after);
-    });
-
-    function getDragAfterElement(y) {
-      const items = [...builderList.querySelectorAll('.builder-item:not(.dragging)')];
-      return items.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-  </script>
+  function getDragAfterElement(y) {
+    const items = [...builderList.querySelectorAll('.builder-item:not(.dragging)')];
+    return items.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+</script>
 </body>
 </html>
