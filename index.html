@@ -61,6 +61,18 @@
   </div>
 
   <script>
+    const menuItems = [
+      { label: "Setup Server", icon: "server", key: "server" },
+      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
+      { label: "Logo", icon: "image", key: "logo" },
+      { label: "Format Request", icon: "file-text", key: "format" },
+      { label: "Poin", icon: "star", key: "poin" },
+      { label: "Downline", icon: "users", key: "downline" },
+      { label: "Prabayar", icon: "phone", key: "prabayar" },
+      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
+      { label: "OTP", icon: "key", key: "otp" }
+    ];
+
     const submenuList = document.getElementById("submenu-list");
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
