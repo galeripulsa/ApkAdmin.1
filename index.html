@@ -29,13 +29,13 @@
   <!-- Modal -->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+      <div class="flex justify-between items-center px-4 py-3 border-b">
         <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t">
         <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
         <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
       </div>
@@ -49,7 +49,7 @@
     </div>
   </div>
 
-    <!-- Modal Konfirmasi -->
+  <!-- Modal Konfirmasi -->
   <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
       <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
@@ -59,7 +59,7 @@
       </div>
     </div>
   </div>
-  
+
   <script>
     const menuItems = [
       { label: "Setup Server", icon: "server", key: "server" },
@@ -72,6 +72,7 @@
       { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
       { label: "OTP", icon: "key", key: "otp" }
     ];
+
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
@@ -84,7 +85,7 @@
       document.getElementById("btn-refresh").disabled = !isDirty;
     }
 
-    function enableSwipeToDelete(row, index) {
+    function enableSwipeToDelete(row) {
       let startX = 0;
       let isSwiping = false;
 
@@ -97,22 +98,14 @@
         const deltaX = e.touches[0].clientX - startX;
         if (Math.abs(deltaX) > 30) {
           isSwiping = true;
-          document.querySelectorAll(".submenu-item").forEach(item => {
-            item.classList.remove("show-delete");
-          });
-
-          if (deltaX < -30) {
-            row.classList.add("show-delete");
-          } else {
-            row.classList.remove("show-delete");
-          }
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          if (deltaX < -30) row.classList.add("show-delete");
+          else row.classList.remove("show-delete");
         }
       });
 
       row.addEventListener("touchend", () => {
-        if (isSwiping) {
-          startX = 0;
-        }
+        if (isSwiping) startX = 0;
       });
     }
 
@@ -127,15 +120,15 @@
             <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
           </div>
           <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 handle"></i>
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>`;
-
         submenuList.appendChild(row);
-        enableSwipeToDelete(row, index);
+        enableSwipeToDelete(row);
       });
 
       lucide.createIcons();
+      updateSummary();
     }
 
     function updateName(index, value) {
@@ -152,13 +145,27 @@
     }
 
     function confirmDelete(index) {
-      const confirmed = confirm(`Yakin ingin menghapus item: "${subMenus[index].name}"?`);
-      if (confirmed) {
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = `Yakin ingin menghapus item: "${subMenus[index].name}"?`;
+      modal.classList.remove("hidden");
+
+      document.getElementById("confirm-yes").onclick = () => {
+        modal.classList.add("hidden");
         subMenus.splice(index, 1);
         isDirty = true;
         updateRefreshButtonState();
         renderSubMenus();
-      }
+      };
+      document.getElementById("confirm-no").onclick = () => {
+        modal.classList.add("hidden");
+      };
+    }
+
+    function updateSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(m => m.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
     }
 
     function showModal() {
@@ -167,10 +174,7 @@
     }
 
     document.getElementById("btn-close").onclick = () => {
-      if (isDirty) {
-        const confirmed = confirm("Perubahan belum disimpan. Tutup tanpa menyimpan?");
-        if (!confirmed) return;
-      }
+      if (isDirty && !confirm("Perubahan belum disimpan. Tutup tanpa menyimpan?")) return;
       document.getElementById("modal").classList.add("hidden");
       subMenus = JSON.parse(JSON.stringify(tempSubMenus));
       isDirty = false;
@@ -188,14 +192,11 @@
     };
 
     document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty) return;
-      const confirmed = confirm("Yakin ingin membatalkan perubahan?");
-      if (confirmed) {
-        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-        isDirty = false;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
+      if (!isDirty || !confirm("Yakin ingin membatalkan perubahan?")) return;
+      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+      renderSubMenus();
     };
 
     document.getElementById("btn-add-menu").onclick = () => {
@@ -211,6 +212,28 @@
       updateRefreshButtonState();
       renderSubMenus();
     };
+
+    // Drag & Drop support
+    new Sortable(submenuList, {
+      animation: 200,
+      handle: ".handle",
+      onEnd: () => {
+        const newOrder = Array.from(submenuList.children).map(child => {
+          const index = Array.from(submenuList.children).indexOf(child);
+          return subMenus[index];
+        });
+        subMenus = newOrder;
+        isDirty = true;
+        updateRefreshButtonState();
+      }
+    });
+
+    // Tampilkan Menu
+    document.getElementById("menu-grid").innerHTML = `
+      <div class="col-span-full bg-yellow-300 text-center py-3 rounded cursor-pointer ring-2 ring-yellow-500" onclick="showModal()">
+        <div class="text-lg font-semibold">Menu Transaksi</div>
+      </div>
+    `;
 
     renderSubMenus();
   </script>
