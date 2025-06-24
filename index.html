@@ -14,17 +14,6 @@
     .submenu-item.swiped {
       transform: translateX(-60px);
     }
-    .delete-icon {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      display: none;
-    }
-    .submenu-item.swiped .delete-icon {
-      display: block;
-    }
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -116,10 +105,8 @@
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
         row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
+
         row.innerHTML = `
-          <div class="delete-icon">
-            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer" onclick="deleteSubmenu(${index})"></i>
-          </div>
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
             <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
@@ -127,6 +114,7 @@
           </div>
           <div class="flex items-center gap-2">
             <i class="lucide lucide-grip-vertical w-5 h-5 text-gray-600"></i>
+            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer" onclick="confirmDelete(${index})"></i>
           </div>
         `;
         submenuList.appendChild(row);
@@ -178,14 +166,18 @@
       }
     }
 
-    function deleteSubmenu(index) {
+    function confirmDelete(index) {
       const confirmed = confirm("Yakin ingin menghapus item ini?");
       if (confirmed) {
-        subMenus.splice(index, 1);
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
+        deleteSubmenu(index);
       }
+    }
+
+    function deleteSubmenu(index) {
+      subMenus.splice(index, 1);
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
     }
 
     function showModal() {
