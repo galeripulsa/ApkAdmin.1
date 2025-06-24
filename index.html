@@ -174,12 +174,16 @@
     }
 
     document.getElementById("btn-close").onclick = () => {
-      if (isDirty && !confirm("Perubahan belum disimpan. Tutup tanpa menyimpan?")) return;
-      document.getElementById("modal").classList.add("hidden");
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-    };
+      if (isDirty) {
+  showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
+    document.getElementById("modal").classList.add("hidden");
+    subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+    isDirty = false;
+    updateRefreshButtonState();
+  });
+} else {
+  document.getElementById("modal").classList.add("hidden");
+}
 
     document.getElementById("btn-save").onclick = () => {
       tempSubMenus = JSON.parse(JSON.stringify(subMenus));
@@ -191,13 +195,12 @@
       setTimeout(() => saveMsg.classList.add("hidden"), 2000);
     };
 
-    document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty || !confirm("Yakin ingin membatalkan perubahan?")) return;
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-      renderSubMenus();
-    };
+    showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+  subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+  isDirty = false;
+  updateRefreshButtonState();
+  renderSubMenus();
+});
 
     document.getElementById("btn-add-menu").onclick = () => {
       subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
