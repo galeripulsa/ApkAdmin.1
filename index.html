@@ -108,7 +108,12 @@
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
             <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
-            ${!menu.isCategory ? `<label class='w-10 h-10 min-w-[2.5rem] bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon<input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' /></label>` : ""}
+            ${!menu.isCategory ? `
+  ${menu.icon ? 
+    `<img src="${menu.icon}" class="w-10 h-10 rounded border object-cover" onclick="document.getElementById('icon-${index}').click()" />` :
+    `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon<input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' /></label>`
+  }
+` : ""}
           </div>
           <div class="flex items-center gap-2">
             <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
