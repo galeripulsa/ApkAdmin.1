@@ -6,6 +6,7 @@
   <title>Web Panel Admin Galeri Pulsa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     .submenu-item {
       transition: transform 0.3s ease;
@@ -17,39 +18,22 @@
     .submenu-item.show-delete .delete-icon {
       display: inline-block;
     }
-    .drag-handle {
-      cursor: grab;
-    }
-    .modal-bg {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
   <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Apk Admin</h1>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-  <!-- Modal -->
-  <div class="fixed inset-0 z-50 hidden modal-bg items-center justify-center" id="confirm-modal">
-    <div class="bg-white rounded shadow p-4 max-w-sm w-full">
-      <p class="text-center mb-4" id="modal-message">Yakin?</p>
-      <div class="flex justify-end gap-2">
-        <button class="bg-gray-300 px-3 py-1 rounded" onclick="hideModal()">Batal</button>
-        <button class="bg-red-500 text-white px-3 py-1 rounded" id="modal-confirm-btn">Ya</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="fixed inset-0 bg-white z-40 flex flex-col hidden" id="modal">
+  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b">
-        <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
+      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+        <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
 
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t">
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
         <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
         <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
       </div>
@@ -67,108 +51,34 @@
     </div>
   </div>
 
+  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
+      <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
+      <div class="flex justify-center gap-4">
+        <button id="confirm-yes" class="bg-red-500 text-white px-4 py-2 rounded">Ya</button>
+        <button id="confirm-no" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Batal</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
-      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
-    ];
-    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-    let isDirty = false;
-
-    const submenuList = document.getElementById("submenu-list");
-    const modal = document.getElementById("modal");
-    const modalBg = document.getElementById("confirm-modal");
-    const modalMsg = document.getElementById("modal-message");
-    const confirmBtn = document.getElementById("modal-confirm-btn");
-    let confirmAction = null;
-
-    function showModalConfirm(msg, callback) {
-      modalMsg.innerText = msg;
-      confirmAction = callback;
-      modalBg.classList.remove("hidden");
-    }
-
-    function hideModal() {
-      modalBg.classList.add("hidden");
-      confirmAction = null;
-    }
-
-    confirmBtn.onclick = () => {
-      if (confirmAction) confirmAction();
-      hideModal();
-    };
-
-    function renderSubMenus() {
-      submenuList.innerHTML = "";
-      subMenus.forEach((menu, index) => {
-        const row = document.createElement("div");
-        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow relative";
-
-        row.innerHTML = `
-          <div class="flex items-center gap-2 flex-1">
-            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
-            ${!menu.isCategory ? `
-              <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
-                <input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-              </label>
-              ${menu.icon ? `<img src="${menu.icon}" class="w-10 h-10 rounded object-cover border ml-2" />` : ''}
-            ` : ""}
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="drag-handle w-5 h-5 text-gray-600"></i>
-            <i data-lucide="trash-2" class="delete-icon w-5 h-5 text-red-500 cursor-pointer" onclick="confirmDelete(${index})"></i>
-          </div>
-        `;
-
-        let startX = 0;
-        row.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
-        row.addEventListener("touchmove", (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          if (deltaX < -30) {
-            document.querySelectorAll(".submenu-item").forEach(el => el.classList.remove("show-delete"));
-            row.classList.add("show-delete");
-          } else if (deltaX > 30) {
-            row.classList.remove("show-delete");
-          }
-        });
-
-        submenuList.appendChild(row);
+    // Tempelkan ulang semua script JS dari kode sebelumnya lalu tambahkan:
+    document.addEventListener("DOMContentLoaded", () => {
+      new Sortable(document.getElementById("submenu-list"), {
+        animation: 150,
+        handle: ".submenu-item",
+        onEnd: () => {
+          const newOrder = Array.from(document.querySelectorAll(".submenu-item")).map(el => {
+            const index = el.getAttribute("data-index");
+            return subMenus[+index];
+          });
+          subMenus = newOrder;
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
+        }
       });
-
-      lucide.createIcons();
-    }
-
-    function updateName(index, value) {
-      subMenus[index].name = value;
-      isDirty = true;
-    }
-
-    function toggleActive(index) {
-      subMenus[index].active = !subMenus[index].active;
-      isDirty = true;
-      renderSubMenus();
-    }
-
-    function uploadIcon(e, index) {
-      const file = e.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        subMenus[index].icon = url;
-        isDirty = true;
-        renderSubMenus();
-      }
-    }
-
-    function confirmDelete(index) {
-      const name = subMenus[index].name || "(Tanpa Nama)";
-      showModalConfirm(`Hapus item \"${name}\"?`, () => {
-        subMenus.splice(index, 1);
-        renderSubMenus();
-        isDirty = true;
-      });
-    }
-
-    renderSubMenus();
+    });
   </script>
 </body>
 </html>
