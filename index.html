@@ -72,7 +72,6 @@
       { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
       { label: "OTP", icon: "key", key: "otp" }
     ];
-
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
@@ -81,46 +80,23 @@
 
     const submenuList = document.getElementById("submenu-list");
 
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
-    }
-
     function showConfirmationModal(message, onYes, onNo) {
       const modal = document.getElementById("confirm-modal");
       document.getElementById("confirm-message").innerText = message;
       modal.classList.remove("hidden");
-
       const yesBtn = document.getElementById("confirm-yes");
       const noBtn = document.getElementById("confirm-no");
-
       const cleanup = () => {
         modal.classList.add("hidden");
         yesBtn.onclick = null;
         noBtn.onclick = null;
       };
-
-      yesBtn.onclick = () => {
-        cleanup();
-        onYes();
-      };
-      noBtn.onclick = () => {
-        cleanup();
-        if (onNo) onNo();
-      };
+      yesBtn.onclick = () => { cleanup(); onYes(); };
+      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
     }
 
-    function enableSwipeToDelete(row) {
-      let startX = 0;
-      row.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
-      row.addEventListener("touchmove", (e) => {
-        const deltaX = e.touches[0].clientX - startX;
-        if (deltaX < -30) {
-          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          row.classList.add("show-delete");
-        } else if (deltaX > 30) {
-          row.classList.remove("show-delete");
-        }
-      });
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
     }
 
     function renderMenus() {
@@ -152,15 +128,59 @@
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
             <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
+              <div class="relative">
+                ${menu.icon ? `
+                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
+                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                ` : `
+                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
+                    + Icon
+                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  </label>
+                `}
+              </div>
+            ` : ""}
           </div>
           <div class="flex items-center gap-2">
             <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>`;
         submenuList.appendChild(row);
-        enableSwipeToDelete(row);
+        enableSwipeToDelete(row, index);
       });
       lucide.createIcons();
+
+      new Sortable(submenuList, {
+        animation: 150,
+        onEnd: (evt) => {
+          const item = subMenus.splice(evt.oldIndex, 1)[0];
+          subMenus.splice(evt.newIndex, 0, item);
+          isDirty = true;
+          updateRefreshButtonState();
+        }
+      });
+
+      const total = subMenus.length;
+      const aktif = subMenus.filter(m => m.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+    }
+
+    function enableSwipeToDelete(row, index) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
     }
 
     function updateName(index, value) {
@@ -176,9 +196,20 @@
       renderSubMenus();
     }
 
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        subMenus[index].icon = url;
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    }
+
     function confirmDelete(index) {
-      const itemName = subMenus[index].name || "(Tanpa Nama)";
-      showConfirmationModal(`Yakin ingin menghapus item: "${itemName}"?`, () => {
+      const name = subMenus[index].name || "(Tanpa Nama)";
+      showConfirmationModal(`Yakin ingin menghapus item: "${name}"?`, () => {
         subMenus.splice(index, 1);
         isDirty = true;
         updateRefreshButtonState();
@@ -239,7 +270,6 @@
     };
 
     renderMenus();
-    renderSubMenus();
   </script>
 </body>
 </html>
