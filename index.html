@@ -1,46 +1,38 @@
-# Buat ulang versi HTML dari awal dengan semua perbaikan langsung
-clean_html = """
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web Panel Admin Galeri Pulsa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Web Panel Admin Galeri Pulsa</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
-
-  <div id="menu-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6"></div>
-
-  <!-- Modal Fullscreen -->
-  <div id="modal" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
-    <!-- Header -->
-    <div class="px-4 py-3 border-b shrink-0">
-      <h2 class="text-lg font-semibold text-gray-800 mb-2">Pengaturan Menu & Kategori</h2>
-      <div class="flex justify-between gap-2">
-        <button id="btn-add-menu" class="border rounded px-3 py-2 w-full text-sm">+ Tambah Menu</button>
-        <button id="btn-add-cat" class="border rounded px-3 py-2 w-full text-sm">+ Tambah Kategori</button>
-        <button id="btn-refresh" class="flex items-center gap-1 text-sm border px-3 py-2 rounded shrink-0">
-          <i class="lucide lucide-refresh-ccw w-4 h-4"></i> Refresh
+<h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
+<!-- Modal -->
+<div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
+<div class="flex flex-col h-full w-full">
+<div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+<h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu &amp; Kategori</h2>
+<button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
+<i class="lucide lucide-refresh-ccw w-4 h-4"></i> Refresh
         </button>
-      </div>
-    </div>
-
-    <!-- Body -->
-    <div id="submenu-list" class="flex-1 overflow-y-auto px-4 py-2 space-y-3"></div>
-
-    <!-- Footer -->
-    <div class="px-4 pb-4 pt-2 border-t shrink-0">
-      <div id="summary-info" class="text-center text-sm text-gray-700 mb-2">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
-      <button id="btn-save" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">SAVE</button>
-      <button id="btn-close" class="w-full mt-2 text-gray-600 text-sm">Tutup</button>
-      <p id="save-msg" class="text-green-600 text-sm mt-2 text-center hidden">Perubahan berhasil disimpan.</p>
-    </div>
-  </div>
-
-  <script>
+</div><div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+<button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Tambah Menu</button>
+<button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Tambah Kategori</button>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
+<div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div><button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
+<p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+<div class="flex justify-end mt-2 px-4 pb-4">
+<button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
+</div>
+</div>
+</div>
+<script>
     const menuItems = [
       { label: "Setup Server", icon: "server", key: "server" },
       { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
@@ -68,13 +60,13 @@ clean_html = """
       grid.innerHTML = "";
       menuItems.forEach(item => {
         const box = document.createElement("div");
-        box.className = \`cursor-pointer text-center p-4 transition-all rounded-xl shadow-md \${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}\`;
-        box.innerHTML = \`
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.innerHTML = `
           <div class="flex justify-center mb-2 text-2xl text-gray-700">
-            <i class="lucide lucide-\${item.icon}"></i>
+            <i class="lucide lucide-${item.icon}"></i>
           </div>
-          <div class="font-semibold text-sm text-gray-800">\${item.label}</div>
-        \`;
+          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+        `;
         box.onclick = () => {
           if (item.key === "menu") showModal();
         };
@@ -83,36 +75,55 @@ clean_html = """
       lucide.createIcons();
     }
 
+    function updateSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(m => m.active).length;
+      const nonaktif = total - aktif;
+      summaryInfo.innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+    }
+
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "flex items-center justify-between border rounded p-2 bg-white hover:shadow";
-        row.innerHTML = \`
+        row.className = "flex items-center justify-between border rounded p-2 bg-white hover:shadow relative overflow-hidden";
+        row.setAttribute("data-index", index);
+
+        row.innerHTML = `
           <div class="flex items-center gap-3 flex-grow">
-            <input type="checkbox" class="accent-green-500 w-5 h-5" \${menu.active ? "checked" : ""} onchange="toggleActive(\${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="\${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="\${menu.name}" onchange="updateName(\${index}, this.value)" />
-            \${!menu.isCategory ? \`<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon<input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, \${index})' /></label>\` : ""}
+            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index});renderSubMenus()" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value);renderSubMenus()" />
+            ${!menu.isCategory ? `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>${menu.icon ? `<img src='${menu.icon}' class='w-10 h-10 rounded' />` : '+ Icon'}<input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' /></label>` : ""}
           </div>
-          <div class="flex items-center gap-2">
-            <i class="lucide lucide-grip-vertical w-4 h-4 text-gray-400"></i>
-            <i class="lucide lucide-trash-2 text-red-500 cursor-pointer" onclick="deleteSubMenu(\${index})"></i>
+          <div class="flex items-center ml-2 gap-2">
+            <i class="lucide lucide-grip-vertical w-5 h-5 text-gray-500"></i>
+            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer hidden" onclick="deleteSubMenu(${index})"></i>
           </div>
-        \`;
+        `;
+
+        let startX;
+        row.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        });
+        row.addEventListener("touchmove", (e) => {
+          const deltaX = e.touches[0].clientX - startX;
+          const trashIcon = row.querySelector(".lucide-trash-2");
+          if (deltaX < -50) trashIcon.classList.remove("hidden");
+          if (deltaX > 50) trashIcon.classList.add("hidden");
+        });
+
         submenuList.appendChild(row);
       });
-      updateSummary();
       lucide.createIcons();
+      updateSummary();
     }
 
     function updateName(index, value) {
       subMenus[index].name = value;
-      updateSummary();
     }
 
     function toggleActive(index) {
       subMenus[index].active = !subMenus[index].active;
-      updateSummary();
     }
 
     function uploadIcon(e, index) {
@@ -120,19 +131,13 @@ clean_html = """
       if (file) {
         const url = URL.createObjectURL(file);
         subMenus[index].icon = url;
+        renderSubMenus();
       }
     }
 
     function deleteSubMenu(index) {
       subMenus.splice(index, 1);
       renderSubMenus();
-    }
-
-    function updateSummary() {
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      summaryInfo.innerText = \`Total: \${total} | Aktif: \${aktif} | Nonaktif: \${nonaktif}\`;
     }
 
     function showModal() {
@@ -150,7 +155,6 @@ clean_html = """
       localStorage.setItem("subMenus", JSON.stringify(subMenus));
       saveMsg.classList.remove("hidden");
       setTimeout(() => saveMsg.classList.add("hidden"), 2000);
-      updateSummary();
     };
 
     document.getElementById("btn-refresh").onclick = () => {
@@ -169,15 +173,6 @@ clean_html = """
     };
 
     renderMenus();
-  </script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+</script>
 </body>
 </html>
-"""
-
-# Simpan file
-html_fixed_path = "/mnt/data/index_clean_final.html"
-with open(html_fixed_path, "w", encoding="utf-8") as f:
-    f.write(clean_html)
-
-html_fixed_path
