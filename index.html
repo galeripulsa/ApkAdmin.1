@@ -9,8 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     .submenu-item {
-      transition: transform 0.3s ease;
-      position: relative;
+      transition: transform 0.2s;
     }
     .submenu-item .delete-icon {
       display: none;
@@ -24,16 +23,17 @@
   <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Apk Admin</h1>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
+  <!-- Modal -->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+      <div class="flex justify-between items-center px-4 py-3 border-b">
         <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
 
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t">
         <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
         <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
       </div>
@@ -51,6 +51,7 @@
     </div>
   </div>
 
+  <!-- Modal Konfirmasi -->
   <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
       <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
@@ -61,7 +62,7 @@
     </div>
   </div>
 
-    <script>
+  <script>
     const menuItems = [
       { label: "Setup Server", icon: "server", key: "server" },
       { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
@@ -93,13 +94,13 @@
       grid.innerHTML = "";
       menuItems.forEach(item => {
         const box = document.createElement("div");
-        box.className = cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"};
-        box.innerHTML = 
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.innerHTML = `
           <div class="flex justify-center mb-2 text-3xl text-gray-700">
             <i data-lucide="${item.icon}"></i>
           </div>
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
-        ;
+        `;
         box.onclick = () => {
           if (item.key === "menu") showModal();
         };
@@ -112,54 +113,38 @@
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
-
-        row.innerHTML = 
+        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2";
+        row.setAttribute("data-id", index);
+        row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
-            ${!menu.isCategory ? 
+            <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" placeholder="${menu.isCategory ? 'Nama Kategori' : 'Nama Menu'}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
               <div class="relative">
-                ${menu.icon ? 
+                ${menu.icon ? `
                   <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
-                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                 : 
-                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
+                  <input id="icon-${index}" type="file" accept="image/*" class="hidden" onchange="uploadIcon(event, ${index})" />
+                ` : `
+                  <label class="w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer">
                     + Icon
-                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                    <input id="icon-${index}" type="file" accept="image/*" class="hidden" onchange="uploadIcon(event, ${index})" />
                   </label>
-                }
+                `}
               </div>
-             : ""}
+            ` : ""}
           </div>
           <div class="flex items-center gap-2">
             <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>
-        ;
+        `;
         submenuList.appendChild(row);
-
-        let startX = 0;
-        row.addEventListener("touchstart", (e) => {
-          startX = e.touches[0].clientX;
-        });
-        row.addEventListener("touchmove", (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          if (deltaX < -30) {
-            document.querySelectorAll(".submenu-item").forEach(item => {
-              item.classList.remove("show-delete");
-            });
-            row.classList.add("show-delete");
-          } else if (deltaX > 30) {
-            row.classList.remove("show-delete");
-          }
-        });
       });
 
       const total = subMenus.length;
       const aktif = subMenus.filter(m => m.active).length;
       const nonaktif = total - aktif;
-      document.getElementById("summary-info").innerText = Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif};
+      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
 
       lucide.createIcons();
       updateRefreshButtonState();
@@ -193,20 +178,13 @@
       const modal = document.getElementById("confirm-modal");
       document.getElementById("confirm-message").innerText = message;
       modal.classList.remove("hidden");
-
-      document.getElementById("confirm-yes").onclick = () => {
-        modal.classList.add("hidden");
-        callback(true);
-      };
-      document.getElementById("confirm-no").onclick = () => {
-        modal.classList.add("hidden");
-        callback(false);
-      };
+      document.getElementById("confirm-yes").onclick = () => { modal.classList.add("hidden"); callback(true); };
+      document.getElementById("confirm-no").onclick = () => { modal.classList.add("hidden"); callback(false); };
     }
 
     function confirmDelete(index) {
       const itemName = subMenus[index].name || "(Tanpa Nama)";
-      showConfirm(Yakin ingin menghapus item: "${itemName}"?, (confirmed) => {
+      showConfirm(`Yakin ingin menghapus item: "${itemName}"?`, (confirmed) => {
         if (confirmed) {
           subMenus.splice(index, 1);
           isDirty = true;
@@ -271,22 +249,18 @@
       renderSubMenus();
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-      new Sortable(document.getElementById("submenu-list"), {
-        animation: 150,
-        handle: ".submenu-item",
-        onEnd: () => {
-          const newOrder = Array.from(document.querySelectorAll(".submenu-item")).map(el => {
-            const index = el.getAttribute("data-index");
-            return subMenus[+index];
-          });
-          subMenus = newOrder;
-          isDirty = true;
-          updateRefreshButtonState();
-          renderSubMenus();
-        }
-      });
+    new Sortable(submenuList, {
+      animation: 150,
+      onEnd: (evt) => {
+        const [movedItem] = subMenus.splice(evt.oldIndex, 1);
+        subMenus.splice(evt.newIndex, 0, movedItem);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      },
     });
+
+    renderMenus();
   </script>
 </body>
 </html>
