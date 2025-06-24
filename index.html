@@ -20,29 +20,29 @@
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Apk Admin</h1>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
   <!-- Modal -->
-  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
+  <div class="fixed inset-0 bg-yellow-800 z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
       <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
-        <h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu & Kategori</h2>
+        <h2 class="text-lg font-semibold Text-black">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
 
       <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Tambah Menu</button>
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Tambah Kategori</button>
+        <button class="border rounded px-0 py-0 w-full" id="btn-add-menu">+ Menu</button>
+        <button class="border rounded px-10 py-10 w-full" id="btn-add-cat">+ Kategori</button>
       </div>
 
       <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
 
       <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
 
-      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
+      <button class="w-full Bg-green-100 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
       <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
 
       <div class="flex justify-end mt-2 px-4 pb-4">
