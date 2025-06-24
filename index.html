@@ -17,6 +17,12 @@
     .submenu-item.show-delete .delete-icon {
       display: inline-block;
     }
+    .drag-handle {
+      cursor: grab;
+    }
+    .modal-bg {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -24,16 +30,26 @@
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
   <!-- Modal -->
-  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
+  <div class="fixed inset-0 z-50 hidden modal-bg items-center justify-center" id="confirm-modal">
+    <div class="bg-white rounded shadow p-4 max-w-sm w-full">
+      <p class="text-center mb-4" id="modal-message">Yakin?</p>
+      <div class="flex justify-end gap-2">
+        <button class="bg-gray-300 px-3 py-1 rounded" onclick="hideModal()">Batal</button>
+        <button class="bg-red-500 text-white px-3 py-1 rounded" id="modal-confirm-btn">Ya</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed inset-0 bg-white z-40 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
-        <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
+      <div class="flex justify-between items-center px-4 py-3 border-b">
+        <h2 class="text-lg font-semibold">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
 
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t">
         <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
         <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
       </div>
@@ -51,131 +67,85 @@
     </div>
   </div>
 
-  <!-- Modal Konfirmasi -->
-  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
-      <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
-      <div class="flex justify-center gap-4">
-        <button id="confirm-yes" class="bg-red-500 text-white px-4 py-2 rounded">Ya</button>
-        <button id="confirm-no" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Batal</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const menuItems = [
-      { label: "Setup Server", icon: "server", key: "server" },
-      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
-      { label: "Logo", icon: "image", key: "logo" },
-      { label: "Format Request", icon: "file-text", key: "format" },
-      { label: "Poin", icon: "star", key: "poin" },
-      { label: "Downline", icon: "users", key: "downline" },
-      { label: "Prabayar", icon: "phone", key: "prabayar" },
-      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
-      { label: "OTP", icon: "key", key: "otp" }
-    ];
-
-    let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+    const subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
     let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
     let isDirty = false;
 
-    const grid = document.getElementById("menu-grid");
-    const modal = document.getElementById("modal");
     const submenuList = document.getElementById("submenu-list");
-    const saveMsg = document.getElementById("save-msg");
+    const modal = document.getElementById("modal");
+    const modalBg = document.getElementById("confirm-modal");
+    const modalMsg = document.getElementById("modal-message");
+    const confirmBtn = document.getElementById("modal-confirm-btn");
+    let confirmAction = null;
 
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
+    function showModalConfirm(msg, callback) {
+      modalMsg.innerText = msg;
+      confirmAction = callback;
+      modalBg.classList.remove("hidden");
     }
 
-    function renderMenus() {
-      grid.innerHTML = "";
-      menuItems.forEach(item => {
-        const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
-        box.innerHTML = `
-          <div class="flex justify-center mb-2 text-3xl text-gray-700">
-            <i data-lucide="${item.icon}"></i>
-          </div>
-          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
-        `;
-        box.onclick = () => {
-          if (item.key === "menu") showModal();
-        };
-        grid.appendChild(box);
-      });
-      lucide.createIcons();
+    function hideModal() {
+      modalBg.classList.add("hidden");
+      confirmAction = null;
     }
+
+    confirmBtn.onclick = () => {
+      if (confirmAction) confirmAction();
+      hideModal();
+    };
 
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
+        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow relative";
 
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
             <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
             ${!menu.isCategory ? `
-              <div class="relative">
-                ${menu.icon ? `
-                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
-                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                ` : `
-                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
-                    + Icon
-                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                  </label>
-                `}
-              </div>
+              <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
+                <input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+              </label>
+              ${menu.icon ? `<img src="${menu.icon}" class="w-10 h-10 rounded object-cover border ml-2" />` : ''}
             ` : ""}
           </div>
           <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
-            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
+            <i data-lucide="grip-vertical" class="drag-handle w-5 h-5 text-gray-600"></i>
+            <i data-lucide="trash-2" class="delete-icon w-5 h-5 text-red-500 cursor-pointer" onclick="confirmDelete(${index})"></i>
           </div>
         `;
-        submenuList.appendChild(row);
 
         let startX = 0;
-        row.addEventListener("touchstart", (e) => {
-          startX = e.touches[0].clientX;
-        });
+        row.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
         row.addEventListener("touchmove", (e) => {
           const deltaX = e.touches[0].clientX - startX;
           if (deltaX < -30) {
-            document.querySelectorAll(".submenu-item").forEach(item => {
-              item.classList.remove("show-delete");
-            });
+            document.querySelectorAll(".submenu-item").forEach(el => el.classList.remove("show-delete"));
             row.classList.add("show-delete");
           } else if (deltaX > 30) {
             row.classList.remove("show-delete");
           }
         });
+
+        submenuList.appendChild(row);
       });
 
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
-
       lucide.createIcons();
-      updateRefreshButtonState();
     }
 
     function updateName(index, value) {
       subMenus[index].name = value;
       isDirty = true;
-      updateRefreshButtonState();
     }
 
     function toggleActive(index) {
       subMenus[index].active = !subMenus[index].active;
       isDirty = true;
-      updateRefreshButtonState();
       renderSubMenus();
     }
 
@@ -185,94 +155,20 @@
         const url = URL.createObjectURL(file);
         subMenus[index].icon = url;
         isDirty = true;
-        updateRefreshButtonState();
         renderSubMenus();
       }
     }
 
-    function showConfirm(message, callback) {
-      const modal = document.getElementById("confirm-modal");
-      document.getElementById("confirm-message").innerText = message;
-      modal.classList.remove("hidden");
-
-      document.getElementById("confirm-yes").onclick = () => {
-        modal.classList.add("hidden");
-        callback(true);
-      };
-      document.getElementById("confirm-no").onclick = () => {
-        modal.classList.add("hidden");
-        callback(false);
-      };
-    }
-
     function confirmDelete(index) {
-      const itemName = subMenus[index].name || "(Tanpa Nama)";
-      showConfirm(`Yakin ingin menghapus item: "${itemName}"?`, (confirmed) => {
-        if (confirmed) {
-          subMenus.splice(index, 1);
-          isDirty = true;
-          updateRefreshButtonState();
-          renderSubMenus();
-        }
+      const name = subMenus[index].name || "(Tanpa Nama)";
+      showModalConfirm(`Hapus item \"${name}\"?`, () => {
+        subMenus.splice(index, 1);
+        renderSubMenus();
+        isDirty = true;
       });
     }
 
-    function showModal() {
-      modal.classList.remove("hidden");
-      renderSubMenus();
-    }
-
-    document.getElementById("btn-close").onclick = () => {
-      if (isDirty) {
-        showConfirm("Perubahan belum disimpan. Yakin ingin menutup dan membatalkan perubahan?", (confirmed) => {
-          if (confirmed) {
-            modal.classList.add("hidden");
-            subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-            isDirty = false;
-            updateRefreshButtonState();
-          }
-        });
-      } else {
-        modal.classList.add("hidden");
-      }
-    };
-
-    document.getElementById("btn-save").onclick = () => {
-      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-      localStorage.setItem("subMenus", JSON.stringify(subMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-      saveMsg.classList.remove("hidden");
-      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
-    };
-
-    document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty) return;
-      showConfirm("Yakin ingin mengembalikan perubahan ke awal?", (confirmed) => {
-        if (confirmed) {
-          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-          isDirty = false;
-          updateRefreshButtonState();
-          renderSubMenus();
-        }
-      });
-    };
-
-    document.getElementById("btn-add-menu").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    };
-
-    document.getElementById("btn-add-cat").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    };
-
-    renderMenus();
+    renderSubMenus();
   </script>
 </body>
 </html>
