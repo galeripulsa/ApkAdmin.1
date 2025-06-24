@@ -1,238 +1,238 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Web Panel Admin Galeri Pulsa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    .submenu-item {
-      transition: transform 0.3s ease;
-      position: relative;
-    }
-    .submenu-item .delete-icon {
-      display: none;
-    }
-    .submenu-item.show-delete .delete-icon {
-      display: inline-block;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Panel Admin Galeri Pulsa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .submenu-item {
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-  <!-- Modal -->
-  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
-    <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
-        <h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu & Kategori</h2>
-        <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
-          <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
-        </button>
-      </div>
+  <!-- Modal -->
+  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
+    <div class="flex flex-col h-full w-full">
+      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+        <h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu & Kategori</h2>
+        <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
+          <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
+        </button>
+      </div>
 
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Tambah Menu</button>
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Tambah Kategori</button>
-      </div>
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+        <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Tambah Menu</button>
+        <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Tambah Kategori</button>
+      </div>
 
-      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
+      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
 
-      <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
+      <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
 
-      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
-      <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+      <button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
+      <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
 
-      <div class="flex justify-end mt-2 px-4 pb-4">
-        <button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
-      </div>
-    </div>
-  </div>
+      <div class="flex justify-end mt-2 px-4 pb-4">
+        <button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    const menuItems = [
-      { label: "Setup Server", icon: "server", key: "server" },
-      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
-      { label: "Logo", icon: "image", key: "logo" },
-      { label: "Format Request", icon: "file-text", key: "format" },
-      { label: "Poin", icon: "star", key: "poin" },
-      { label: "Downline", icon: "users", key: "downline" },
-      { label: "Prabayar", icon: "phone", key: "prabayar" },
-      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
-      { label: "OTP", icon: "key", key: "otp" }
-    ];
+  <script>
+    const menuItems = [
+      { label: "Setup Server", icon: "server", key: "server" },
+      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
+      { label: "Logo", icon: "image", key: "logo" },
+      { label: "Format Request", icon: "file-text", key: "format" },
+      { label: "Poin", icon: "star", key: "poin" },
+      { label: "Downline", icon: "users", key: "downline" },
+      { label: "Prabayar", icon: "phone", key: "prabayar" },
+      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
+      { label: "OTP", icon: "key", key: "otp" }
+    ];
 
-    let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
-      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
-    ];
-    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-    let isDirty = false;
+    let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
+    ];
+    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    let isDirty = false;
 
-    const grid = document.getElementById("menu-grid");
-    const modal = document.getElementById("modal");
-    const submenuList = document.getElementById("submenu-list");
-    const saveMsg = document.getElementById("save-msg");
+    const grid = document.getElementById("menu-grid");
+    const modal = document.getElementById("modal");
+    const submenuList = document.getElementById("submenu-list");
+    const saveMsg = document.getElementById("save-msg");
 
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
-    }
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
 
-    function renderMenus() {
-      grid.innerHTML = "";
-      menuItems.forEach(item => {
-        const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
-        box.innerHTML = `
-          <div class="flex justify-center mb-2 text-2xl text-gray-700">
-            <i data-lucide="${item.icon}"></i>
-          </div>
-          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
-        `;
-        box.onclick = () => {
-          if (item.key === "menu") showModal();
-        };
-        grid.appendChild(box);
-      });
-      lucide.createIcons();
-    }
+    function renderMenus() {
+      grid.innerHTML = "";
+      menuItems.forEach(item => {
+        const box = document.createElement("div");
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.innerHTML = `
+          <div class="flex justify-center mb-2 text-2xl text-gray-700">
+            <i data-lucide="${item.icon}"></i>
+          </div>
+          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+        `;
+        box.onclick = () => {
+          if (item.key === "menu") showModal();
+        };
+        grid.appendChild(box);
+      });
+      lucide.createIcons();
+    }
 
-    function renderSubMenus() {
-      submenuList.innerHTML = "";
-      subMenus.forEach((menu, index) => {
-        const row = document.createElement("div");
-        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
+    function renderSubMenus() {
+      submenuList.innerHTML = "";
+      subMenus.forEach((menu, index) => {
+        const row = document.createElement("div");
+        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
 
-        row.innerHTML = `
-          <div class="flex items-center gap-2 flex-1">
-            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
-            ${!menu.isCategory ? `
-              <div class="relative">
-                ${menu.icon ? `
-                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
-                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                ` : `
-                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
-                    + Icon
-                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                  </label>
-                `}
-              </div>
-            ` : ""}
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
-            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
-          </div>
-        `;
-        submenuList.appendChild(row);
+        row.innerHTML = `
+          <div class="flex items-center gap-2 flex-1">
+            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
+              <div class="relative">
+                ${menu.icon ? `
+                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
+                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                ` : `
+                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
+                    + Icon
+                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  </label>
+                `}
+              </div>
+            ` : ""}
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
+          </div>
+        `;
+        submenuList.appendChild(row);
 
-        let startX = 0;
-        row.addEventListener("touchstart", (e) => {
-          startX = e.touches[0].clientX;
-        });
-        row.addEventListener("touchmove", (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          if (deltaX < -30) {
-            row.classList.add("show-delete");
-          } else if (deltaX > 30) {
-            row.classList.remove("show-delete");
-          }
-        });
-      });
+        let startX = 0;
+        row.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        });
+        row.addEventListener("touchmove", (e) => {
+          const deltaX = e.touches[0].clientX - startX;
+          if (deltaX < -30) {
+            row.classList.add("show-delete");
+          } else if (deltaX > 30) {
+            row.classList.remove("show-delete");
+          }
+        });
+      });
 
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+      const total = subMenus.length;
+      const aktif = subMenus.filter(m => m.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
 
-      lucide.createIcons();
-      updateRefreshButtonState();
-    }
+      lucide.createIcons();
+      updateRefreshButtonState();
+    }
 
-    function updateName(index, value) {
-      subMenus[index].name = value;
-      isDirty = true;
-      updateRefreshButtonState();
-    }
+    function updateName(index, value) {
+      subMenus[index].name = value;
+      isDirty = true;
+      updateRefreshButtonState();
+    }
 
-    function toggleActive(index) {
-      subMenus[index].active = !subMenus[index].active;
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    }
+    function toggleActive(index) {
+      subMenus[index].active = !subMenus[index].active;
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    }
 
-    function uploadIcon(e, index) {
-      const file = e.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        subMenus[index].icon = url;
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    }
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        subMenus[index].icon = url;
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    }
 
-    function confirmDelete(index) {
-      const confirmed = confirm("Yakin ingin menghapus item ini?");
-      if (confirmed) {
-        subMenus.splice(index, 1);
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    }
+    function confirmDelete(index) {
+      const confirmed = confirm("Yakin ingin menghapus item ini?");
+      if (confirmed) {
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    }
 
-    function showModal() {
-      modal.classList.remove("hidden");
-      renderSubMenus();
-    }
+    function showModal() {
+      modal.classList.remove("hidden");
+      renderSubMenus();
+    }
 
-    document.getElementById("btn-close").onclick = () => {
-      modal.classList.add("hidden");
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-    };
+    document.getElementById("btn-close").onclick = () => {
+      modal.classList.add("hidden");
+      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+    };
 
-    document.getElementById("btn-save").onclick = () => {
-      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-      localStorage.setItem("subMenus", JSON.stringify(subMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-      saveMsg.classList.remove("hidden");
-      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
-    };
+    document.getElementById("btn-save").onclick = () => {
+      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+      localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+      saveMsg.classList.remove("hidden");
+      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
+    };
 
-    document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty) return;
-      const confirmed = confirm("Yakin ingin mengembalikan perubahan ke awal?");
-      if (confirmed) {
-        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-        isDirty = false;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    };
+    document.getElementById("btn-refresh").onclick = () => {
+      if (!isDirty) return;
+      const confirmed = confirm("Yakin ingin mengembalikan perubahan ke awal?");
+      if (confirmed) {
+        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+        isDirty = false;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    };
 
-    document.getElementById("btn-add-menu").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    };
+    document.getElementById("btn-add-menu").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
 
-    document.getElementById("btn-add-cat").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    };
+    document.getElementById("btn-add-cat").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
 
-    renderMenus();
-  </script>
+    renderMenus();
+  </script>
 </body>
 </html>
