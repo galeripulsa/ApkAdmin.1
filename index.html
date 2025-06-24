@@ -198,11 +198,15 @@
     }
 
     document.getElementById("btn-close").onclick = () => {
-      modal.classList.add("hidden");
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-    };
+  if (isDirty) {
+    const confirmed = confirm("Perubahan belum disimpan. Yakin ingin menutup dan membatalkan perubahan?");
+    if (!confirmed) return;
+  }
+  modal.classList.add("hidden");
+  subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+  isDirty = false;
+  updateRefreshButtonState();
+};
 
     document.getElementById("btn-save").onclick = () => {
       tempSubMenus = JSON.parse(JSON.stringify(subMenus));
