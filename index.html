@@ -72,6 +72,7 @@
       { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
       { label: "OTP", icon: "key", key: "otp" }
     ];
+
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
@@ -80,43 +81,42 @@
 
     const submenuList = document.getElementById("submenu-list");
 
-    function showConfirmationModal(message, onYes, onNo) {
-      const modal = document.getElementById("confirm-modal");
-      document.getElementById("confirm-message").innerText = message;
-      modal.classList.remove("hidden");
-      const yesBtn = document.getElementById("confirm-yes");
-      const noBtn = document.getElementById("confirm-no");
-      const cleanup = () => {
-        modal.classList.add("hidden");
-        yesBtn.onclick = null;
-        noBtn.onclick = null;
-      };
-      yesBtn.onclick = () => { cleanup(); onYes(); };
-      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
-    }
-
     function updateRefreshButtonState() {
       document.getElementById("btn-refresh").disabled = !isDirty;
     }
 
-    function renderMenus() {
-      const grid = document.getElementById("menu-grid");
-      grid.innerHTML = "";
-      menuItems.forEach(item => {
-        const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
-        box.innerHTML = `
-          <div class="flex justify-center mb-2 text-3xl text-gray-700">
-            <i data-lucide="${item.icon}"></i>
-          </div>
-          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
-        `;
-        box.onclick = () => {
-          if (item.key === "menu") showModal();
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          subMenus[index].icon = evt.target.result;
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
         };
-        grid.appendChild(box);
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function enableSwipeToDelete(row, index) {
+      let startX = 0;
+      let isSwiping = false;
+
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        isSwiping = false;
       });
-      lucide.createIcons();
+
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (Math.abs(deltaX) > 30) {
+          isSwiping = true;
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          if (deltaX < -30) row.classList.add("show-delete");
+          else row.classList.remove("show-delete");
+        }
+      });
     }
 
     function renderSubMenus() {
@@ -150,37 +150,6 @@
         enableSwipeToDelete(row, index);
       });
       lucide.createIcons();
-
-      new Sortable(submenuList, {
-        animation: 150,
-        onEnd: (evt) => {
-          const item = subMenus.splice(evt.oldIndex, 1)[0];
-          subMenus.splice(evt.newIndex, 0, item);
-          isDirty = true;
-          updateRefreshButtonState();
-        }
-      });
-
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
-    }
-
-    function enableSwipeToDelete(row, index) {
-      let startX = 0;
-      row.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-      });
-      row.addEventListener("touchmove", (e) => {
-        const deltaX = e.touches[0].clientX - startX;
-        if (deltaX < -30) {
-          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          row.classList.add("show-delete");
-        } else if (deltaX > 30) {
-          row.classList.remove("show-delete");
-        }
-      });
     }
 
     function updateName(index, value) {
@@ -196,25 +165,14 @@
       renderSubMenus();
     }
 
-    function uploadIcon(e, index) {
-      const file = e.target.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        subMenus[index].icon = url;
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    }
-
     function confirmDelete(index) {
-      const name = subMenus[index].name || "(Tanpa Nama)";
-      showConfirmationModal(`Yakin ingin menghapus item: "${name}"?`, () => {
+      const confirmed = confirm(`Yakin ingin menghapus item: "${subMenus[index].name}"?`);
+      if (confirmed) {
         subMenus.splice(index, 1);
         isDirty = true;
         updateRefreshButtonState();
         renderSubMenus();
-      });
+      }
     }
 
     function showModal() {
@@ -224,15 +182,13 @@
 
     document.getElementById("btn-close").onclick = () => {
       if (isDirty) {
-        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
-          document.getElementById("modal").classList.add("hidden");
-          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-          isDirty = false;
-          updateRefreshButtonState();
-        });
-      } else {
-        document.getElementById("modal").classList.add("hidden");
+        const confirmed = confirm("Perubahan belum disimpan. Tutup tanpa menyimpan?");
+        if (!confirmed) return;
       }
+      document.getElementById("modal").classList.add("hidden");
+      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+      isDirty = false;
+      updateRefreshButtonState();
     };
 
     document.getElementById("btn-save").onclick = () => {
@@ -247,12 +203,13 @@
 
     document.getElementById("btn-refresh").onclick = () => {
       if (!isDirty) return;
-      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+      const confirmed = confirm("Yakin ingin membatalkan perubahan?");
+      if (confirmed) {
         subMenus = JSON.parse(JSON.stringify(tempSubMenus));
         isDirty = false;
         updateRefreshButtonState();
         renderSubMenus();
-      });
+      }
     };
 
     document.getElementById("btn-add-menu").onclick = () => {
@@ -269,7 +226,7 @@
       renderSubMenus();
     };
 
-    renderMenus();
+    renderSubMenus();
   </script>
 </body>
 </html>
