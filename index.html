@@ -42,7 +42,7 @@
 
       <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
 
-      <button class="w-full bg-green-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
+      <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
       <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
 
       <div class="flex justify-end mt-2 px-4 pb-4">
@@ -177,14 +177,15 @@
     }
 
     function confirmDelete(index) {
-      const confirmed = confirm("Yakin ingin menghapus item ini?  ${index}");
-      if (confirmed) {
-        subMenus.splice(index, 1);
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    }
+  const itemName = subMenus[index].name || "(Tanpa Nama)";
+  const confirmed = confirm(`Yakin ingin menghapus item: "${itemName}"?`);
+  if (confirmed) {
+    subMenus.splice(index, 1);
+    isDirty = true;
+    updateRefreshButtonState();
+    renderSubMenus();
+  }
+}
 
     function showModal() {
       modal.classList.remove("hidden");
