@@ -79,6 +79,8 @@
     let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
     let isDirty = false;
 
+    const submenuList = document.getElementById("submenu-list");
+
     function updateRefreshButtonState() {
       document.getElementById("btn-refresh").disabled = !isDirty;
     }
@@ -107,26 +109,38 @@
       };
     }
 
-    function enableSwipeToDelete(row, index) {
+    function enableSwipeToDelete(row) {
       let startX = 0;
-      let isSwiping = false;
-
-      row.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-        isSwiping = false;
-      });
-
+      row.addEventListener("touchstart", (e) => startX = e.touches[0].clientX);
       row.addEventListener("touchmove", (e) => {
         const deltaX = e.touches[0].clientX - startX;
-        if (Math.abs(deltaX) > 30) {
-          isSwiping = true;
+        if (deltaX < -30) {
           document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          if (deltaX < -30) row.classList.add("show-delete");
-          else row.classList.remove("show-delete");
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
         }
       });
+    }
 
-      row.addEventListener("touchend", () => { if (isSwiping) startX = 0; });
+    function renderMenus() {
+      const grid = document.getElementById("menu-grid");
+      grid.innerHTML = "";
+      menuItems.forEach(item => {
+        const box = document.createElement("div");
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.innerHTML = `
+          <div class="flex justify-center mb-2 text-3xl text-gray-700">
+            <i data-lucide="${item.icon}"></i>
+          </div>
+          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+        `;
+        box.onclick = () => {
+          if (item.key === "menu") showModal();
+        };
+        grid.appendChild(box);
+      });
+      lucide.createIcons();
     }
 
     function renderSubMenus() {
@@ -144,7 +158,7 @@
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>`;
         submenuList.appendChild(row);
-        enableSwipeToDelete(row, index);
+        enableSwipeToDelete(row);
       });
       lucide.createIcons();
     }
@@ -163,12 +177,18 @@
     }
 
     function confirmDelete(index) {
-      showConfirmationModal(`Yakin ingin menghapus item: "${subMenus[index].name}"?`, () => {
+      const itemName = subMenus[index].name || "(Tanpa Nama)";
+      showConfirmationModal(`Yakin ingin menghapus item: "${itemName}"?`, () => {
         subMenus.splice(index, 1);
         isDirty = true;
         updateRefreshButtonState();
         renderSubMenus();
       });
+    }
+
+    function showModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      renderSubMenus();
     }
 
     document.getElementById("btn-close").onclick = () => {
@@ -218,6 +238,7 @@
       renderSubMenus();
     };
 
+    renderMenus();
     renderSubMenus();
   </script>
 </body>
