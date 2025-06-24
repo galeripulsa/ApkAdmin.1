@@ -11,8 +11,11 @@
       transition: transform 0.3s ease;
       position: relative;
     }
-    .submenu-item.swiped {
-      transform: translateX(-60px);
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
     }
   </style>
 </head>
@@ -23,7 +26,7 @@
   <!-- Modal -->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex flex-wrap justify-between items-center gap-2 px-4 py-3 border-b shrink-0">
+      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
         <h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
@@ -109,7 +112,7 @@
           </div>
           <div class="flex items-center gap-2">
             <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
-            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer" onclick="confirmDelete(${index})"></i>
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>
         `;
         submenuList.appendChild(row);
@@ -121,9 +124,9 @@
         row.addEventListener("touchmove", (e) => {
           const deltaX = e.touches[0].clientX - startX;
           if (deltaX < -30) {
-            row.classList.add("swiped");
+            row.classList.add("show-delete");
           } else if (deltaX > 30) {
-            row.classList.remove("swiped");
+            row.classList.remove("show-delete");
           }
         });
       });
@@ -164,15 +167,11 @@
     function confirmDelete(index) {
       const confirmed = confirm("Yakin ingin menghapus item ini?");
       if (confirmed) {
-        deleteSubmenu(index);
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
       }
-    }
-
-    function deleteSubmenu(index) {
-      subMenus.splice(index, 1);
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
     }
 
     function showModal() {
