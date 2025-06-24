@@ -6,6 +6,26 @@
   <title>Web Panel Admin Galeri Pulsa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet" />
+  <style>
+    .submenu-item {
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .submenu-item.swiped {
+      transform: translateX(-60px);
+    }
+    .delete-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: none;
+    }
+    .submenu-item.swiped .delete-icon {
+      display: block;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
   <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
@@ -95,8 +115,11 @@
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2";
+        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
         row.innerHTML = `
+          <div class="delete-icon">
+            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer" onclick="deleteSubmenu(${index})"></i>
+          </div>
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
             <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
@@ -104,10 +127,22 @@
           </div>
           <div class="flex items-center gap-2">
             <i class="lucide lucide-grip-vertical w-5 h-5 text-gray-600"></i>
-            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer hover:scale-110 transition" onclick="deleteSubmenu(${index})"></i>
           </div>
         `;
         submenuList.appendChild(row);
+
+        let startX = 0;
+        row.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        });
+        row.addEventListener("touchmove", (e) => {
+          const deltaX = e.touches[0].clientX - startX;
+          if (deltaX < -30) {
+            row.classList.add("swiped");
+          } else if (deltaX > 30) {
+            row.classList.remove("swiped");
+          }
+        });
       });
 
       const total = subMenus.length;
