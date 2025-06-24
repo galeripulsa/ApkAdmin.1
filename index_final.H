@@ -1,38 +1,68 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Web Panel Admin Galeri Pulsa</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet"/>
-<script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Panel Admin Galeri Pulsa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .submenu-item {
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-<h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Web Panel Admin Galeri Pulsa</h1>
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
-<!-- Modal -->
-<div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
-<div class="flex flex-col h-full w-full">
-<div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
-<h2 class="text-lg font-semibold text-gray-800">Pengaturan Menu &amp; Kategori</h2>
-<button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
-<i class="lucide lucide-refresh-ccw w-4 h-4"></i> Refresh
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Apk Admin</h1>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
+
+  <!-- Modal -->
+  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
+    <div class="flex flex-col h-full w-full">
+      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+        <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
+        <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
+          <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
-</div><div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
-<button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Tambah Menu</button>
-<button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Tambah Kategori</button>
-</div>
-<div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
-<div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div><button class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
-<p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
-<div class="flex justify-end mt-2 px-4 pb-4">
-<button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
-</div>
-</div>
-</div>
-<script>
+      </div>
+
+      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
+        <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
+        <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
+
+      <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
+
+      <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
+      <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+
+      <div class="flex justify-end mt-2 px-4 pb-4">
+        <button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi -->
+  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
+      <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
+      <div class="flex justify-center gap-4">
+        <button id="confirm-yes" class="bg-red-500 text-white px-4 py-2 rounded">Ya</button>
+        <button id="confirm-no" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const menuItems = [
       { label: "Setup Server", icon: "server", key: "server" },
       { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
@@ -49,12 +79,16 @@
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
     let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    let isDirty = false;
 
     const grid = document.getElementById("menu-grid");
     const modal = document.getElementById("modal");
     const submenuList = document.getElementById("submenu-list");
     const saveMsg = document.getElementById("save-msg");
-    const summaryInfo = document.getElementById("summary-info");
+
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
 
     function renderMenus() {
       grid.innerHTML = "";
@@ -62,8 +96,8 @@
         const box = document.createElement("div");
         box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
         box.innerHTML = `
-          <div class="flex justify-center mb-2 text-2xl text-gray-700">
-            <i class="lucide lucide-${item.icon}"></i>
+          <div class="flex justify-center mb-2 text-3xl text-gray-700">
+            <i data-lucide="${item.icon}"></i>
           </div>
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
         `;
@@ -75,55 +109,74 @@
       lucide.createIcons();
     }
 
-    function updateSummary() {
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      summaryInfo.innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
-    }
-
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "flex items-center justify-between border rounded p-2 bg-white hover:shadow relative overflow-hidden";
-        row.setAttribute("data-index", index);
+        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
 
         row.innerHTML = `
-          <div class="flex items-center gap-3 flex-grow">
-            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index});renderSubMenus()" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value);renderSubMenus()" />
-            ${!menu.isCategory ? `<label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>${menu.icon ? `<img src='${menu.icon}' class='w-10 h-10 rounded' />` : '+ Icon'}<input type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' /></label>` : ""}
+          <div class="flex items-center gap-2 flex-1">
+            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
+              <div class="relative">
+                ${menu.icon ? `
+                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
+                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                ` : `
+                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
+                    + Icon
+                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  </label>
+                `}
+              </div>
+            ` : ""}
           </div>
-          <div class="flex items-center ml-2 gap-2">
-            <i class="lucide lucide-grip-vertical w-5 h-5 text-gray-500"></i>
-            <i class="lucide lucide-trash-2 w-5 h-5 text-red-500 cursor-pointer hidden" onclick="deleteSubMenu(${index})"></i>
+          <div class="flex items-center gap-2">
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>
         `;
+        submenuList.appendChild(row);
 
-        let startX;
+        let startX = 0;
         row.addEventListener("touchstart", (e) => {
           startX = e.touches[0].clientX;
         });
         row.addEventListener("touchmove", (e) => {
           const deltaX = e.touches[0].clientX - startX;
-          const trashIcon = row.querySelector(".lucide-trash-2");
-          if (deltaX < -50) trashIcon.classList.remove("hidden");
-          if (deltaX > 50) trashIcon.classList.add("hidden");
+          if (deltaX < -30) {
+            document.querySelectorAll(".submenu-item").forEach(item => {
+              item.classList.remove("show-delete");
+            });
+            row.classList.add("show-delete");
+          } else if (deltaX > 30) {
+            row.classList.remove("show-delete");
+          }
         });
-
-        submenuList.appendChild(row);
       });
+
+      const total = subMenus.length;
+      const aktif = subMenus.filter(m => m.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+
       lucide.createIcons();
-      updateSummary();
+      updateRefreshButtonState();
     }
 
     function updateName(index, value) {
       subMenus[index].name = value;
+      isDirty = true;
+      updateRefreshButtonState();
     }
 
     function toggleActive(index) {
       subMenus[index].active = !subMenus[index].active;
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
     }
 
     function uploadIcon(e, index) {
@@ -131,13 +184,37 @@
       if (file) {
         const url = URL.createObjectURL(file);
         subMenus[index].icon = url;
+        isDirty = true;
+        updateRefreshButtonState();
         renderSubMenus();
       }
     }
 
-    function deleteSubMenu(index) {
-      subMenus.splice(index, 1);
-      renderSubMenus();
+    function showConfirm(message, callback) {
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = message;
+      modal.classList.remove("hidden");
+
+      document.getElementById("confirm-yes").onclick = () => {
+        modal.classList.add("hidden");
+        callback(true);
+      };
+      document.getElementById("confirm-no").onclick = () => {
+        modal.classList.add("hidden");
+        callback(false);
+      };
+    }
+
+    function confirmDelete(index) {
+      const itemName = subMenus[index].name || "(Tanpa Nama)";
+      showConfirm(`Yakin ingin menghapus item: "${itemName}"?`, (confirmed) => {
+        if (confirmed) {
+          subMenus.splice(index, 1);
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
+        }
+      });
     }
 
     function showModal() {
@@ -146,33 +223,56 @@
     }
 
     document.getElementById("btn-close").onclick = () => {
-      modal.classList.add("hidden");
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+      if (isDirty) {
+        showConfirm("Perubahan belum disimpan. Yakin ingin menutup dan membatalkan perubahan?", (confirmed) => {
+          if (confirmed) {
+            modal.classList.add("hidden");
+            subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+            isDirty = false;
+            updateRefreshButtonState();
+          }
+        });
+      } else {
+        modal.classList.add("hidden");
+      }
     };
 
     document.getElementById("btn-save").onclick = () => {
       tempSubMenus = JSON.parse(JSON.stringify(subMenus));
       localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      isDirty = false;
+      updateRefreshButtonState();
       saveMsg.classList.remove("hidden");
       setTimeout(() => saveMsg.classList.add("hidden"), 2000);
     };
 
     document.getElementById("btn-refresh").onclick = () => {
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      renderSubMenus();
+      if (!isDirty) return;
+      showConfirm("Yakin ingin mengembalikan perubahan ke awal?", (confirmed) => {
+        if (confirmed) {
+          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+          isDirty = false;
+          updateRefreshButtonState();
+          renderSubMenus();
+        }
+      });
     };
 
     document.getElementById("btn-add-menu").onclick = () => {
       subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+      isDirty = true;
+      updateRefreshButtonState();
       renderSubMenus();
     };
 
     document.getElementById("btn-add-cat").onclick = () => {
       subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+      isDirty = true;
+      updateRefreshButtonState();
       renderSubMenus();
     };
 
     renderMenus();
-</script>
+  </script>
 </body>
 </html>
