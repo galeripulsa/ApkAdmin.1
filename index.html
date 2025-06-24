@@ -142,7 +142,7 @@
               </div>` : ""}
           </div>
           <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
           </div>`;
         submenuList.appendChild(row);
@@ -150,6 +150,7 @@
       });
       lucide.createIcons();
       updateRefreshButtonState();
+      renderSummary();
     }
 
     function updateName(index, value) {
@@ -254,6 +255,26 @@
       updateRefreshButtonState();
       renderSubMenus();
     };
+
+    const sortable = new Sortable(submenuList, {
+      animation: 150,
+      handle: ".lucide-grip-vertical",
+      onEnd: function (evt) {
+        const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
+        subMenus.splice(evt.newIndex, 0, movedItem);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    });
+
+    function renderSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(item => item.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").textContent =
+        `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+    }
 
     renderMenus();
   </script>
