@@ -134,13 +134,18 @@
           startX = e.touches[0].clientX;
         });
         row.addEventListener("touchmove", (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          if (deltaX < -30) {
-            row.classList.add("show-delete");
-          } else if (deltaX > 30) {
-            row.classList.remove("show-delete");
-          }
-        });
+  const deltaX = e.touches[0].clientX - startX;
+  if (deltaX < -30) {
+    document.querySelectorAll(".submenu-item").forEach(item => {
+      item.classList.remove("show-delete");
+    });
+    
+    row.classList.add("show-delete");
+  } else if (deltaX > 30) {
+    // Sembunyikan kembali jika digeser ke kanan
+    row.classList.remove("show-delete");
+  }
+});
       });
 
       const total = subMenus.length;
