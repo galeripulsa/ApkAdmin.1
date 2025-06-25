@@ -6,6 +6,7 @@
   <title>Web Panel Admin Galeri Pulsa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     .submenu-item {
       transition: transform 0.3s ease;
@@ -20,38 +21,44 @@
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Apk Admin</h1>
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Apk Admin</h1>
+  </div>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-  <!-- Modal -->
+<!-- Modal -->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <div class="flex justify-between items-center px-4 py-3 border-b shrink-0">
+      <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0">
         <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
         <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
-
-      <div class="flex justify-between gap-2 px-4 pt-2 border-t shrink-0">
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-menu">+ Menu</button>
-        <button class="border rounded px-3 py-2 w-full" id="btn-add-cat">+ Kategori</button>
+      <div class="bg-cyan-400 flex justify-between gap-2 px-2 pt-2 border-px-5 shrink-0">
+        <button class="bg-gray-200 border rounded px-3 py-2 w-auto" id="btn-add-menu">+ Menu</button>
+        <button class="bg-yellow-300 border rounded px-3 py-2 w-auto" id="btn-add-cat">+ Kategori</button>
       </div>
+      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3 bg-cyan-100" id="submenu-list"></div>
+      
+      <div class="flex flex-col px-4 py-3 border-[3px] border-yellow-700 bg-cyan-500 sticky bottom-0 z-10 space-y-2">
 
-      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3" id="submenu-list"></div>
+  <p class="text-black text-sm text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
 
-      <div class="text-center text-sm text-gray-700 mt-2 px-4" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</div>
+    <p class="text-center text-sm text-white" id="summary-info">
+    Total: 6 | Aktif: 5 | Nonaktif: 1
+  </p>
+  
+  <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" id="btn-save">
+    SAVE
+  </button>
+  
+  <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" id="btn-close">
+    Tutup
+  </button>
 
-      <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mx-4 mt-2" id="btn-save">SAVE</button>
-      <p class="text-green-600 text-sm mt-2 text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+</div>
 
-      <div class="flex justify-end mt-2 px-4 pb-4">
-        <button class="text-gray-600 text-sm" id="btn-close">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Konfirmasi -->
   <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
       <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
@@ -81,14 +88,8 @@
     let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
     let isDirty = false;
 
-    const grid = document.getElementById("menu-grid");
-    const modal = document.getElementById("modal");
     const submenuList = document.getElementById("submenu-list");
-    const saveMsg = document.getElementById("save-msg");
-
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
-    }
+    const grid = document.getElementById("menu-grid");
 
     function renderMenus() {
       grid.innerHTML = "";
@@ -109,61 +110,65 @@
       lucide.createIcons();
     }
 
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
+    }
+
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
-        row.className = "submenu-item flex items-center justify-between border rounded p-2 bg-white hover:shadow gap-2 relative";
+         const bgColor = menu.isCategory
+  ? menu.active
+    ? "bg-yellow-300" // Kategori aktif
+    : "bg-yellow-100" // Kategori nonaktif
+  : menu.active
+    ? "bg-green-300"  // Item aktif
+    : "bg-gray-100";  // Item nonaktif
 
+row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" placeholder="${menu.isCategory ? "Nama Kategori" : "Nama Menu"}" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
             ${!menu.isCategory ? `
               <div class="relative">
                 ${menu.icon ? `
                   <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
                   <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                 ` : `
-                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>
-                    + Icon
+                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
                     <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                   </label>
                 `}
-              </div>
-            ` : ""}
+              </div>` : ""}
           </div>
           <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600"></i>
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
             <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
-          </div>
-        `;
+          </div>`;
         submenuList.appendChild(row);
-
-        let startX = 0;
-        row.addEventListener("touchstart", (e) => {
-          startX = e.touches[0].clientX;
-        });
-        row.addEventListener("touchmove", (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          if (deltaX < -30) {
-            document.querySelectorAll(".submenu-item").forEach(item => {
-              item.classList.remove("show-delete");
-            });
-            row.classList.add("show-delete");
-          } else if (deltaX > 30) {
-            row.classList.remove("show-delete");
-          }
-        });
+        enableSwipeToDelete(row);
       });
-
-      const total = subMenus.length;
-      const aktif = subMenus.filter(m => m.active).length;
-      const nonaktif = total - aktif;
-      document.getElementById("summary-info").innerText = `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
-
       lucide.createIcons();
       updateRefreshButtonState();
+      renderSummary();
     }
 
     function updateName(index, value) {
@@ -182,58 +187,56 @@
     function uploadIcon(e, index) {
       const file = e.target.files[0];
       if (file) {
-        const url = URL.createObjectURL(file);
-        subMenus[index].icon = url;
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
-      }
-    }
-
-    function showConfirm(message, callback) {
-      const modal = document.getElementById("confirm-modal");
-      document.getElementById("confirm-message").innerText = message;
-      modal.classList.remove("hidden");
-
-      document.getElementById("confirm-yes").onclick = () => {
-        modal.classList.add("hidden");
-        callback(true);
-      };
-      document.getElementById("confirm-no").onclick = () => {
-        modal.classList.add("hidden");
-        callback(false);
-      };
-    }
-
-    function confirmDelete(index) {
-      const itemName = subMenus[index].name || "(Tanpa Nama)";
-      showConfirm(`Yakin ingin menghapus item: "${itemName}"?`, (confirmed) => {
-        if (confirmed) {
-          subMenus.splice(index, 1);
+        const reader = new FileReader();
+        reader.onload = () => {
+          subMenus[index].icon = reader.result;
           isDirty = true;
           updateRefreshButtonState();
           renderSubMenus();
-        }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function confirmDelete(index) {
+      showConfirmationModal(`Yakin ingin menghapus item: "${subMenus[index].name}"?`, () => {
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
       });
     }
 
     function showModal() {
-      modal.classList.remove("hidden");
+      document.getElementById("modal").classList.remove("hidden");
       renderSubMenus();
+    }
+
+    function showConfirmationModal(message, onYes, onNo) {
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = message;
+      modal.classList.remove("hidden");
+      const yesBtn = document.getElementById("confirm-yes");
+      const noBtn = document.getElementById("confirm-no");
+      const cleanup = () => {
+        modal.classList.add("hidden");
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+      };
+      yesBtn.onclick = () => { cleanup(); onYes(); };
+      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
     }
 
     document.getElementById("btn-close").onclick = () => {
       if (isDirty) {
-        showConfirm("Perubahan belum disimpan. Yakin ingin menutup dan membatalkan perubahan?", (confirmed) => {
-          if (confirmed) {
-            modal.classList.add("hidden");
-            subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-            isDirty = false;
-            updateRefreshButtonState();
-          }
+        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
+          document.getElementById("modal").classList.add("hidden");
+          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+          isDirty = false;
+          updateRefreshButtonState();
         });
       } else {
-        modal.classList.add("hidden");
+        document.getElementById("modal").classList.add("hidden");
       }
     };
 
@@ -242,19 +245,18 @@
       localStorage.setItem("subMenus", JSON.stringify(subMenus));
       isDirty = false;
       updateRefreshButtonState();
+      const saveMsg = document.getElementById("save-msg");
       saveMsg.classList.remove("hidden");
       setTimeout(() => saveMsg.classList.add("hidden"), 2000);
     };
 
     document.getElementById("btn-refresh").onclick = () => {
       if (!isDirty) return;
-      showConfirm("Yakin ingin mengembalikan perubahan ke awal?", (confirmed) => {
-        if (confirmed) {
-          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-          isDirty = false;
-          updateRefreshButtonState();
-          renderSubMenus();
-        }
+      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+        isDirty = false;
+        updateRefreshButtonState();
+        renderSubMenus();
       });
     };
 
@@ -272,8 +274,27 @@
       renderSubMenus();
     };
 
+    const sortable = new Sortable(submenuList, {
+      animation: 150,
+      handle: ".lucide-grip-vertical",
+      onEnd: function (evt) {
+        const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
+        subMenus.splice(evt.newIndex, 0, movedItem);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    });
+
+    function renderSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(item => item.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").textContent =
+        `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+    }
+
     renderMenus();
   </script>
 </body>
 </html>
-
