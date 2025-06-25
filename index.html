@@ -67,6 +67,82 @@
     <button onclick="openModalSetupCenter()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Setup Center</button>
     <button onclick="document.getElementById('modal-server-options').classList.add('hidden')" class="text-sm text-gray-500 w-full">Tutup</button>
   </div>
+
+<!-- Modal Setup Server -->
+<div id="modal-setup-server" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center hidden">
+  <div class="bg-white rounded-lg p-6 w-11/12 max-w-md space-y-4 shadow">
+    <h2 class="text-xl font-semibold text-center text-gray-800">Setup Server</h2>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nama Konter</label>
+      <input type="text" placeholder="Nama Konter" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Alamat Konter</label>
+      <input type="text" placeholder="Alamat Lengkap" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <button onclick="closeAllModals()" class="w-full bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400">Tutup</button>
+    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Save</button>
+  </div>
+</div>
+
+<!-- Modal Setup Center -->
+<div id="modal-setup-center" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center hidden overflow-y-auto">
+  <div class="bg-white rounded-lg p-6 w-11/12 max-w-md space-y-4 shadow">
+
+    <h2 class="text-xl font-semibold text-center text-gray-800">Setup Center</h2>
+
+    <!-- IP Center -->
+    <h3 class="text-lg font-semibold text-gray-700">IP Center</h3>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nama Center</label>
+      <input type="text" placeholder="Contoh: IP Center A" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Server Center</label>
+      <input type="text" placeholder="192.168.1.1" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Host</label>
+      <input type="text" placeholder="jeon/smpe" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <!-- Jabber Center -->
+    <h3 class="text-lg font-semibold text-gray-700">Jabber Center</h3>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nama Center</label>
+      <input type="text" placeholder="Contoh: Jabber 1" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Server Center</label>
+      <input type="text" placeholder="192.168.2.1" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Host</label>
+      <input type="text" placeholder="host/jabber" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <!-- WhatsApp Center -->
+    <h3 class="text-lg font-semibold text-gray-700">WhatsApp Center</h3>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
+      <input type="text" placeholder="6281234567890" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <!-- SMS Center -->
+    <h3 class="text-lg font-semibold text-gray-700">SMS Center</h3>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nomor SMS Center</label>
+      <input type="text" placeholder="08123456789" class="mt-1 w-full border px-3 py-2 rounded" />
+    </div>
+
+    <button onclick="closeAllModals()" class="w-full bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400">Tutup</button>
+    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Save</button>
+  </div>
+</div>
+
 </div>
 
 
