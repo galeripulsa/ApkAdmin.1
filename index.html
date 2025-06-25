@@ -217,19 +217,27 @@
     }
 
     function showConfirmationModal(message, onYes, onNo) {
-      const modal = document.getElementById("confirm-modal");
-      document.getElementById("confirm-message").innerText = message;
-      modal.classList.remove("hidden");
-      const yesBtn = document.getElementById("confirm-yes");
-      const noBtn = document.getElementById("confirm-no");
-      const cleanup = () => {
-        modal.classList.add("hidden");
-        yesBtn.onclick = null;
-        noBtn.onclick = null;
-      };
-      yesBtn.onclick = () => { cleanup(); onYes(); };
-      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
-    }
+  const modal = document.getElementById("confirm-modal");
+  document.getElementById("confirm-message").innerText = message;
+  modal.classList.remove("hidden");
+
+  const yesBtn = document.getElementById("confirm-yes");
+  const noBtn = document.getElementById("confirm-no");
+
+  // Hapus event sebelumnya
+  yesBtn.onclick = null;
+  noBtn.onclick = null;
+
+  // Tambahkan event baru
+  yesBtn.onclick = () => {
+    modal.classList.add("hidden");
+    if (typeof onYes === "function") onYes();
+  };
+  noBtn.onclick = () => {
+    modal.classList.add("hidden");
+    if (typeof onNo === "function") onNo();
+  };
+}
 
     document.getElementById("btn-close").onclick = () => {
       if (isDirty) {
