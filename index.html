@@ -26,7 +26,7 @@
   </div>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-<!-- Modal Menu-->
+  <!-- Modal -->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
       <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0">
@@ -40,111 +40,17 @@
         <button class="bg-yellow-300 border rounded px-3 py-2 w-auto" id="btn-add-cat">+ Kategori</button>
       </div>
       <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3 bg-cyan-100" id="submenu-list"></div>
-      
+
       <div class="flex flex-col px-4 py-3 border-[3px] border-yellow-700 bg-cyan-500 sticky bottom-0 z-10 space-y-2">
-
-  <p class="text-black text-sm text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
-
-    <p class="text-center text-sm text-white" id="summary-info">
-    Total: 6 | Aktif: 5 | Nonaktif: 1
-  </p>
-  
-  <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" id="btn-save">
-    SAVE
-  </button>
-  
-  <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" id="btn-close">
-    Tutup
-  </button>
-
-</div>
-
-  <!-- Modal Pilihan Setup -->
-<div id="modal-server-options" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center hidden">
-  <div class="bg-white rounded-lg p-6 w-11/12 max-w-md space-y-4 shadow">
-    <h2 class="text-xl font-semibold text-center text-gray-800">Pilih Pengaturan</h2>
-    <button onclick="openModalSetupServer()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Setup Server</button>
-    <button onclick="openModalSetupCenter()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Setup Center</button>
-    <button onclick="document.getElementById('modal-server-options').classList.add('hidden')" class="text-sm text-gray-500 w-full">Tutup</button>
+        <p class="text-black text-sm text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+        <p class="text-center text-sm text-white" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
+        <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" id="btn-save">SAVE</button>
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" id="btn-close">Tutup</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<!-- Modal Setup Server -->
-<div id="modal-setup-server" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center hidden">
-  <div class="bg-white rounded-lg p-6 w-11/12 max-w-md space-y-4 shadow">
-    <h2 class="text-xl font-semibold text-center text-gray-800">Setup Server</h2>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Nama Konter</label>
-      <input type="text" placeholder="Nama Konter" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Alamat Konter</label>
-      <input type="text" placeholder="Alamat Lengkap" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <button onclick="closeAllModals()" class="w-full bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400">Tutup</button>
-    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Save</button>
-  </div>
-</div>
-
-<!-- Modal Setup Center -->
-<div id="modal-setup-center" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center hidden overflow-y-auto">
-  <div class="bg-white rounded-lg p-6 w-11/12 max-w-md space-y-4 shadow">
-
-    <h2 class="text-xl font-semibold text-center text-gray-800">Setup Center</h2>
-
-    <!-- IP Center -->
-    <h3 class="text-lg font-semibold text-gray-700">IP Center</h3>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Nama Center</label>
-      <input type="text" placeholder="Contoh: IP Center A" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Server Center</label>
-      <input type="text" placeholder="192.168.1.1" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Host</label>
-      <input type="text" placeholder="jeon/smpe" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <!-- Jabber Center -->
-    <h3 class="text-lg font-semibold text-gray-700">Jabber Center</h3>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Nama Center</label>
-      <input type="text" placeholder="Contoh: Jabber 1" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Server Center</label>
-      <input type="text" placeholder="192.168.2.1" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Host</label>
-      <input type="text" placeholder="host/jabber" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <!-- WhatsApp Center -->
-    <h3 class="text-lg font-semibold text-gray-700">WhatsApp Center</h3>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp</label>
-      <input type="text" placeholder="6281234567890" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <!-- SMS Center -->
-    <h3 class="text-lg font-semibold text-gray-700">SMS Center</h3>
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Nomor SMS Center</label>
-      <input type="text" placeholder="08123456789" class="mt-1 w-full border px-3 py-2 rounded" />
-    </div>
-
-    <button onclick="closeAllModals()" class="w-full bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400">Tutup</button>
-    <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Save</button>
-  </div>
-</div>
-
-
+  <!-- Konfirmasi Hapus -->
   <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
       <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
@@ -155,6 +61,7 @@
     </div>
   </div>
 
+  <!-- SCRIPT -->
   <script>
     const menuItems = [
       { label: "Setup Server", icon: "server", key: "server" },
@@ -168,6 +75,7 @@
       { label: "OTP", icon: "key", key: "otp" }
     ];
 
+    let activeKey = "menu";
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
@@ -180,8 +88,12 @@
     function renderMenus() {
       grid.innerHTML = "";
       menuItems.forEach(item => {
+        const isActive = item.key === activeKey;
         const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
+          isActive ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"
+        }`;
+        box.setAttribute("data-key", item.key);
         box.innerHTML = `
           <div class="flex justify-center mb-2 text-3xl text-gray-700">
             <i data-lucide="${item.icon}"></i>
@@ -189,50 +101,34 @@
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
         `;
         box.onclick = () => {
-          if (item.key === "menu") {
-  showModal();
-} else if (item.key === "server") {
-  document.getElementById("modal-server-options").classList.remove("hidden");
-}
+          activeKey = item.key;
+          renderMenus();
+          handleMenuClick(item.key);
         };
         grid.appendChild(box);
       });
       lucide.createIcons();
     }
 
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
-    }
-
-    function enableSwipeToDelete(row) {
-      let startX = 0;
-      row.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-      });
-      row.addEventListener("touchmove", (e) => {
-        const deltaX = e.touches[0].clientX - startX;
-        if (deltaX < -30) {
-          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          row.classList.add("show-delete");
-        } else if (deltaX > 30) {
-          row.classList.remove("show-delete");
-        }
-      });
+    function handleMenuClick(key) {
+      if (key === "menu") {
+        showModal();
+      } else if (key === "server") {
+        alert("Setup Server diklik");
+      } else {
+        alert("Klik menu: " + key);
+      }
     }
 
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
-        const row = document.createElement("div");
-         const bgColor = menu.isCategory
-  ? menu.active
-    ? "bg-yellow-300" // Kategori aktif
-    : "bg-yellow-100" // Kategori nonaktif
-  : menu.active
-    ? "bg-green-300"  // Item aktif
-    : "bg-gray-100";  // Item nonaktif
+        const bgColor = menu.isCategory
+          ? menu.active ? "bg-yellow-300" : "bg-yellow-100"
+          : menu.active ? "bg-green-300" : "bg-gray-100";
 
-row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
+        const row = document.createElement("div");
+        row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
@@ -294,6 +190,22 @@ row.className = `submenu-item flex items-center justify-between border rounded p
         isDirty = true;
         updateRefreshButtonState();
         renderSubMenus();
+      });
+    }
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
       });
     }
 
@@ -385,28 +297,6 @@ row.className = `submenu-item flex items-center justify-between border rounded p
     }
 
     renderMenus();
-
-  document.getElementById("btn-setup-server").addEventListener("click", function () {
-    document.getElementById("modal-server-options").classList.remove("hidden");
-  });
-
-
-function openModalSetupServer() {
-  document.getElementById("modal-server-options").classList.add("hidden");
-  document.getElementById("modal-setup-server").classList.remove("hidden");
-}
-
-function openModalSetupCenter() {
-  document.getElementById("modal-server-options").classList.add("hidden");
-  document.getElementById("modal-setup-center").classList.remove("hidden");
-}
-
-function closeAllModals() {
-  document.getElementById("modal-server-options").classList.add("hidden");
-  document.getElementById("modal-setup-server").classList.add("hidden");
-  document.getElementById("modal-setup-center").classList.add("hidden");
-}
-
   </script>
 </body>
 </html>
