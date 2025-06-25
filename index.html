@@ -253,14 +253,16 @@
     };
 
     document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty) return;
-      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
-        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-        isDirty = false;
-        updateRefreshButtonState();
-        renderSubMenus();
-      });
-    };
+  if (!isDirty) return;
+  showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+    subMenus = JSON.parse(JSON.stringify(tempSubMenus));  // reset data
+    isDirty = false;
+    updateRefreshButtonState();
+    renderMenus();       
+    renderSubMenus();    
+  });
+};
+
 
     document.getElementById("btn-add-menu").onclick = () => {
       subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
