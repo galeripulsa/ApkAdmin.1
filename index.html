@@ -311,6 +311,11 @@ row.className = `submenu-item flex items-center justify-between border rounded p
 
     renderMenus();
 
+  document.getElementById("btn-setup-server").addEventListener("click", function () {
+    document.getElementById("modal-server-options").classList.remove("hidden");
+  });
+
+
 function openModalSetupServer() {
   document.getElementById("modal-server-options").classList.add("hidden");
   document.getElementById("modal-setup-server").classList.remove("hidden");
