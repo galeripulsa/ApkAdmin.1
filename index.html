@@ -125,13 +125,14 @@
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
          const bgColor = menu.isCategory
-          ? "bg-yellow-150"
-          : "bg-black-150"
-          : menu.active
-            ? "bg-green-200"
-            : "bg-gray-100";
+  ? menu.active
+    ? "bg-yellow-100" // Kategori aktif
+    : "bg-yellow-300" // Kategori nonaktif
+  : menu.active
+    ? "bg-green-100"  // Item aktif
+    : "bg-gray-100";  // Item nonaktif
 
-        row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
+row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
