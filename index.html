@@ -125,9 +125,10 @@
       subMenus.forEach((menu, index) => {
         const row = document.createElement("div");
          const bgColor = menu.isCategory
-          ? "bg-yellow-100"
+          ? "bg-yellow-150"
+          : "bg-black-150"
           : menu.active
-            ? "bg-green-100"
+            ? "bg-green-200"
             : "bg-gray-100";
 
         row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
