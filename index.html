@@ -341,7 +341,7 @@
     renderMenus();
 
 
-// -------> 👉Setup Server
+// ✅✅✅ SETUP SERVER ✅✅✅
 
     function showSetupServerModal() {
   const modal = document.getElementById("modalSetupServer");
@@ -381,6 +381,9 @@ function closeSetupServerModal() {
 
 
 function openServerSettings() {
+  // Ambil data dari localStorage kalau ada
+  const saved = JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" };
+
   const modal = document.getElementById("modalSetupServer");
   modal.innerHTML = `
     <div class="max-w-md mx-auto w-full">
@@ -389,11 +392,11 @@ function openServerSettings() {
       <form onsubmit="submitServerSettings(event)" class="space-y-4">
         <div>
           <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
-          <input type="text" id="namaServer" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
+          <input type="text" id="namaServer" value="${saved.nama}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
         </div>
         <div>
           <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
-          <textarea id="alamatServer" rows="3" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required></textarea>
+          <textarea id="alamatServer" rows="3" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required>${saved.alamat}</textarea>
         </div>
         <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
           Simpan
