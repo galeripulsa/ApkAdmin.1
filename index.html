@@ -379,6 +379,30 @@ function openCenterSettings() {
   alert("Tombol 'Center Server' diklik");
 }
 
+function submitServerSettings(event) {
+  event.preventDefault(); // Hindari reload form
+
+  const nama = document.getElementById("namaServer").value.trim();
+  const alamat = document.getElementById("alamatServer").value.trim();
+
+  if (!nama || !alamat) {
+    alert("Semua kolom harus diisi.");
+    return;
+  }
+
+  // Simpan ke localStorage
+  const serverData = { nama, alamat };
+  localStorage.setItem("setupServer", JSON.stringify(serverData));
+
+  // Tampilkan notifikasi
+  showToast("Melayani...");
+
+  // Tutup modal setelah delay sedikit
+  setTimeout(() => {
+    closeSetupServerModal();
+  }, 1200);
+}
+
   </script>
 </body>
 </html>
