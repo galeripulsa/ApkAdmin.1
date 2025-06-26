@@ -137,9 +137,10 @@
   if (key === "menu") {
     showModal();
   } else if (key === "server") {
-    // Aksi khusus untuk tombol Setup Server (jika ada), atau cukup kosong
+    showSetupServerModal();
   } else {
-    // Aksi lainnya, misalnya buka halaman lain (tanpa alert)
+    else if (key === "format")
+    showModal();
   }
 }
 
