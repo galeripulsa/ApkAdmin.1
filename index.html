@@ -8,6 +8,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
+    //✅ Menu Trx ✅
     .submenu-item {
       transition: transform 0.3s ease;
       position: relative;
@@ -18,6 +19,38 @@
     .submenu-item.show-delete .delete-icon {
       display: inline-block;
     }
+
+   //✅ Server Center ✅
+  .form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 1rem 1rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    font-size: 1rem;
+  }
+  .form-group label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: white;
+    color: #aaa;
+    transition: 0.2s ease all;
+    padding: 0 0.3rem;
+    pointer-events: none;
+  }
+  .form-group input:focus + label,
+  .form-group input:not(:placeholder-shown) + label {
+    top: -0.6rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    color: #007bff;
+  }
+
   </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -26,7 +59,7 @@
   </div>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-  <!-- Modal -->
+  <!-- ✅✅✅ MENU TRX ✅✅✅-->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
       <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0">
@@ -61,7 +94,7 @@
     </div>
   </div>
 
-   <!-- Modal Setup Server (Desain List Keren) -->
+<!--✅✅✅ Modal Setup Server (Desain List Keren) ✅✅✅-->
 <div id="modalSetupServer" class="fixed inset-0 z-50 bg-white overflow-auto p-6 hidden">
   <div class="max-w-md mx-auto">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Server</h2>
@@ -424,15 +457,23 @@ function openCenterSettings() {
     <div class="max-w-xl mx-auto w-full space-y-6">
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Center Server</h2>
 
-      <!-- Bagian IP Center -->
+      <!--✅ Bagian IP Center -->
       <div>
-        <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
-        <input type="text" id="ip-nama" placeholder="Nama Center" value="${saved.ip.nama}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
-        <input type="text" id="ip-server" placeholder="Server Center" value="${saved.ip.server}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
-        <input type="text" id="ip-host" placeholder="Host" value="${saved.ip.host}" class="w-full border border-gray-300 rounded px-4 py-2" />
-      </div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">IP Center</h2>
+<div class="form-group">
+  <input type="text" id="ip-nama" placeholder=" " />
+  <label for="ip-nama">Nama Center</label>
+</div>
+<div class="form-group">
+  <input type="text" id="ip-server" placeholder=" " />
+  <label for="ip-server">Server Center</label>
+</div>
+<div class="form-group">
+  <input type="text" id="ip-host" placeholder=" " />
+  <label for="ip-host">Host</label>
+</div>
 
-      <!-- Bagian Jabber Center -->
+      <!--✅ Bagian Jabber Center -->
       <div>
         <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
         <input type="text" id="jabber-nama" placeholder="Nama Center" value="${saved.jabber.nama}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
@@ -440,7 +481,7 @@ function openCenterSettings() {
         <input type="text" id="jabber-host" placeholder="Host" value="${saved.jabber.host}" class="w-full border border-gray-300 rounded px-4 py-2" />
       </div>
 
-      <!-- Bagian Nomor Center -->
+      <!--✅ Bagian Nomor Center -->
       <div>
         <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
         <input type="text" id="wa-center" placeholder="WhatsApp Center" value="${saved.nomor.whatsapp}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
