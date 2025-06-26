@@ -349,8 +349,31 @@ function closeSetupServerModal() {
 }
 
 function openServerSettings() {
-  alert("Tombol 'Setup Server' diklik");
+  const modal = document.getElementById("modalSetupServer");
+  modal.innerHTML = `
+    <div class="max-w-md mx-auto w-full">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Setup Server</h2>
+
+      <form onsubmit="submitServerSettings(event)" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
+          <input type="text" id="namaServer" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Masukkan nama server" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
+          <textarea id="alamatServer" rows="3" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Masukkan alamat server" required></textarea>
+        </div>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+          Simpan
+        </button>
+        <button type="button" onclick="closeSetupServerModal()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+          Batal
+        </button>
+      </form>
+    </div>
+  `;
 }
+
 
 function openCenterSettings() {
   alert("Tombol 'Center Server' diklik");
