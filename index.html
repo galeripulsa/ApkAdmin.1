@@ -447,6 +447,43 @@ function openServerSettings() {
   `;
 }
 
+//✅✅✅✅✅
+
+function submitServerSettings(event) {
+  event.preventDefault();
+
+  const nama = document.getElementById("namaServer").value.trim();
+  const alamat = document.getElementById("alamatServer").value.trim();
+
+  if (!nama || !alamat) {
+    alert("Semua kolom harus diisi.");
+    return;
+  }
+
+  const serverData = { nama, alamat };
+  localStorage.setItem("setupServer", JSON.stringify(serverData));
+
+  showToast("Data Berhasil Disimpan");
+  // Jangan tutup modal otomatis, biarkan user klik tombol "Kembali"
+}
+
+
+function showToast(message) {
+  let toast = document.getElementById("toast-message");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "toast-message";
+    toast.className = "fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+  }, 2500);
+}
+
 
  // ✅ Bagian Center ✅
 function openCenterSettings() {
@@ -521,7 +558,7 @@ function openCenterSettings() {
 
 
 function submitCenterSettings() {
-  const data = {
+  const centerData = {
     ip: {
       nama: document.getElementById("ip-nama").value.trim(),
       server: document.getElementById("ip-server").value.trim(),
@@ -538,47 +575,12 @@ function submitCenterSettings() {
     }
   };
 
-  localStorage.setItem("centerServer", JSON.stringify(data));
-  showToast("Data Center disimpan");
+  localStorage.setItem("centerServer", JSON.stringify(centerData));
+
+  // Tampilkan notifikasi melayang
+  showToast("✅ Data Center Server berhasil disimpan!");
 }
 
-
-//✅✅✅✅✅✅✅✅✅✅✅
-
-function submitServerSettings(event) {
-  event.preventDefault();
-
-  const nama = document.getElementById("namaServer").value.trim();
-  const alamat = document.getElementById("alamatServer").value.trim();
-
-  if (!nama || !alamat) {
-    alert("Semua kolom harus diisi.");
-    return;
-  }
-
-  const serverData = { nama, alamat };
-  localStorage.setItem("setupServer", JSON.stringify(serverData));
-
-  showToast("Data Berhasil Disimpan");
-  // Jangan tutup modal otomatis, biarkan user klik tombol "Kembali"
-}
-
-
-function showToast(message) {
-  let toast = document.getElementById("toast-message");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.id = "toast-message";
-    toast.className = "fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300";
-    document.body.appendChild(toast);
-  }
-  toast.textContent = message;
-  toast.style.opacity = "1";
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-  }, 3000);
-}
 
 
   </script>
