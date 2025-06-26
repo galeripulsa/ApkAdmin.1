@@ -449,7 +449,6 @@ function openServerSettings() {
 
 
  // ✅ Bagian Center ✅
-
 function openCenterSettings() {
   const modal = document.getElementById("modalSetupServer");
   const saved = JSON.parse(localStorage.getItem("centerServer")) || {
@@ -463,34 +462,50 @@ function openCenterSettings() {
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Center Server</h2>
 
       <!--✅ Bagian IP Center -->
-   
-     <div>
-       <h3 class="text-lg font-semibold text-cyan-700 mb-2">Ip Center</h3>
-<div class="floating-input">
-  <input type="text" id="nama-center" placeholder=" " />
-  <label for="nama-center">Nama Center</label>
-</div>
-
-
-  <input type="text" id="ip-server" placeholder="IP Center Server" value="${saved.ip.server}" />
-  <label for="ip-server">Ip Center Server</label>
-  </div>
-</div>
-   
+      <div>
+        <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
+        <div class="floating-input">
+          <input type="text" id="ip-nama" placeholder=" " value="${saved.ip.nama}" />
+          <label for="ip-nama">Nama Center</label>
+        </div>
+        <div class="floating-input">
+          <input type="text" id="ip-server" placeholder=" " value="${saved.ip.server}" />
+          <label for="ip-server">Server Center</label>
+        </div>
+        <div class="floating-input">
+          <input type="text" id="ip-host" placeholder=" " value="${saved.ip.host}" />
+          <label for="ip-host">Host</label>
+        </div>
+      </div>
 
       <!--✅ Bagian Jabber Center -->
       <div>
         <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
-        <input type="text" id="jabber-nama" placeholder="Nama Center" value="${saved.jabber.nama}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
-        <input type="text" id="jabber-server" placeholder="Server Center" value="${saved.jabber.server}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
-        <input type="text" id="jabber-host" placeholder="Host" value="${saved.jabber.host}" class="w-full border border-gray-300 rounded px-4 py-2" />
+        <div class="floating-input">
+          <input type="text" id="jabber-nama" placeholder=" " value="${saved.jabber.nama}" />
+          <label for="jabber-nama">Nama Center</label>
+        </div>
+        <div class="floating-input">
+          <input type="text" id="jabber-server" placeholder=" " value="${saved.jabber.server}" />
+          <label for="jabber-server">Server Center</label>
+        </div>
+        <div class="floating-input">
+          <input type="text" id="jabber-host" placeholder=" " value="${saved.jabber.host}" />
+          <label for="jabber-host">Host</label>
+        </div>
       </div>
 
       <!--✅ Bagian Nomor Center -->
       <div>
         <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
-        <input type="text" id="wa-center" placeholder="WhatsApp Center" value="${saved.nomor.whatsapp}" class="mb-2 w-full border border-gray-300 rounded px-4 py-2" />
-        <input type="text" id="sms-center" placeholder="SMS Center" value="${saved.nomor.sms}" class="w-full border border-gray-300 rounded px-4 py-2" />
+        <div class="floating-input">
+          <input type="text" id="wa-center" placeholder=" " value="${saved.nomor.whatsapp}" />
+          <label for="wa-center">WhatsApp Center</label>
+        </div>
+        <div class="floating-input">
+          <input type="text" id="sms-center" placeholder=" " value="${saved.nomor.sms}" />
+          <label for="sms-center">SMS Center</label>
+        </div>
       </div>
 
       <button onclick="submitCenterSettings()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-semibold">
@@ -502,6 +517,7 @@ function openCenterSettings() {
     </div>
   `;
 }
+
 
 
 function submitCenterSettings() {
