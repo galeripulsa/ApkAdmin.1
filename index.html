@@ -429,11 +429,10 @@ function submitServerSettings(event) {
   const serverData = { nama, alamat };
   localStorage.setItem("setupServer", JSON.stringify(serverData));
 
-  showToast("Melayani...");
-  setTimeout(() => {
-    closeSetupServerModal();
-  }, 1200);
+  showToast("Data Berhasil Disimpan");
+  // Jangan tutup modal otomatis, biarkan user klik tombol "Kembali"
 }
+
 
 function showToast(message) {
   let toast = document.getElementById("toast-message");
@@ -448,7 +447,7 @@ function showToast(message) {
 
   setTimeout(() => {
     toast.style.opacity = "0";
-  }, 1000);
+  }, 3000);
 }
 
 
