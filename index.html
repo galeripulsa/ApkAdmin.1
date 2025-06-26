@@ -374,8 +374,10 @@
 
 
 function closeSetupServerModal() {
-  document.getElementById("modalSetupServer").style.display = "none";
+  const modal = document.getElementById("modalSetupServer");
+  modal.style.display = "none";
 }
+
 
 function openServerSettings() {
   const modal = document.getElementById("modalSetupServer");
