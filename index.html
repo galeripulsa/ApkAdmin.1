@@ -340,9 +340,38 @@
 
     renderMenus();
 
+<!👉===Setup Server===>
+
     function showSetupServerModal() {
-  document.getElementById("modalSetupServer").style.display = "block";
+  const modal = document.getElementById("modalSetupServer");
+  modal.innerHTML = `
+    <div class="max-w-md mx-auto">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Server</h2>
+
+      <ul class="space-y-4">
+        <li>
+          <button onclick="openServerSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
+            <span class="text-lg">Setup Server</span>
+            <i data-lucide='settings' class='w-5 h-5'></i>
+          </button>
+        </li>
+        <li>
+          <button onclick="openCenterSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
+            <span class="text-lg">Center Server</span>
+            <i data-lucide='server' class='w-5 h-5'></i>
+          </button>
+        </li>
+      </ul>
+
+      <button onclick="closeSetupServerModal()" class="mt-8 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+        Tutup
+      </button>
+    </div>
+  `;
+  modal.style.display = "block";
+  lucide.createIcons();
 }
+
 
 function closeSetupServerModal() {
   document.getElementById("modalSetupServer").style.display = "none";
@@ -357,22 +386,23 @@ function openServerSettings() {
       <form onsubmit="submitServerSettings(event)" class="space-y-4">
         <div>
           <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
-          <input type="text" id="namaServer" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Masukkan nama server" required />
+          <input type="text" id="namaServer" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
         </div>
         <div>
           <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
-          <textarea id="alamatServer" rows="3" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="Masukkan alamat server" required></textarea>
+          <textarea id="alamatServer" rows="3" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required></textarea>
         </div>
         <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
           Simpan
         </button>
-        <button type="button" onclick="closeSetupServerModal()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-          Batal
+        <button type="button" onclick="showSetupServerModal()" class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
+          Kembali
         </button>
       </form>
     </div>
   `;
 }
+
 
 
 function openCenterSettings() {
