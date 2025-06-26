@@ -27,13 +27,13 @@
 }
 
 .floating-input input {
-  width: 100%;
+  width: 70%;
   padding: 1rem 0.75rem 0.25rem;
-  font-size: 16px;
+  font-size: 10px;
   border: 2px solid #7e22ce; /* ungu */
   border-radius: 0.5rem;
   outline: none;
-  background-color: white;
+  background-color: yellow;
 }
 
 .floating-input label {
@@ -45,7 +45,7 @@
   background-color: white;
   padding: 0 4px;
   transition: 0.2s ease;
-  font-size: 16px;
+  font-size: 10px;
 }
 
 .floating-input input:focus + label,
@@ -468,7 +468,12 @@ function openCenterSettings() {
       <div class="floating-input">
   <input type="text" id="ip-nama" placeholder=" " value="${saved.ip.nama}" />
   <label for="ip-nama">Nama Center</label>
+  
+  <input type="text" id="ip-server" placeholder=" " value="${saved.ip.server}" />
+  <label for="ip-server">Ip Center Server</label>
 </div>
+</div>
+   
 
       <!--✅ Bagian Jabber Center -->
       <div>
