@@ -23,16 +23,16 @@
    //✅ Server Center ✅
 .floating-input {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .floating-input input {
   width: 100%;
-  padding: 1rem 0.75rem 0.25rem 0.75rem;
-  border: 2px solid #ccc;
+  padding: 1.2rem 0.75rem 0.5rem;
+  font-size: 1rem;
+  border: 2px solid orange;
   border-radius: 0.5rem;
   background: transparent;
-  font-size: 1rem;
 }
 
 .floating-input label {
@@ -40,22 +40,21 @@
   top: 1rem;
   left: 0.75rem;
   color: #888;
-  font-size: 1rem;
-  pointer-events: none;
-  transition: all 0.2s ease-in-out;
-  background: white;
+  background-color: white;
   padding: 0 0.25rem;
+  font-size: 1rem;
+  transition: 0.2s ease;
+  pointer-events: none;
 }
 
+/* Saat fokus atau sudah ada isian */
 .floating-input input:focus + label,
 .floating-input input:not(:placeholder-shown) + label {
   top: -0.5rem;
   left: 0.65rem;
   font-size: 0.75rem;
-  color: #6b46c1; /* warna saat aktif */
+  color: #6b46c1;
 }
-
-
 
 </style>
 </head>
@@ -468,8 +467,10 @@ function openCenterSettings() {
      <div>
        <h3 class="text-lg font-semibold text-cyan-700 mb-2">Ip Center</h3>
 <div class="floating-input">
-  <input type="text" id="ip-nama" placeholder="Nama Center" />
-  <label for="ip-nama">Nama Center</label>
+  <input type="text" id="nama-center" placeholder=" " />
+  <label for="nama-center">Nama Center</label>
+</div>
+
 
   <input type="text" id="ip-server" placeholder="IP Center Server" value="${saved.ip.server}" />
   <label for="ip-server">Ip Center Server</label>
