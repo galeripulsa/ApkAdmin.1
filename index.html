@@ -111,14 +111,14 @@
     }
 
     function handleMenuClick(key) {
-      if (key === "menu") {
-        showModal();
-      } else if (key === "server") {
-        alert("Setup Server diklik");
-      } else {
-        alert("Klik menu: " + key);
-      }
-    }
+  if (key === "menu") {
+    showModal();
+  } else if (key === "server") {
+    // Aksi khusus untuk tombol Setup Server (jika ada), atau cukup kosong
+  } else {
+    // Aksi lainnya, misalnya buka halaman lain (tanpa alert)
+  }
+}
 
     function renderSubMenus() {
       submenuList.innerHTML = "";
