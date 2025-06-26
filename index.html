@@ -27,34 +27,34 @@
 }
 
 .floating-input input {
-  width: 70%;
-  padding: 1rem 0.75rem 0.25rem;
-  font-size: 10px;
-  border: 2px solid #7e22ce; /* ungu */
+  width: 100%;
+  padding: 1rem 0.75rem 0.25rem 0.75rem;
+  border: 2px solid #ccc;
   border-radius: 0.5rem;
-  outline: none;
-  background-color: yellow;
+  background: transparent;
+  font-size: 1rem;
 }
 
 .floating-input label {
   position: absolute;
   top: 1rem;
   left: 0.75rem;
-  color: #7e22ce;
+  color: #888;
+  font-size: 1rem;
   pointer-events: none;
-  background-color: white;
-  padding: 0 4px;
-  transition: 0.2s ease;
-  font-size: 10px;
+  transition: all 0.2s ease-in-out;
+  background: white;
+  padding: 0 0.25rem;
 }
 
 .floating-input input:focus + label,
 .floating-input input:not(:placeholder-shown) + label {
   top: -0.5rem;
-  left: 0.6rem;
-  font-size: 13px;
-  color: #7e22ce;
+  left: 0.65rem;
+  font-size: 0.75rem;
+  color: #6b46c1; /* warna saat aktif */
 }
+
 
 
 </style>
