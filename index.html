@@ -61,6 +61,29 @@
     </div>
   </div>
 
+   <!-- Modal Setup Server -->
+<div id="modalSetupServer" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: white;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+">
+  <h2>Pengaturan Server</h2>
+  <button onclick="openServerSettings()" style="width: 100%; padding: 15px; margin-top: 20px; font-size: 16px;">
+    Setup Server
+  </button>
+  <button onclick="openCenterSettings()" style="width: 100%; padding: 15px; margin-top: 10px; font-size: 16px;">
+    Center Server
+  </button>
+  <button onclick="closeSetupServerModal()" style="margin-top: 30px; font-size: 14px;">Tutup</button>
+</div>
+
+
   <!-- SCRIPT -->
   <script>
     const menuItems = [
@@ -309,6 +332,23 @@
     }
 
     renderMenus();
+
+    function showSetupServerModal() {
+  document.getElementById("modalSetupServer").style.display = "block";
+}
+
+function closeSetupServerModal() {
+  document.getElementById("modalSetupServer").style.display = "none";
+}
+
+function openServerSettings() {
+  alert("Tombol 'Setup Server' diklik");
+}
+
+function openCenterSettings() {
+  alert("Tombol 'Center Server' diklik");
+}
+
   </script>
 </body>
 </html>
