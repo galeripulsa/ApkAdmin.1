@@ -76,9 +76,10 @@ button:hover {
   transform: scale(1.01);
 }
 
-/* Floating label (jika pakai input nanti) */
+
 .floating-input {
   position: relative;
+  margin-top: 1rem;
 }
 .floating-input input {
   width: 100%;
@@ -89,20 +90,21 @@ button:hover {
 }
 .floating-input label {
   position: absolute;
-  top: 12px;
   left: 12px;
+  top: 12px;
   background: white;
   padding: 0 4px;
   color: #999;
-  transition: all 0.2s;
+  pointer-events: none;
+  transition: 0.2s ease;
 }
 .floating-input input:focus + label,
 .floating-input input:not(:placeholder-shown) + label {
   top: -10px;
+  left: 8px;
   font-size: 0.75rem;
   color: #3b82f6;
 }
-
 
 </style>
 </head>
@@ -184,10 +186,25 @@ button:hover {
 <div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
   <div class="max-w-md mx-auto">
     <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
-    <div id="format-request-list" class="space-y-4">
-      <!-- Tombol akan di-generate oleh JS -->
+
+    <!--✅ Mode daftar tombol -->
+    <div id="format-request-list" class="space-y-4"></div>
+
+    <!-- Mode form detail -->
+    <div id="format-request-form" class="space-y-4 hidden">
+      <button onclick="backToFormatList()" class="text-sm text-blue-500 font-medium underline mb-2">&larr; Kembali</button>
+      <h3 id="format-form-title" class="text-lg font-semibold text-gray-800"></h3>
+      <div class="floating-input">
+        <input id="formatInput" type="text" placeholder=" " class="border-gray-300" />
+        <label for="formatInput">Masukkan Format</label>
+      </div>
+      <button onclick="submitFormatInput()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold shadow">
+        Simpan Format
+      </button>
     </div>
-    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow transition">
+
+    <!-- ✅ Tombol Tutup -->
+    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
       Tutup
     </button>
   </div>
@@ -600,18 +617,29 @@ function showFormatRequestModal() {
   const modal = document.getElementById("modalFormatRequest");
   modal.classList.remove("hidden");
 
-  const list = [
-    "Setup Transaksi",
-    "Setup Laporan",
-    "Format Cek",
-    "Setup PIN",
-    "Topup"
-  ];
+const formatList = [
+  "Setup Transaksi",
+  "Setup Laporan",
+  "Format Cek",
+  "Setup PIN",
+  "Topup"
+];
+
+let selectedFormat = "";
+
+function showFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
+
+function renderFormatList() {
+  document.getElementById("format-request-list").classList.remove("hidden");
+  document.getElementById("format-request-form").classList.add("hidden");
 
   const container = document.getElementById("format-request-list");
   container.innerHTML = "";
 
-  list.forEach(text => {
+  formatList.forEach(text => {
     const btn = document.createElement("button");
     btn.className =
       "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
@@ -619,16 +647,44 @@ function showFormatRequestModal() {
       <span class="text-base md:text-lg">${text}</span>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => alert(`Kamu klik: ${text}`);
+    btn.onclick = () => openFormatForm(text);
     container.appendChild(btn);
   });
 
   lucide.createIcons();
 }
 
+function openFormatForm(title) {
+  selectedFormat = title;
+  document.getElementById("format-form-title").innerText = title;
+  document.getElementById("formatInput").value = ""; // Kosongkan
+  document.getElementById("format-request-list").classList.add("hidden");
+  document.getElementById("format-request-form").classList.remove("hidden");
+}
+
+function backToFormatList() {
+  renderFormatList();
+}
+
+function submitFormatInput() {
+  const value = document.getElementById("formatInput").value.trim();
+  if (value === "") {
+    alert("Format tidak boleh kosong!");
+    return;
+  }
+
+  alert(`Format untuk "${selectedFormat}": ${value}`);
+
+  // Bisa kamu simpan ke localStorage atau database nanti
+  backToFormatList(); // kembali ke list utama
+}
+
 function closeFormatRequestModal() {
   document.getElementById("modalFormatRequest").classList.add("hidden");
+  backToFormatList(); // reset ke awal
 }
+</script>
+
 
   </script>
 </body>
