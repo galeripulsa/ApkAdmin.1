@@ -70,6 +70,40 @@
   opacity: 0;
 }
 
+
+/* ✅ Tombol efek hover */
+button:hover {
+  transform: scale(1.01);
+}
+
+/* Floating label (jika pakai input nanti) */
+.floating-input {
+  position: relative;
+}
+.floating-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: white;
+  padding: 0 4px;
+  color: #999;
+  transition: all 0.2s;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 0.75rem;
+  color: #3b82f6;
+}
+
+
 </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -144,6 +178,20 @@
 
 <!-- ✅✅✅ TOAST ✅✅✅ -->
 <div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
+
+
+<!-- ✅✅✅✅✅ Modal Format Request ✅✅✅✅✅-->
+<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
+  <div class="max-w-md mx-auto">
+    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
+    <div id="format-request-list" class="space-y-4">
+      <!-- Tombol akan di-generate oleh JS -->
+    </div>
+    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow transition">
+      Tutup
+    </button>
+  </div>
+</div>
 
 
   <!-- SCRIPT -->
@@ -545,6 +593,43 @@ function showToast(message) {
     setTimeout(() => toast.classList.add("hidden"), 300);
   }, 2500);
 }
+
+
+// ✅✅✅ MENU FORMAT ✅✅✅
+function showFormatRequestModal() {
+  const modal = document.getElementById("modalFormatRequest");
+  modal.classList.remove("hidden");
+
+  const list = [
+    "Setup Transaksi",
+    "Setup Laporan",
+    "Format Cek",
+    "Setup PIN",
+    "Topup"
+  ];
+
+  const container = document.getElementById("format-request-list");
+  container.innerHTML = "";
+
+  list.forEach(text => {
+    const btn = document.createElement("button");
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+    btn.innerHTML = `
+      <span class="text-base md:text-lg">${text}</span>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+    `;
+    btn.onclick = () => alert(`Kamu klik: ${text}`);
+    container.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
+
+function closeFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.add("hidden");
+}
+
   </script>
 </body>
 </html>
