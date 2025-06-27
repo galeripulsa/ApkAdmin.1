@@ -469,6 +469,11 @@ function submitServerSettings(event) {
 }
 
 
+<script>
+// ✅ GLOBAL: status perubahan form
+let hasChanges = false;
+
+// ✅ Fungsi toast
 function showToast(message) {
   let toast = document.getElementById("toast-message");
   if (!toast) {
@@ -485,8 +490,7 @@ function showToast(message) {
   }, 2500);
 }
 
-
- // ✅ Bagian Center ✅
+// ✅ Fungsi buka Center Server
 function openCenterSettings() {
   const modal = document.getElementById("modalSetupServer");
   const saved = JSON.parse(localStorage.getItem("centerServer")) || {
@@ -495,8 +499,7 @@ function openCenterSettings() {
     nomor: { whatsapp: "", sms: "" }
   };
 
-  // untuk deteksi perubahan
-  let hasChanges = false;
+  // handle perubahan
   const handleInputChange = () => { hasChanges = true; };
 
   modal.innerHTML = `
@@ -512,15 +515,15 @@ function openCenterSettings() {
         <div>
           <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
           <div class="floating-input">
-            <input type="text" id="ip-nama" placeholder=" " value="${saved.ip.nama}" oninput="handleInputChange()" />
+            <input type="text" id="ip-nama" placeholder=" " value="${saved.ip.nama}" oninput="hasChanges=true" />
             <label for="ip-nama">Nama Center</label>
           </div>
           <div class="floating-input">
-            <input type="text" id="ip-server" placeholder=" " value="${saved.ip.server}" oninput="handleInputChange()" />
+            <input type="text" id="ip-server" placeholder=" " value="${saved.ip.server}" oninput="hasChanges=true" />
             <label for="ip-server">Server Center</label>
           </div>
           <div class="floating-input">
-            <input type="text" id="ip-host" placeholder=" " value="${saved.ip.host}" oninput="handleInputChange()" />
+            <input type="text" id="ip-host" placeholder=" " value="${saved.ip.host}" oninput="hasChanges=true" />
             <label for="ip-host">Host</label>
           </div>
         </div>
@@ -529,15 +532,15 @@ function openCenterSettings() {
         <div>
           <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
           <div class="floating-input">
-            <input type="text" id="jabber-nama" placeholder=" " value="${saved.jabber.nama}" oninput="handleInputChange()" />
+            <input type="text" id="jabber-nama" placeholder=" " value="${saved.jabber.nama}" oninput="hasChanges=true" />
             <label for="jabber-nama">Nama Center</label>
           </div>
           <div class="floating-input">
-            <input type="text" id="jabber-server" placeholder=" " value="${saved.jabber.server}" oninput="handleInputChange()" />
+            <input type="text" id="jabber-server" placeholder=" " value="${saved.jabber.server}" oninput="hasChanges=true" />
             <label for="jabber-server">Server Center</label>
           </div>
           <div class="floating-input">
-            <input type="text" id="jabber-host" placeholder=" " value="${saved.jabber.host}" oninput="handleInputChange()" />
+            <input type="text" id="jabber-host" placeholder=" " value="${saved.jabber.host}" oninput="hasChanges=true" />
             <label for="jabber-host">Host</label>
           </div>
         </div>
@@ -546,12 +549,12 @@ function openCenterSettings() {
         <div>
           <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
           <div class="floating-input">
-            <input type="text" id="wa-center" placeholder=" " value="${saved.nomor.whatsapp}" oninput="handleInputChange()" />
-            <label for="wa-center">WhatsApp Center Contoh: 6281234567890</label>
+            <input type="text" id="wa-center" placeholder=" " value="${saved.nomor.whatsapp}" oninput="hasChanges=true" />
+            <label for="wa-center">WhatsApp Center</label>
           </div>
           <div class="floating-input">
-            <input type="text" id="sms-center" placeholder=" " value="${saved.nomor.sms}" oninput="handleInputChange()" />
-            <label for="sms-center">SMS Center Contoh: 6281234567890</label>
+            <input type="text" id="sms-center" placeholder=" " value="${saved.nomor.sms}" oninput="hasChanges=true" />
+            <label for="sms-center">SMS Center</label>
           </div>
         </div>
       </div>
@@ -567,26 +570,18 @@ function openCenterSettings() {
       </div>
     </div>
   `;
-
-  // tempel listener setelah elemen dimuat
-  setTimeout(() => {
-    document.querySelectorAll("#modalSetupServer input").forEach(input => {
-      input.addEventListener("input", handleInputChange);
-    });
-  }, 100);
 }
 
-// Fungsi tombol kembali agar cek jika ada perubahan
+// ✅ Fungsi Kembali (cek jika ada perubahan)
 function handleBackFromCenterSettings() {
-  if (typeof hasChanges !== "undefined" && hasChanges) {
+  if (hasChanges) {
     const confirmLeave = confirm("Perubahan belum disimpan. Yakin ingin kembali?");
     if (!confirmLeave) return;
   }
-  showSetupServerModal();
+  showSetupServerModal(); // balik ke menu awal
 }
 
-
-
+// ✅ Fungsi Simpan
 function submitCenterSettings() {
   const centerData = {
     ip: {
@@ -606,13 +601,7 @@ function submitCenterSettings() {
   };
 
   localStorage.setItem("centerServer", JSON.stringify(centerData));
-
-  // ✅ reset flag perubahan
-  if (typeof hasChanges !== "undefined") {
-    hasChanges = false;
-  }
-
-  // ✅ tampilkan notifikasi
+  hasChanges = false;
   showToast("✅ Data Center berhasil disimpan!");
 }
 
