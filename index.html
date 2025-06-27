@@ -609,45 +609,6 @@ function showToast(message) {
   }, 2500);
 }
 
-
-
-// ✅✅MENU FORMAT 
-function showFormatRequestModal() {
-  const modal = document.getElementById("modalFormatRequest");
-  modal.classList.remove("hidden");
-
-  const list = [
-    "Setup Transaksi",
-    "Setup Laporan",
-    "Format Cek",
-    "Setup PIN",
-    "Topup"
-  ];
-
-  const container = document.getElementById("format-request-list");
-  container.innerHTML = "";
-
-  list.forEach(text => {
-    const btn = document.createElement("button");
-    btn.className =
-      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
-    btn.innerHTML = `
-      <span class="text-base md:text-lg">${text}</span>
-      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
-    `;
-    btn.onclick = () => alert(`Kamu klik: ${text}`);
-    container.appendChild(btn);
-  });
-
-  lucide.createIcons();
-}
-
-function closeFormatRequestModal() {
-  document.getElementById("modalFormatRequest").classList.add("hidden");
-}
-
-
-
   </script>
 </body>
 </html>
