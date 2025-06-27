@@ -181,9 +181,13 @@
           </div>
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
         `;
-        box.onclick = () => {
-          if (item.key === "menu") showModal();
+        
+     Box.onclick = () => {
+          activeKey = item.key;
+          renderMenus();
+          handleMenuClick(item.key);
         };
+
         grid.appendChild(box);
       });
       lucide.createIcons();
