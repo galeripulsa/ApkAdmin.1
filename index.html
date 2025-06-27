@@ -573,7 +573,7 @@ function openCenterSettings() {
   setTimeout(() => {
     document.querySelectorAll("#modalSetupServer input").forEach(input => {
       input.addEventListener("input", () => {
-        hasChanges = true;
+        hasChanges = false;
       });
     });
   }, 0);
