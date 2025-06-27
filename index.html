@@ -21,7 +21,7 @@
     }
 
 
-  /* 🖥🖥 Server Center 🖥🖥 */
+  /* ✅ Server Center ✅ */
 
 /* ✅ Floating Label */
 .floating-input {
@@ -70,39 +70,6 @@
   opacity: 0;
 }
 
-/* 🗂🗂 Format ✅ */
-/* Tombol efek hover */
-button:hover {
-  transform: scale(1.01);
-}
-
-/* Floating label (jika pakai input nanti) */
-.floating-input {
-  position: relative;
-}
-.floating-input input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 0.75rem;
-  outline: none;
-}
-.floating-input label {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: white;
-  padding: 0 4px;
-  color: #999;
-  transition: all 0.2s;
-}
-.floating-input input:focus + label,
-.floating-input input:not(:placeholder-shown) + label {
-  top: -10px;
-  font-size: 0.75rem;
-  color: #3b82f6;
-}
-
 </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -111,7 +78,7 @@ button:hover {
   </div>
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
 
-  <!-- ✅ MENU TRX ✅
+  <!-- ✅✅✅ MENU TRX ✅✅✅-->
   <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
       <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0">
@@ -146,8 +113,7 @@ button:hover {
     </div>
   </div>
 
-
-<!--✅✅✅✅✅ MENU Setup Server (Desain List Keren) ✅
+<!--✅✅✅ Modal Setup Server (Desain List Keren) ✅✅✅-->
 <div id="modalSetupServer" class="fixed inset-0 z-50 bg-white overflow-auto p-6 hidden">
   <div class="max-w-md mx-auto">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Server</h2>
@@ -178,21 +144,6 @@ button:hover {
 
 <!-- ✅✅✅ TOAST ✅✅✅ -->
 <div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
-
-
-<!--✅✅✅✅✅✅✅✅✅ MODAL FORMAT REQUEST -->
-<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
-  <div class="max-w-md mx-auto">
-    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
-    <div id="format-request-list" class="space-y-4">
-      <!-- Tombol akan di-generate oleh JS -->
-    </div>
-   <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow transition">
-      Tutup
-    </button>
-  </div>
-</div>
-
 
 
   <!-- SCRIPT -->
@@ -251,20 +202,6 @@ button:hover {
     showSetupServerModal();
   } else if (key === "format") {
     showFormatRequestModal();
-  } else if (key === "logo") {
-    alert("Pengaturan Logo belum tersedia.");
-  } else if (key === "poin") {
-    alert("Poin belum tersedia.");
-  } else if (key === "downline") {
-    alert("Downline belum tersedia.");
-  } else if (key === "prabayar") {
-    alert("Prabayar belum tersedia.");
-  } else if (key === "pascabayar") {
-    alert("Pascabayar belum tersedia.");
-  } else if (key === "otp") {
-    alert("OTP belum tersedia.");
-  } else {
-    alert("Menu tidak dikenal.");
   }
 }
 
@@ -608,7 +545,6 @@ function showToast(message) {
     setTimeout(() => toast.classList.add("hidden"), 300);
   }, 2500);
 }
-
   </script>
 </body>
 </html>
