@@ -607,10 +607,14 @@ function submitCenterSettings() {
 
   localStorage.setItem("centerServer", JSON.stringify(centerData));
 
-  // Tampilkan notifikasi melayang
+  // ✅ reset flag perubahan
+  if (typeof hasChanges !== "undefined") {
+    hasChanges = false;
+  }
+
+  // ✅ tampilkan notifikasi
   showToast("✅ Data Center berhasil disimpan!");
 }
-
 
 
   </script>
