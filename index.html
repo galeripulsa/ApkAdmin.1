@@ -193,15 +193,31 @@
       lucide.createIcons();
     }
 
-Function handleMenuClick(key) {
-  If (key === “menu”) {
+function handleMenuClick(key) {
+  if (key === "menu") {
     showModal();
-  } else if (key === “server”) {
+  } else if (key === "server") {
     showSetupServerModal();
-  } else if (key === “format”) {
-    showFormatRequestModal();
+  } else if (key === "format") {
+    alert("Format Request belum tersedia.");
+  } else if (key === "logo") {
+    alert("Pengaturan Logo belum tersedia.");
+  } else if (key === "poin") {
+    alert("Poin belum tersedia.");
+  } else if (key === "downline") {
+    alert("Downline belum tersedia.");
+  } else if (key === "prabayar") {
+    alert("Prabayar belum tersedia.");
+  } else if (key === "pascabayar") {
+    alert("Pascabayar belum tersedia.");
+  } else if (key === "otp") {
+    alert("OTP belum tersedia.");
+  } else {
+    alert("Menu tidak dikenal.");
   }
 }
+
+// Lanjut ke: showModal(), showSetupServerModal(), dll.
 
     function updateRefreshButtonState() {
       document.getElementById("btn-refresh").disabled = !isDirty;
