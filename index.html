@@ -147,218 +147,404 @@
 
 
   <!-- SCRIPT -->
-  <!-- BAGIAN SCRIPT SETELAH PERBAIKAN --><script>
-  const menuItems = [
-    { label: "Setup Server", icon: "server", key: "server" },
-    { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
-    { label: "Logo", icon: "image", key: "logo" },
-    { label: "Format Request", icon: "file-text", key: "format" },
-    { label: "Poin", icon: "star", key: "poin" },
-    { label: "Downline", icon: "users", key: "downline" },
-    { label: "Prabayar", icon: "phone", key: "prabayar" },
-    { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
-    { label: "OTP", icon: "key", key: "otp" }
-  ];
+  <script>
+    const menuItems = [
+      { label: "Setup Server", icon: "server", key: "server" },
+      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
+      { label: "Logo", icon: "image", key: "logo" },
+      { label: "Format Request", icon: "file-text", key: "format" },
+      { label: "Poin", icon: "star", key: "poin" },
+      { label: "Downline", icon: "users", key: "downline" },
+      { label: "Prabayar", icon: "phone", key: "prabayar" },
+      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
+      { label: "OTP", icon: "key", key: "otp" }
+    ];
 
-  let activeKey = "menu";
-  let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
-    { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
-  ];
-  let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-  let isDirty = false;
+    let activeKey = "menu";
+    let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
+    ];
+    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    let isDirty = false;
 
-  const submenuList = document.getElementById("submenu-list");
-  const grid = document.getElementById("menu-grid");
+    const submenuList = document.getElementById("submenu-list");
+    const grid = document.getElementById("menu-grid");
 
-  function renderMenus() {
-    grid.innerHTML = "";
-    menuItems.forEach(item => {
-      const isActive = item.key === activeKey;
-      const box = document.createElement("div");
-      box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
-        isActive ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"
-      }`;
-      box.setAttribute("data-key", item.key);
-      box.innerHTML = `
-        <div class="flex justify-center mb-2 text-3xl text-gray-700">
-          <i data-lucide="${item.icon}"></i>
-        </div>
-        <div class="font-semibold text-sm text-gray-800">${item.label}</div>
-      `;
-      box.onclick = () => {
-        activeKey = item.key;
-        renderMenus();
-        handleMenuClick(item.key);
-      };
-      grid.appendChild(box);
-    });
-    lucide.createIcons();
-  }
-
-  function handleMenuClick(key) {
-    if (key === "menu") {
-      showModal();
-    } else if (key === "server") {
-      showSetupServerModal();
-    } else if (key === "format") {
-      showFormatRequestModal();
+    function renderMenus() {
+      grid.innerHTML = "";
+      menuItems.forEach(item => {
+        const isActive = item.key === activeKey;
+        const box = document.createElement("div");
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
+          isActive ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"
+        }`;
+        box.setAttribute("data-key", item.key);
+        box.innerHTML = `
+          <div class="flex justify-center mb-2 text-3xl text-gray-700">
+            <i data-lucide="${item.icon}"></i>
+          </div>
+          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+        `;
+        box.onclick = () => {
+          activeKey = item.key;
+          renderMenus();
+          handleMenuClick(item.key);
+        };
+        grid.appendChild(box);
+      });
+      lucide.createIcons();
     }
+
+    function handleMenuClick(key) {
+  if (key === "menu") {
+    showModal();
+  } else if (key === "server") {
+    showSetupServerModal();
+  } else if (key === "format") {
+    showFormatRequestModal();
   }
+}
 
-  function renderSubMenus() {
-    submenuList.innerHTML = "";
-    subMenus.forEach((menu, index) => {
-      const bgColor = menu.isCategory
-        ? menu.active ? "bg-yellow-300" : "bg-yellow-100"
-        : menu.active ? "bg-green-300" : "bg-gray-100";
+    function renderSubMenus() {
+      submenuList.innerHTML = "";
+      subMenus.forEach((menu, index) => {
+        const bgColor = menu.isCategory
+          ? menu.active ? "bg-yellow-300" : "bg-yellow-100"
+          : menu.active ? "bg-green-300" : "bg-gray-100";
 
-      const row = document.createElement("div");
-      row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
-      row.innerHTML = `
-        <div class="flex items-center gap-2 flex-1">
-          <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-          <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
-          ${!menu.isCategory ? `
-            <div class="relative">
-              ${menu.icon ? `
-                <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
-                <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-              ` : `
-                <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
+        const row = document.createElement("div");
+        row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
+        row.innerHTML = `
+          <div class="flex items-center gap-2 flex-1">
+            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
+              <div class="relative">
+                ${menu.icon ? `
+                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
                   <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
-                </label>
-              `}
-            </div>` : ""}
-        </div>
-        <div class="flex items-center gap-2">
-          <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
-          <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
-        </div>`;
-      submenuList.appendChild(row);
-      enableSwipeToDelete(row);
-    });
-    lucide.createIcons();
-    updateRefreshButtonState();
-    renderSummary();
-  }
+                ` : `
+                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
+                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  </label>
+                `}
+              </div>` : ""}
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
+          </div>`;
+        submenuList.appendChild(row);
+        enableSwipeToDelete(row);
+      });
+      lucide.createIcons();
+      updateRefreshButtonState();
+      renderSummary();
+    }
 
-  function updateName(index, value) {
-    subMenus[index].name = value;
-    isDirty = true;
-    updateRefreshButtonState();
-  }
+    function updateName(index, value) {
+      subMenus[index].name = value;
+      isDirty = true;
+      updateRefreshButtonState();
+    }
 
-  function toggleActive(index) {
-    subMenus[index].active = !subMenus[index].active;
+    function toggleActive(index) {
+      subMenus[index].active = !subMenus[index].active;
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    }
+
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          subMenus[index].icon = reader.result;
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function confirmDelete(index) {
+  const itemName = subMenus[index].name;
+  showConfirmationModal(`Yakin ingin menghapus item: "${itemName}"?`, () => {
+    subMenus.splice(index, 1);
     isDirty = true;
     updateRefreshButtonState();
     renderSubMenus();
-  }
+  });
+}
 
-  function uploadIcon(e, index) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        subMenus[index].icon = reader.result;
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
+    }
+
+    function showModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      renderSubMenus();
+    }
+
+    function showConfirmationModal(message, onYes, onNo) {
+  const modal = document.getElementById("confirm-modal");
+  document.getElementById("confirm-message").innerText = message;
+  modal.classList.remove("hidden");
+
+  const yesBtn = document.getElementById("confirm-yes");
+  const noBtn = document.getElementById("confirm-no");
+
+  // Hapus event sebelumnya
+  yesBtn.onclick = null;
+  noBtn.onclick = null;
+
+  // Tambahkan event baru
+  yesBtn.onclick = () => {
+    modal.classList.add("hidden");
+    if (typeof onYes === "function") onYes();
+  };
+  noBtn.onclick = () => {
+    modal.classList.add("hidden");
+    if (typeof onNo === "function") onNo();
+  };
+}
+
+    document.getElementById("btn-close").onclick = () => {
+      if (isDirty) {
+        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
+          document.getElementById("modal").classList.add("hidden");
+          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+          isDirty = false;
+          updateRefreshButtonState();
+        });
+      } else {
+        document.getElementById("modal").classList.add("hidden");
+      }
+    };
+
+    document.getElementById("btn-save").onclick = () => {
+      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+      localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+      const saveMsg = document.getElementById("save-msg");
+      saveMsg.classList.remove("hidden");
+      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
+    };
+
+    document.getElementById("btn-refresh").onclick = () => {
+  if (!isDirty) return;
+  showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+    subMenus = JSON.parse(JSON.stringify(tempSubMenus));  // reset data
+    isDirty = false;
+    updateRefreshButtonState();
+    renderMenus();       
+    renderSubMenus();    
+  });
+};
+
+
+    document.getElementById("btn-add-menu").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    document.getElementById("btn-add-cat").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    const sortable = new Sortable(submenuList, {
+      animation: 150,
+      handle: ".lucide-grip-vertical",
+      onEnd: function (evt) {
+        const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
+        subMenus.splice(evt.newIndex, 0, movedItem);
         isDirty = true;
         updateRefreshButtonState();
         renderSubMenus();
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  function confirmDelete(index) {
-    const itemName = subMenus[index].name;
-    showConfirmationModal(`Yakin ingin menghapus item: "${itemName}"?`, () => {
-      subMenus.splice(index, 1);
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
-    });
-  }
-
-  function enableSwipeToDelete(row) {
-    let startX = 0;
-    row.addEventListener("touchstart", (e) => {
-      startX = e.touches[0].clientX;
-    });
-    row.addEventListener("touchmove", (e) => {
-      const deltaX = e.touches[0].clientX - startX;
-      if (deltaX < -30) {
-        document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-        row.classList.add("show-delete");
-      } else if (deltaX > 30) {
-        row.classList.remove("show-delete");
       }
     });
-  }
 
-  document.getElementById("btn-save").onclick = () => {
-    const kosong = subMenus.find(item => item.name.trim() === "");
-    if (kosong) return alert("Masih ada menu atau kategori yang kosong namanya.");
-    tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-    localStorage.setItem("subMenus", JSON.stringify(subMenus));
-    isDirty = false;
-    updateRefreshButtonState();
-    const saveMsg = document.getElementById("save-msg");
-    saveMsg.classList.remove("hidden");
-    setTimeout(() => saveMsg.classList.add("hidden"), 2000);
-  };
-
-  document.getElementById("btn-refresh").onclick = () => {
-    if (!isDirty) return;
-    showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
-      subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-      isDirty = false;
-      updateRefreshButtonState();
-      renderMenus();
-      renderSubMenus();
-    });
-  };
-
-  document.getElementById("btn-add-menu").onclick = () => {
-    subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
-    isDirty = true;
-    updateRefreshButtonState();
-    renderSubMenus();
-  };
-
-  document.getElementById("btn-add-cat").onclick = () => {
-    subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
-    isDirty = true;
-    updateRefreshButtonState();
-    renderSubMenus();
-  };
-
-  const sortable = new Sortable(submenuList, {
-    animation: 150,
-    handle: ".lucide-grip-vertical",
-    onEnd: function (evt) {
-      const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
-      subMenus.splice(evt.newIndex, 0, movedItem);
-      isDirty = true;
-      updateRefreshButtonState();
-      renderSubMenus();
+    function renderSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(item => item.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").textContent =
+        `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
     }
-  });
 
-  function updateRefreshButtonState() {
-    document.getElementById("btn-refresh").disabled = !isDirty;
-  }
+      lucide.createIcons();
 
-  function renderSummary() {
-    const total = subMenus.length;
-    const aktif = subMenus.filter(item => item.active).length;
-    const nonaktif = total - aktif;
-    document.getElementById("summary-info").textContent =
-      `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
-  }
+    renderMenus();
 
-  lucide.createIcons();
-  renderMenus();
 
+// ✅✅✅ SETUP SERVER ✅✅✅
+
+// ✅ TAMPILAN MODAL UTAMA
+function showSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.remove("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function closeSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function backToMainModal() {
+  showSetupServerModal();
+}
+
+// ✅ SETUP SERVER
+function openServerSettings() {
+  const saved = JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" };
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  modal.innerHTML = `
+    <div class="max-w-md mx-auto w-full">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Setup Server</h2>
+      <form onsubmit="submitServerSettings(event)" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
+          <input type="text" id="namaServer" value="${saved.nama}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
+          <textarea id="alamatServer" rows="10" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required>${saved.alamat}</textarea>
+        </div>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">Simpan</button>
+        <button type="button" onclick="backToMainModal()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Kembali</button>
+      </form>
+    </div>
+  `;
+}
+
+function submitServerSettings(event) {
+  event.preventDefault();
+  const nama = document.getElementById("namaServer").value.trim();
+  const alamat = document.getElementById("alamatServer").value.trim();
+  if (!nama || !alamat) return alert("Semua kolom harus diisi.");
+  localStorage.setItem("setupServer", JSON.stringify({ nama, alamat }));
+  showToast("✅ Data Server berhasil disimpan!");
+}
+
+// ✅ BAGIAN CENTER
+let hasChanges = false;
+
+function openCenterSettings() {
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  const saved = JSON.parse(localStorage.getItem("centerServer")) || {
+    ip: { nama: "", server: "", host: "" },
+    jabber: { nama: "", server: "", host: "" },
+    nomor: { whatsapp: "", sms: "" }
+  };
+
+  modal.innerHTML = `
+    <div class="flex flex-col h-full bg-white p-4 rounded-lg shadow-md max-w-xl mx-auto">
+      <div class="border-b pb-3 mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Center Server</h2>
+      </div>
+      <div class="flex-1 overflow-y-auto space-y-6 pr-1">
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
+          <div class="floating-input"><input type="text" id="ip-nama" value="${saved.ip.nama}" /><label>Nama Center</label></div>
+          <div class="floating-input"><input type="text" id="ip-server" value="${saved.ip.server}" /><label>Server Center</label></div>
+          <div class="floating-input"><input type="text" id="ip-host" value="${saved.ip.host}" /><label>Host</label></div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
+          <div class="floating-input"><input type="text" id="jabber-nama" value="${saved.jabber.nama}" /><label>Nama Center</label></div>
+          <div class="floating-input"><input type="text" id="jabber-server" value="${saved.jabber.server}" /><label>Server Center</label></div>
+          <div class="floating-input"><input type="text" id="jabber-host" value="${saved.jabber.host}" /><label>Host</label></div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
+          <div class="floating-input"><input type="text" id="wa-center" value="${saved.nomor.whatsapp}" /><label>WhatsApp Center</label></div>
+          <div class="floating-input"><input type="text" id="sms-center" value="${saved.nomor.sms}" /><label>SMS Center</label></div>
+        </div>
+      </div>
+      <div class="mt-6 space-y-2">
+        <button onclick="submitCenterSettings()" class="w-full bg-green-600 text-white py-2 rounded font-semibold">Simpan</button>
+        <button onclick="handleBackFromCenterSettings()" class="w-full bg-gray-300 text-gray-800 py-2 rounded font-semibold">Kembali</button>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    modal.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", () => {
+        hasChanges = true;
+      });
+    });
+  }, 100);
+}
+
+function handleBackFromCenterSettings() {
+  if (hasChanges && !confirm("Perubahan belum disimpan. Yakin ingin kembali?")) return;
+  showSetupServerModal();
+  document.getElementById("modalContentServer").classList.add("hidden");
+  hasChanges = false;
+}
+
+function submitCenterSettings() {
+  const data = {
+    ip: {
+      nama: document.getElementById("ip-nama").value.trim(),
+      server: document.getElementById("ip-server").value.trim(),
+      host: document.getElementById("ip-host").value.trim()
+    },
+    jabber: {
+      nama: document.getElementById("jabber-nama").value.trim(),
+      server: document.getElementById("jabber-server").value.trim(),
+      host: document.getElementById("jabber-host").value.trim()
+    },
+    nomor: {
+      whatsapp: document.getElementById("wa-center").value.trim(),
+      sms: document.getElementById("sms-center").value.trim()
+    }
+  };
+
+  localStorage.setItem("centerServer", JSON.stringify(data));
+  hasChanges = false;
+  showToast("✅ Data Center berhasil disimpan!");
+}
+
+// ✅ TOAST
+function showToast(message) {
+  const toast = document.getElementById("toast-message");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.style.opacity = "1";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
   </script>
 </body>
 </html>
