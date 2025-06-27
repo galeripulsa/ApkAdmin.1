@@ -70,6 +70,39 @@
   opacity: 0;
 }
 
+/* 🗂🗂 Format ✅
+/* Tombol efek hover */
+button:hover {
+  transform: scale(1.01);
+}
+
+/* Floating label (jika pakai input nanti) */
+.floating-input {
+  position: relative;
+}
+.floating-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: white;
+  padding: 0 4px;
+  color: #999;
+  transition: all 0.2s;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 0.75rem;
+  color: #3b82f6;
+}
+
 </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -147,18 +180,19 @@
 <div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
 
 
-<!-- 🅰️🗂🗂🗂🗂🗂 MENU FORMAT 🗂🗂🗂🗂🗂🅰️
-<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-cyan-50 to-cyan-100 overflow-auto p-6 hidden">
+<!-- 🅰️🗂🗂🗂🗂🗂 MODAL FORMAT REQUEST 🅰️🅰️🅰️🅰️🅰️
+<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
   <div class="max-w-md mx-auto">
-    <h2 class="text-xl font-bold text-center text-gray-700 mb-6">Format Request</h2>
+    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
     <div id="format-request-list" class="space-y-4">
-      <!-- Isi tombol list -->
+      <!-- Tombol akan di-generate oleh JS -->
     </div>
-    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow transition">
       Tutup
     </button>
   </div>
 </div>
+
 
 
   <!-- SCRIPT -->
@@ -595,22 +629,26 @@ function showFormatRequestModal() {
 
   list.forEach(text => {
     const btn = document.createElement("button");
-    btn.className = "w-full flex items-center justify-between bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold px-5 py-4 rounded-lg shadow hover:opacity-90 transition";
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
     btn.innerHTML = `
-      <span class="text-lg">${text}</span>
-      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      <span class="text-base md:text-lg">${text}</span>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => alert(\`Kamu klik: \${text}\`);
+    btn.onclick = () => alert(`Kamu klik: ${text}`);
     container.appendChild(btn);
   });
 
   lucide.createIcons();
 }
 
-// 🗂🗂 TUTUP 🅰️
+// 🗂🗂 Tutup
+
 function closeFormatRequestModal() {
   document.getElementById("modalFormatRequest").classList.add("hidden");
 }
+
+
 
   </script>
 </body>
