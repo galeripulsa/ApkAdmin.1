@@ -189,6 +189,16 @@
       lucide.createIcons();
     }
 
+Function handleMenuClick(key) {
+  If (key === “menu”) {
+    showModal();
+  } else if (key === “server”) {
+    showSetupServerModal();
+  } else if (key === “format”) {
+    showFormatRequestModal();
+  }
+}
+
     function updateRefreshButtonState() {
       document.getElementById("btn-refresh").disabled = !isDirty;
     }
