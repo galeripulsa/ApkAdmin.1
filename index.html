@@ -180,13 +180,16 @@ button:hover {
 <div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
 
 
-<!-- 🅰️🗂🗂🗂🗂🗂 MODAL FORMAT REQUEST 🅰️🅰️🅰️🅰️🅰️
+<!-- 🅰️🅰️🅰️🅰️🅰️ MODAL FORMAT REQUEST -->
 <div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
   <div class="max-w-md mx-auto">
     <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
     <div id="format-request-list" class="space-y-4">
       <!-- Tombol akan di-generate oleh JS -->
     </div>
+   <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow transition">
+      Tutup
+    </button>
   </div>
 </div>
 
