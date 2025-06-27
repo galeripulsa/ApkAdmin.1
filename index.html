@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang=”id”>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset=”utf-8” />
+  <meta name=”viewport” content=”width=device-width, initial-scale=1.0” />
   <title>Web Panel Admin Galeri Pulsa</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src=https://cdn.tailwindcss.com></script>
+  <script src=https://unpkg.com/lucide@latest></script>
+  <script src=https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js></script>
   <style>
     /* ✅ Menu Trx ✅ */
     .submenu-item {
-      transition: transform 0.3s ease;
-      position: relative;
+      Transition: transform 0.3s ease;
+      Position: relative;
     }
     .submenu-item .delete-icon {
-      display: none;
+      Display: none;
     }
     .submenu-item.show-delete .delete-icon {
-      display: inline-block;
+      Display: inline-block;
     }
 
 
@@ -25,46 +25,46 @@
 
 /* ✅ Floating Label */
 .floating-input {
-  position: relative;
-  margin-top: 1.5rem;
+  Position: relative;
+  Margin-top: 1.5rem;
 }
 .floating-input input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  outline: none;
+  Width: 100%;
+  Padding: 10px;
+  Border: 1px solid #ccc;
+  Border-radius: 5px;
+  Outline: none;
 }
 .floating-input label {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: white;
-  padding: 0 5px;
-  color: gray;
-  font-size: 0.9rem;
-  pointer-events: none;
-  transition: all 0.2s;
+  Position: absolute;
+  Left: 12px;
+  Top: 50%;
+  Transform: translateY(-50%);
+  Background: white;
+  Padding: 0 5px;
+  Color: gray;
+  Font-size: 0.9rem;
+  Pointer-events: none;
+  Transition: all 0.2s;
 }
 .floating-input input:focus + label,
 .floating-input input:not(:placeholder-shown) + label {
-  top: -10px;
-  left: 8px;
-  font-size: 0.75rem;
-  color: #06b6d4;
+  Top: -10px;
+  Left: 8px;
+  Font-size: 0.75rem;
+  Color: #06b6d4;
 }
 
 /* ✅ Toast Style */
 #toast-message {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
+  Position: fixed;
+  Bottom: 20px;
+  Left: 50%;
+  Transform: translateX(-50%);
+  Background-color: #333;
+  Color: white;
+  Padding: 10px 20px;
+  Border-radius: 8px;
   z-index: 9999;
   transition: opacity 0.3s ease;
   opacity: 0;
@@ -72,320 +72,310 @@
 
 </style>
 </head>
-<body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
-  <div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">Apk Admin</h1>
+<body class=”min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto”>
+  <div class=”flex items-center justify-between mb-4”>
+    <h1 class=”text-2xl font-bold text-gray-800”>Apk Admin</h1>
   </div>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
+  <div class=”grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6” id=”menu-grid”></div>
 
-  <!-- ✅✅✅ MENU TRX ✅✅✅-->
-  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
-    <div class="flex flex-col h-full w-full">
-      <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0">
-        <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
-        <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50" id="btn-refresh">
-          <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
+  <!-- ✅✅✅ MENU TRX ✅✅✅
+  <div class=”fixed inset-0 bg-white z-50 flex flex-col hidden” id=”modal”>
+    <div class=”flex flex-col h-full w-full”>
+      <div class=”w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b shrink-0”>
+        <h2 class=”text-lg font-semibold text-black”>Pengaturan Menu & Kategori</h2>
+        <button class=”flex items-center gap-1 text-sm border px-3 py-1 rounded disabled:opacity-50” id=”btn-refresh”>
+          <i data-lucide=”refresh-ccw” class=”w-4 h-4”></i> Refresh
         </button>
       </div>
-      <div class="bg-cyan-700 flex justify-between gap-2 px-2 pt-2 border-px-5 shrink-0">
-        <button class="bg-purple-100 text-sm border rounded px-3 py-2 w-auto" id="btn-add-menu">+ Menu</button>
-        <button class="bg-violet-200 border rounded px-3 py-2 w-auto text-sm" id="btn-add-cat">+ Kategori</button>
+      <div class=”bg-cyan-700 flex justify-between gap-2 px-2 pt-2 border-px-5 shrink-0”>
+        <button class=”bg-purple-100 text-sm border rounded px-3 py-2 w-auto” id=”btn-add-menu”>+ Menu</button>
+        <button class=”bg-violet-200 border rounded px-3 py-2 w-auto text-sm” id=”btn-add-cat”>+ Kategori</button>
       </div>
-      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3 bg-gray-100" id="submenu-list"></div>
+      <div class=”flex-1 overflow-y-auto px-4 py-2 space-y-3 bg-gray-100” id=”submenu-list”></div>
 
-      <div class="flex flex-col px-4 py-3 border-[3px] border-yellow-700 bg-cyan-500 sticky bottom-0 z-10 space-y-2">
-        <p class="text-black text-sm text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
-        <p class="text-center text-sm text-white" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
-        <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" id="btn-save">SAVE</button>
-        <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" id="btn-close">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Konfirmasi Hapus -->
-  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
-      <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
-      <div class="flex justify-center gap-4">
-        <button id="confirm-yes" class="bg-red-500 text-white px-4 py-2 rounded">Ya</button>
-        <button id="confirm-no" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Batal</button>
+      <div class=”flex flex-col px-4 py-3 border-[3px] border-yellow-700 bg-cyan-500 sticky bottom-0 z-10 space-y-2”>
+        <p class=”text-black text-sm text-center hidden” id=”save-msg”>Perubahan berhasil disimpan.</p>
+        <p class=”text-center text-sm text-white” id=”summary-info”>Total: 0 | Aktif: 0 | Nonaktif: 0</p>
+        <button class=”w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded” id=”btn-save”>SAVE</button>
+        <button class=”w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded” id=”btn-close”>Tutup</button>
       </div>
     </div>
   </div>
 
-<!--✅✅✅ Modal Setup Server (Desain List Keren) ✅✅✅-->
-<div id="modalSetupServer" class="fixed inset-0 z-50 bg-white overflow-auto p-6 hidden">
-  <div class="max-w-md mx-auto">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Server</h2>
+  <!—Konfirmasi Hapus 
+  <div id=”confirm-modal” class=”fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden”>
+    <div class=”bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center”>
+      <p id=”confirm-message” class=”text-gray-800 mb-4”>Apakah Anda yakin?</p>
+      <div class=”flex justify-center gap-4”>
+        <button id=”confirm-yes” class=”bg-red-500 text-white px-4 py-2 rounded”>Ya</button>
+        <button id=”confirm-no” class=”bg-gray-300 text-gray-800 px-4 py-2 rounded”>Batal</button>
+      </div>
+    </div>
+  </div>
 
-    <ul class="space-y-4">
+<!--✅✅✅ Modal Setup Server (Desain List Keren) ✅✅✅
+<div id=”modalSetupServer” class=”fixed inset-0 z-50 bg-white overflow-auto p-6 hidden”>
+  <div class=”max-w-md mx-auto”>
+    <h2 class=”text-2xl font-bold text-gray-800 mb-6”>Pengaturan Server</h2>
+
+    <ul class=”space-y-4”>
       <li>
-        <button onclick="openServerSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
-          <span class="text-lg">Setup Server</span>
-          <i data-lucide="settings" class="w-5 h-5"></i>
+        <button onclick=”openServerSettings()” class=”w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow”>
+          <span class=”text-lg”>Setup Server</span>
+          <i data-lucide=”settings” class=”w-5 h-5”></i>
         </button>
       </li>
       <li>
-        <button onclick="openCenterSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
-          <span class="text-lg">Center Server</span>
-          <i data-lucide="server" class="w-5 h-5"></i>
+        <button onclick=”openCenterSettings()” class=”w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow”>
+          <span class=”text-lg”>Center Server</span>
+          <i data-lucide=”server” class=”w-5 h-5”></i>
         </button>
       </li>
     </ul>
 
-    <button onclick="closeSetupServerModal()" class="mt-8 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+    <button onclick=”closeSetupServerModal()” class=”mt-8 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow”>
       Tutup
     </button>
   </div>
 </div>
 
-<!-- ✅✅✅ MODAL KONTEN DINAMIS (SETUP/CENTER) ✅✅✅ -->
-<div id="modalContentServer" class="fixed inset-0 z-[9999] bg-white overflow-auto p-6 hidden"></div>
+<!-- ✅✅✅ MODAL KONTEN DINAMIS (SETUP/CENTER) ✅✅✅ 
+<div id=”modalContentServer” class=”fixed inset-0 z-[9999] bg-white overflow-auto p-6 hidden”></div>
 
-<!-- ✅✅✅ TOAST ✅✅✅ -->
-<div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
+<!-- ✅✅✅ TOAST ✅✅✅ 
+<div id=”toast-message” class=”fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden”></div>
 
 
-  <!-- SCRIPT -->
+  <!—SCRIPT 
   <script>
-    const menuItems = [
-      { label: "Setup Server", icon: "server", key: "server" },
-      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
-      { label: "Logo", icon: "image", key: "logo" },
-      { label: "Format Request", icon: "file-text", key: "format" },
-      { label: "Poin", icon: "star", key: "poin" },
-      { label: "Downline", icon: "users", key: "downline" },
-      { label: "Prabayar", icon: "phone", key: "prabayar" },
-      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
-      { label: "OTP", icon: "key", key: "otp" }
+    Const menuItems = [
+      { label: “Setup Server”, icon: “server”, key: “server” },
+      { label: “Menu Transaksi”, icon: “layout-grid”, key: “menu” },
+      { label: “Logo”, icon: “image”, key: “logo” },
+      { label: “Format Request”, icon: “file-text”, key: “format” },
+      { label: “Poin”, icon: “star”, key: “poin” },
+      { label: “Downline”, icon: “users”, key: “downline” },
+      { label: “Prabayar”, icon: “phone”, key: “prabayar” },
+      { label: “Pascabayar”, icon: “credit-card”, key: “pascabayar” },
+      { label: “OTP”, icon: “key”, key: “otp” }
     ];
 
-    let activeKey = "menu";
-        let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
-      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
+    Let activeKey = “menu”;
+    Let subMenus = JSON.parse(localStorage.getItem(“subMenus”)) || [
+      { name: “Pulsa Reguler”, icon: null, active: true, isCategory: false }
     ];
-    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-    let isDirty = false;
+    Let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    Let isDirty = false;
 
-    const submenuList = document.getElementById("submenu-list");
-    const grid = document.getElementById("menu-grid");
+    Const submenuList = document.getElementById(“submenu-list”);
+    Const grid = document.getElementById(“menu-grid”);
 
-    function renderMenus() {
-      grid.innerHTML = "";
+    Function renderMenus() {
+      Grid.innerHTML = “”;
       menuItems.forEach(item => {
-        const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
-        box.innerHTML = `
-          <div class="flex justify-center mb-2 text-3xl text-gray-700">
-            <i data-lucide="${item.icon}"></i>
+        const isActive = item.key === activeKey;
+        const box = document.createElement(“div”);
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
+          isActive ? “bg-yellow-300 ring-2 ring-yellow-400” : “bg-white”
+        }`;
+        Box.setAttribute(“data-key”, item.key);
+        Box.innerHTML = `
+          <div class=”flex justify-center mb-2 text-3xl text-gray-700”>
+            <i data-lucide=”${item.icon}”></i>
           </div>
-          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+          <div class=”font-semibold text-sm text-gray-800”>${item.label}</div>
         `;
-        
-     Box.onclick = () => {
+        Box.onclick = () => {
           activeKey = item.key;
           renderMenus();
           handleMenuClick(item.key);
         };
-
-        grid.appendChild(box);
+        Grid.appendChild(box);
       });
-      lucide.createIcons();
+      Lucide.createIcons();
     }
 
-function handleMenuClick(key) {
-  if (key === "menu") {
+    Function handleMenuClick(key) {
+  If (key === “menu”) {
     showModal();
-  } else if (key === "server") {
+  } else if (key === “server”) {
     showSetupServerModal();
-  } else if (key === "format") {
-    alert("Format Request belum tersedia.");
-  } else if (key === "logo") {
-    alert("Pengaturan Logo belum tersedia.");
-  } else if (key === "poin") {
-    alert("Poin belum tersedia.");
-  } else if (key === "downline") {
-    alert("Downline belum tersedia.");
-  } else if (key === "prabayar") {
-    alert("Prabayar belum tersedia.");
-  } else if (key === "pascabayar") {
-    alert("Pascabayar belum tersedia.");
-  } else if (key === "otp") {
-    alert("OTP belum tersedia.");
-  } else {
-    alert("Menu tidak dikenal.");
+  } else if (key === “format”) {
+    showFormatRequestModal();
   }
 }
 
-// Lanjut ke: showModal(), showSetupServerModal(), dll.
-
-    function updateRefreshButtonState() {
-      document.getElementById("btn-refresh").disabled = !isDirty;
-    }
-
-    function enableSwipeToDelete(row) {
-      let startX = 0;
-      row.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-      });
-      row.addEventListener("touchmove", (e) => {
-        const deltaX = e.touches[0].clientX - startX;
-        if (deltaX < -30) {
-          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          row.classList.add("show-delete");
-        } else if (deltaX > 30) {
-          row.classList.remove("show-delete");
-        }
-      });
-    }
-
-    function renderSubMenus() {
-      submenuList.innerHTML = "";
+    Function renderSubMenus() {
+      submenuList.innerHTML = “”;
       subMenus.forEach((menu, index) => {
-        const row = document.createElement("div");
-         const bgColor = menu.isCategory
-  ? menu.active
-    ? "bg-yellow-300" // Kategori aktif
-    : "bg-yellow-100" // Kategori nonaktif
-  : menu.active
-    ? "bg-green-300"  // Item aktif
-    : "bg-gray-100";  // Item nonaktif
+        const bgColor = menu.isCategory
+          ? menu.active ? “bg-yellow-300” : “bg-yellow-100”
+          : menu.active ? “bg-green-300” : “bg-gray-100”;
 
-row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
-        row.innerHTML = `
-          <div class="flex items-center gap-2 flex-1">
-            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
-            <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+        Const row = document.createElement(“div”);
+        Row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
+        Row.innerHTML = `
+          <div class=”flex items-center gap-2 flex-1”>
+            <input type=”checkbox” class=”accent-green-500 w-5 h-5” ${menu.active ? “checked” : “”} onchange=”toggleActive(${index})” />
+            <input type=”text” class=”flex-grow p-2 border rounded text-sm” value=”${menu.name}” onchange=”updateName(${index}, this.value)” />
             ${!menu.isCategory ? `
-              <div class="relative">
+              <div class=”relative”>
                 ${menu.icon ? `
-                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
-                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  <img src=”${menu.icon}” class=”w-10 h-10 rounded border object-cover cursor-pointer” onclick=”document.getElementById(‘icon-${index}’).click()” />
+                  <input id=”icon-${index}” type=’file’ accept=’image/*’ class=’hidden’ onchange=’uploadIcon(event, ${index})’ />
                 ` : `
-                  <label class='w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer'>+ Icon
-                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  <label class=’w-10 h-10 bg-gray-200 border rounded flex items-center justify-center text-gray-400 text-xs cursor-pointer’>+ Icon
+                    <input id=”icon-${index}” type=’file’ accept=’image/*’ class=’hidden’ onchange=’uploadIcon(event, ${index})’ />
                   </label>
                 `}
-              </div>` : ""}
+              </div>` : “”}
           </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
-            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
+          <div class=”flex items-center gap-2”>
+            <i data-lucide=”grip-vertical” class=”w-5 h-5 text-gray-600 cursor-move”></i>
+            <i data-lucide=”trash-2” class=”w-5 h-5 text-red-500 cursor-pointer delete-icon” onclick=”confirmDelete(${index})”></i>
           </div>`;
         submenuList.appendChild(row);
         enableSwipeToDelete(row);
       });
-      lucide.createIcons();
+      Lucide.createIcons();
       updateRefreshButtonState();
       renderSummary();
     }
 
-    function updateName(index, value) {
+    Function updateName(index, value) {
       subMenus[index].name = value;
       isDirty = true;
       updateRefreshButtonState();
     }
 
-    function toggleActive(index) {
+    Function toggleActive(index) {
       subMenus[index].active = !subMenus[index].active;
       isDirty = true;
       updateRefreshButtonState();
       renderSubMenus();
     }
 
-    function uploadIcon(e, index) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
+    Function uploadIcon(e, index) {
+      Const file = e.target.files[0];
+      If (file) {
+        Const reader = new FileReader();
+        Reader.onload = () => {
           subMenus[index].icon = reader.result;
           isDirty = true;
           updateRefreshButtonState();
           renderSubMenus();
         };
-        reader.readAsDataURL(file);
+        Reader.readAsDataURL(file);
       }
     }
 
-    function confirmDelete(index) {
-      showConfirmationModal(`Yakin ingin menghapus item: "${subMenus[index].name}"?`, () => {
-        subMenus.splice(index, 1);
-        isDirty = true;
-        updateRefreshButtonState();
-        renderSubMenus();
+    Function confirmDelete(index) {
+  Const itemName = subMenus[index].name;
+  showConfirmationModal(`Yakin ingin menghapus item: “${itemName}”?`, () => {
+    subMenus.splice(index, 1);
+    isDirty = true;
+    updateRefreshButtonState();
+    renderSubMenus();
+  });
+}
+
+
+    Function enableSwipeToDelete(row) {
+      Let startX = 0;
+      Row.addEventListener(“touchstart”, (e) => {
+        startX = e.touches[0].clientX;
+      });
+      Row.addEventListener(“touchmove”, (e) => {
+        Const deltaX = e.touches[0].clientX – startX;
+        If (deltaX < -30) {
+          Document.querySelectorAll(“.submenu-item”).forEach(item => item.classList.remove(“show-delete”));
+          Row.classList.add(“show-delete”);
+        } else if (deltaX > 30) {
+          Row.classList.remove(“show-delete”);
+        }
       });
     }
 
-    function showModal() {
-      document.getElementById("modal").classList.remove("hidden");
+    Function showModal() {
+      Document.getElementById(“modal”).classList.remove(“hidden”);
       renderSubMenus();
     }
 
-    function showConfirmationModal(message, onYes, onNo) {
-      const modal = document.getElementById("confirm-modal");
-      document.getElementById("confirm-message").innerText = message;
-      modal.classList.remove("hidden");
-      const yesBtn = document.getElementById("confirm-yes");
-      const noBtn = document.getElementById("confirm-no");
-      const cleanup = () => {
-        modal.classList.add("hidden");
-        yesBtn.onclick = null;
-        noBtn.onclick = null;
-      };
-      yesBtn.onclick = () => { cleanup(); onYes(); };
-      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
-    }
+    Function showConfirmationModal(message, onYes, onNo) {
+  Const modal = document.getElementById(“confirm-modal”);
+  Document.getElementById(“confirm-message”).innerText = message;
+  Modal.classList.remove(“hidden”);
 
-    document.getElementById("btn-close").onclick = () => {
-      if (isDirty) {
-        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
-          document.getElementById("modal").classList.add("hidden");
+  Const yesBtn = document.getElementById(“confirm-yes”);
+  Const noBtn = document.getElementById(“confirm-no”);
+
+  // Hapus event sebelumnya
+  yesBtn.onclick = null;
+  noBtn.onclick = null;
+
+  // Tambahkan event baru
+  yesBtn.onclick = () => {
+    modal.classList.add(“hidden”);
+    if (typeof onYes === “function”) onYes();
+  };
+  noBtn.onclick = () => {
+    modal.classList.add(“hidden”);
+    if (typeof onNo === “function”) onNo();
+  };
+}
+
+    Document.getElementById(“btn-close”).onclick = () => {
+      If (isDirty) {
+        showConfirmationModal(“Perubahan belum disimpan. Tutup tanpa menyimpan?”, () => {
+          document.getElementById(“modal”).classList.add(“hidden”);
           subMenus = JSON.parse(JSON.stringify(tempSubMenus));
           isDirty = false;
           updateRefreshButtonState();
         });
       } else {
-        document.getElementById("modal").classList.add("hidden");
+        Document.getElementById(“modal”).classList.add(“hidden”);
       }
     };
 
-    document.getElementById("btn-save").onclick = () => {
+    Document.getElementById(“btn-save”).onclick = () => {
       tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-      localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      localStorage.setItem(“subMenus”, JSON.stringify(subMenus));
       isDirty = false;
       updateRefreshButtonState();
-      const saveMsg = document.getElementById("save-msg");
-      saveMsg.classList.remove("hidden");
-      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
+      const saveMsg = document.getElementById(“save-msg”);
+      saveMsg.classList.remove(“hidden”);
+      setTimeout(() => saveMsg.classList.add(“hidden”), 2000);
     };
 
-    document.getElementById("btn-refresh").onclick = () => {
-      if (!isDirty) return;
-      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
-        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
-        isDirty = false;
-        updateRefreshButtonState();
-        renderSubMenus();
-      });
-    };
+    Document.getElementById(“btn-refresh”).onclick = () => {
+  If (!isDirty) return;
+  showConfirmationModal(“Yakin ingin membatalkan perubahan?”, () => {
+    subMenus = JSON.parse(JSON.stringify(tempSubMenus));  // reset data
+    isDirty = false;
+    updateRefreshButtonState();
+    renderMenus();       
+    renderSubMenus();    
+  });
+};
 
-    document.getElementById("btn-add-menu").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+
+    Document.getElementById(“btn-add-menu”).onclick = () => {
+      subMenus.unshift({ name: “”, icon: null, active: false, isCategory: false });
       isDirty = true;
       updateRefreshButtonState();
       renderSubMenus();
     };
 
-    document.getElementById("btn-add-cat").onclick = () => {
-      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+    Document.getElementById(“btn-add-cat”).onclick = () => {
+      subMenus.unshift({ name: “”, icon: null, active: false, isCategory: true });
       isDirty = true;
       updateRefreshButtonState();
       renderSubMenus();
     };
 
-    const sortable = new Sortable(submenuList, {
-      animation: 150,
-      handle: ".lucide-grip-vertical",
+    Const sortable = new Sortable(submenuList, {
+      Animation: 150,
+      Handle: “.lucide-grip-vertical”,
       onEnd: function (evt) {
         const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
         subMenus.splice(evt.newIndex, 0, movedItem);
@@ -395,13 +385,15 @@ row.className = `submenu-item flex items-center justify-between border rounded p
       }
     });
 
-    function renderSummary() {
-      const total = subMenus.length;
-      const aktif = subMenus.filter(item => item.active).length;
-      const nonaktif = total - aktif;
-      document.getElementById("summary-info").textContent =
+    Function renderSummary() {
+      Const total = subMenus.length;
+      Const aktif = subMenus.filter(item => item.active).length;
+      Const nonaktif = total – aktif;
+      Document.getElementById(“summary-info”).textContent =
         `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
     }
+
+      Lucide.createIcons();
 
     renderMenus();
 
@@ -409,151 +401,152 @@ row.className = `submenu-item flex items-center justify-between border rounded p
 // ✅✅✅ SETUP SERVER ✅✅✅
 
 // ✅ TAMPILAN MODAL UTAMA
-function showSetupServerModal() {
-  document.getElementById("modalSetupServer").classList.remove("hidden");
-  document.getElementById("modalContentServer").classList.add("hidden");
+Function showSetupServerModal() {
+  Document.getElementById(“modalSetupServer”).classList.remove(“hidden”);
+  Document.getElementById(“modalContentServer”).classList.add(“hidden”);
 }
 
-function closeSetupServerModal() {
-  document.getElementById("modalSetupServer").classList.add("hidden");
-  document.getElementById("modalContentServer").classList.add("hidden");
+Function closeSetupServerModal() {
+  Document.getElementById(“modalSetupServer”).classList.add(“hidden”);
+  Document.getElementById(“modalContentServer”).classList.add(“hidden”);
 }
 
-function backToMainModal() {
+Function backToMainModal() {
   showSetupServerModal();
 }
 
 // ✅ SETUP SERVER
-function openServerSettings() {
-  const saved = JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" };
-  const modal = document.getElementById("modalContentServer");
-  document.getElementById("modalSetupServer").classList.add("hidden");
-  modal.classList.remove("hidden");
+Function openServerSettings() {
+  Const saved = JSON.parse(localStorage.getItem(“setupServer”)) || { nama: “”, alamat: “” };
+  Const modal = document.getElementById(“modalContentServer”);
+  Document.getElementById(“modalSetupServer”).classList.add(“hidden”);
+  Modal.classList.remove(“hidden”);
 
-  modal.innerHTML = `
-    <div class="max-w-md mx-auto w-full">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Setup Server</h2>
-      <form onsubmit="submitServerSettings(event)" class="space-y-4">
+  Modal.innerHTML = `
+    <div class=”max-w-md mx-auto w-full”>
+      <h2 class=”text-2xl font-bold text-gray-800 mb-6”>Setup Server</h2>
+      <form onsubmit=”submitServerSettings(event)” class=”space-y-4”>
         <div>
-          <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
-          <input type="text" id="namaServer" value="${saved.nama}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
+          <label class=”block text-gray-700 font-medium mb-1”>Nama Server</label>
+          <input type=”text” id=”namaServer” value=”${saved.nama}” class=”w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400” required />
         </div>
         <div>
-          <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
-          <textarea id="alamatServer" rows="10" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required>${saved.alamat}</textarea>
+          <label class=”block text-gray-700 font-medium mb-1”>Alamat Server</label>
+          <textarea id=”alamatServer” rows=”10” class=”w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400” required>${saved.alamat}</textarea>
         </div>
-        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">Simpan</button>
-        <button type="button" onclick="backToMainModal()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Kembali</button>
+        <button type=”submit” class=”w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded”>Simpan</button>
+        <button type=”button” onclick=”backToMainModal()” class=”w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded”>Kembali</button>
       </form>
     </div>
   `;
 }
 
-function submitServerSettings(event) {
-  event.preventDefault();
-  const nama = document.getElementById("namaServer").value.trim();
-  const alamat = document.getElementById("alamatServer").value.trim();
-  if (!nama || !alamat) return alert("Semua kolom harus diisi.");
-  localStorage.setItem("setupServer", JSON.stringify({ nama, alamat }));
-  showToast("✅ Data Server berhasil disimpan!");
+Function submitServerSettings(event) {
+  Event.preventDefault();
+  Const nama = document.getElementById(“namaServer”).value.trim();
+  Const alamat = document.getElementById(“alamatServer”).value.trim();
+  If (!nama || !alamat) return alert(“Semua kolom harus diisi.”);
+  localStorage.setItem(“setupServer”, JSON.stringify({ nama, alamat }));
+  showToast(“✅ Data Server berhasil disimpan!”);
 }
 
 // ✅ BAGIAN CENTER
-let hasChanges = false;
+Let hasChanges = false;
 
-function openCenterSettings() {
-  const modal = document.getElementById("modalContentServer");
-  document.getElementById("modalSetupServer").classList.add("hidden");
-  modal.classList.remove("hidden");
+Function openCenterSettings() {
+  Const modal = document.getElementById(“modalContentServer”);
+  Document.getElementById(“modalSetupServer”).classList.add(“hidden”);
+  Modal.classList.remove(“hidden”);
 
-  const saved = JSON.parse(localStorage.getItem("centerServer")) || {
-    ip: { nama: "", server: "", host: "" },
-    jabber: { nama: "", server: "", host: "" },
-    nomor: { whatsapp: "", sms: "" }
+  Const saved = JSON.parse(localStorage.getItem(“centerServer”)) || {
+    Ip: { nama: “”, server: “”, host: “” },
+    Jabber: { nama: “”, server: “”, host: “” },
+    Nomor: { whatsapp: “”, sms: “” }
   };
 
-  modal.innerHTML = `
-    <div class="flex flex-col h-full bg-white p-4 rounded-lg shadow-md max-w-xl mx-auto">
-      <div class="border-b pb-3 mb-4">
-        <h2 class="text-2xl font-bold text-gray-800">Center Server</h2>
+  Modal.innerHTML = `
+    <div class=”flex flex-col h-full bg-white p-4 rounded-lg shadow-md max-w-xl mx-auto”>
+      <div class=”border-b pb-3 mb-4”>
+        <h2 class=”text-2xl font-bold text-gray-800”>Center Server</h2>
       </div>
-      <div class="flex-1 overflow-y-auto space-y-6 pr-1">
+      <div class=”flex-1 overflow-y-auto space-y-6 pr-1”>
         <div>
-          <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
-          <div class="floating-input"><input type="text" id="ip-nama" value="${saved.ip.nama}" /><label>Nama Center</label></div>
-          <div class="floating-input"><input type="text" id="ip-server" value="${saved.ip.server}" /><label>Server Center</label></div>
-          <div class="floating-input"><input type="text" id="ip-host" value="${saved.ip.host}" /><label>Host</label></div>
+          <h3 class=”text-lg font-semibold text-cyan-700 mb-2”>IP Center</h3>
+          <div class=”floating-input”><input type=”text” id=”ip-nama” value=”${saved.ip.nama}” /><label>Nama Center</label></div>
+          <div class=”floating-input”><input type=”text” id=”ip-server” value=”${saved.ip.server}” /><label>Server Center</label></div>
+          <div class=”floating-input”><input type=”text” id=”ip-host” value=”${saved.ip.host}” /><label>Host</label></div>
         </div>
         <div>
-          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
-          <div class="floating-input"><input type="text" id="jabber-nama" value="${saved.jabber.nama}" /><label>Nama Center</label></div>
-          <div class="floating-input"><input type="text" id="jabber-server" value="${saved.jabber.server}" /><label>Server Center</label></div>
-          <div class="floating-input"><input type="text" id="jabber-host" value="${saved.jabber.host}" /><label>Host</label></div>
+          <h3 class=”text-lg font-semibold text-cyan-700 mb-2”>Jabber Center</h3>
+          <div class=”floating-input”><input type=”text” id=”jabber-nama” value=”${saved.jabber.nama}” /><label>Nama Center</label></div>
+          <div class=”floating-input”><input type=”text” id=”jabber-server” value=”${saved.jabber.server}” /><label>Server Center</label></div>
+          <div class=”floating-input”><input type=”text” id=”jabber-host” value=”${saved.jabber.host}” /><label>Host</label></div>
         </div>
         <div>
-          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
-          <div class="floating-input"><input type="text" id="wa-center" value="${saved.nomor.whatsapp}" /><label>WhatsApp Center</label></div>
-          <div class="floating-input"><input type="text" id="sms-center" value="${saved.nomor.sms}" /><label>SMS Center</label></div>
+          <h3 class=”text-lg font-semibold text-cyan-700 mb-2”>Nomor Center</h3>
+          <div class=”floating-input”><input type=”text” id=”wa-center” value=”${saved.nomor.whatsapp}” /><label>WhatsApp Center</label></div>
+          <div class=”floating-input”><input type=”text” id=”sms-center” value=”${saved.nomor.sms}” /><label>SMS Center</label></div>
         </div>
       </div>
-      <div class="mt-6 space-y-2">
-        <button onclick="submitCenterSettings()" class="w-full bg-green-600 text-white py-2 rounded font-semibold">Simpan</button>
-        <button onclick="handleBackFromCenterSettings()" class="w-full bg-gray-300 text-gray-800 py-2 rounded font-semibold">Kembali</button>
+      <div class=”mt-6 space-y-2”>
+        <button onclick=”submitCenterSettings()” class=”w-full bg-green-600 text-white py-2 rounded font-semibold”>Simpan</button>
+        <button onclick=”handleBackFromCenterSettings()” class=”w-full bg-gray-300 text-gray-800 py-2 rounded font-semibold”>Kembali</button>
       </div>
     </div>
   `;
 
   setTimeout(() => {
-    modal.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", () => {
+    modal.querySelectorAll(“input”).forEach(input => {
+      input.addEventListener(“input”, () => {
         hasChanges = true;
       });
     });
   }, 100);
 }
 
-function handleBackFromCenterSettings() {
-  if (hasChanges && !confirm("Perubahan belum disimpan. Yakin ingin kembali?")) return;
+Function handleBackFromCenterSettings() {
+  If (hasChanges && !confirm(“Perubahan belum disimpan. Yakin ingin kembali?”)) return;
   showSetupServerModal();
-  document.getElementById("modalContentServer").classList.add("hidden");
+  document.getElementById(“modalContentServer”).classList.add(“hidden”);
   hasChanges = false;
 }
 
-function submitCenterSettings() {
-  const data = {
-    ip: {
-      nama: document.getElementById("ip-nama").value.trim(),
-      server: document.getElementById("ip-server").value.trim(),
-      host: document.getElementById("ip-host").value.trim()
+Function submitCenterSettings() {
+  Const data = {
+    Ip: {
+      Nama: document.getElementById(“ip-nama”).value.trim(),
+      Server: document.getElementById(“ip-server”).value.trim(),
+      Host: document.getElementById(“ip-host”).value.trim()
     },
-    jabber: {
-      nama: document.getElementById("jabber-nama").value.trim(),
-      server: document.getElementById("jabber-server").value.trim(),
-      host: document.getElementById("jabber-host").value.trim()
+    Jabber: {
+      Nama: document.getElementById(“jabber-nama”).value.trim(),
+      Server: document.getElementById(“jabber-server”).value.trim(),
+      Host: document.getElementById(“jabber-host”).value.trim()
     },
-    nomor: {
-      whatsapp: document.getElementById("wa-center").value.trim(),
-      sms: document.getElementById("sms-center").value.trim()
+    Nomor: {
+      Whatsapp: document.getElementById(“wa-center”).value.trim(),
+      Sms: document.getElementById(“sms-center”).value.trim()
     }
   };
 
-  localStorage.setItem("centerServer", JSON.stringify(data));
+  localStorage.setItem(“centerServer”, JSON.stringify(data));
   hasChanges = false;
-  showToast("✅ Data Center berhasil disimpan!");
+  showToast(“✅ Data Center berhasil disimpan!”);
 }
 
 // ✅ TOAST
-function showToast(message) {
-  const toast = document.getElementById("toast-message");
-  toast.textContent = message;
-  toast.classList.remove("hidden");
-  toast.style.opacity = "1";
+Function showToast(message) {
+  Const toast = document.getElementById(“toast-message”);
+  Toast.textContent = message;
+  Toast.classList.remove(“hidden”);
+  Toast.style.opacity = “1”;
   setTimeout(() => {
-    toast.style.opacity = "0";
-    setTimeout(() => toast.classList.add("hidden"), 300);
+    toast.style.opacity = “0”;
+    setTimeout(() => toast.classList.add(“hidden”), 300);
   }, 2500);
 }
   </script>
 </body>
 </html>
  
+
