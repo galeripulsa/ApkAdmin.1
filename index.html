@@ -569,16 +569,15 @@ function openCenterSettings() {
     </div>
   `;
 
-  // ✅ Tambahkan event listener input ke semua input
+  // Tambah event listener input agar deteksi perubahan
   setTimeout(() => {
     document.querySelectorAll("#modalSetupServer input").forEach(input => {
       input.addEventListener("input", () => {
-        hasChanges = false;
+        hasChanges = true;
       });
     });
-  }, 0);
+  }, 100);
 }
-
 
 // ✅ Fungsi Kembali (cek jika ada perubahan)
 function handleBackFromCenterSettings() {
@@ -586,7 +585,7 @@ function handleBackFromCenterSettings() {
     const confirmLeave = confirm("Perubahan belum disimpan. Yakin ingin kembali?");
     if (!confirmLeave) return;
   }
-  showSetupServerModal(); // balik ke menu awal
+  showSetupServerModal();
 }
 
 // ✅ Fungsi Simpan
