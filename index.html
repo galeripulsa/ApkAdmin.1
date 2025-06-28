@@ -616,31 +616,26 @@ const formatList = [
 let selectedFormat = "";
 
 function showFormatRequestModal() {
-  const modal = document.getElementById("modalFormatRequest");
-  modal.classList.remove("hidden");
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
 
-  const list = [
-    { label: "Setup Transaksi", icon: "file-text" },
-    { label: "Setup Laporan", icon: "bar-chart-2" },
-    { label: "Format Cek", icon: "search" },
-    { label: "Setup PIN", icon: "key" },
-    { label: "Topup", icon: "dollar-sign" }
-  ];
+function renderFormatList() {
+  document.getElementById("format-request-list").classList.remove("hidden");
+  document.getElementById("format-request-form").classList.add("hidden");
 
   const container = document.getElementById("format-request-list");
   container.innerHTML = "";
 
-  list.forEach(item => {
+  formatList.forEach(text => {
     const btn = document.createElement("button");
-    btn.className = "w-full flex items-center justify-between gap-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold px-5 py-4 rounded-xl shadow hover:opacity-90 transition";
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
     btn.innerHTML = `
-      <div class="flex items-center gap-3">
-        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-        <span class="text-base">${item.label}</span>
-      </div>
-      <i data-lucide="chevron-right" class="w-5 h-5 opacity-70"></i>
+      <span class="text-base md:text-lg">${text}</span>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => alert(\`Kamu klik: \${item.label}\`);
+    btn.onclick = () => openFormatForm(text);
     container.appendChild(btn);
   });
 
