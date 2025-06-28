@@ -605,6 +605,16 @@ function showToast(message) {
 }
 
 // FORMAT ✅✅
+const formatList = [
+  "Setup Transaksi",
+  "Setup Laporan",
+  "Format Cek",
+  "Setup PIN",
+  "Topup"
+];
+
+let selectedFormat = "";
+
 function showFormatRequestModal() {
   const modal = document.getElementById("modalFormatRequest");
   modal.classList.remove("hidden");
