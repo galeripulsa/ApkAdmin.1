@@ -204,61 +204,80 @@
   </div>
 </div>
 
-<-- ✅✅ SETUP TRANSAKSI ✅✅
-<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center hidden">
-  <div class="bg-white w-full max-w-md p-5 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
-    <h2 class="text-lg font-bold mb-4 text-center">Format Transaksi Umum</h2>
+<-- ✅✅ MODAL SETUP TRANSAKSI ✅✅
 
-    <div class="space-y-4 text-sm text-gray-700">
-      <div>
-        <label class="block font-semibold mb-1">Format Umum</label>
-        <textarea class="w-full p-2 border rounded-md text-xs" readonly>[kodeproduk].[tujuan].[pin]R#[refid]</textarea>
-        <p class="text-[11px] text-gray-500 mt-1 italic">
-          *Format trx umum yg dipakai jalur XMPP<br/>
-          pilih pakai counter atau pakai refid<br/>
-          hilangkan counter jika pakai refid<br/>
-          (urutan format bebas)
-        </p>
-      </div>
+<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm p-4 overflow-y-auto hidden">
+  <div class="bg-white rounded-2xl max-w-xl mx-auto p-6 space-y-4 shadow-lg">
+    <h2 class="text-center font-bold text-lg text-blue-600">Format Transaksi Umum</h2>
 
-      <div>
-        <button class="w-full py-2 bg-gray-100 rounded-md font-semibold text-left">Format Transaksi QTY Umum</button>
-        <button class="w-full py-2 bg-gray-100 rounded-md font-semibold text-left">Format Cek Harga</button>
-      </div>
-
-      <div>
-        <label class="block font-semibold mb-1">Format UbahPass IP</label>
-        <textarea class="w-full p-2 border rounded-md text-xs" readonly></textarea>
-        <p class="text-[11px] text-gray-500 mt-1 italic">
-          *Khusus untuk sw 3P, diisi jika trx pakai jalur IP<br/>
-          abaikan jika tidak pakai IP
-        </p>
-      </div>
-
-      <div>
-        <label class="block font-semibold mb-1">Format Reset Password IP</label>
-        <textarea class="w-full p-2 border rounded-md text-xs" readonly>GPSW*[newpassword]*[pin]</textarea>
-        <p class="text-[11px] text-gray-500 mt-1 italic">
-          [newpassword] = memunculkan isian password baru<br/>
-          [timestamp] = otomatis password baru berdasarkan rumus tanggal
-        </p>
-      </div>
-
-      <input class="w-full p-2 border rounded-md text-xs" placeholder="Kata kunci sukses">
-      <input class="w-full p-2 border rounded-md text-xs" placeholder="Kata kunci gagal">
-
-      <div>
-        <label class="block font-semibold mb-1">Format awalan Komplen</label>
-        <textarea class="w-full p-2 border rounded-md text-xs" readonly>K.[pesan]</textarea>
-        <p class="text-[11px] text-gray-500 mt-1 italic">
-          Contoh: K. (disertai titik)
-        </p>
-      </div>
+    <!-- KOLOM 1 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format Transaksi Umum</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="[kodeproduk].[tujuan].[pin]R#[refid]"></textarea>
+      <p class="text-xs text-gray-500 mt-1">
+        * Format trx umum yg dipakai jalur XMPP<br>
+        pilih pakai counter atau pakai refid<br>
+        hilangkan counter jika pakai refid (urutan format bebas)
+      </p>
     </div>
 
-    <div class="mt-6 flex gap-3">
-      <button onclick="closeSetupTransaksiModal()" class="flex-1 py-2 bg-gray-300 rounded-lg font-semibold">Kembali</button>
-      <button class="flex-1 py-2 bg-blue-500 text-white rounded-lg font-semibold">Save</button>
+    <!-- KOLOM 2 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format Transaksi QTY Umum</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder=""></textarea>
+    </div>
+
+    <!-- KOLOM 3 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format Cek Harga</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder=""></textarea>
+    </div>
+
+    <!-- KOLOM 4 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format UbahPass IP</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder=""></textarea>
+      <p class="text-xs text-gray-500 mt-1">
+        * Khusus untuk sw 3P<br>
+        diisi jika trx pakai jalur IP<br>
+        abaikan jika tidak pakai IP
+      </p>
+    </div>
+
+    <!-- KOLOM 5 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format Reset Password IP</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="GPSW*[newpassword]*[pin]"></textarea>
+      <p class="text-xs text-gray-500 mt-1">
+        [newpassword] = memunculkan isian password baru<br>
+        [timestamp] = otomatis password baru berdasarkan rumus tanggal
+      </p>
+    </div>
+
+    <!-- KOLOM 6 & 7 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Kata Kunci Ubah Password IP Sukses</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
+    </div>
+
+    <div>
+      <label class="text-sm font-medium text-gray-600">Kata Kunci Ubah Password IP Gagal</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
+    </div>
+
+    <!-- KOLOM 8 -->
+    <div>
+      <label class="text-sm font-medium text-gray-600">Format Awalan Komplen</label>
+      <textarea rows="2" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="K.[pesan]"></textarea>
+      <p class="text-xs text-gray-500 mt-1">Contoh: K. (disertai titik)</p>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="pt-4">
+      <button onclick="saveSetupTransaksi()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold shadow">
+        SAVE
+      </button>
+      <button onclick="closeSetupTransaksi()" class="w-full mt-3 text-sm text-gray-500 underline">Tutup</button>
     </div>
   </div>
 </div>
@@ -697,8 +716,13 @@ function renderFormatList() {
       </div>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => openFormatForm(item.label);
-    container.appendChild(btn);
+   btn.onclick = () => {
+  if (text === "Setup Transaksi") {
+    showSetupTransaksi();
+  } else {
+    openFormatForm(text);
+  }
+};
   });
 
   lucide.createIcons();
@@ -742,27 +766,39 @@ function closeFormatRequestModal() {
 }
 
 // ✅✅ SETUP TRANSAKSI ✅✅
-function openFormatForm(title) {
-  selectedFormat = title;
-
-  if (title === "Setup Transaksi") {
-    showSetupTransaksiModal();
-  } else {
-    document.getElementById("format-form-title").innerText = title;
-    document.getElementById("formatInput").value = "";
-    document.getElementById("format-request-list").classList.add("hidden");
-    document.getElementById("format-request-form").classList.remove("hidden");
-  }
-}
-
-function showSetupTransaksiModal() {
-  document.getElementById("modalFormatRequest").classList.add("hidden");
+function showSetupTransaksi() {
   document.getElementById("modalSetupTransaksi").classList.remove("hidden");
 }
 
-function closeSetupTransaksiModal() {
+function closeSetupTransaksi() {
   document.getElementById("modalSetupTransaksi").classList.add("hidden");
-  document.getElementById("modalFormatRequest").classList.remove("hidden");
+}
+
+function saveSetupTransaksi() {
+  alert("Format disimpan!");
+  closeSetupTransaksi();
+}
+
+function handleMenuClick(key) {
+  if (key === "format") {
+    showFormatRequestModal();
+  } else if (key === "server") {
+    showSetupServerModal();
+  } else if (key === "menu") {
+    showModal();
+  } else if (key === "logo") {
+    alert("Pengaturan Logo belum tersedia.");
+  } else if (key === "poin") {
+    alert("Poin belum tersedia.");
+  } else if (key === "downline") {
+    alert("Downline belum tersedia.");
+  } else if (key === "prabayar") {
+    alert("Prabayar belum tersedia.");
+  } else if (key === "pascabayar") {
+    alert("Pascabayar belum tersedia.");
+  } else if (key === "otp") {
+    alert("OTP belum tersedia.");
+  }
 }
 
   </script>
