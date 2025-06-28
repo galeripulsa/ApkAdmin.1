@@ -770,17 +770,29 @@ function closeFormatRequestModal() {
 
 // ✅✅ SETUP TRANSAKSI ✅✅
 function showSetupTransaksi() {
-  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-}
+      document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+      loadSetupTransaksi();
+    }
 
-function closeSetupTransaksi() {
-  document.getElementById("modalSetupTransaksi").classList.add("hidden");
-}
+    function closeSetupTransaksi() {
+      document.getElementById("modalSetupTransaksi").classList.add("hidden");
+    }
 
-function saveSetupTransaksi() {
-  alert("Format disimpan!");
-  closeSetupTransaksi();
-}
+    function saveSetupTransaksi() {
+      const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
+      const values = Array.from(inputs).map(input => input.value);
+      localStorage.setItem("setupTransaksi", JSON.stringify(values));
+      alert("Disimpan!");
+      closeSetupTransaksi();
+    }
+
+    function loadSetupTransaksi() {
+      const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");
+      const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
+      values.forEach((val, i) => {
+        if (inputs[i]) inputs[i].value = val;
+      });
+    }
 
 function handleMenuClick(key) {
   if (key === "format") {
