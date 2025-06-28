@@ -606,11 +606,11 @@ function showToast(message) {
 
 // FORMAT ✅✅
 const formatList = [
-  "Setup Transaksi",
-  "Setup Laporan",
-  "Format Cek",
-  "Setup PIN",
-  "Topup"
+  { label: "Setup Transaksi", icon: "file-text" },
+  { label: "Setup Laporan", icon: "bar-chart-2" },
+  { label: "Format Cek", icon: "search" },
+  { label: "Setup PIN", icon: "key" },
+  { label: "Topup", icon: "dollar-sign" }
 ];
 
 let selectedFormat = "";
@@ -627,15 +627,18 @@ function renderFormatList() {
   const container = document.getElementById("format-request-list");
   container.innerHTML = "";
 
-  formatList.forEach(text => {
+  formatList.forEach(item => {
     const btn = document.createElement("button");
     btn.className =
       "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
     btn.innerHTML = `
-      <span class="text-base md:text-lg">${text}</span>
+      <div class="flex items-center gap-3">
+        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+        <span class="text-base md:text-lg">${item.label}</span>
+      </div>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => openFormatForm(text);
+    btn.onclick = () => openFormatForm(item.label);
     container.appendChild(btn);
   });
 
