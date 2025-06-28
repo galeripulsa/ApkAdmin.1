@@ -716,6 +716,8 @@ function renderFormatList() {
       </div>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
+btn.onclick = () => openFormatForm(item.label);
+    container.appendChild(btn);
 
    btn.onclick = () => {
   if (text === "Setup Transaksi") {
@@ -729,42 +731,6 @@ function renderFormatList() {
   lucide.createIcons();
 }
 
-function openFormatForm(title) {
-  selectedFormat = title;
-  document.getElementById("format-form-title").innerText = title;
-  document.getElementById("formatInput").value = ""; // Kosongkan
-  document.getElementById("format-request-list").classList.add("hidden");
-  document.getElementById("format-request-form").classList.remove("hidden");
-}
-
-function backToFormatList() {
-  renderFormatList();
-}
-
-function submitFormatInput() {
-  const value = document.getElementById("formatInput").value.trim();
-  if (value === "") {
-    alert("Format tidak boleh kosong!");
-    return;
-  }
-
-  alert(`Format untuk "${selectedFormat}": ${value}`);
-
-  // Bisa kamu simpan ke localStorage atau database nanti
-  backToFormatList(); // kembali ke list utama
-}
-
-function closeFormatRequestModal() {
-  const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
-  
-  if (isInForm) {
-    // Kembali ke daftar list dulu
-    backToFormatList();
-  } else {
-    // Sudah di list, tutup modal
-    document.getElementById("modalFormatRequest").classList.add("hidden");
-  }
-}
 
 // ✅✅ SETUP TRANSAKSI ✅✅
 function showSetupTransaksi() {
@@ -791,6 +757,19 @@ function showSetupTransaksi() {
         if (inputs[i]) inputs[i].value = val;
       });
     }
+
+
+function closeFormatRequestModal() {
+  const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
+  
+  if (isInForm) {
+    // Kembali ke daftar list dulu
+    backToFormatList();
+  } else {
+    // Sudah di list, tutup modal
+    document.getElementById("modalFormatRequest").classList.add("hidden");
+  }
+}
 
   </script>
 </body>
