@@ -706,27 +706,29 @@ function renderFormatList() {
   container.innerHTML = "";
 
   formatList.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className =
-      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
-    btn.innerHTML = `
-      <div class="flex items-center gap-3">
-        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-        <span class="text-base md:text-lg">${item.label}</span>
-      </div>
-      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
-    `;
-btn.onclick = () => openFormatForm(item.label);
-    container.appendChild(btn);
+  const btn = document.createElement("button");
+  btn.className =
+    "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+  btn.innerHTML = `
+    <div class="flex items-center gap-3">
+      <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+      <span class="text-base md:text-lg">${item.label}</span>
+    </div>
+    <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+  `;
 
-   btn.onclick = () => {
-  if (text === "Setup Transaksi") {
-    showSetupTransaksi();
-  } else {
-    openFormatForm(text);
-  }
-};
-  });
+  // ✅ Pastikan hanya 1 onclick
+  btn.onclick = () => {
+    if (item.label === "Setup Transaksi") {
+      showSetupTransaksi();
+    } else {
+      openFormatForm(item.label);
+    }
+  };
+
+  container.appendChild(btn);
+});
+
 
   lucide.createIcons();
 }
