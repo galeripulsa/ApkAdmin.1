@@ -281,18 +281,19 @@
 
   <!-- Floating label dalam kolom -->
   <div class="relative">
-    <textarea rows="1" id="format1"
-      class="peer w-full p-2 border border-gray-300 rounded-lg text-sm placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-      placeholder="Masukkan format transaksi umum..."></textarea>
+  <textarea
+    class="peer w-full pt-5 pb-2 px-3 border rounded placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+    placeholder="Format transaksi" id="format1" rows="1"
+  ></textarea>
+  
+  <label for="format1"
+    class="absolute left-3 top-3 text-sm text-gray-500 transition-all duration-200
+      peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+      peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-blue-600 bg-white px-1">
+    Nama Kolom
+  </label>
+</div>
 
-    <!-- Label di dalam kolom -->
-    <label for="format1"
-      class="absolute left-3 top-2 text-sm text-gray-400 transition-all duration-200
-             peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm
-             peer-focus:top-full peer-focus:mt-1 peer-focus:text-xs peer-focus:text-blue-500">
-      Masukkan format transaksi umum...
-    </label>
-  </div>
 </div>
 
 
