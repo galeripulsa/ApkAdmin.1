@@ -671,8 +671,15 @@ function submitFormatInput() {
 }
 
 function closeFormatRequestModal() {
-  document.getElementById("modalFormatRequest").classList.add("hidden");
-  backToFormatList(); // reset ke awal
+  const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
+  
+  if (isInForm) {
+    // Kembali ke daftar list dulu
+    backToFormatList();
+  } else {
+    // Sudah di list, tutup modal
+    document.getElementById("modalFormatRequest").classList.add("hidden");
+  }
 }
 
   </script>
