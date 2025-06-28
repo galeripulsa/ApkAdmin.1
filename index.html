@@ -617,29 +617,18 @@ function showFormatRequestModal() {
   const modal = document.getElementById("modalFormatRequest");
   modal.classList.remove("hidden");
 
-const formatList = [
-  "Setup Transaksi",
-  "Setup Laporan",
-  "Format Cek",
-  "Setup PIN",
-  "Topup"
-];
-
-let selectedFormat = "";
-
-function showFormatRequestModal() {
-  document.getElementById("modalFormatRequest").classList.remove("hidden");
-  renderFormatList();
-}
-
-function renderFormatList() {
-  document.getElementById("format-request-list").classList.remove("hidden");
-  document.getElementById("format-request-form").classList.add("hidden");
+  const list = [
+    "Setup Transaksi",
+    "Setup Laporan",
+    "Format Cek",
+    "Setup PIN",
+    "Topup"
+  ];
 
   const container = document.getElementById("format-request-list");
   container.innerHTML = "";
 
-  formatList.forEach(text => {
+  list.forEach(text => {
     const btn = document.createElement("button");
     btn.className =
       "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
@@ -647,41 +636,18 @@ function renderFormatList() {
       <span class="text-base md:text-lg">${text}</span>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
-    btn.onclick = () => openFormatForm(text);
+    btn.onclick = () => alert(`Kamu klik: ${text}`);
     container.appendChild(btn);
   });
 
   lucide.createIcons();
 }
 
-function openFormatForm(title) {
-  selectedFormat = title;
-  document.getElementById("format-form-title").innerText = title;
-  document.getElementById("formatInput").value = ""; // Kosongkan
-  document.getElementById("format-request-list").classList.add("hidden");
-  document.getElementById("format-request-form").classList.remove("hidden");
-}
-
-function backToFormatList() {
-  renderFormatList();
-}
-
-function submitFormatInput() {
-  const value = document.getElementById("formatInput").value.trim();
-  if (value === "") {
-    alert("Format tidak boleh kosong!");
-    return;
-  }
-
-  alert(`Format untuk "${selectedFormat}": ${value}`);
-
-  // Bisa kamu simpan ke localStorage atau database nanti
-  backToFormatList(); // kembali ke list utama
-}
-
 function closeFormatRequestModal() {
   document.getElementById("modalFormatRequest").classList.add("hidden");
-  backToFormatList(); // reset ke awal
+}
+
+  backToFormatList();
 }
 
   </script>
