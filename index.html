@@ -204,8 +204,7 @@
   </div>
 </div>
 
-<!-- 🟢🟢🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢🟢🟢 -->
-
+<!-- 🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢 -->
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm p-4 overflow-y-auto hidden">
   <div class="bg-white rounded-2xl max-w-xl mx-auto p-6 pb-32 relative">
 
@@ -213,25 +212,26 @@
     <h2 class="text-center font-bold text-lg text-blue-600 mb-4">🛠️ Format Transaksi</h2>
 
     <!-- KOLOM 1 -->
-      <div class="mb-1 border-gray-400">
-      <label class=texs-sm font-semibold text-gray-700">Format Transaksi Umum</label>
-      <textarea row="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="[kodeproduk].[tujuan].[pin]"></textarea>
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Transaksi Umum</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="[kodeproduk].[tujuan].[pin]"></textarea>
       <p class="text-xs text-gray-500 mt-1">
         * Format jalur XMPP, bisa pakai counter atau refid<br>
         Urutan format sesuaikan format di server
       </p>
-     
+    </div>
 
     <!-- KOLOM 2 -->
+    <div class="mb-4">
       <label class="text-sm font-semibold text-gray-700">Format Transaksi QTY Umum</label>
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
-    
+    </div>
 
     <!-- KOLOM 3 -->
+    <div class="mb-4">
       <label class="text-sm font-semibold text-gray-700">Format Cek Harga</label>
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
     </div>
-   
 
     <!-- KOLOM 4 -->
     <div class="mb-4">
@@ -265,19 +265,21 @@
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="K.[pesan]"></textarea>
       <p class="text-xs text-gray-500 mt-1">Contoh: K. (harus pakai titik)</p>
     </div>
-   </div>
+  </div>
 
-    <!-- FOOTER TETAP -->
-    <div class="sticky bottom-0 left-0 bg-white pt-4 pb-4 mt-6 z-10">
-    <div class="flex gap-4">
-      <button class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold shadow">
+  <!-- FOOTER -->
+  <div class="sticky bottom-0 left-0 right-0 bg-white px-6 pt-4 pb-4 z-10">
+    <div class="max-w-xl mx-auto flex gap-4">
+      <button onclick="saveSetupTransaksi()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold shadow">
         💾 Simpan
       </button>
-      <button class="flex-1 border border-gray-400 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-100">
+      <button onclick="closeSetupTransaksi()" class="flex-1 border border-gray-400 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-100">
         ↩️ Kembali
       </button>
     </div>
   </div>
+</div>
+
 
 
   <!-- SCRIPT -->
