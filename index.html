@@ -204,7 +204,7 @@
   </div>
 </div>
 
-<-- ✅✅ MODAL SETUP TRANSAKSI ✅✅
+<!-- ✅✅ MODAL SETUP TRANSAKSI ✅✅
 
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm p-4 overflow-y-auto hidden">
   <div class="bg-white rounded-2xl max-w-xl mx-auto p-6 space-y-4 shadow-lg">
@@ -716,6 +716,9 @@ function renderFormatList() {
       </div>
       <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
     `;
+btn.onclick = () => openFormatForm(item.label);
+    container.appendChild(btn);
+
    btn.onclick = () => {
   if (text === "Setup Transaksi") {
     showSetupTransaksi();
