@@ -206,80 +206,82 @@
 
 <!-- 🟢🟢🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢🟢🟢 -->
 
-<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm p-4 overflow-y-auto hidden">
-  <div class="bg-white rounded-2xl max-w-xl mx-auto p-6 space-y-4 shadow-lg">
-    <h2 class="text-center font-bold text-lg text-blue-600">Format Transaksi</h2>
+<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl max-w-xl mx-auto p-6 pb-28 shadow-2xl relative">
+
+    <!-- JUDUL -->
+    <h2 class="text-center font-bold text-lg text-blue-600 mb-4">🛠️ Format Transaksi</h2>
 
     <!-- KOLOM 1 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format Transaksi Umum</label>
-      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="Contoh: [kodeproduk].[tujuan].[pin]"></textarea>
-      <p class="text-[10px] text-gray-500 mt-1">
-        * Format trx umum yg dipakai jalur XMPP<br>
-        pilih pakai counter atau pakai refid<br>
-        hilangkan counter jika pakai refid (urutan format bebas)
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Transaksi Umum</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="[kodeproduk].[tujuan].[pin]R#[refid]"></textarea>
+      <p class="text-xs text-gray-500 mt-1">
+        * Format jalur XMPP, bisa pakai counter atau refid<br>
+        Urutan format sesuaikan format di server
       </p>
     </div>
 
     <!-- KOLOM 2 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format Transaksi QTY Umum</label>
-      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="Contoh: [kodeproduk].[qty].[tujuan].[pin]"></textarea>
-    </div>
-
-    <!-- KOLOM 3 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format Cek Harga</label>
-      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="Contoh: CH.[kodeproduk]"></textarea>
-    </div>
-
-    <!-- KOLOM 4 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format UbahPass IP</label>
-      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder=""></textarea>
-      <p class="text-xs text-gray-500 mt-1">
-        * Khusus untuk sw 3P<br>
-        diisi jika trx pakai jalur IP<br>
-        abaikan jika tidak pakai IP
-      </p>
-    </div>
-
-    <!-- KOLOM 5 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format Reset Password IP</label>
-      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="GPSW*[newpassword]*[pin]"></textarea>
-      <p class="text-xs text-gray-500 mt-1">
-        [newpassword] = memunculkan isian password baru<br>
-        [timestamp] = otomatis password baru berdasarkan rumus tanggal
-      </p>
-    </div>
-
-    <!-- KOLOM 6 & 7 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Kata Kunci Ubah Password IP Sukses</label>
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Transaksi QTY Umum</label>
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
     </div>
 
-    <div>
-      <label class="text-sm font-medium text-gray-600">Kata Kunci Ubah Password IP Gagal</label>
+    <!-- KOLOM 3 -->
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Cek Harga</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
+    </div>
+
+    <!-- KOLOM 4 -->
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format UbahPass IP</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
+      <p class="text-xs text-gray-500 mt-1">* Hanya untuk jalur IP (3P), abaikan jika tidak pakai IP</p>
+    </div>
+
+    <!-- KOLOM 5 -->
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Reset Password IP</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="GPSW*[newpassword]*[pin]"></textarea>
+      <p class="text-xs text-gray-500 mt-1">Gunakan [timestamp] jika password otomatis</p>
+    </div>
+
+    <!-- KOLOM 6 -->
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Kata Kunci Ubah Password IP Sukses</label>
+      <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
+    </div>
+
+    <!-- KOLOM 7 -->
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Kata Kunci Ubah Password IP Gagal</label>
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg"></textarea>
     </div>
 
     <!-- KOLOM 8 -->
-    <div>
-      <label class="text-sm font-medium text-gray-600">Format Awalan Komplen</label>
+    <div class="mb-4">
+      <label class="text-sm font-semibold text-gray-700">Format Awalan Komplen</label>
       <textarea rows="1" class="w-full mt-1 p-2 border border-gray-300 rounded-lg" placeholder="K.[pesan]"></textarea>
-      <p class="text-xs text-gray-500 mt-1">Contoh: K. (disertai titik)</p>
+      <p class="text-xs text-gray-500 mt-1">Contoh: K. (harus pakai titik)</p>
     </div>
-   </div>
-    <!-- BUTTONS -->
-    <div class="pt-4">
-      <button onclick="saveSetupTransaksi()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl font-bold shadow">
-        SAVE
-      </button>
-      <button onclick="closeSetupTransaksi()" class="w-full mt-3 text-sm text-gray-500 underline">Tutup</button>
-    </div> 
+
+    <!-- FOOTER TETAP -->
+    <div class="fixed bottom-4 left-0 right-0 px-6">
+      <div class="max-w-xl mx-auto flex gap-4">
+        <button onclick="saveSetupTransaksi()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg">
+          💾 Simpan
+        </button>
+        <button onclick="closeSetupTransaksi()" class="flex-1 border border-gray-400 text-gray-600 py-3 rounded-xl font-semibold hover:bg-gray-100">
+          ↩️ Kembali
+        </button>
+      </div>
+    </div>
+
+  </div>
 </div>
+
 
   <!-- SCRIPT -->
   <script>
