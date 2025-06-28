@@ -204,6 +204,65 @@
   </div>
 </div>
 
+<-- ✅✅ SETUP TRANSAKSI ✅✅
+<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center hidden">
+  <div class="bg-white w-full max-w-md p-5 rounded-xl shadow-lg overflow-y-auto max-h-[90vh]">
+    <h2 class="text-lg font-bold mb-4 text-center">Format Transaksi Umum</h2>
+
+    <div class="space-y-4 text-sm text-gray-700">
+      <div>
+        <label class="block font-semibold mb-1">Format Umum</label>
+        <textarea class="w-full p-2 border rounded-md text-xs" readonly>[kodeproduk].[tujuan].[pin]R#[refid]</textarea>
+        <p class="text-[11px] text-gray-500 mt-1 italic">
+          *Format trx umum yg dipakai jalur XMPP<br/>
+          pilih pakai counter atau pakai refid<br/>
+          hilangkan counter jika pakai refid<br/>
+          (urutan format bebas)
+        </p>
+      </div>
+
+      <div>
+        <button class="w-full py-2 bg-gray-100 rounded-md font-semibold text-left">Format Transaksi QTY Umum</button>
+        <button class="w-full py-2 bg-gray-100 rounded-md font-semibold text-left">Format Cek Harga</button>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Format UbahPass IP</label>
+        <textarea class="w-full p-2 border rounded-md text-xs" readonly></textarea>
+        <p class="text-[11px] text-gray-500 mt-1 italic">
+          *Khusus untuk sw 3P, diisi jika trx pakai jalur IP<br/>
+          abaikan jika tidak pakai IP
+        </p>
+      </div>
+
+      <div>
+        <label class="block font-semibold mb-1">Format Reset Password IP</label>
+        <textarea class="w-full p-2 border rounded-md text-xs" readonly>GPSW*[newpassword]*[pin]</textarea>
+        <p class="text-[11px] text-gray-500 mt-1 italic">
+          [newpassword] = memunculkan isian password baru<br/>
+          [timestamp] = otomatis password baru berdasarkan rumus tanggal
+        </p>
+      </div>
+
+      <input class="w-full p-2 border rounded-md text-xs" placeholder="Kata kunci sukses">
+      <input class="w-full p-2 border rounded-md text-xs" placeholder="Kata kunci gagal">
+
+      <div>
+        <label class="block font-semibold mb-1">Format awalan Komplen</label>
+        <textarea class="w-full p-2 border rounded-md text-xs" readonly>K.[pesan]</textarea>
+        <p class="text-[11px] text-gray-500 mt-1 italic">
+          Contoh: K. (disertai titik)
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <button onclick="closeSetupTransaksiModal()" class="flex-1 py-2 bg-gray-300 rounded-lg font-semibold">Kembali</button>
+      <button class="flex-1 py-2 bg-blue-500 text-white rounded-lg font-semibold">Save</button>
+    </div>
+  </div>
+</div>
+
   <!-- SCRIPT -->
   <script>
     const menuItems = [
@@ -680,6 +739,30 @@ function closeFormatRequestModal() {
     // Sudah di list, tutup modal
     document.getElementById("modalFormatRequest").classList.add("hidden");
   }
+}
+
+// ✅✅ SETUP TRANSAKSI ✅✅
+function openFormatForm(title) {
+  selectedFormat = title;
+
+  if (title === "Setup Transaksi") {
+    showSetupTransaksiModal();
+  } else {
+    document.getElementById("format-form-title").innerText = title;
+    document.getElementById("formatInput").value = "";
+    document.getElementById("format-request-list").classList.add("hidden");
+    document.getElementById("format-request-form").classList.remove("hidden");
+  }
+}
+
+function showSetupTransaksiModal() {
+  document.getElementById("modalFormatRequest").classList.add("hidden");
+  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+}
+
+function closeSetupTransaksiModal() {
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
 }
 
   </script>
