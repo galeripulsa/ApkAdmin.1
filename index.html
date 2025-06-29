@@ -213,12 +213,6 @@
   <!-- HEADER + TOMBOL SIMPAN -->
   <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
     <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
-    <button onclick="saveTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">
-      💾 Save
-    </button>
-<button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">
-      💾 Save
-    </button>
   </div>
 
   <!-- ISI FORM -->
@@ -233,9 +227,9 @@
   
   <label
     for="format1"
-    class="absolute left-2 top-1 text-xs text-blue-600 bg-white px-1 transition-all duration-200
+    class="absolute left-2 top-[-15px] text-xs text-blue-600 bg-white px-1 transition-all duration-200
            peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-600">
+           peer-focus:top-[-15px] peer-focus:text-xs peer-focus:text-blue-600">
     Format Transaksi
   </label>
 </div>
@@ -299,6 +293,15 @@
       <p class="text-xs text-gray-500 mt-1 italic">Contoh: K. (disertai titik)</p>
     </div>
 
+  </div>
+ <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
+   
+    <button onclick="saveTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">
+      💾 Save
+    </button>
+<button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">
+      ↩️ Kembali
+    </button>
   </div>
 </div>
 
