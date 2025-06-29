@@ -206,10 +206,6 @@
 
 <!-- 🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢 -->
 
-<!-- TOMBOL PEMICU MODAL -->
-<button onclick="openSetupTransaksi()" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow font-semibold">
-  ⚙️ Setup Transaksi
-</button>
 
 <!-- MODAL FULLSCREEN -->
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-white hidden flex flex-col">
@@ -218,6 +214,9 @@
   <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
     <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
     <button onclick="saveTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">
+      💾 Save
+    </button>
+<button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">
       💾 Save
     </button>
   </div>
@@ -234,9 +233,9 @@
   
   <label
     for="format1"
-    class="absolute left-2 top-2 text-xs text-blue-600 bg-white px-1 transition-all duration-200
+    class="absolute left-2 top-1 text-xs text-blue-600 bg-white px-1 transition-all duration-200
            peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-2 peer-focus:text-xs peer-focus:text-blue-600">
+           peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-600">
     Format Transaksi
   </label>
 </div>
