@@ -248,64 +248,141 @@
 
 
 
-
-    
-    <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format Transaksi Umum</label>
-      <textarea rows="2" placeholder="[kodeproduk].[tujuan].[pin]R#[refid]"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-      <p class="text-xs text-gray-500 mt-1 italic">*Format trx umum yg dipakai jalur XMPP, pilih pakai counter atau refid</p>
-    </div>
-
     <!-- FORMAT QTY -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format Transaksi QTY Umum</label>
-      <textarea rows="2" placeholder="Contoh format qty"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-    </div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi QTY Umum</label></div>
+<div class="relative">
+  <textarea
+    id="formatQty"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatTransaksi"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    Contoh: [kodeproduk].[qty].[tujuan].[pin]
+  </label>
+</div>
+
 
     <!-- FORMAT CEK HARGA -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format Cek Harga</label>
-      <textarea rows="2" placeholder="CEK.[produk]"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-    </div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label></div>
+<div class="relative">
+  <textarea
+    id="formatCek"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatCek"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    Contoh: [ch].[kodeproduk]
+  </label>
+</div>
 
     <!-- FORMAT UBAH PASS IP -->
-    <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format UbahPass IP</label>
-      <textarea rows="2" placeholder="Contoh format ubah pass"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-      <p class="text-xs text-gray-500 mt-1 italic">*Khusus jalur IP (SW 3P)</p>
-    </div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Ubah Password IP</label></div>
+<div class="relative">
+  <textarea
+    id="formatUbah"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatUbah"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    isi sesuai format di server
+  </label>
+</ddiv
+
 
     <!-- FORMAT RESET PASS -->
-    <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format Reset Password IP</label>
-      <textarea rows="2" placeholder="GPSW*[newpassword]*[pin]"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-      <p class="text-xs text-gray-500 mt-1 italic">[newpassword] = isian password baru</p>
-    </div>
+   <div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Reset Password IP</label></div>
+<div class="relative">
+  <textarea
+    id="formatReset"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatReset"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    isi sesuai format di server
+  </label>
+</div>
+
 
     <!-- KUNCI SUKSES -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Kata Kunci Sukses</label>
-      <textarea rows="1" placeholder="Contoh: berhasil" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm"></textarea>
-    </div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Sukses</label></div>
+<div class="relative">
+  <textarea
+    id="formatSukses"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatSukses"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    Kata Kunci Sukses Ubah Password IP
+  </label>
+</div>
 
     <!-- KUNCI GAGAL -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Kata Kunci Gagal</label>
-      <textarea rows="1" placeholder="Contoh: gagal" class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm"></textarea>
-    </div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label></div>
+<div class="relative">
+  <textarea
+    id="formatGagal"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatGagal"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+ Kata Kunci Gagal Ubah Password IP
+  </label>
+</div>
 
     <!-- FORMAT AWALAN KOMPLEN -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-1">Format Awalan Komplen</label>
-      <textarea rows="2" placeholder="K.[pesan]"
-        class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-      <p class="text-xs text-gray-500 mt-1 italic">Contoh: K. (disertai titik)</p>
-    </div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Kompline</label></div>
+<div class="relative">
+  <textarea
+    id="formatKompline"
+    rows=" "
+    placeholder=" "
+    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+  <label
+    for="formatKompline"
+    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
+    Contoh: K.[pesan]
+  </label>
+</div>
 
   </div>
  <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
