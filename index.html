@@ -211,9 +211,9 @@
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-white hidden flex flex-col">
 
   <!-- HEADER + TOMBOL SIMPAN -->
-  <div>
+ 
 <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
-    <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
+    <div><h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
    </div>
 
   <button onclick="saveTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">
@@ -235,7 +235,7 @@
     id="formatTransaksi"
     rows=" "
     placeholder=" "
-    class="peer w-full h-[30px] text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+    class="peer w-full h-[50px] text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
   ></textarea>
   <label
     for="formatTransaksi"
@@ -270,7 +270,7 @@
 
     <!-- FORMAT CEK HARGA -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label></div>
+<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Cek Harga</label></div>
 <div class="relative">
   <textarea
     id="formatCek"
