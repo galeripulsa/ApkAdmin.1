@@ -783,7 +783,6 @@ function openSetupTransaksi() {
   document.getElementById("modalSetupTransaksi").classList.remove("hidden");
   loadSetupTransaksi();
 
-  // Simpan data awal untuk deteksi perubahan
   setupDataAwal = JSON.stringify({
     formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
     formatQty: document.getElementById("formatQty").value.trim(),
@@ -794,9 +793,10 @@ function openSetupTransaksi() {
     formatGagal: document.getElementById("formatGagal").value.trim(),
     formatKompline: document.getElementById("formatKompline").value.trim()
   });
-}
 
-history.pushState(null, null, location.href); // Supaya tombol back bisa dicegat
+  // Ini baru akan aktif hanya saat modal dibuka
+  history.pushState(null, null, location.href);
+}
 
 
 document.querySelectorAll("textarea.custom-style").forEach(el => {
