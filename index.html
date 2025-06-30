@@ -403,7 +403,7 @@
     ? "bg-cyan-500" // Kategori aktif
     : "bg-violet-50" // Kategori nonaktif
   : menu.active
-    ? "bg-green-700"  // Item aktif
+    ? "bg-green-600"  // Item aktif
     : "bg-stone-200";  // Item nonaktif
 
 row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-3 relative`;
@@ -417,7 +417,7 @@ row.className = `submenu-item flex items-center justify-between border rounded p
                   <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
                   <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                 ` : `
-                  <label class='w-10 h-10 bg-white border rounded flex items-center justify-center text-gray-500 text-xs cursor-pointer'>icon 🪙
+                  <label class='w-10 h-9 bg-white border rounded flex items-center justify-center text-gray-300 text-xs cursor-pointer'>icon🪙
                     <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                   </label>
                 `}
