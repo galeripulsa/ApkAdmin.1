@@ -400,11 +400,11 @@
         const row = document.createElement("div");
          const bgColor = menu.isCategory
   ? menu.active
-    ? "bg-violet-400" // Kategori aktif
-    : "bg-violet-100" // Kategori nonaktif
+    ? "bg-cyan-500" // Kategori aktif
+    : "bg-violet-50" // Kategori nonaktif
   : menu.active
-    ? "bg-purple-200"  // Item aktif
-    : "bg-gray-100";  // Item nonaktif
+    ? "bg-cyan-300"  // Item aktif
+    : "bg-zinc-100";  // Item nonaktif
 
 row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
