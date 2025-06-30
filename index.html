@@ -474,9 +474,14 @@
     }
 
     function showModal() {
-      document.getElementById("modal").classList.remove("hidden");
-      renderSubMenus();
-    }
+  subMenus = JSON.parse(localStorage.getItem("subMenus")) || [];
+  tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+  isDirty = false;
+
+  document.getElementById("modal").classList.remove("hidden");
+  renderSubMenus();
+}
+
 
     function showConfirmationModal(message, onYes, onNo) {
   const modal = document.getElementById("confirm-modal");
