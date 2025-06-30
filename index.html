@@ -21,22 +21,6 @@
       display: inline-block;
     }
 
-  textarea.custom-style {
-    transition: all 0.2s ease;
-    border: 1px solid #d1d5db; /* gray-300 */
-    padding-left: 12px;
-    padding-right: 12px;
-    box-shadow: none;
-  }
-  textarea.custom-style:focus {
-    border-color: #3b82f6; /* blue-500 */
-    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
-  }
-  textarea.custom-style.filled {
-    border-color: #16a34a; /* green-600 */
-    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3);
-  }
-
 
   /* 🖥🖥🖥🖥🖥 Server Center 🖥🖥🖥 */
 
@@ -116,6 +100,21 @@
   font-size: 0.75rem;
   color: #3b82f6;
 }
+textarea.custom-style {
+    transition: all 0.2s ease;
+    border: 1px solid #d1d5db; /* gray-300 */
+    padding-left: 12px;
+    padding-right: 12px;
+    box-shadow: none;
+  }
+  textarea.custom-style:focus {
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  textarea.custom-style.filled {
+    border-color: #16a34a; /* green-600 */
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3);
+  }
 
 </style>
 </head>
@@ -321,6 +320,10 @@
   </div>
 </div>
 
+<!-- NOTIFIKASI SIMPAN -->
+<div id="notif-simpan" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-md shadow hidden z-[99999]">
+  ✅ Format berhasil disimpan!
+</div>
   
 
   <!-- SCRIPT -->
@@ -555,12 +558,6 @@ row.className = `submenu-item flex items-center justify-between border rounded p
     }
 
     renderMenus();
-
-document.querySelectorAll("textarea.custom-style").forEach(el => {
-    el.addEventListener("input", () => {
-      el.classList.toggle("filled", el.value.trim() !== "");
-    });
-  });
 
 
 // 🖥🖥🖥🖥🖥 SETUP SERVER 🖥🖥🖥🖥🖥
@@ -798,29 +795,71 @@ document.getElementById("modalFormatRequest").classList.add("hidden");
 }
 }
 
+
 function openSetupTransaksi() {
-document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-}
-
-function saveTransaksi() {
-alert("Data disimpan!");
-document.getElementById("modalSetupTransaksi").classList.add("hidden");
-}
-
-window.addEventListener("popstate", function (event) {
-if (event.state && event.state.modalOpen) {
-closeSetupTransaksi(); // Menutup modal saat tombol kembali ditekan
-}
-});
-
-function closeSetupTransaksi() {
-document.getElementById("modalSetupTransaksi").classList.add("hidden");
-if (history.state && history.state.modalOpen) {
-history.back(); // Kembali satu langkah di history
-}
-}
+    document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+    loadSetupTransaksi();
+  }
 
 
+document.querySelectorAll("textarea.custom-style").forEach(el => {
+    el.addEventListener("input", () => {
+      el.classList.toggle("filled", el.value.trim() !== "");
+    });
+  });
+
+
+  function saveSetupTransaksi() {
+    const data = {
+      formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+      formatQty: document.getElementById("formatQty").value.trim(),
+      formatCek: document.getElementById("formatCek").value.trim(),
+      formatUbah: document.getElementById("formatUbah").value.trim(),
+      formatReset: document.getElementById("formatReset").value.trim(),
+      formatSukses: document.getElementById("formatSukses").value.trim(),
+      formatGagal: document.getElementById("formatGagal").value.trim(),
+      formatKompline: document.getElementById("formatKompline").value.trim()
+    };
+
+    // Simpan ke localStorage
+    localStorage.setItem("setupTransaksi", JSON.stringify(data));
+
+    // Tampilkan notifikasi simpan
+    const notif = document.getElementById("notif-simpan");
+    notif.classList.remove("hidden");
+    setTimeout(() => notif.classList.add("hidden"), 2000);
+  }
+
+  // Untuk load data saat buka modal
+  function loadSetupTransaksi() {
+    const saved = JSON.parse(localStorage.getItem("setupTransaksi"));
+    if (saved) {
+      document.getElementById("formatTransaksi").value = saved.formatTransaksi || "";
+      document.getElementById("formatQty").value = saved.formatQty || "";
+      document.getElementById("formatCek").value = saved.formatCek || "";
+      document.getElementById("formatUbah").value = saved.formatUbah || "";
+      document.getElementById("formatReset").value = saved.formatReset || "";
+      document.getElementById("formatSukses").value = saved.formatSukses || "";
+      document.getElementById("formatGagal").value = saved.formatGagal || "";
+      document.getElementById("formatKompline").value = saved.formatKompline || "";
+    }
+
+    // Perbarui tampilan filled
+    document.querySelectorAll("textarea.custom-style").forEach(el => {
+      el.classList.toggle("filled", el.value.trim() !== "");
+    });
+  }
+
+  // Tambahkan ini saat modal dibuka
+  function openSetupTransaksi() {
+    document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+    loadSetupTransaksi();
+  }
+
+  // Tutup modal
+  function closeSetupTransaksi() {
+    document.getElementById("modalSetupTransaksi").classList.add("hidden");
+  }
 
 
   </script>
