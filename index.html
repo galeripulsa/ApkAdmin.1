@@ -210,185 +210,89 @@
 <!-- MODAL FULLSCREEN -->
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-white hidden flex flex-col">
 
-  <!-- HEADER + TOMBOL SIMPAN -->
- 
-<div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
+  <!-- HEADER -->
+  <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
     <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
-   </div>
+  </div>
 
-
-  <!--🟥🟥🟥🟥🟥 ISI FORM -->
+  <!-- ISI FORM -->
   <div class="overflow-y-auto p-4 space-y-6 pb-24">
 
-<!-- 🔴 FORMAT TRANSAKSI UMUM -->
- <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label></div>
-<div class="relative">
-  <textarea
-    id="formatTransaksi"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatTransaksi"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    Contoh: [kodeproduk].[tujuan].[pin]
-  </label>
-</div>
-
-
-
-    <!-- FORMAT QTY -->
+    <!-- ITEM -->
+    <!-- Gunakan struktur konsisten: judul + textarea -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi QTY Umum</label></div>
-<div class="relative">
-  <textarea
-    id="formatQty"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatQty"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    Contoh: [kodeproduk].[qty].[tujuan].[pin]
-  </label>
-</div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label>
+      <div class="relative">
+        <textarea id="formatTransaksi" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatTransaksi" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[tujuan].[pin]</label>
+      </div>
+    </div>
 
-
-    <!-- FORMAT CEK HARGA -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Cek Harga</label></div>
-<div class="relative">
-  <textarea
-    id="formatCek"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatCek"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    Contoh: [ch].[kodeproduk]
-  </label>
-</div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi QTY Umum</label>
+      <div class="relative">
+        <textarea id="formatQty" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatQty" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[qty].[tujuan].[pin]</label>
+      </div>
+    </div>
 
-    <!-- FORMAT UBAH PASS IP -->
-<div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Ubah Password IP</label></div>
-<div class="relative">
-  <textarea
-    id="formatUbah"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatUbah"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    isi sesuai format di server
-  </label>
-</div
-
-
-    <!-- FORMAT RESET PASS -->
-   <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Reset Password IP</label></div>
-<div class="relative">
-  <textarea
-    id="formatReset"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatReset"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    isi sesuai format di server
-  </label>
-</div>
-
-
-    <!-- KUNCI SUKSES -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Sukses</label></div>
-<div class="relative">
-  <textarea
-    id="formatSukses"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatSukses"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    Kata Kunci Sukses Ubah Password IP
-  </label>
-</div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Cek Harga</label>
+      <div class="relative">
+        <textarea id="formatCek" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatCek" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [ch].[kodeproduk]</label>
+      </div>
+    </div>
 
-    <!-- KUNCI GAGAL -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label></div>
-<div class="relative">
-  <textarea
-    id="formatGagal"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatGagal"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
- Kata Kunci Gagal Ubah Password IP
-  </label>
-</div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Ubah Password IP</label>
+      <div class="relative">
+        <textarea id="formatUbah" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatUbah" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
+      </div>
+    </div>
 
-    <!-- FORMAT AWALAN KOMPLEN -->
     <div>
-<label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Kompline</label></div>
-<div class="relative">
-  <textarea
-    id="formatKompline"
-    rows="2"
-    placeholder=" "
-    class="peer w-full h-auto text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-  ></textarea>
-  <label
-    for="formatKompline"
-    class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
-           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-           peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">
-    Contoh: K.[pesan]
-  </label>
- </div>
-</div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Reset Password IP</label>
+      <div class="relative">
+        <textarea id="formatReset" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatReset" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
+      </div>
+    </div>
 
-  
- <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
-   
-    <button onclick="saveTransaksi()" class="bg-cyan-600 text-Gray-800 font-semibold px-4 py-2 rounded-lg shadow">
-      Simpan
-    </button>
-<button onclick="closeSetupTransaksi()" class="bg-cyan-500 text-gray-800 font-semibold px-6 py-2 rounded-lg shadow">
-      Kembali
-    </button>
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Sukses</label>
+      <div class="relative">
+        <textarea id="formatSukses" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatSukses" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Sukses Ubah Password IP</label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Gagal</label>
+      <div class="relative">
+        <textarea id="formatGagal" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatGagal" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Gagal Ubah Password IP</label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Awalan Komplain</label>
+      <div class="relative">
+        <textarea id="formatKompline" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <label for="formatKompline" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: K.[pesan]</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
+    <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
+    <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
   </div>
 </div>
+
+
 
 
 
@@ -842,45 +746,41 @@ function renderFormatList() {
 
 // 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
 
-  function openSetupTransaksi() {
-    if (history.state && history.state.modalOpen) return; // Cegah double modal
-    
-    document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-    loadSetupTransaksi();
-    history.pushState({ modalOpen: true }, ""); // Tambah ke riwayat
-  }
+// Script Modal Setup Transaksi
+function openSetupTransaksi() {
+  if (history.state && history.state.modalOpen) return;
+  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+  loadSetupTransaksi();
+  history.pushState({ modalOpen: true }, "");
+}
 
-  function closeSetupTransaksi() {
-    document.getElementById("modalSetupTransaksi").classList.add("hidden");
+function closeSetupTransaksi() {
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");
+  if (history.state && history.state.modalOpen) history.back();
+}
 
-    // Hanya back jika memang modal yang terbuka
-    if (history.state && history.state.modalOpen) {
-      history.back();
-    }
-  }
+function saveSetupTransaksi() {
+  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
+  const values = Array.from(inputs).map(input => input.value);
+  localStorage.setItem("setupTransaksi", JSON.stringify(values));
+  alert("Disimpan!");
+  closeSetupTransaksi();
+}
 
-  function saveSetupTransaksi() {
-    const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
-    const values = Array.from(inputs).map(input => input.value);
-    localStorage.setItem("setupTransaksi", JSON.stringify(values));
-    alert("Disimpan!");
+function loadSetupTransaksi() {
+  const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");
+  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
+  values.forEach((val, i) => {
+    if (inputs[i]) inputs[i].value = val;
+  });
+}
+
+// Tangkap tombol kembali (back button)
+window.addEventListener("popstate", function (event) {
+  if (event.state && event.state.modalOpen) {
     closeSetupTransaksi();
   }
-
-  function loadSetupTransaksi() {
-    const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");
-    const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
-    values.forEach((val, i) => {
-      if (inputs[i]) inputs[i].value = val;
-    });
-  }
-
-  // Deteksi tombol kembali HP (back button)
-  window.addEventListener("popstate", function (event) {
-    if (event.state && event.state.modalOpen) {
-      closeSetupTransaksi();
-    }
-  });
+});
 
 
   </script>
