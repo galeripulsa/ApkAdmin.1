@@ -21,6 +21,23 @@
       display: inline-block;
     }
 
+  textarea.custom-style {
+    transition: all 0.2s ease;
+    border: 1px solid #d1d5db; /* gray-300 */
+    padding-left: 12px;
+    padding-right: 12px;
+    box-shadow: none;
+  }
+  textarea.custom-style:focus {
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  textarea.custom-style.filled {
+    border-color: #16a34a; /* green-600 */
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3);
+  }
+
+
   /* 🖥🖥🖥🖥🖥 Server Center 🖥🖥🖥 */
 
 /* ✅ Floating Label */
@@ -221,107 +238,90 @@
   
 
 <!-- MODAL FULLSCREEN -->
+
 <div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-white hidden flex flex-col">
-
   <!-- HEADER -->
-   
- <div class="bg-blue-600 text-white p-4 flex flex-col space-y-1 shadow text-center">
-  <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
-  <h1 class="text-sm text-yellow-300">Semua Format Harus Sesuai Setingan Format Di Server</h1>
-</div>
-
+  <div class="bg-blue-600 text-white p-4 flex flex-col space-y-1 shadow-md text-center">
+    <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
+    <h1 class="text-sm text-yellow-300">Semua Format Harus Sesuai Setingan Format Di Server</h1>
+  </div>
 
   <!-- ISI FORM -->
   <div class="overflow-y-auto p-4 space-y-6 pb-24">
-
-    
-    <!-- Gunakan struktur konsisten: judul + textarea -->
-  <!-- 🔁 Transaksi Umum 🔁 -->
+    <!-- Loop Format -->
     <div>
-     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
       <div class="relative">
-        <textarea id="formatTransaksi" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-3 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatTransaksi" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatTransaksi" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[tujuan].[pin]</label>
       </div>
     </div>
 
-   <!-- 🔁 Transaksi Qty 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi QTY Umum</label>
       <div class="relative">
-        <textarea id="formatQty" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-3 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatQty" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatQty" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[qty].[tujuan].[pin]</label>
       </div>
     </div>
 
-   <!-- 🔁 CEK HARGA 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Cek Harga</label>
       <div class="relative">
-        <textarea id="formatCek" rows="1" placeholder=" " class="peer w-full text-sm leading-tight px-2 py-4 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatCek" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatCek" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: CH.[kodeproduk]</label>
       </div>
     </div>
 
-   <!-- 🔁 UBAH PASSWORD IP 🔁 -->
     <div>
-     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Ubah Password IP</label>
       <div class="relative">
-        <textarea id="formatUbah" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-3 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatUbah" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatUbah" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
       </div>
     </div>
 
-   <!-- 🔁 RESET PASSWORD IP 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Reset Password IP</label>
       <div class="relative">
-        <textarea id="formatReset" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-3 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatReset" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatReset" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
       </div>
     </div>
-   </div>
 
-   <!-- 🔁 KATA KUNCI SUKSES🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Sukses</label>
       <div class="relative">
-        <textarea id="formatSukses" rows="1" placeholder=" " class="peer w-full text-sm leading-tight px-2 py-4 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatSukses" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatSukses" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Sukses Ubah Password IP</label>
       </div>
     </div>
 
-   <!-- 🔁 KATA KUNCI GAGAL 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Gagal</label>
       <div class="relative">
-        <textarea id="formatGagal" rows="1" placeholder=" " class="peer w-full text-sm leading-tight px-2 py-4 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatGagal" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatGagal" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Gagal Ubah Password IP</label>
       </div>
     </div>
 
-   <!-- 🔁 AWALAN KOMPLINE 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Awalan Komplain</label>
       <div class="relative">
-        <textarea id="formatKompline" rows="1" placeholder=" " class="peer w-full text-sm leading-tight px-2 py-4 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <textarea id="formatKompline" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" "></textarea>
         <label for="formatKompline" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: K.[pesan]</label>
       </div>
     </div>
   </div>
- </div>
+
   <!-- FOOTER -->
-  <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow">
+  <div class="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
     <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
     <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
   </div>
 </div>
 
-
-
-
+  
 
   <!-- SCRIPT -->
   <script>
@@ -555,6 +555,12 @@ row.className = `submenu-item flex items-center justify-between border rounded p
     }
 
     renderMenus();
+
+document.querySelectorAll("textarea.custom-style").forEach(el => {
+    el.addEventListener("input", () => {
+      el.classList.toggle("filled", el.value.trim() !== "");
+    });
+  });
 
 
 // 🖥🖥🖥🖥🖥 SETUP SERVER 🖥🖥🖥🖥🖥
