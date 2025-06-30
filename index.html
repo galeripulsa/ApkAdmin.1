@@ -361,10 +361,8 @@
 
 box.onclick = () => {
           if (item.key === "menu") showModal();
-       };
-     {else if (key.key === "server") showSetupServerModal();      
-       };
-{else if (key === "format") showFormatRequestModal();
+          if (item.key === "server") showSetupServerModal();      
+          if (item.key === "format") showFormatRequestModal();
     };
         grid.appendChild(box);
       });
