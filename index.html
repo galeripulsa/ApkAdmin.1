@@ -336,6 +336,15 @@
       { label: "OTP", icon: "key", key: "otp" }
     ];
 
+    function handleMenuClick(key) {
+  if (key === "menu") {
+    showModal();
+  } else if (key === "server") {
+    showSetupServerModal();
+  } else if (key === "format") {
+    showFormatRequestModal();
+  }
+}
     let activeKey = "menu";
     let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
@@ -371,15 +380,6 @@
       lucide.createIcons();
     }
 
-    function handleMenuClick(key) {
-  if (key === "menu") {
-    showModal();
-  } else if (key === "server") {
-    showSetupServerModal();
-  } else if (key === "format") {
-    showFormatRequestModal();
-  }
-}
 
     function renderSubMenus() {
       submenuList.innerHTML = "";
