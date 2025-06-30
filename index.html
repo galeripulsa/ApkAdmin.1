@@ -9,17 +9,17 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
     /* 🅰️🅰️ Menu Trx 🅰️🅰️ */
-      .submenu-item {
-    transition: transform 0.3s ease;
-    position: relative;
-  }
-  .submenu-item .delete-icon {
-    display: none;
-  }
-  .submenu-item.show-delete .delete-icon {
-    display: inline-block;
-  }
-
+    
+    .submenu-item {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      position: relative;
+    }
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
+    }
 
   /* 🖥🖥🖥🖥🖥 Server Center 🖥🖥🖥 */
 
@@ -110,44 +110,36 @@
 
   <!-- 🔁🔁🔁🔁🔁 MENU TRX 🔁🔁🔁🔁🔁-->
   <!-- 🟦 MODAL MENU TRANSAKSI -->
-  <div class="fixed inset-0 bg-gradient-to-br from-white to-cyan-100 z-50 flex flex-col hidden rounded-xl shadow-xl" id="modal">
+
+  <div class="fixed inset-0 bg-white z-50 flex flex-col hidden" id="modal">
     <div class="flex flex-col h-full w-full">
-      <!-- 🔵 HEADER -->
-      <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-600 text-white font-semibold text-lg border-b shrink-0 shadow-md">
-        <h2>🔧 Pengaturan Menu & Kategori</h2>
-        <button class="flex items-center gap-1 bg-white text-cyan-700 text-sm border px-3 py-1 rounded shadow hover:bg-gray-100" id="btn-refresh">
+      <div class="w-auto flex justify-between items-center px-4 py-3 bg-cyan-500 border-b">
+        <h2 class="text-lg font-semibold text-black">Pengaturan Menu & Kategori</h2>
+        <button class="flex items-center gap-1 text-sm border px-3 py-1 rounded" id="btn-refresh">
           <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
         </button>
       </div>
-
-      <!-- 🔘 AKSI ATAS -->
-      <div class="bg-cyan-100 flex justify-center gap-3 px-4 py-2 border-b border-cyan-300">
-        <button class="bg-purple-200 hover:bg-purple-300 text-sm border rounded px-4 py-2 font-medium shadow" id="btn-add-menu">➕ Menu</button>
-        <button class="bg-violet-300 hover:bg-violet-400 text-sm border rounded px-4 py-2 font-medium shadow" id="btn-add-cat">📁 Kategori</button>
+      <div class="bg-cyan-700 flex justify-between gap-2 px-2 pt-2">
+        <button class="bg-purple-100 text-sm border rounded px-3 py-2" id="btn-add-menu">+ Menu</button>
+        <button class="bg-violet-200 border rounded px-3 py-2 text-sm" id="btn-add-cat">+ Kategori</button>
       </div>
+      <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3 bg-gray-100" id="submenu-list"></div>
 
-      <!-- 🧾 DAFTAR MENU -->
-      <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50" id="submenu-list">
-        <!-- Konten akan dimasukkan via JS -->
-      </div>
-
-      <!-- 🟡 FOOTER -->
-      <div class="flex flex-col px-4 py-4 border-t-4 border-yellow-500 bg-white sticky bottom-0 z-10 space-y-2 shadow-inner">
-        <p class="text-green-700 text-sm text-center font-semibold hidden" id="save-msg">✅ Perubahan berhasil disimpan.</p>
-        <p class="text-center text-sm text-gray-700 font-medium" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
-        <button class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-semibold shadow" id="btn-save">💾 SIMPAN</button>
-        <button class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold shadow" id="btn-close">❌ TUTUP</button>
+      <div class="flex flex-col px-4 py-3 border-t border-yellow-700 bg-cyan-500 sticky bottom-0 space-y-2">
+        <p class="text-black text-sm text-center hidden" id="save-msg">Perubahan berhasil disimpan.</p>
+        <p class="text-center text-sm text-white" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
+        <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" id="btn-save">SAVE</button>
+        <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded" id="btn-close">Tutup</button>
       </div>
     </div>
   </div>
 
-  <!-- ❗ MODAL KONFIRMASI HAPUS -->
   <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-xl shadow-xl w-11/12 max-w-sm p-6 text-center">
-      <p id="confirm-message" class="text-gray-800 mb-4 font-medium">Apakah Anda yakin ingin menghapus item ini?</p>
+    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-sm p-6 text-center">
+      <p id="confirm-message" class="text-gray-800 mb-4">Apakah Anda yakin?</p>
       <div class="flex justify-center gap-4">
-        <button id="confirm-yes" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded font-semibold">Ya</button>
-        <button id="confirm-no" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded font-semibold">Batal</button>
+        <button id="confirm-yes" class="bg-red-500 text-white px-4 py-2 rounded">Ya</button>
+        <button id="confirm-no" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Batal</button>
       </div>
     </div>
   </div>
