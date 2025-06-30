@@ -764,9 +764,26 @@ document.getElementById("modalSetupTransaksi").classList.remove("hidden");
 loadSetupTransaksi();
 }
 
-function closeSetupTransaksi() {  
-  document.getElementById("modalSetupTransaksi").classList.add("hidden");  
-}  
+function closeSetupTransaksi() {
+  if (isSetupChanged()) {
+    const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
+    if (!konfirmasi) return;
+  }
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");
+}
+
+window.addEventListener("popstate", (e) => {
+  if (!document.getElementById("modalSetupTransaksi").classList.contains("hidden")) {
+    if (isSetupChanged()) {
+      const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
+      if (!konfirmasi) {
+        history.pushState(null, null, location.href); // Cegah keluar
+        return;
+      }
+    }
+    closeSetupTransaksi();
+  }
+});
 
 function saveSetupTransaksi() {  
   const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');  
@@ -798,9 +815,23 @@ document.getElementById("modalFormatRequest").classList.add("hidden");
 
 
 function openSetupTransaksi() {
-    document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-    loadSetupTransaksi();
-  }
+  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+  loadSetupTransaksi();
+
+  // Simpan data awal untuk deteksi perubahan
+  setupDataAwal = JSON.stringify({
+    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+    formatQty: document.getElementById("formatQty").value.trim(),
+    formatCek: document.getElementById("formatCek").value.trim(),
+    formatUbah: document.getElementById("formatUbah").value.trim(),
+    formatReset: document.getElementById("formatReset").value.trim(),
+    formatSukses: document.getElementById("formatSukses").value.trim(),
+    formatGagal: document.getElementById("formatGagal").value.trim(),
+    formatKompline: document.getElementById("formatKompline").value.trim()
+  });
+}
+
+history.pushState(null, null, location.href); // Supaya tombol back bisa dicegat
 
 
 document.querySelectorAll("textarea.custom-style").forEach(el => {
@@ -810,6 +841,21 @@ document.querySelectorAll("textarea.custom-style").forEach(el => {
   });
 
 
+function isSetupChanged() {
+  const currentData = JSON.stringify({
+    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+    formatQty: document.getElementById("formatQty").value.trim(),
+    formatCek: document.getElementById("formatCek").value.trim(),
+    formatUbah: document.getElementById("formatUbah").value.trim(),
+    formatReset: document.getElementById("formatReset").value.trim(),
+    formatSukses: document.getElementById("formatSukses").value.trim(),
+    formatGagal: document.getElementById("formatGagal").value.trim(),
+    formatKompline: document.getElementById("formatKompline").value.trim()
+  });
+  return currentData !== setupDataAwal;
+}
+
+// 💾💾💾 Fungsi SIMPAN
   function saveSetupTransaksi() {
     const data = {
       formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
