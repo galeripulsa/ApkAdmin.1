@@ -754,42 +754,66 @@ function renderFormatList() {
 
 // 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
 
+function showSetupTransaksi() {
+document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+loadSetupTransaksi();
+}
+
+function closeSetupTransaksi() {  
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");  
+}  
+
+function saveSetupTransaksi() {  
+  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');  
+  const values = Array.from(inputs).map(input => input.value);  
+  localStorage.setItem("setupTransaksi", JSON.stringify(values));  
+  alert("Disimpan!");  
+  closeSetupTransaksi();  
+}  
+
+function loadSetupTransaksi() {  
+  const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");  
+  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');  
+  values.forEach((val, i) => {  
+    if (inputs[i]) inputs[i].value = val;  
+  });  
+}
+
+function closeFormatRequestModal() {
+const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
+
+if (isInForm) {
+// Kembali ke daftar list dulu
+backToFormatList();
+} else {
+// Sudah di list, tutup modal
+document.getElementById("modalFormatRequest").classList.add("hidden");
+}
+}
+
 function openSetupTransaksi() {
-      if (history.state && history.state.modalOpen) return;
-      document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-      loadSetupTransaksi();
-      history.pushState({ modalOpen: true }, "");
-    }
+document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+}
 
-    function closeSetupTransaksi() {
-      document.getElementById("modalSetupTransaksi").classList.add("hidden");
-      if (history.state && history.state.modalOpen) {
-        history.back();
-      }
-    }
+function saveTransaksi() {
+alert("Data disimpan!");
+document.getElementById("modalSetupTransaksi").classList.add("hidden");
+}
 
-    function saveSetupTransaksi() {
-      const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
-      const values = Array.from(inputs).map(input => input.value);
-      localStorage.setItem("setupTransaksi", JSON.stringify(values));
-      alert("Disimpan!");
-      closeSetupTransaksi();
-    }
+window.addEventListener("popstate", function (event) {
+if (event.state && event.state.modalOpen) {
+closeSetupTransaksi(); // Menutup modal saat tombol kembali ditekan
+}
+});
 
-    function loadSetupTransaksi() {
-      const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");
-      const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');
-      values.forEach((val, i) => {
-        if (inputs[i]) inputs[i].value = val;
-      });
-    }
+function closeSetupTransaksi() {
+document.getElementById("modalSetupTransaksi").classList.add("hidden");
+if (history.state && history.state.modalOpen) {
+history.back(); // Kembali satu langkah di history
+}
+}
 
-    // DETEKSI TOMBOL KEMBALI HP
-    window.addEventListener("popstate", function (event) {
-      if (event.state && event.state.modalOpen) {
-        closeSetupTransaksi();
-      }
-    });
+
 
 
   </script>
