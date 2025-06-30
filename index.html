@@ -346,8 +346,7 @@
     showFormatRequestModal();
   }
 }
-    let activeKey = "menu";
-    let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+        let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
       { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
     ];
     let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
@@ -359,12 +358,8 @@
     function renderMenus() {
       grid.innerHTML = "";
       menuItems.forEach(item => {
-        const isActive = item.key === activeKey;
         const box = document.createElement("div");
-        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${
-          isActive ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"
-        }`;
-        box.setAttribute("data-key", item.key);
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
         box.innerHTML = `
           <div class="flex justify-center mb-2 text-3xl text-gray-700">
             <i data-lucide="${item.icon}"></i>
@@ -372,25 +367,46 @@
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
         `;
         box.onclick = () => {
-          activeKey = item.key;
-          renderMenus();
-          handleMenuClick(item.key);
+          if (item.key === "menu") showModal();
         };
         grid.appendChild(box);
       });
       lucide.createIcons();
     }
 
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
+    }
 
     function renderSubMenus() {
       submenuList.innerHTML = "";
       subMenus.forEach((menu, index) => {
-        const bgColor = menu.isCategory
-          ? menu.active ? "bg-yellow-300" : "bg-yellow-100"
-          : menu.active ? "bg-green-300" : "bg-gray-100";
-
         const row = document.createElement("div");
-        row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
+         const bgColor = menu.isCategory
+  ? menu.active
+    ? "bg-yellow-300" // Kategori aktif
+    : "bg-yellow-100" // Kategori nonaktif
+  : menu.active
+    ? "bg-green-300"  // Item aktif
+    : "bg-gray-100";  // Item nonaktif
+
+row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
           <div class="flex items-center gap-2 flex-1">
             <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
@@ -447,64 +463,33 @@
     }
 
     function confirmDelete(index) {
-  const itemName = subMenus[index].name;
-  showConfirmationModal(`Yakin ingin menghapus item: "${itemName}"?`, () => {
-    subMenus.splice(index, 1);
-    isDirty = true;
-    updateRefreshButtonState();
-    renderSubMenus();
-  });
-}
-
-
-    function enableSwipeToDelete(row) {
-      let startX = 0;
-      row.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-      });
-      row.addEventListener("touchmove", (e) => {
-        const deltaX = e.touches[0].clientX - startX;
-        if (deltaX < -30) {
-          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
-          row.classList.add("show-delete");
-        } else if (deltaX > 30) {
-          row.classList.remove("show-delete");
-        }
+      showConfirmationModal(`Yakin ingin menghapus item: "${subMenus[index].name}"?`, () => {
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
       });
     }
 
     function showModal() {
-  subMenus = JSON.parse(localStorage.getItem("subMenus")) || [];
-  tempSubMenus = JSON.parse(JSON.stringify(subMenus));
-  isDirty = false;
-
-  document.getElementById("modal").classList.remove("hidden");
-  renderSubMenus();
-}
-
+      document.getElementById("modal").classList.remove("hidden");
+      renderSubMenus();
+    }
 
     function showConfirmationModal(message, onYes, onNo) {
-  const modal = document.getElementById("confirm-modal");
-  document.getElementById("confirm-message").innerText = message;
-  modal.classList.remove("hidden");
-
-  const yesBtn = document.getElementById("confirm-yes");
-  const noBtn = document.getElementById("confirm-no");
-
-  // Hapus event sebelumnya
-  yesBtn.onclick = null;
-  noBtn.onclick = null;
-
-  // Tambahkan event baru
-  yesBtn.onclick = () => {
-    modal.classList.add("hidden");
-    if (typeof onYes === "function") onYes();
-  };
-  noBtn.onclick = () => {
-    modal.classList.add("hidden");
-    if (typeof onNo === "function") onNo();
-  };
-}
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = message;
+      modal.classList.remove("hidden");
+      const yesBtn = document.getElementById("confirm-yes");
+      const noBtn = document.getElementById("confirm-no");
+      const cleanup = () => {
+        modal.classList.add("hidden");
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+      };
+      yesBtn.onclick = () => { cleanup(); onYes(); };
+      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
+    }
 
     document.getElementById("btn-close").onclick = () => {
       if (isDirty) {
@@ -530,16 +515,14 @@
     };
 
     document.getElementById("btn-refresh").onclick = () => {
-  if (!isDirty) return;
-  showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
-    subMenus = JSON.parse(JSON.stringify(tempSubMenus));  // reset data
-    isDirty = false;
-    updateRefreshButtonState();
-    renderMenus();       
-    renderSubMenus();    
-  });
-};
-
+      if (!isDirty) return;
+      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+        isDirty = false;
+        updateRefreshButtonState();
+        renderSubMenus();
+      });
+    };
 
     document.getElementById("btn-add-menu").onclick = () => {
       subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
@@ -574,8 +557,6 @@
       document.getElementById("summary-info").textContent =
         `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
     }
-
-      lucide.createIcons();
 
     renderMenus();
 
