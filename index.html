@@ -221,24 +221,27 @@
   <!-- ISI FORM -->
   <div class="overflow-y-auto p-4 space-y-6 pb-24">
 
-    <!-- ITEM -->
+    
     <!-- Gunakan struktur konsisten: judul + textarea -->
+  <!-- 🔁 Transaksi Umum 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Transaksi Umum</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
       <div class="relative">
         <textarea id="formatTransaksi" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatTransaksi" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[tujuan].[pin]</label>
       </div>
     </div>
 
+   <!-- 🔁 Transaksi Qty 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-2px]">Format Transaksi QTY Umum</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi QTY Umum</label>
       <div class="relative">
         <textarea id="formatQty" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatQty" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[qty].[tujuan].[pin]</label>
       </div>
     </div>
 
+   <!-- 🔁 CEK HARGA 🔁 -->
     <div>
       <label class="block text-sm font-semibold text-gray-700 mb-2">Format Cek Harga</label>
       <div class="relative">
@@ -247,40 +250,45 @@
       </div>
     </div>
 
+   <!-- 🔁 UBAH PASSWORD IP 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Ubah Password IP</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Format Ubah Password IP</label>
       <div class="relative">
         <textarea id="formatUbah" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatUbah" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
       </div>
     </div>
 
+   <!-- 🔁 RESET PASSWORD IP 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Reset Password IP</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Format Reset Password IP</label>
       <div class="relative">
         <textarea id="formatReset" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatReset" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
       </div>
     </div>
 
+   <!-- 🔁 KATA KUNCI SUKSES🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Sukses</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Sukses</label>
       <div class="relative">
         <textarea id="formatSukses" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatSukses" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Sukses Ubah Password IP</label>
       </div>
     </div>
 
+   <!-- 🔁 KATA KUNCI GAGAL 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Kata Kunci Gagal</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Gagal</label>
       <div class="relative">
         <textarea id="formatGagal" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatGagal" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Gagal Ubah Password IP</label>
       </div>
     </div>
 
+   <!-- 🔁 AWALAN KOMPLINE 🔁 -->
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-[-8px]">Format Awalan Komplain</label>
+      <label class="block text-sm font-semibold text-gray-700 bg-gray-700 mb-[-8px]">Format Awalan Komplain</label>
       <div class="relative">
         <textarea id="formatKompline" rows="2" placeholder=" " class="peer w-full text-sm leading-tight px-2 pt-6 pb-1 border border-gray-300 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
         <label for="formatKompline" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: K.[pesan]</label>
