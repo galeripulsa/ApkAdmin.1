@@ -132,7 +132,7 @@
       </div>
 
       <!-- 🟡 FOOTER -->
-      <div class="flex flex-col px-4 py-4 border-t-4 border-yellow-500 bg-white sticky bottom-0 z-10 space-y-2 shadow-inner">
+      <div class="flex flex-col px-4 py-4 border-t-4 border-yellow-700 bg-gray-100 sticky bottom-0 z-10 space-y-2 shadow-inner">
         <p class="text-green-700 text-sm text-center font-semibold hidden" id="save-msg">✅ Perubahan berhasil disimpan.</p>
         <p class="text-center text-sm text-gray-700 font-medium" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
         <button class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-semibold shadow" id="btn-save">💾 SIMPAN</button>
@@ -403,8 +403,8 @@
     ? "bg-cyan-500" // Kategori aktif
     : "bg-violet-50" // Kategori nonaktif
   : menu.active
-    ? "bg-cyan-300"  // Item aktif
-    : "bg-zinc-100";  // Item nonaktif
+    ? "bg-green700-300"  // Item aktif
+    : "bg-stone-200";  // Item nonaktif
 
 row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-2 relative`;
         row.innerHTML = `
