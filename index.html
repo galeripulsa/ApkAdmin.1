@@ -764,42 +764,6 @@ document.getElementById("modalSetupTransaksi").classList.remove("hidden");
 loadSetupTransaksi();
 }
 
-function closeSetupTransaksi() {
-  if (isSetupChanged()) {
-    const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
-    if (!konfirmasi) return;
-  }
-  document.getElementById("modalSetupTransaksi").classList.add("hidden");
-}
-
-window.addEventListener("popstate", (e) => {
-  if (!document.getElementById("modalSetupTransaksi").classList.contains("hidden")) {
-    if (isSetupChanged()) {
-      const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
-      if (!konfirmasi) {
-        history.pushState(null, null, location.href); // Cegah keluar
-        return;
-      }
-    }
-    closeSetupTransaksi();
-  }
-});
-
-function saveSetupTransaksi() {  
-  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');  
-  const values = Array.from(inputs).map(input => input.value);  
-  localStorage.setItem("setupTransaksi", JSON.stringify(values));  
-  alert("Disimpan!");  
-  closeSetupTransaksi();  
-}  
-
-function loadSetupTransaksi() {  
-  const values = JSON.parse(localStorage.getItem("setupTransaksi") || "[]");  
-  const inputs = document.querySelectorAll('#modalSetupTransaksi textarea');  
-  values.forEach((val, i) => {  
-    if (inputs[i]) inputs[i].value = val;  
-  });  
-}
 
 function closeFormatRequestModal() {
 const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
@@ -813,7 +777,8 @@ document.getElementById("modalFormatRequest").classList.add("hidden");
 }
 }
 
-
+// Tambahkan ini saat modal dibuka
+  
 function openSetupTransaksi() {
   document.getElementById("modalSetupTransaksi").classList.remove("hidden");
   loadSetupTransaksi();
@@ -897,16 +862,28 @@ function isSetupChanged() {
     });
   }
 
-  // Tambahkan ini saat modal dibuka
-  function openSetupTransaksi() {
-    document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-    loadSetupTransaksi();
-  }
 
   // Tutup modal
   function closeSetupTransaksi() {
-    document.getElementById("modalSetupTransaksi").classList.add("hidden");
+  if (isSetupChanged()) {
+    const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
+    if (!konfirmasi) return;
   }
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");
+}
+
+window.addEventListener("popstate", (e) => {
+  if (!document.getElementById("modalSetupTransaksi").classList.contains("hidden")) {
+    if (isSetupChanged()) {
+      const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
+      if (!konfirmasi) {
+        history.pushState(null, null, location.href); // Cegah keluar
+        return;
+      }
+    }
+    closeSetupTransaksi();
+  }
+});
 
 
   </script>
