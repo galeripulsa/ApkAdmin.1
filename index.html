@@ -359,19 +359,20 @@
           <div class="font-semibold text-sm text-gray-800">${item.label}</div>
         `;
 
-function handleMenuClick(key) {
-  if (key === "menu") {
-    showModal();
-  } else if (key === "server") {
+box.onclick = () => {
+          if (item.key === "menu") showModal();
+        };
+     else if (key.key === "server") 
     showSetupServerModal();
-  } else if (key === "format") {
+       };
+     else if (key === "format") {
     showFormatRequestModal();
-  }
-}
-grid.appendChild(box);
+    };
+        grid.appendChild(box);
       });
       lucide.createIcons();
     }
+
 
     function updateRefreshButtonState() {
       document.getElementById("btn-refresh").disabled = !isDirty;
