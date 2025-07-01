@@ -290,6 +290,41 @@ textarea.custom-style {
 </div>
 
 
+<!-- 🔹 TEKS BANTU DENGAN ANIMASI -->
+<p id="teksBantuTransaksi"
+   class="text-sm text-blue-600 bg-white px-2 py-1 rounded shadow-md z-10
+          opacity-0 translate-y-2 scale-x-0 origin-left pointer-events-none
+          transition-all duration-500 ease-in-out mb-2">
+  Masukkan format transaksi seperti: <strong>[kodeproduk].[tujuan].[pin]</strong>
+</p>
+
+<!-- 🔹 FORM FIELD -->
+<div>
+  <label class="block text-sm font-semibold text-gray-700 mb-2">Tes Format Transaksi Umum</label>
+  <div class="relative">
+    <textarea
+      id="formatTransaksi"
+      rows="2"
+      class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500"
+      placeholder=" "
+      onfocus="showHintTransaksi()"
+      onblur="hideHintTransaksi()"
+    ></textarea>
+
+    <label
+      for="formatTransaksi"
+      class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1 transition-all duration-200
+             peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+             peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600"
+    >
+      Contoh: [kodeproduk].[tujuan].[pin]
+    </label>
+  </div>
+</div>
+
+<!-- 🔹 SCRIPT UNTUK EFEK ANIMASI -->
+
 
 
     <div>
@@ -814,6 +849,9 @@ function showSetupTransaksi() {
 }
 
 
+
+  
+
 // 📕📕📕📕 TEKS INFO
   
   
@@ -829,6 +867,17 @@ function showSetupTransaksi() {
     hint.classList.add('opacity-0', 'translate-y-2', 'scale-95');
   }
 
+const hintTransaksi = document.getElementById('teksBantuTransaksi');
+
+  function showHintTransaksi() {
+    hintTransaksi.classList.remove('opacity-0', 'translate-y-2', 'scale-x-0');
+    hintTransaksi.classList.add('opacity-100', 'translate-y-0', 'scale-x-100');
+  }
+
+  function hideHintTransaksi() {
+    hintTransaksi.classList.remove('opacity-100', 'translate-y-0', 'scale-x-100');
+    hintTransaksi.classList.add('opacity-0', 'translate-y-2', 'scale-x-0');
+  }
 
 // 📕📕📕
 
