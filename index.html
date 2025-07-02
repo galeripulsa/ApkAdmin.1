@@ -265,7 +265,7 @@ textarea.custom-style {
     <div class="relative">
       <textarea id="formatTransaksi" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Wajib: [kodeproduk],[tujuan],[pin]<br>Optional: [refid] atau [conter]')" onblur="hideHintGlobal()"></textarea>
       <label
-  for="formatKompline"
+  for="formatTransaksiUmum"
   class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
          peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
          peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600"
@@ -277,7 +277,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi QTY Umum</label>
     <div class="relative">
       <textarea id="formatQty" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: [kodeproduk],[qty],[tujuan],[pin] — Digunakan untuk transaksi dengan jumlah')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatQty" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Contoh: [kodeproduk].[qty].[tujuan].[pin]</label>
+      <label for="formatQty" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: [kodeproduk].[qty].[tujuan].[pin]</label>
     </div>
   </div>
 
@@ -285,7 +287,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Cek Harga</label>
     <div class="relative">
       <textarea id="formatCek" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Contoh: CH.[kodeproduk] — Untuk mengecek harga produk')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatCek" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Contoh: CH.[kodeproduk]</label>
+      <label for="formatCek" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: CH.[kodeproduk]</label>
     </div>
   </div>
 
@@ -293,7 +297,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Ubah Password IP</label>
     <div class="relative">
       <textarea id="formatUbah" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: UP.[pinLama].[pinBaru] — Untuk ubah PIN transaksi')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatUbah" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Isi sesuai format di server</label>
+      <label for="formatUbah" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
     </div>
   </div>
 
@@ -301,7 +307,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Reset Password IP</label>
     <div class="relative">
       <textarea id="formatReset" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: RP.[kodeAdmin] — Reset PIN akun dengan otorisasi')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatReset" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Isi sesuai format di server</label>
+      <label for="formatReset" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Isi sesuai format di server</label>
     </div>
   </div>
 
@@ -309,7 +317,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Sukses</label>
     <div class="relative">
       <textarea id="formatSukses" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Isi kata kunci dari balasan server yang menandakan transaksi berhasil')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatSukses" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Kata Kunci Sukses Ubah Password IP</label>
+      <label for="formatSukses" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Sukses Ubah Password IP</label>
     </div>
   </div>
 
@@ -317,7 +327,9 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Gagal</label>
     <div class="relative">
       <textarea id="formatGagal" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Isi kata kunci dari balasan server yang menandakan transaksi gagal')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatGagal" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Kata Kunci Gagal Ubah Password IP</label>
+      <label for="formatGagal" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Gagal Ubah Password IP</label>
     </div>
   </div>
 
@@ -325,10 +337,11 @@ textarea.custom-style {
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Awalan Komplain</label>
     <div class="relative">
       <textarea id="formatKompline" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: K.[isiPesan] — Kirim komplain ke CS server')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatKompline" class="absolute left-2 top-[-8px] text-[11px] text-blue-600 bg-white px-1">Contoh: K.[pesan]</label>
+      <label for="formatKompline" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: K.[pesan]</label>
     </div>
-  </div>
-
+   </div>
   </div>
 
 
@@ -341,8 +354,8 @@ textarea.custom-style {
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
     <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
     <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
-  </div>
-</div>
+    </div>
+   </div>
   </div>
 
   <!-- SCRIPT -->
