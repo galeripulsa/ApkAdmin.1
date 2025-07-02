@@ -786,17 +786,18 @@ function showSetupTransaksi() {
 
 // 📕📕📕📕 TEKS INFO
   
-  const teksBantuGlobal = document.getElementById('teksBantuGlobal');
+  
+  const hint = document.getElementById('teksBantuGlobal');
 
-  function showGlobalHint(teks) {
-    teksBantuGlobal.innerHTML = teks;
-    teksBantuGlobal.classList.remove('opacity-0', 'scale-95', 'translate-y-2');
-    teksBantuGlobal.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+  function showHintGlobal(teks) {
+    hint.innerHTML = teks;
+    hint.classList.remove('opacity-0', 'scale-95');
+    hint.classList.add('opacity-100', 'scale-100');
   }
 
-  function hideGlobalHint() {
-    teksBantuGlobal.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
-    teksBantuGlobal.classList.add('opacity-0', 'scale-95', 'translate-y-2');
+  function hideHintGlobal() {
+    hint.classList.remove('opacity-100', 'scale-100');
+    hint.classList.add('opacity-0', 'scale-95');
   }
   
 
