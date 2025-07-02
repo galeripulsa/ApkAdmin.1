@@ -808,18 +808,19 @@ function showSetupTransaksi() {
 // 📕📕📕📕 TEKS INFO
   
   
-  const hint = document.getElementById('teksBantuGlobal');
 
   function showHintGlobal(teks) {
-    hint.innerHTML = teks;
-    hint.classList.remove('opacity-0', 'scale-95');
-    hint.classList.add('opacity-100', 'scale-100');
-  }
+  const el = document.getElementById("teksBantuGlobal");
+  el.innerText = teks;
+  el.classList.remove("opacity-0", "pointer-events-none", "scale-95");
+  el.classList.add("opacity-100", "scale-100");
+}
 
-  function hideHintGlobal() {
-    hint.classList.remove('opacity-100', 'scale-100');
-    hint.classList.add('opacity-0', 'scale-95');
-  }
+function hideHintGlobal() {
+  const el = document.getElementById("teksBantuGlobal");
+  el.classList.add("opacity-0", "pointer-events-none", "scale-95");
+  el.classList.remove("opacity-100", "scale-100");
+}
   
 
 // 📕📕📕
