@@ -265,20 +265,17 @@ textarea.custom-style {
 
   <div>
   <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
+<div class="relative mb-4">
+  <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
   <div class="relative">
     <textarea
-  id="formatTransaksi"
-  rows="2"
-  class="peer custom-style w-full text-sm leading-tight pt-5 pb-1 rounded-md placeholder-transparent
-         focus:outline-none focus:ring-2 focus:ring-blue-500"
-  placeholder=" "
-  onfocus="showHint('Wajib: [kodeproduk],[tujuan],[pin]\nOptional Pilih: [refid] atau [conter]')"
-  onblur="hideHint()"
-></textarea>
+      rows="2"
+      class="peer textarea-floating w-full text-sm pt-5 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
+      placeholder=" "
+    ></textarea>
 
     <label
-      for="formatTransaksi"
-      class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+      class="floating-label absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
              peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600"
     >
@@ -286,6 +283,7 @@ textarea.custom-style {
     </label>
   </div>
 </div>
+
 
 
   <div>
@@ -923,21 +921,28 @@ function loadSetupTransaksi() {
 }
 
 
+  
   document.addEventListener("DOMContentLoaded", () => {
-    const area = document.getElementById("formatTransaksi");
-    const label = document.querySelector("label[for='formatTransaksi']");
+    const textareas = document.querySelectorAll(".textarea-floating");
 
-    const checkState = () => {
-      if (area.value.trim() !== "") {
-        label.classList.add("!top-[-8px]", "!text-[11px]", "!text-blue-600");
-      } else {
-        label.classList.remove("!top-[-8px]", "!text-[11px]", "!text-blue-600");
-      }
-    };
+    textareas.forEach((textarea) => {
+      const label = textarea.parentElement.querySelector(".floating-label");
 
-    area.addEventListener("input", checkState);
-    checkState(); // untuk isi awal
+      const updateLabel = () => {
+        if (textarea.value.trim() !== "") {
+          label.classList.add("top-[-8px]", "text-[11px]", "text-blue-600");
+          label.classList.remove("top-3.5", "text-sm", "text-gray-400");
+        } else {
+          label.classList.add("top-3.5", "text-sm", "text-gray-400");
+          label.classList.remove("top-[-8px]", "text-[11px]", "text-blue-600");
+        }
+      };
+
+      textarea.addEventListener("input", updateLabel);
+      updateLabel(); // cek isi awal
+    });
   });
+
 
 
 
