@@ -923,6 +923,23 @@ function loadSetupTransaksi() {
 }
 
 
+  document.addEventListener("DOMContentLoaded", () => {
+    const area = document.getElementById("formatTransaksi");
+    const label = document.querySelector("label[for='formatTransaksi']");
+
+    const checkState = () => {
+      if (area.value.trim() !== "") {
+        label.classList.add("!top-[-8px]", "!text-[11px]", "!text-blue-600");
+      } else {
+        label.classList.remove("!top-[-8px]", "!text-[11px]", "!text-blue-600");
+      }
+    };
+
+    area.addEventListener("input", checkState);
+    checkState(); // untuk isi awal
+  });
+
+
 
 
 function closeSetupTransaksi() {
