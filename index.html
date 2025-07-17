@@ -297,7 +297,7 @@ textarea.custom-style {
    <!--Tes 💠💠💠💠-->
 <div class="relative">
   <!-- Label Atas -->
-  <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
+  <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Uji</label>
 
   <!-- Teks Bantu di atas kolom -->
   <p id="help-text" class="text-xs text-gray-600 bg-yellow-300 pl-3 py-1 rounded-md mb-2 opacity-0 pointer-events-none transition-opacity duration-300">
@@ -988,15 +988,13 @@ function loadSetupTransaksi() {
   const helpText = document.getElementById('help-text');
 
   textarea.addEventListener('focus', () => {
-    helpText.classList.remove('pointer-events-none');
+    helpText.classList.remove('pointer-events-none', 'opacity-0');
     helpText.classList.add('opacity-100');
-    helpText.classList.remove('opacity-0');
   });
 
   textarea.addEventListener('blur', () => {
     helpText.classList.remove('opacity-100');
-    helpText.classList.add('opacity-0');
-    helpText.classList.add('pointer-events-none');
+    helpText.classList.add('opacity-0', 'pointer-events-none');
   });
 
   });
