@@ -294,7 +294,37 @@ textarea.custom-style {
   </div>
 </div>
   
+   <!--Tes 💠💠💠💠-->
+<div class="relative mb-6">
+  <!-- Label Atas -->
+  <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi</label>
 
+  <!-- Teks Bantu (di atas textarea) -->
+  <p id="help-text" class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 rounded-md mb-2 hidden transition-opacity duration-200">
+    Wajib: [kodeproduk],[tujuan],[pin]<br>
+    Optional: [counter] atau [refid]
+  </p>
+
+  <!-- Kolom Input -->
+  <div class="relative">
+    <textarea
+      id="textarea-format"
+      rows="2"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
+      placeholder=" "
+    ></textarea>
+
+    <!-- Placeholder Mengambang -->
+    <label
+      class="floating-label absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+             peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+             peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600"
+    >
+      Contoh: [kodeproduk].[tujuan].[pin]
+    </label>
+  </div>
+</div>
 
 <div class="relative mb-4">
   <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi Umum</label>
