@@ -974,7 +974,16 @@ function loadSetupTransaksi() {
     });
   });
 
+const textarea = document.getElementById('textarea-format');
+  const helpText = document.getElementById('help-text');
 
+  textarea.addEventListener('focus', () => {
+    helpText.classList.remove('hidden');
+  });
+
+  textarea.addEventListener('blur', () => {
+    helpText.classList.add('hidden');
+  });
 
 
 
