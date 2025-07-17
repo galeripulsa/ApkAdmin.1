@@ -988,13 +988,13 @@ function loadSetupTransaksi() {
   const helpText = document.getElementById('help-text');
 
   textarea.addEventListener('focus', () => {
-    helpText.classList.remove('pointer-events-none', 'opacity-0');
+    helpText.classList.remove('pointer-events-none', 'opacity-0','hidden');
     helpText.classList.add('opacity-100');
   });
 
   textarea.addEventListener('blur', () => {
     helpText.classList.remove('opacity-100');
-    helpText.classList.add('opacity-0', 'pointer-events-none');
+    helpText.classList.add('opacity-0', 'pointer-events-none','hidden');
   });
 
   });
