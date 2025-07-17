@@ -990,7 +990,7 @@ const helpText = document.getElementById('help-text');
 textarea.addEventListener('focus', () => {  
   helpText.classList.remove('pointer-events-none', 'hidden');  
   helpText.classList.remove('opacity-0');  
-  helpText.classList.add('opacity-100');  
+  helpText.classList.add('opacity-500');  
 });  
 
 textarea.addEventListener('blur', () => {  
@@ -1000,7 +1000,7 @@ textarea.addEventListener('blur', () => {
   // Tambahkan delay sebelum menyembunyikan
   setTimeout(() => {
     helpText.classList.add('hidden');
-  }, 800); // harus sesuai dengan duration CSS (800ms)
+  }); // harus sesuai dengan duration CSS (800ms)
 });
 
   });
