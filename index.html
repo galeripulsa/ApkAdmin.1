@@ -327,8 +327,6 @@ textarea.custom-style {
 </div>
 
 
-
-
   <div>
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi QTY Umum</label>
     <div class="relative">
@@ -985,18 +983,7 @@ function loadSetupTransaksi() {
       updateLabel(); // cek isi awal
     });
 
-const textarea = document.getElementById('textarea-format');
-  const helpText = document.getElementById('help-text');
 
-  textarea.addEventListener('focus', () => {
-    helpText.classList.remove('hidden');
-  });
-
-  textarea.addEventListener('blur', () => {
-    helpText.classList.add('hidden');
-  });
-
-  
   const textarea = document.getElementById('textarea-format');
   const helpText = document.getElementById('help-text');
 
