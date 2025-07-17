@@ -300,7 +300,7 @@ textarea.custom-style {
   <label class="block text-sm font-semibold text-gray-700 mb-2">Format Transaksi</label>
 
   <!-- Teks Bantu di atas kolom -->
-  <p id="help-text" class="text-xs text-gray-600 bg-yellow-300 pl-3 py-1 rounded-md mb-2 opacity-0 pointer-events-none transition-opacity duration-300">
+  <p id="help-text" class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 rounded-md mb-2 opacity-0 pointer-events-none transition-opacity duration-300">
     Wajib: [kodeproduk],[tujuan],[pin]<br>
     Optional: [counter] atau [refid]
   </p>
@@ -988,13 +988,15 @@ function loadSetupTransaksi() {
   const helpText = document.getElementById('help-text');
 
   textarea.addEventListener('focus', () => {
-    helpText.classList.remove('pointer-events-none', 'opacity-0','hidden');
+    helpText.classList.remove('hidden');
+    helpText.classList.remove('pointer-events-none', 'opacity-0');
     helpText.classList.add('opacity-100');
   });
 
   textarea.addEventListener('blur', () => {
+    helpText.classList.add('hidden');
     helpText.classList.remove('opacity-100');
-    helpText.classList.add('opacity-0', 'pointer-events-none','hidden');
+    helpText.classList.add('opacity-0', 'pointer-events-none');
   });
 
   });
