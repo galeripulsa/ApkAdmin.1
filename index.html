@@ -270,7 +270,8 @@ textarea.custom-style {
   <div class="relative">
     <textarea id="format1"
       class="peer w-full p-3 pt-6 border border-gray-300 rounded-lg placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="Contoh: [kode].[tujuan].[pin]" rows="1"></textarea>
+      placeholder="Contoh: [kode].[tujuan].[pin]" rows="1">
+onfocus="showHint('Wajib: [kodeproduk],[tujuan],[pin]\nOptional Pilih: [refid] atau [counter]')" onblur="hideHint()"></textarea></textarea>
     <label for="format1"
       class="absolute left-3 top-[1px] text-[10px] text-blue-600 bg-white px-1 transition-all duration-200
       peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
