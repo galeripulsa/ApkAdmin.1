@@ -1002,7 +1002,6 @@ function loadSetupTransaksi() {
       textarea.addEventListener("input", updateLabel);
       updateLabel(); // cek isi awal
     });
-  });
 
 const textarea = document.getElementById('textarea-format');
   const helpText = document.getElementById('help-text');
@@ -1014,6 +1013,8 @@ const textarea = document.getElementById('textarea-format');
   textarea.addEventListener('blur', () => {
     helpText.classList.add('hidden');
   });
+  });
+
 
 
 
