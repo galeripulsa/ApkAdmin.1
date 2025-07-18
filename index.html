@@ -390,22 +390,31 @@ textarea.custom-style {
 
 
  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Format Cek dan Tes</label>
+    <label class="block text-sm font-semibold text-gray-700 mb-2">kolom Tes</label>
 
-<p class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 mt-1 ml-1 hidden peer-focus:block rounded-md opacity-0 scale-0 origin-center transition-all duration-700 ease-out
-            absolute left-1/2 -translate-x-1/2 top-[-3rem] pointer-events-none z-10 w-[300px] text-center">
-  Wajib: [kodeproduk],[tujuan],[pin]<br>
-  Optional: [counter] atau [refid]
-</p>
-
-  <div class="relative z-0 w-full group mb-4">
+<div class="relative z-0 w-full group mb-8">
+  <!-- Input -->
   <input type="text" id="formatTransaksiUmum" name="formatTransaksiUmum"
-    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none 
+           focus:outline-none focus:ring-0 focus:border-blue-600 peer"
     placeholder=" " />
+
+  <!-- Label -->
   <label for="formatTransaksiUmum"
-    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:scale-75 peer-focus:-translate-y-6">
+    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] 
+           peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 
+           peer-focus:scale-75 peer-focus:-translate-y-6">
     Contoh: [kodeproduk].[tujuan].[pin]
   </label>
+
+  <!-- Teks Bantu -->
+  <p
+    class="absolute left-1/2 -translate-x-1/2 -top-16 bg-yellow-100 text-gray-800 text-xs text-center w-[300px] p-2 
+           rounded-md shadow-md opacity-0 scale-0 peer-focus:opacity-100 peer-focus:scale-100 
+           transition-all duration-700 ease-out pointer-events-none z-10">
+    Wajib: [kodeproduk],[tujuan],[pin]<br>
+    Optional: [counter] atau [refid]
+  </p>
 </div>
 </div>
 
