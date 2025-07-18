@@ -294,20 +294,17 @@ textarea.custom-style {
 
 
 
-<div class="relative">
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Qty</label>
+<div class="relative mb-6">
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
 
-  <!-- Kolom Input -->
   <div class="relative group">
-    <!-- Teks Bantu -->
-    <p class="help-text text-xs text-gray-600 bg-yellow-500 px-3 py-2 rounded-md mb-2
-       transform scale-0 opacity-0 pointer-events-none hidden
-       transition-all duration-1000 ease-out origin-top">
-      Wajib: [kodeproduk],[tujuan],[pin],[qty]<br>
-      Optional: [counter] atau [refid]
+    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 hidden">
+      Wajib: [kodeproduk],[tujuan],[pin] <br>
+      Optional: [counter], [refid]
     </p>
 
     <textarea
+      id="formatTransaksi"
       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
              focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
       rows="2"
@@ -318,8 +315,16 @@ textarea.custom-style {
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
              peer-focus:top-12 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
-      Contoh: [kodeproduk].[tujuan].[pin].[qty]
+      Contoh: [kodeproduk].[tujuan].[pin]
     </label>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="popupModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-50">
+  <div class="bg-white p-4 rounded-lg shadow-lg text-center w-80">
+    <p id="modalText" class="text-red-600 mb-4"></p>
+    <button onclick="closeModal()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">OK</button>
   </div>
 </div>
 
@@ -991,6 +996,37 @@ function loadSetupTransaksi() {
       textarea.addEventListener("input", updateLabel);
       updateLabel(); // cek isi awal
     });
+
+
+// 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍
+
+
+  const textarea = document.getElementById('formatTransaksi');
+  const modal = document.getElementById('popupModal');
+  const modalText = document.getElementById('modalText');
+
+  const requiredParams = ['[kodeproduk]', '[tujuan]', '[pin]'];
+
+  textarea.addEventListener('blur', () => {
+    const value = textarea.value.trim().toLowerCase();
+
+    if (value === '') return; // Jangan lakukan apa-apa jika kosong
+
+    const missingParams = requiredParams.filter(param => !value.includes(param.toLowerCase()));
+
+    if (missingParams.length > 0) {
+      // Buat pesan dinamis
+      const formatted = missingParams.map(p => `<strong>${p}</strong>`).join(', ');
+      modalText.innerHTML = `⚠️ Format tidak lengkap. Masih kurang: ${formatted}`;
+      modal.classList.remove('hidden');
+    }
+  });
+
+  function closeModal() {
+    modal.classList.add('hidden');
+  }
+
+
 
     
 // BAGIAN BORDER KOLOM🖍🖍🖍🖍
