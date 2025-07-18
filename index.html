@@ -980,11 +980,11 @@ function loadSetupTransaksi() {
 
       const updateLabel = () => {
         if (textarea.value.trim() !== "") {
-          label.classList.add("top-[-8px]", "text-[11px]", "text-blue-600");
-          label.classList.remove("top-3.5", "text-sm", "text-gray-400");
+          label.classList.add("top-12", "text-[11px]", "text-blue-600");
+          label.classList.remove("top-4", "text-sm", "text-gray-400");
         } else {
-          label.classList.add("top-3.5", "text-sm", "text-gray-400");
-          label.classList.remove("top-[-8px]", "text-[11px]", "text-blue-600");
+          label.classList.add("top-4", "text-sm", "text-gray-400");
+          label.classList.remove("top-12", "text-[11px]", "text-blue-600");
         }
       };
 
@@ -992,7 +992,30 @@ function loadSetupTransaksi() {
       updateLabel(); // cek isi awal
     });
 
+    
+// BAGIAN BORDER KOLOM🖍🖍🖍🖍
+    const textarea = document.getElementById('format-transaksi');
 
+  textarea.addEventListener('blur', () => {
+    if (textarea.value.trim() !== '') {
+      textarea.classList.add('border-green-500');
+      textarea.classList.remove('border-gray-300');
+    } else {
+      textarea.classList.remove('border-green-500');
+      textarea.classList.add('border-gray-300');
+    }
+  });
+
+  // Optional: jika ingin langsung aktif saat ketik
+  textarea.addEventListener('input', () => {
+    if (textarea.value.trim() === '') {
+      textarea.classList.remove('border-green-500');
+      textarea.classList.add('border-gray-300');
+    }
+  });
+
+
+// BAGIAN TEKS BANTU
   document.querySelectorAll('.textarea-floating').forEach((textarea) => {
     const wrapper = textarea.closest('.group');
     const helpText = wrapper.querySelector('.help-text');
