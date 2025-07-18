@@ -980,7 +980,7 @@ function loadSetupTransaksi() {
 
       const updateLabel = () => {
         if (textarea.value.trim() !== "") {
-          label.classList.add("top-12", "text-[11px]", "text-blue-600");
+          label.classList.add("top-[-8px]", "text-[11px]", "text-blue-600");
           label.classList.remove("top-4", "text-sm", "text-gray-400");
         } else {
           label.classList.add("top-4", "text-sm", "text-gray-400");
@@ -998,10 +998,10 @@ function loadSetupTransaksi() {
 
   textarea.addEventListener('blur', () => {
     if (textarea.value.trim() !== '') {
-      textarea.classList.add('border-green-500');
+      textarea.classList.add('border-2','border-green-500');
       textarea.classList.remove('border-gray-300');
     } else {
-      textarea.classList.remove('border-green-500');
+      textarea.classList.remove('border-2','border-green-500');
       textarea.classList.add('border-gray-300');
     }
   });
