@@ -267,7 +267,8 @@ textarea.custom-style {
   <!-- Label Atas -->
   <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Umum</label>
 
-<p class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 mt-1 ml-1 hidden peer-focus:block rounded-md opacity-0 pointer-events-none transition-opacity duration-1000">
+<p class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 mt-1 ml-1 hidden peer-focus:block rounded-md opacity-0 scale-0 origin-center transition-all duration-700 ease-out
+            absolute left-1/2 -translate-x-1/2 top-[-3rem] pointer-events-none z-10 w-[300px] text-center">
   Wajib: [kodeproduk],[tujuan],[pin]<br>
   Optional: [counter] atau [refid]
 </p>
@@ -277,7 +278,7 @@ textarea.custom-style {
 
     <!-- Teks Bantu -->
   <p id="help-text" class="text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2
-      transform scale-90 opacity-0 pointer-events-none hidden
+      transform scale-0 opacity-0 pointer-events-none hidden
       transition-all duration-700 ease-out origin-top">
     Wajib: [kodeproduk],[tujuan],[pin]<br>
     Optional: [counter] atau [refid]
@@ -1003,14 +1004,14 @@ function loadSetupTransaksi() {
     // Trigger fade in + scale up
     requestAnimationFrame(() => {
       helpText.classList.add('opacity-100', 'scale-100');
-      helpText.classList.remove('opacity-0', 'scale-90');
+      helpText.classList.remove('opacity-0', 'scale-0');
     });
   });
 
   textarea.addEventListener('blur', () => {
     // Trigger fade out + scale down
     helpText.classList.remove('opacity-100', 'scale-100');
-    helpText.classList.add('opacity-0', 'scale-90');
+    helpText.classList.add('opacity-0', 'scale-0');
 
     // Sembunyikan setelah 300ms
     setTimeout(() => {
