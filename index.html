@@ -265,7 +265,7 @@ textarea.custom-style {
 
 <div class="relative mb-6">
   <!-- Label Atas -->
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Server Pulsa</label>
 
 <p class="text-xs text-gray-600 bg-yellow-100 pl-3 py-1 mt-1 ml-1 rounded-md opacity-0 pointer-events-none transition-opacity duration-1000">
   Wajib: [kodeproduk],[tujuan],[pin]<br>
@@ -275,7 +275,18 @@ textarea.custom-style {
   <!-- Kolom Input -->
   <div class="relative">
 
+    <!-- Teks Bantu -->
+  <p id="help-text" class="text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2
+      transform scale-90 opacity-0 pointer-events-none hidden
+      transition-all duration-700 ease-out origin-top">
+    Wajib: [kodeproduk],[tujuan],[pin]<br>
+    Optional: [counter] atau [refid]
+  </p>
+
+  <!-- Kolom Input -->
+  <div class="relative">
     <textarea
+      id="textarea-format"
       rows="2"
       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
              focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
@@ -984,24 +995,28 @@ function loadSetupTransaksi() {
     });
 
 
-  const textarea = document.getElementById('textarea-format');  
-const helpText = document.getElementById('help-text');  
+  const textarea = document.getElementById('textarea-format');
+  const helpText = document.getElementById('help-text');
 
-textarea.addEventListener('focus', () => {  
-  helpText.classList.remove('pointer-events-none', 'hidden');  
-  helpText.classList.remove('opacity-0');  
-  helpText.classList.add('opacity-500');  
-});  
+  textarea.addEventListener('focus', () => {
+    helpText.classList.remove('hidden', 'pointer-events-none');
+    // Trigger fade in + scale up
+    requestAnimationFrame(() => {
+      helpText.classList.add('opacity-100', 'scale-100');
+      helpText.classList.remove('opacity-0', 'scale-90');
+    });
+  });
 
-textarea.addEventListener('blur', () => {  
-  helpText.classList.remove('opacity-100');  
-  helpText.classList.add('opacity-0', 'pointer-events-none');
-  
-  // Tambahkan delay sebelum menyembunyikan
-  setTimeout(() => {
-    helpText.classList.add('hidden');
-  }); // harus sesuai dengan duration CSS (800ms)
-});
+  textarea.addEventListener('blur', () => {
+    // Trigger fade out + scale down
+    helpText.classList.remove('opacity-100', 'scale-100');
+    helpText.classList.add('opacity-0', 'scale-90');
+
+    // Sembunyikan setelah 300ms
+    setTimeout(() => {
+      helpText.classList.add('hidden', 'pointer-events-none');
+    }, 300);
+  });
 
   });
 
