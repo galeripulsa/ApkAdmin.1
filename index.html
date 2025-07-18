@@ -962,28 +962,25 @@ function loadSetupTransaksi() {
     });
 
 
-  const textarea = document.getElementById('textarea-format');
-  const helpText = document.getElementById('help-text');
+  document.querySelectorAll('.textarea-floating').forEach((textarea) => {
+    const wrapper = textarea.closest('.group');
+    const helpText = wrapper.querySelector('.help-text');
 
-  textarea.addEventListener('focus', () => {
-    helpText.classList.remove('hidden', 'pointer-events-none');
-    // Trigger fade in + scale up
-    requestAnimationFrame(() => {
-      helpText.classList.add('opacity-100', 'scale-100');
-      helpText.classList.remove('opacity-0', 'scale-0');
+    textarea.addEventListener('focus', () => {
+      helpText.classList.remove('hidden');
+      setTimeout(() => {
+        helpText.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    });
+
+    textarea.addEventListener('blur', () => {
+      helpText.classList.remove('scale-100', 'opacity-100');
+      setTimeout(() => {
+        helpText.classList.add('hidden');
+      }, 300);
     });
   });
 
-  textarea.addEventListener('blur', () => {
-    // Trigger fade out + scale down
-    helpText.classList.remove('opacity-100', 'scale-100');
-    helpText.classList.add('opacity-0', 'scale-0');
-
-    // Sembunyikan setelah 300ms
-    setTimeout(() => {
-      helpText.classList.add('hidden', 'pointer-events-none');
-    }, 300);
-  });
 
   });
 
