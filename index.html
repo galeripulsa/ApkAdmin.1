@@ -1011,86 +1011,90 @@ function loadSetupTransaksi() {
 // BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
     
 
-
-
-// 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍
-
+// 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍  
   
-
-  // Ambil elemen penting
-  const textarea = document.getElementById('format-transaksi');
-  const popupModal = document.getElementById('popupModal');
-  const missingParamsList = document.getElementById('missingParamsList');
-  const helpText = document.querySelector('.help-text');
-
-  // Ambil parameter wajib
-  const requiredParams = helpText.dataset.required
-    .split(',')
-    .map(p => p.trim().toLowerCase());
-
-  // Saat blur, cek isi textarea
-  textarea.addEventListener('blur', () => {
-    const text = textarea.value.trim().toLowerCase();
-
-    if (!text) return;
-
-    const missing = requiredParams.filter(param => !text.includes(param));
-
-    if (missing.length > 0) {
-      // Kosongkan daftar sebelumnya
-      missingParamsList.innerHTML = '';
-      // Tambahkan item yang kurang
-      missing.forEach(param => {
-        const li = document.createElement('li');
-        li.textContent = `Parameter ${param} belum diisi`;
-        missingParamsList.appendChild(li);
-      });
-      popupModal.classList.remove('hidden');
-    }
-  });
-
-  function closeModal() {
-    popupModal.classList.add('hidden');
-  }
-
-  // Border hijau jika valid
-  textarea.addEventListener('blur', () => {
-    if (textarea.value.trim() !== '') {
-      textarea.classList.add('border-2','border-green-500');
-      textarea.classList.remove('border-gray-300');
-    } else {
-      textarea.classList.remove('border-2','border-green-500');
-      textarea.classList.add('border-gray-300');
-    }
-  });
-
-  // Border kembali abu-abu jika dikosongkan
-  textarea.addEventListener('input', () => {
-    if (textarea.value.trim() === '') {
-      textarea.classList.remove('border-green-500');
-      textarea.classList.add('border-gray-300');
-    }
-  });
-
-  // Teks bantu muncul saat fokus, hilang saat blur
-  document.querySelectorAll('.textarea-floating').forEach((el) => {
-    const wrapper = el.closest('.group');
-    const helpText = wrapper.querySelector('.help-text');
-
-    el.addEventListener('focus', () => {
-      helpText.classList.remove('hidden');
-      setTimeout(() => {
-        helpText.classList.add('scale-100', 'opacity-100');
-      }, 10);
-    });
-
-    el.addEventListener('blur', () => {
-      helpText.classList.remove('scale-100', 'opacity-100');
-      setTimeout(() => {
-        helpText.classList.add('hidden');
-      }, 300);
-    });
-  });
+  const textarea = document.getElementById('format-transaksi');  
+  const popupModal = document.getElementById('popupModal');  
+  const missingParamsList = document.getElementById('missingParamsList');  
+  const helpText = document.querySelector('.help-text');  
+const requiredParams = helpText.dataset.required  
+  .split(',')  
+  .map(p => p.trim().toLowerCase());  
+  
+  textarea.addEventListener('blur', () => {  
+    const text = textarea.value.trim();  
+  
+    // Jika kolom kosong, abaikan  
+    if (!text) return;  
+  
+    // Cek parameter yang belum ada  
+    const missing = requiredParams.filter(param =>   
+      !text.includes(param) &&   
+      !text.toLowerCase().includes(param.replace(/|/g, ''))  
+    );  
+  
+    if (missing.length > 0) {  
+      // Isi daftar parameter yang belum diisi  
+      missingParamsList.innerHTML = '';  
+      missing.forEach(param => {  
+        const item = document.createElement('li');  
+        item.textContent = `Parameter ${param} belum diisi`;  
+        missingParamsList.appendChild(item);  
+      });  
+  
+      popupModal.classList.remove('hidden');  
+    }  
+  });  
+  
+  function closeModal() {  
+    popupModal.classList.add('hidden');  
+  }  
+  
+  
+  
+  
+// 🖍🖍🖍 BAGIAN BORDER KOLOM🖍🖍🖍  
+  
+  
+  textarea.addEventListener('blur', () => {  
+    if (textarea.value.trim() !== '') {  
+      textarea.classList.add('border-2','border-green-500');  
+      textarea.classList.remove('border-gray-300');  
+    } else {  
+      textarea.classList.remove('border-2','border-green-500');  
+      textarea.classList.add('border-gray-300');  
+    }  
+  });  
+  
+  // Optional: jika ingin langsung aktif saat ketik  
+  textarea.addEventListener('input', () => {  
+    if (textarea.value.trim() === '') {  
+      textarea.classList.remove('border-green-500');  
+      textarea.classList.add('border-gray-300');  
+    }  
+  });  
+  
+  
+// BAGIAN TEKS BANTU  
+  document.querySelectorAll('.textarea-floating').forEach((textarea) => {  
+    const wrapper = textarea.closest('.group');  
+    const helpText = wrapper.querySelector('.help-text');  
+  
+    textarea.addEventListener('focus', () => {  
+      helpText.classList.remove('hidden');  
+      setTimeout(() => {  
+        helpText.classList.add('scale-100', 'opacity-100');  
+      }, 10);  
+    });  
+  
+    textarea.addEventListener('blur', () => {  
+      helpText.classList.remove('scale-100', 'opacity-100');  
+      setTimeout(() => {  
+        helpText.classList.add('hidden');  
+      }, 300);  
+    });  
+    });  
+  });  
 
 
 
