@@ -349,7 +349,7 @@ textarea.custom-style {
 
   
   <div class="relative mb-6">
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Ubah Password IP Tes</label>
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Ubah Password IP</label>
 
     <div class="relative group">
     <textarea
@@ -363,7 +363,7 @@ textarea.custom-style {
     <label
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-             peer-focus:top-5 peer-focus:text-[11px] peer-focus: text-blue-600 ease-out pointer-events-none z-10">
+             peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus: text-blue-600 ease-out pointer-events-none z-10">
       Format Ubah Password IP
     </label>
     </div>
@@ -1076,14 +1076,14 @@ function loadSetupTransaksi() {
       helpText.classList.remove('hidden');  
       setTimeout(() => {  
         helpText.classList.add('scale-100', 'opacity-100');  
-      }, 10);  
+      });  
     });  
   
     textarea.addEventListener('blur', () => {  
       helpText.classList.remove('scale-100', 'opacity-100');  
       setTimeout(() => {  
         helpText.classList.add('hidden');  
-      }, 300);  
+      });  
     });  
     });  
   });  
