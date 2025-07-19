@@ -295,15 +295,17 @@ textarea.custom-style {
 
 
 <div class="relative mb-6">
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Uji</label>
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Tes</label>
 
   <div class="relative group">
+    <!-- Teks bantu -->
     <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 hidden"
-   data-required="[kodeproduk],[tujuan],[pin]">
-  Wajib: [kodeproduk],[tujuan],[pin] <br>
-  Optional: [counter], [refid]
-</p>
+       data-required="[kodeproduk],[tujuan],[pin]">
+      Wajib: [kodeproduk],[tujuan],[pin] <br>
+      Optional: [counter], [refid]
+    </p>
 
+    <!-- Inputan format -->
     <textarea
       id="format-transaksi"
       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
@@ -312,6 +314,7 @@ textarea.custom-style {
       placeholder=" "
     ></textarea>
 
+    <!-- Label mengambang -->
     <label
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
@@ -321,14 +324,15 @@ textarea.custom-style {
   </div>
 </div>
 
-  <!-- Modal Pop-up Parameter📕📕📕-->
+<!-- Modal Pop-up Parameter -->
 <div id="popupModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-50">
   <div class="bg-white p-4 rounded-lg shadow-lg text-center w-80">
-    <p id="modalText" class="text-red-600 mb-2">Format tidak lengkap:</p>
+    <p class="text-red-600 font-semibold mb-2">Format tidak lengkap:</p>
     <ul id="missingParamsList" class="text-sm text-left text-gray-700 list-disc list-inside mb-4"></ul>
     <button onclick="closeModal()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">OK</button>
   </div>
 </div>
+
 
 
 
@@ -1011,35 +1015,36 @@ function loadSetupTransaksi() {
 
 // 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍
 
+  
+
+  // Ambil elemen penting
   const textarea = document.getElementById('format-transaksi');
   const popupModal = document.getElementById('popupModal');
   const missingParamsList = document.getElementById('missingParamsList');
   const helpText = document.querySelector('.help-text');
-const requiredParams = helpText.dataset.required
-  .split(',')
-  .map(p => p.trim().toLowerCase());
 
+  // Ambil parameter wajib
+  const requiredParams = helpText.dataset.required
+    .split(',')
+    .map(p => p.trim().toLowerCase());
+
+  // Saat blur, cek isi textarea
   textarea.addEventListener('blur', () => {
-    const text = textarea.value.trim();
+    const text = textarea.value.trim().toLowerCase();
 
-    // Jika kolom kosong, abaikan
     if (!text) return;
 
-    // Cek parameter yang belum ada
-    const missing = requiredParams.filter(param => 
-      !text.includes(param) && 
-      !text.toLowerCase().includes(param.replace(/|/g, ''))
-    );
+    const missing = requiredParams.filter(param => !text.includes(param));
 
     if (missing.length > 0) {
-      // Isi daftar parameter yang belum diisi
+      // Kosongkan daftar sebelumnya
       missingParamsList.innerHTML = '';
+      // Tambahkan item yang kurang
       missing.forEach(param => {
-        const item = document.createElement('li');
-        item.textContent = `Parameter ${param} belum diisi`;
-        missingParamsList.appendChild(item);
+        const li = document.createElement('li');
+        li.textContent = `Parameter ${param} belum diisi`;
+        missingParamsList.appendChild(li);
       });
-
       popupModal.classList.remove('hidden');
     }
   });
@@ -1048,12 +1053,7 @@ const requiredParams = helpText.dataset.required
     popupModal.classList.add('hidden');
   }
 
-  
-
-  
-// 🖍🖍🖍 BAGIAN BORDER KOLOM🖍🖍🖍
-  
-
+  // Border hijau jika valid
   textarea.addEventListener('blur', () => {
     if (textarea.value.trim() !== '') {
       textarea.classList.add('border-2','border-green-500');
@@ -1064,7 +1064,7 @@ const requiredParams = helpText.dataset.required
     }
   });
 
-  // Optional: jika ingin langsung aktif saat ketik
+  // Border kembali abu-abu jika dikosongkan
   textarea.addEventListener('input', () => {
     if (textarea.value.trim() === '') {
       textarea.classList.remove('border-green-500');
@@ -1072,28 +1072,24 @@ const requiredParams = helpText.dataset.required
     }
   });
 
-
-// BAGIAN TEKS BANTU
-  document.querySelectorAll('.textarea-floating').forEach((textarea) => {
-    const wrapper = textarea.closest('.group');
+  // Teks bantu muncul saat fokus, hilang saat blur
+  document.querySelectorAll('.textarea-floating').forEach((el) => {
+    const wrapper = el.closest('.group');
     const helpText = wrapper.querySelector('.help-text');
 
-    textarea.addEventListener('focus', () => {
+    el.addEventListener('focus', () => {
       helpText.classList.remove('hidden');
       setTimeout(() => {
         helpText.classList.add('scale-100', 'opacity-100');
       }, 10);
     });
 
-    textarea.addEventListener('blur', () => {
+    el.addEventListener('blur', () => {
       helpText.classList.remove('scale-100', 'opacity-100');
       setTimeout(() => {
         helpText.classList.add('hidden');
       }, 300);
     });
-    });
-
-
   });
 
 
