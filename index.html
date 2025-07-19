@@ -298,13 +298,14 @@ textarea.custom-style {
   <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Tes</label>
 
   <div class="relative group">
-    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 hidden">
-      Wajib: [kodeproduk],[tujuan],[pin] <br>
-      Optional: [counter], [refid]
-    </p>
+    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 hidden"
+   data-required="[kodeproduk],[tujuan],[pin]">
+  Wajib: [kodeproduk],[tujuan],[pin] <br>
+  Optional: [counter], [refid]
+</p>
 
     <textarea
-      id="formatTransaksi"
+      id="format-Transaksi"
       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
              focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
       rows="2"
@@ -1013,7 +1014,10 @@ function loadSetupTransaksi() {
   const textarea = document.getElementById('format-transaksi');
   const popupModal = document.getElementById('popupModal');
   const missingParamsList = document.getElementById('missingParamsList');
-  const requiredParams = ['[kodeproduk]', '[tujuan]', '[pin]'];
+  const helpText = document.querySelector('.help-text');
+const requiredParams = helpText.dataset.required
+  .split(',')
+  .map(p => p.trim().toLowerCase());
 
   textarea.addEventListener('blur', () => {
     const text = textarea.value.trim();
