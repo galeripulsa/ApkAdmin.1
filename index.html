@@ -347,63 +347,102 @@ textarea.custom-style {
 </div>
 
 
+  
+  <div class="relative mb-6">
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Ubah Password IP</label>
 
 
-  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Format Ubah Password IP</label>
-    <div class="relative">
-      <textarea id="formatUbah" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: UP.[pinLama].[pinBaru] — Untuk ubah PIN transaksi')" onblur="hideHintGlobal()"></textarea>
-      <label
+    <textarea
+      id="format-transaksi"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+      rows="2"
+      placeholder=" "
+    ></textarea>
+
+    <label
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
              peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10">
-      Isi sesuai format di server
+      Format Ubah Password IP
     </label>
-    </div>
   </div>
+</div>
 
 
-  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Format Reset Password IP</label>
-    <div class="relative">
-      <textarea id="formatReset" rows="2" class="peer custom-style w-full text-sm leading-tight pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: RP.[kodeAdmin] — Reset PIN akun dengan otorisasi')" onblur="hideHintGlobal()"></textarea>
-      <label
+     
+    <div class="relative mb-6">
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Reset Password IP</label>
+
+
+    <textarea
+      id="format-transaksi"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+      rows="2"
+      placeholder=" "
+    ></textarea>
+
+    <label
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
              peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10">
-      Isi sesuai format di server
+      Format Reset Password IP
     </label>
+  </div>
+</div>
+
+
+     <div class="relative mb-6">
+    <textarea
+      id="format-transaksi"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+      rows="2"
+      placeholder=" "
+    ></textarea>
+
+    <label
+      class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+             peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+             peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10">Kata Kunci Sukses Ubah Password IP</label>
     </div>
   </div>
 
 
-  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Sukses</label>
-    <div class="relative">
-      <textarea id="formatSukses" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Isi kata kunci dari balasan server yang menandakan transaksi berhasil')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatSukses" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
-         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Sukses Ubah Password IP</label>
+  <div class="relative mb-6">
+    <textarea
+      id="format-transaksi"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+      rows="2"
+      placeholder=" "
+    ></textarea>
+
+    <label
+      class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+             peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+             peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10">Kata Kunci Gagal Ubah Password IP</label>
     </div>
   </div>
 
-  <div>
-    <label class="block text-sm font-semibold text-gray-700 mb-2">Kata Kunci Gagal</label>
-    <div class="relative">
-      <textarea id="formatGagal" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Isi kata kunci dari balasan server yang menandakan transaksi gagal')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatGagal" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
-         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Kata Kunci Gagal Ubah Password IP</label>
-    </div>
-  </div>
+
 
   <div>
     <label class="block text-sm font-semibold text-gray-700 mb-2">Format Awalan Komplain</label>
     <div class="relative">
-      <textarea id="formatKompline" rows="1" class="peer custom-style w-full text-sm leading-tight py-4 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder=" " onfocus="showHintGlobal('Format: K.[isiPesan] — Kirim komplain ke CS server')" onblur="hideHintGlobal()"></textarea>
-      <label for="formatKompline" class="absolute left-2 top-3.5 text-sm text-gray-400 bg-white px-1 transition-all duration-200
-         peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-         peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600">Contoh: K.[pesan]</label>
+      <textarea
+      id="format-transaksi"
+      class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+      rows="2"
+      placeholder=" "
+    ></textarea>
+
+    <label
+      class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
+             peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
+             peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10>Contoh: K.[pesan]</label>
     </div>
    </div>
 
