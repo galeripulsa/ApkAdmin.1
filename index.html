@@ -8,6 +8,29 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <style>
+
+   
+  /* Blok semua seleksi teks secara default */
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Izinkan seleksi hanya untuk input dan textarea */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+
+
+
     /* 🅰️🅰️ Menu Trx 🅰️🅰️ */
     
     .submenu-item {
