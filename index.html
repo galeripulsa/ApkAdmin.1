@@ -1004,39 +1004,51 @@ function loadSetupTransaksi() {
 
     
 // BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
-    const textarea = document.getElementById('format-transaksi');
+    
 
 
 
 // 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍
-const modal = document.getElementById('popupModal');
-  const modalText = document.getElementById('modalText');
 
+  const textarea = document.getElementById('formatTextarea');
+  const popupModal = document.getElementById('popupModal');
+  const missingParamsList = document.getElementById('missingParamsList');
   const requiredParams = ['[kodeproduk]', '[tujuan]', '[pin]'];
 
   textarea.addEventListener('blur', () => {
-    const value = textarea.value.trim().toLowerCase();
+    const text = textarea.value.trim();
 
-    if (value === '') return; // Jangan lakukan apa-apa jika kosong
+    // Jika kolom kosong, abaikan
+    if (!text) return;
 
-    const missingParams = requiredParams.filter(param => !value.includes(param.toLowerCase()));
+    // Cek parameter yang belum ada
+    const missing = requiredParams.filter(param => 
+      !text.includes(param) && 
+      !text.toLowerCase().includes(param.replace(/|/g, ''))
+    );
 
-    if (missingParams.length > 0) {
-      // Buat pesan dinamis
-      const formatted = missingParams.map(p => `<strong>${p}</strong>`).join(', ');
-      modalText.innerHTML = `⚠️ Format tidak lengkap. Masih kurang: ${formatted}`;
-      modal.classList.remove('hidden');
+    if (missing.length > 0) {
+      // Isi daftar parameter yang belum diisi
+      missingParamsList.innerHTML = '';
+      missing.forEach(param => {
+        const item = document.createElement('li');
+        item.textContent = `Parameter ${param} belum diisi`;
+        missingParamsList.appendChild(item);
+      });
+
+      popupModal.classList.remove('hidden');
     }
   });
 
   function closeModal() {
-    modal.classList.add('hidden');
+    popupModal.classList.add('hidden');
   }
 
   
 
   
 // 🖍🖍🖍 BAGIAN BORDER KOLOM🖍🖍🖍
+  const textarea = document.getElementById('format-transaksi');
 
   textarea.addEventListener('blur', () => {
     if (textarea.value.trim() !== '') {
