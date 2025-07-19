@@ -997,12 +997,17 @@ function loadSetupTransaksi() {
       updateLabel(); // cek isi awal
     });
 
+  
+
+
+    
+// BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
+    const textarea = document.getElementById('format-transaksi');
+
+
 
 // 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍
-
-
-  const textarea = document.getElementById('formatTransaksi');
-  const modal = document.getElementById('popupModal');
+const modal = document.getElementById('popupModal');
   const modalText = document.getElementById('modalText');
 
   const requiredParams = ['[kodeproduk]', '[tujuan]', '[pin]'];
@@ -1026,11 +1031,10 @@ function loadSetupTransaksi() {
     modal.classList.add('hidden');
   }
 
+  
 
-
-    
-// BAGIAN BORDER KOLOM🖍🖍🖍🖍
-    const textarea = document.getElementById('format-transaksi');
+  
+// 🖍🖍🖍 BAGIAN BORDER KOLOM🖍🖍🖍
 
   textarea.addEventListener('blur', () => {
     if (textarea.value.trim() !== '') {
