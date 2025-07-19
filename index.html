@@ -295,45 +295,33 @@ textarea.custom-style {
 
 
 <div class="relative mb-6">
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Tes</label>
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Qty</label>
 
   <div class="relative group">
-    <!-- Teks bantu -->
-    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 hidden"
-       data-required="[kodeproduk],[tujuan],[pin]">
-      Wajib: [kodeproduk],[tujuan],[pin] <br>
-      Optional: [counter], [refid]
+    <!-- Teks Bantu -->
+    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2
+       transform scale-0 opacity-0 pointer-events-none hidden
+       transition-all duration-700 ease-out origin-top">
+      Wajib: [kodeproduk],[tujuan],[pin],[qty]<br>
+      Optional: [counter] atau [refid]
     </p>
 
-    <!-- Inputan format -->
     <textarea
       id="format-transaksi"
       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent
-             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300"
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
       rows="2"
       placeholder=" "
     ></textarea>
 
-    <!-- Label mengambang -->
     <label
       class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200
              peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-             peer-focus:top-12 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+             peer-focus:top-12 peer-focus:text-[11px] peer-focus: ease-out pointer-events-none z-10">
       Contoh: [kodeproduk].[tujuan].[pin].[qty]
     </label>
   </div>
 </div>
-
-<!-- Modal Pop-up Parameter -->
-<div id="popupModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-50">
-  <div class="bg-white p-4 rounded-lg shadow-lg text-center w-80">
-    <p class="text-red-600 font-semibold mb-2">Format tidak lengkap:</p>
-    <ul id="missingParamsList" class="text-sm text-left text-gray-700 list-disc list-inside mb-4"></ul>
-    <button onclick="closeModal()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">OK</button>
-  </div>
-</div>
-
-
 
 
 
