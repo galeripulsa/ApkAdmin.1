@@ -1039,33 +1039,9 @@ function loadSetupTransaksi() {
 
     
 // BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
-    
-
-// 🖍🖍🖍 BAGIAN POP-UP PARAMETER 🖍🖍🖍  
+      
   
   const textarea = document.getElementById('format-transaksi'); 
-  
-  
-// 🖍🖍🖍 BAGIAN BORDER KOLOM🖍🖍🖍  
-  
-  
-  textarea.addEventListener('blur', () => {  
-    if (textarea.value.trim() !== '') {  
-      textarea.classList.add('border-2','border-green-500');  
-      textarea.classList.remove('border-gray-300');  
-    } else {  
-      textarea.classList.remove('border-2','border-green-500');  
-      textarea.classList.add('border-gray-300');  
-    }  
-  });  
-  
-  // Optional: jika ingin langsung aktif saat ketik  
-  textarea.addEventListener('input', () => {  
-    if (textarea.value.trim() === '') {  
-      textarea.classList.remove('border-green-500');  
-      textarea.classList.add('border-gray-300');  
-    }  
-  });  
   
   
 // BAGIAN TEKS BANTU  
