@@ -485,15 +485,7 @@ textarea.custom-style {
 
 
 <!-- NOTIFIKASI SIMPAN -->
-<div id="notif-simpan" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-[12px] text-white px-4 py-2 rounded-md shadow hidden z-[99999]">
-  Data berhasil disimpan!
-</div>
 
-  <!-- FOOTER -->
-  <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
-    <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
-    <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
-    </div>
    </div>
 
 
@@ -888,43 +880,7 @@ const formatList = [
   { label: "Topup", icon: "dollar-sign" }
 ];
 
-let selectedFormat = "";
 
-function showFormatRequestModal() {
-  document.getElementById("modalFormatRequest").classList.remove("hidden");
-  renderFormatList();
-}
-
-function renderFormatList() {
-  const container = document.getElementById("format-request-list");
-  container.innerHTML = "";
-
-  formatList.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className =
-      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
-    btn.innerHTML = `
-      <div class="flex items-center gap-3">
-        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-        <span class="text-base md:text-lg">${item.label}</span>
-      </div>
-      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
-    `;
-
-    // ✅ Perbaikan bagian ini:
-    btn.onclick = () => {
-      if (item.label === "Setup Transaksi") {
-        showSetupTransaksi(); // tampilkan modal Setup Transaksi
-      } else {
-        openFormatForm(item.label); // atau form isian lainnya
-      }
-    };
-
-    container.appendChild(btn);
-  });
-
-  lucide.createIcons();
-}
 
 
 // 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
@@ -1069,7 +1025,7 @@ function loadSetupTransaksi() {
 
       const updateLabel = () => {
         if (textarea.value.trim() !== "") {
-          label.classList.add("top-3", "text-[10px]");
+          label.classList.add("top-[-8px]", "text-[10px]");
           label.classList.remove("top-4", "text-sm", "text-gray-300");
         } else {
           label.classList.add("top-4", "text-sm", "text-gray-300");
