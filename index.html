@@ -956,6 +956,7 @@ function isSetupChanged() {
   return currentData !== setupDataAwal;
 }
 
+
 function saveSetupTransaksi() {
   const data = {
     formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
@@ -966,20 +967,25 @@ function saveSetupTransaksi() {
     formatSukses: document.getElementById("formatSukses").value.trim(),
     formatGagal: document.getElementById("formatGagal").value.trim(),
     formatKompline: document.getElementById("formatKompline").value.trim()
+  };
 
- };
+  localStorage.setItem("setupTransaksi", JSON.stringify(data));
 
-
-    localStorage.setItem("setupTransaksi", JSON.stringify(data));
-
-  // Update setupDataAwal agar dianggap sudah disimpan
+  // Update state awal
   setupDataAwal = JSON.stringify(data);
 
+  // Tampilkan notifikasi simpan
   const notif = document.getElementById("notif-simpan");
-  notif.classList.remove("hidden");
-  setTimeout(() => notif.classList.add("hidden"), 2000);
-}
+  notif.classList.remove("hidden", "opacity-0", "scale-95");
+  notif.classList.add("opacity-100", "scale-100");
 
+  // Sembunyikan setelah 2.5 detik
+  setTimeout(() => {
+    notif.classList.add("opacity-0", "scale-95");
+    notif.classList.remove("opacity-100", "scale-100");
+    setTimeout(() => notif.classList.add("hidden"), 300); // tunggu transisi selesai
+  }, 2500);
+}
     
     
 
