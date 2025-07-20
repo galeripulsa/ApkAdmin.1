@@ -878,13 +878,12 @@ function renderFormatList() {
 
     // ✅ Perbaikan bagian ini:
     btn.onclick = () => {
-      if (item.label === "Setup Transaksi") {
-        showSetupTransaksi(); // tampilkan modal Setup Transaksi
-      } else {
-        openFormatForm(item.label); // atau form isian lainnya
-      }
-    };
-
+  if (item.label === "Setup Transaksi") {
+    openSetupTransaksi(); 
+  } else {
+    openFormatForm(item.label);
+  }
+};
     container.appendChild(btn);
   });
 
