@@ -456,8 +456,11 @@ textarea.custom-style {
 
   <!-- FOOTER -->
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
-    <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
-    <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
+    <!-- Tombol Simpan -->
+<button id="btnSimpanTransaksi" class="...">Simpan</button>
+
+<!-- Tombol Kembali -->
+<button id="btnKembaliTransaksi" class="...">Kembali</button>
     </div>
    </div>
 
@@ -1009,6 +1012,29 @@ function openSetupTransaksi() {
     window.openSetupTransaksi = () => setupTransaksi.openModal();
     window.saveSetupTransaksi = () => setupTransaksi.saveData();
   });
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnSimpan = document.getElementById("btnSimpanTransaksi");
+  const btnKembali = document.getElementById("btnKembaliTransaksi");
+
+  if (btnSimpan) {
+    btnSimpan.addEventListener("click", () => {
+      // aksi simpan
+      console.log("Simpan diklik");
+      // misal: close modal
+      document.getElementById("modalSetupTransaksi").classList.add("hidden");
+    });
+  }
+
+  if (btnKembali) {
+    btnKembali.addEventListener("click", () => {
+      console.log("Kembali diklik");
+      document.getElementById("modalSetupTransaksi").classList.add("hidden");
+    });
+  }
+});
 
 </script>
 </body>
