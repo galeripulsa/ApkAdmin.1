@@ -1036,54 +1036,41 @@ function openSetupTransaksi() {
 
 
   document.addEventListener("DOMContentLoaded", () => {
-    const btnSimpan = document.getElementById("btnSimpanTransaksi");
-    const btnKembali = document.getElementById("btnKembaliTransaksi");
-    const textarea = document.getElementById("formatTransaksi");
-    const popupSimpan = document.getElementById("popupSimpanBerhasil");
-    const btnOKSimpan = document.getElementById("btnOKSimpan");
+  const popup = document.getElementById("popupKonfirmasi");
+  const btnKembali = document.getElementById("btnKembaliTransaksi");
+  const btnBatal = document.getElementById("btnBatal");
+  const btnYaSimpan = document.getElementById("btnYaSimpan");
 
-    const modalSetup = document.getElementById("modalSetupTransaksi");
-    const modalBelumSimpan = document.getElementById("modalBelumSimpan");
-    const btnBatalKembali = document.getElementById("btnBatalKembali");
-    const btnTetapKembali = document.getElementById("btnTetapKembali");
+  let isChanged = false;
+  const textarea = document.getElementById("formatTransaksi");
 
-    let originalValue = "";
+  if (textarea) {
+    textarea.addEventListener("input", () => {
+      isChanged = true;
+    });
+  }
 
-    // Ambil isi awal textarea
-    const saved = localStorage.getItem("setup_format_transaksi");
-    if (saved && textarea) {
-      textarea.value = saved;
-      originalValue = saved;
+  btnKembali?.addEventListener("click", () => {
+    if (isChanged) {
+      popup.classList.remove("hidden");
+    } else {
+      document.getElementById("modalSetupTransaksi")?.classList.add("hidden");
     }
+  });
 
-    function hasChanged() {
-      return textarea.value.trim() !== originalValue.trim();
+  btnBatal?.addEventListener("click", () => {
+    popup.classList.add("hidden");
+  });
+
+  btnYaSimpan?.addEventListener("click", () => {
+    const value = textarea?.value.trim();
+    if (value) {
+      localStorage.setItem("setup_format_transaksi", value);
     }
-
-    function showKonfirmasiKembali() {
-      if (hasChanged()) {
-        modalBelumSimpan.classList.remove("hidden");
-      } else {
-        modalSetup.classList.add("hidden");
-      }
-    }
-
-    if (btnSimpan) {
-      btnSimpan.addEventListener("click", () => {
-        const value = textarea.value.trim();
-        localStorage.setItem("setup_format_transaksi", value);
-        originalValue = value;
-
-        popupSimpan.classList.remove("hidden");
-      });
-    }
-
-    if (btnOKSimpan) {
-      btnOKSimpan.addEventListener("click", () => {
-        popupSimpan.classList.add("hidden");
-        modalSetup.classList.add("hidden");
-      });
-    }
+    popup.classList.add("hidden");
+    document.getElementById("modalSetupTransaksi")?.classList.add("hidden");
+  });
+});
 
     if (btnKembali) {
       btnKembali.addEventListener("click", () => {
