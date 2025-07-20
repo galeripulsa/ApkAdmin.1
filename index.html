@@ -453,6 +453,18 @@ textarea.custom-style {
   Data berhasil disimpan!
 </div>
 
+<!-- MODAL PERINGATAN -->
+<div id="modal-konfirmasi-kembali" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-[99999]">
+  <div class="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
+    <p class="text-sm text-gray-800 mb-4">Perubahan belum disimpan.<br>
+Yakin ingin kembali tanpa menyimpan?</p>
+    <div class="flex justify-center space-x-4">
+      <button onclick="konfirmasiKembali(true)" class="px-4 py-1 bg-red-500 text-white rounded-md">OK</button>
+      <button onclick="konfirmasiKembali(false)" class="px-4 py-1 bg-gray-300 text-gray-800 rounded-md">Batal</button>
+    </div>
+  </div>
+</div>
+
   <!-- FOOTER -->
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
     <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
@@ -1075,6 +1087,67 @@ function loadSetupTransaksi() {
     });  
     });  
   });  
+
+
+// ↩️↩️↩️ Modal Konfirmasi Kembali⏪⏪⏪
+
+  let isChanged = false;
+
+  // Deteksi perubahan di semua input/textarea/select
+  document.querySelectorAll('textarea, input, select').forEach(el => {
+    el.addEventListener('input', () => {
+      isChanged = true;
+    });
+  });
+
+  // Fungsi notifikasi simpan
+  function showNotifSimpan() {
+    const notif = document.getElementById("notif-simpan");
+    notif.classList.remove("hidden");
+    setTimeout(() => {
+      notif.classList.add("hidden");
+    }, 2000);
+  }
+
+  // Fungsi tombol Simpan
+  function saveSetupTransaksi() {
+    // Simulasi penyimpanan data
+    isChanged = false;
+    showNotifSimpan();
+  }
+
+  // Fungsi tombol Kembali
+  function closeSetupTransaksi() {
+    if (isChanged) {
+      document.getElementById("modal-konfirmasi-kembali").classList.remove("hidden");
+    } else {
+      // Ganti ini sesuai aksi kembali yang kamu butuhkan
+      console.log("Kembali tanpa perubahan");
+      // window.location.href = "halaman-utama.html";
+    }
+  }
+
+  // Fungsi dari modal konfirmasi
+  function konfirmasiKembali(setuju) {
+    document.getElementById("modal-konfirmasi-kembali").classList.add("hidden");
+    if (setuju) {
+      // Lanjut kembali tanpa simpan
+      console.log("Lanjut kembali meskipun belum disimpan");
+      // window.location.href = "halaman-utama.html";
+    }
+  }
+
+  // Tangani tombol back di HP/browser
+  window.addEventListener("popstate", (e) => {
+    if (isChanged) {
+      e.preventDefault();
+      history.pushState(null, null, location.href); // cegah back
+      document.getElementById("modal-konfirmasi-kembali").classList.remove("hidden");
+    }
+  });
+
+  // Cegah langsung bisa back saat pertama kali load
+  window.history.pushState({}, "");
 
 
 
