@@ -158,6 +158,12 @@ textarea.custom-style {
     border-radius: calc(var(--radius) / 2); /* Boleh beda jika ingin lebih kecil */
   }
 
+
+
+  #notif-simpan {
+    transition: opacity 0.3s ease;
+  }
+
 </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -960,7 +966,11 @@ function saveSetupTransaksi() {
     formatSukses: document.getElementById("formatSukses").value.trim(),
     formatGagal: document.getElementById("formatGagal").value.trim(),
     formatKompline: document.getElementById("formatKompline").value.trim()
-  };
+ 
+// Setelah simpan berhasil, tampilkan notifikasi
+    showNotifSimpan();
+
+ };
 
   localStorage.setItem("setupTransaksi", JSON.stringify(data));
 
@@ -969,7 +979,9 @@ function saveSetupTransaksi() {
 
   
 
-function showNotifSimpan() {
+
+
+  function showNotifSimpan() {
     const notif = document.getElementById('notif-simpan');
     notif.classList.remove('hidden');
     notif.classList.add('flex');
@@ -980,12 +992,9 @@ function showNotifSimpan() {
     }, 3000); // Notif hilang setelah 3 detik
   }
 
-  function saveSetupTransaksi() {
-    // Logika simpan data di sini...
+  
     
-    // Setelah simpan berhasil, tampilkan notifikasi
-    showNotifSimpan();
-  }
+    
 
 
 
