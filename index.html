@@ -975,23 +975,7 @@ function saveSetupTransaksi() {
     formatKompline: document.getElementById("formatKompline").value.trim()
   };
 
-  localStorage.setItem("setupTransaksi", JSON.stringify(data));
 
-  // Update state awal
-  setupDataAwal = JSON.stringify(data);
-
-  // Tampilkan notifikasi simpan
-  const notif = document.getElementById("notif-simpan");
-  notif.classList.remove("hidden", "opacity-0", "scale-95");
-  notif.classList.add("opacity-100", "scale-100");
-
-  // Sembunyikan setelah 2.5 detik
-  setTimeout(() => {
-    notif.classList.add("opacity-0", "scale-95");
-    notif.classList.remove("opacity-100", "scale-100");
-    setTimeout(() => notif.classList.add("hidden"), 300); // tunggu transisi selesai
-  }, 2500);
-}
 
 
 
@@ -1010,6 +994,43 @@ function loadSetupTransaksi() {
     document.getElementById("formatKompline").value = saved.formatKompline || "";
   }
 
+let selectedFormat = "";
+
+function showFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
+
+function renderFormatList() {
+  const container = document.getElementById("format-request-list");
+  container.innerHTML = "";
+
+  formatList.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+    btn.innerHTML = `
+      <div class="flex items-center gap-3">
+        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+        <span class="text-base md:text-lg">${item.label}</span>
+      </div>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+    `;
+
+    // ✅ Perbaikan bagian ini:
+    btn.onclick = () => {
+      if (item.label === "Setup Transaksi") {
+        showSetupTransaksi(); // tampilkan modal Setup Transaksi
+      } else {
+        openFormatForm(item.label); // atau form isian lainnya
+      }
+    };
+
+    container.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
   document.querySelectorAll("textarea.custom-style").forEach(el => {
     el.classList.toggle("filled", el.value.trim() !== "");
   });
