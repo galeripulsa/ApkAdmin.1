@@ -252,6 +252,32 @@ textarea.custom-style {
 
 <!-- ✅Modal Format Request ✅-->
 
+<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
+  <div class="max-w-md mx-auto">
+    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
+
+    <!-- Mode daftar tombol -->
+    <div id="format-request-list" class="space-y-4"></div>
+
+    <!-- Mode form detail -->
+    <div id="format-request-form" class="space-y-4 hidden">
+      <button onclick="backToFormatList()" class="text-sm text-blue-500 font-medium underline mb-2">&larr; Kembali</button>
+      <h3 id="format-form-title" class="text-lg font-semibold text-gray-800"></h3>
+      <div class="floating-input">
+        <input id="formatInput" type="text" placeholder=" " class="border-gray-300" />
+        <label for="formatInput">Masukkan Format</label>
+      </div>
+      <button onclick="backToFormatList()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold shadow">
+        Simpan Format
+      </button>
+    </div>
+
+    <!-- Tombol Tutup -->
+    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+      Tutup
+    </button>
+  </div>
+</div>
 
 <!-- 🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢 -->
 
@@ -866,213 +892,114 @@ function renderFormatList() {
 }
 
 
-// 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
-
-// Inisialisasi awal agar state bisa dikendalikan
-window.addEventListener("load", () => {
-  history.replaceState({ modal: false }, "", location.href);
-});
-
-function showSetupTransaksi() {
-  openSetupTransaksi(); // gunakan yang menyimpan data awal
-}
+// 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩 
 
 
-
-// 📕📕📕📕 TEKS INFO
-
-  function showHint(text) {
-  const bantu = document.getElementById("teksBantuGlobal");
-  bantu.innerText = text; // gunakan \n di dalam text untuk baris baru
-  bantu.classList.remove("opacity-0", "scale-95");
-  bantu.classList.add("opacity-100", "scale-100");
-}
-
-function hideHint() {
-  const bantu = document.getElementById("teksBantuGlobal");
-  bantu.classList.remove("opacity-100", "scale-100");
-  bantu.classList.add("opacity-0", "scale-95");
-}
-
-// 📕📕📕
-
-
-function closeFormatRequestModal() {
-  const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
-  if (isInForm) {
-    backToFormatList();
-  } else {
-    document.getElementById("modalFormatRequest").classList.add("hidden");
-  }
-}
-
-function openSetupTransaksi() {
-  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
-  loadSetupTransaksi();
-
-  setupDataAwal = JSON.stringify({
-    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
-    formatQty: document.getElementById("formatQty").value.trim(),
-    formatCek: document.getElementById("formatCek").value.trim(),
-    formatUbah: document.getElementById("formatUbah").value.trim(),
-    formatReset: document.getElementById("formatReset").value.trim(),
-    formatSukses: document.getElementById("formatSukses").value.trim(),
-    formatGagal: document.getElementById("formatGagal").value.trim(),
-    formatKompline: document.getElementById("formatKompline").value.trim()
-  });
-
-  // Tambah state baru agar tombol kembali HP aktif
-  history.pushState({ modal: true }, "", "#setup");
-}
-
-document.querySelectorAll("textarea.custom-style").forEach(el => {
-  el.addEventListener("input", () => {
-    el.classList.toggle("filled", el.value.trim() !== "");
-  });
-});
-
-function isSetupChanged() {
-  const currentData = JSON.stringify({
-    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
-    formatQty: document.getElementById("formatQty").value.trim(),
-    formatCek: document.getElementById("formatCek").value.trim(),
-    formatUbah: document.getElementById("formatUbah").value.trim(),
-    formatReset: document.getElementById("formatReset").value.trim(),
-    formatSukses: document.getElementById("formatSukses").value.trim(),
-    formatGagal: document.getElementById("formatGagal").value.trim(),
-    formatKompline: document.getElementById("formatKompline").value.trim()
-  });
-  return currentData !== setupDataAwal;
-}
-
-
-function saveSetupTransaksi() {
-  const data = {
-    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
-    formatQty: document.getElementById("formatQty").value.trim(),
-    formatCek: document.getElementById("formatCek").value.trim(),
-    formatUbah: document.getElementById("formatUbah").value.trim(),
-    formatReset: document.getElementById("formatReset").value.trim(),
-    formatSukses: document.getElementById("formatSukses").value.trim(),
-    formatGagal: document.getElementById("formatGagal").value.trim(),
-    formatKompline: document.getElementById("formatKompline").value.trim()
-  };
-
-  localStorage.setItem("setupTransaksi", JSON.stringify(data));
-
-  // Update state awal
-  setupDataAwal = JSON.stringify(data);
-
-  // Tampilkan notifikasi simpan
-  const notif = document.getElementById("notif-simpan");
-  notif.classList.remove("hidden", "opacity-0", "scale-95");
-  notif.classList.add("opacity-100", "scale-100");
-
-  // Sembunyikan setelah 2.5 detik
-  setTimeout(() => {
-    notif.classList.add("opacity-0", "scale-95");
-    notif.classList.remove("opacity-100", "scale-100");
-    setTimeout(() => notif.classList.add("hidden"), 300); // tunggu transisi selesai
-  }, 2500);
-}
-
-
-
-
-
-function loadSetupTransaksi() {
-  const saved = JSON.parse(localStorage.getItem("setupTransaksi"));
-  if (saved) {
-    document.getElementById("formatTransaksi").value = saved.formatTransaksi || "";
-    document.getElementById("formatQty").value = saved.formatQty || "";
-    document.getElementById("formatCek").value = saved.formatCek || "";
-    document.getElementById("formatUbah").value = saved.formatUbah || "";
-    document.getElementById("formatReset").value = saved.formatReset || "";
-    document.getElementById("formatSukses").value = saved.formatSukses || "";
-    document.getElementById("formatGagal").value = saved.formatGagal || "";
-    document.getElementById("formatKompline").value = saved.formatKompline || "";
-  }
-
-  document.querySelectorAll("textarea.custom-style").forEach(el => {
-    el.classList.toggle("filled", el.value.trim() !== "");
-  });
-}
-
-
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const textareas = document.querySelectorAll(".textarea-floating");
-
-    textareas.forEach((textarea) => {
-      const label = textarea.parentElement.querySelector(".floating-label");
-
-      const updateLabel = () => {
-        if (textarea.value.trim() !== "") {
-          label.classList.add("top-[-8px]", "text-[10px]");
-          label.classList.remove("top-4", "text-sm", "text-gray-300");
-        } else {
-          label.classList.add("top-4", "text-sm", "text-gray-300");
-          label.classList.remove("top-[-8px]", "text-[11px]");
-        }
+  class SetupTransaksi {
+    constructor() {
+      this.textareas = {
+        formatTransaksi: document.getElementById('formatTransaksi'),
+        formatQty: document.getElementById('formatQty'),
+        formatCek: document.getElementById('formatCek'),
+        formatSN: document.getElementById('formatSN'),
+        formatCS: document.getElementById('formatCS'),
       };
 
-      textarea.addEventListener("input", updateLabel);
-      updateLabel(); // cek isi awal
-    });
+      this.helpTexts = document.querySelectorAll('.help-text');
+      this.modal = document.getElementById('modalSetupTransaksi');
+      this.notif = document.getElementById('notif-simpan');
+      this.hasChanges = false;
 
+      this.setupEvents();
+      this.loadData();
+    }
 
+    setupEvents() {
+      Object.values(this.textareas).forEach(textarea => {
+        textarea.addEventListener('input', () => this.handleInputChange());
+        textarea.addEventListener('focus', (e) => this.showHelpText(e.target));
+        textarea.addEventListener('blur', (e) => this.hideHelpText(e.target));
+      });
 
+      window.addEventListener('popstate', () => this.closeModal());
+    }
 
+    handleInputChange() {
+      this.hasChanges = true;
+      Object.entries(this.textareas).forEach(([key, textarea]) => {
+        const label = textarea.previousElementSibling;
+        if (label && label.tagName === 'LABEL') {
+          label.classList.toggle('text-gray-300', textarea.value.trim() === '');
+        }
+      });
+    }
 
-// BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
-
-
-  const textarea = document.getElementById('format-transaksi'); 
-
-
-// BAGIAN TEKS BANTU  
-  document.querySelectorAll('.textarea-floating').forEach((textarea) => {  
-    const wrapper = textarea.closest('.group');  
-    const helpText = wrapper.querySelector('.help-text');  
-
-    textarea.addEventListener('focus', () => {  
-      helpText.classList.remove('hidden');  
-      setTimeout(() => {  
-        helpText.classList.add('scale-100', 'opacity-100');  
-      });  
-    });  
-
-    textarea.addEventListener('blur', () => {  
-      helpText.classList.remove('scale-100', 'opacity-100');  
-      setTimeout(() => {  
-        helpText.classList.add('hidden');  
-      });  
-    });  
-    });  
-  });  
-
-
-
-
-function closeSetupTransaksi() {
-  document.getElementById("modalSetupTransaksi").classList.add("hidden");
-  // Ganti state agar bisa buka modal ulang
-  history.replaceState({ modal: false }, "", location.href);
-}
-
-window.addEventListener("popstate", (e) => {
-  if (!document.getElementById("modalSetupTransaksi").classList.contains("hidden")) {
-    if (isSetupChanged()) {
-      const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
-      if (!konfirmasi) {
-        history.pushState({ modal: true }, "", "#setup");
-        return;
+    showHelpText(target) {
+      const helpText = target.parentElement.querySelector('.help-text');
+      if (helpText) {
+        helpText.classList.remove('opacity-0', 'scale-95');
+        helpText.classList.add('opacity-100', 'scale-100');
       }
     }
-    closeSetupTransaksi();
-  }
-});
 
-  </script>
+    hideHelpText(target) {
+      const helpText = target.parentElement.querySelector('.help-text');
+      if (helpText) {
+        helpText.classList.remove('opacity-100', 'scale-100');
+        helpText.classList.add('opacity-0', 'scale-95');
+      }
+    }
+
+    openModal() {
+      this.modal.classList.remove('hidden');
+      history.pushState(null, null, location.href);
+    }
+
+    closeModal() {
+      if (this.hasChanges && !confirm("Ada perubahan yang belum disimpan. Tutup tanpa menyimpan?")) {
+        history.pushState(null, null, location.href);
+        return;
+      }
+      this.modal.classList.add('hidden');
+      this.hasChanges = false;
+    }
+
+    saveData() {
+      Object.entries(this.textareas).forEach(([key, textarea]) => {
+        localStorage.setItem(key, textarea.value);
+      });
+      this.hasChanges = false;
+      this.showNotification();
+    }
+
+    loadData() {
+      Object.entries(this.textareas).forEach(([key, textarea]) => {
+        const saved = localStorage.getItem(key);
+        if (saved !== null) textarea.value = saved;
+      });
+      this.handleInputChange();
+    }
+
+    showNotification() {
+      this.notif.classList.remove('hidden', 'scale-95', 'opacity-0');
+      this.notif.classList.add('scale-100', 'opacity-100');
+      setTimeout(() => {
+        this.notif.classList.remove('scale-100', 'opacity-100');
+        this.notif.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => this.notif.classList.add('hidden'), 300);
+      }, 1000);
+    }
+  }
+
+  // Inisialisasi setelah DOM siap
+  window.addEventListener('DOMContentLoaded', () => {
+    const setupTransaksi = new SetupTransaksi();
+
+    // Ekspor metode global jika dibutuhkan tombol HTML
+    window.openSetupTransaksi = () => setupTransaksi.openModal();
+    window.saveSetupTransaksi = () => setupTransaksi.saveData();
+  });
+
+</script>
 </body>
 </html>
