@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Panel Admin Galeri Pulsa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <style>
+
+
+  /* Blok semua seleksi teks secara default */
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Izinkan seleksi hanya untuk input dan textarea */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+
+
+
+    /* 🅰️🅰️ Menu Trx 🅰️🅰️ */
+
+    .submenu-item {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      position: relative;
+    }
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
+    }
+
+
+  /* 🖥🖥🖥🖥🖥 Server Center 🖥🖥🖥 */
+
+/* ✅ Floating Label */
+.floating-input {
+  position: relative;
+  margin-top: 1.5rem;
+}
+.floating-input input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 5px;
+  color: gray;
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 8px;
+  font-size: 0.75rem;
+  color: #06b6d4;
+}
+
+/* ✅ Toast Style */
+#toast-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+/* 💠💠💠💠💠 LIST FORMAT */
+.floating-input {
+  position: relative;
+  margin-top: 1rem;
+}
+.floating-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  background: white;
+  padding: 0 4px;
+  color: #999;
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 8px;
+  font-size: 0.75rem;
+  color: #ccc;
+}
+textarea.custom-style {
+    transition: all 0.2s ease;
+    border: 1px solid #d1d5db; /* gray-300 */
+    padding-left: 12px;
+    padding-right: 12px;
+    box-shadow: none;
+  }
+  textarea.custom-style:focus {
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  textarea.custom-style.filled {
+    border-color: #16a34a; /* green-600 */
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3);
+  }
+
+
+
+
+  :root {
+    --radius: 3px; /* Ubah angka ini untuk semua sudut */
+  }
+
+  #format-transaksi {
+    border-radius: var(--radius);
+  }
+
+  .help-text {
+    border-radius: var(--radius);
+  }
+
+  .floating-label {
+    border-radius: calc(var(--radius) / 2); /* Boleh beda jika ingin lebih kecil */
+  }
+
+
+
+  #notif-simpan {
+    transition: opacity 0.3s ease;
+  }
+
+</style>
+</head>
+<body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Apk Admin</h1>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6" id="menu-grid"></div>
+
+  <!-- 🔁🔁🔁🔁🔁 MENU TRX 🔁🔁🔁🔁🔁-->
+  <!-- 🟦 MODAL MENU TRANSAKSI -->
+<div class="fixed inset-0 bg-gradient-to-br from-white to-cyan-100 z-50 flex flex-col hidden rounded-xl shadow-xl" id="modal">
+    <div class="flex flex-col h-full w-full">
+      <!-- 🔵 HEADER -->
+      <div class="w-auto flex flex-col items-center px-4 py-3 bg-cyan-600 text-white font-semibold text-lg border-b shrink-0 shadow-md">
+        <h2>⚙️ Pengaturan Menu & Kategori</h2>
+
+      <!-- 🔘 AKSI ATAS -->
+      <div class="flex justify-center gap-3 px-4 py-2 border-b border-yellow-300">
+        <button class="bg-purple-200 hover:bg-purple-300 text-sm border rounded px-4 py-2 font-medium shadow" id="btn-add-menu">➕ Menu</button>
+        <button class="bg-violet-300 hover:bg-violet-400 text-sm border-1 rounded px-4 py-2 font-medium shadow" id="btn-add-cat">📁 Kategori</button>
+      <button class="flex items-center gap-1 bg-white text-cyan-700 text-sm border px-3 py-1 rounded shadow hover:bg-gray-100" id="btn-refresh">
+          <i data-lucide="refresh-ccw" class="w-4 h-4"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+      <!-- 🧾 DAFTAR MENU -->
+      <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50" id="submenu-list">
+        <!-- Konten akan dimasukkan via JS -->
+      </div>
+
+      <!-- 🟡 FOOTER -->
+      <div class="flex flex-col px-4 py-4 border-t-2 border-yellow-300 bg-gray-200 sticky bottom-0 z-10 space-y-2 shadow-inner">
+        <p class="text-green-700 text-sm text-center font-semibold hidden" id="save-msg">✅ Perubahan berhasil disimpan.</p>
+        <p class="text-center text-sm text-gray-700 font-medium" id="summary-info">Total: 0 | Aktif: 0 | Nonaktif: 0</p>
+        <button class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-semibold shadow" id="btn-save">💾 SIMPAN</button>
+        <button class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-semibold shadow" id="btn-close">❌ TUTUP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ❗ MODAL KONFIRMASI HAPUS -->
+  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-xl w-11/12 max-w-sm p-6 text-center">
+      <p id="confirm-message" class="text-gray-800 mb-4 font-medium">Apakah Anda yakin ingin menghapus item ini?</p>
+      <div class="flex justify-center gap-4">
+        <button id="confirm-yes" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded font-semibold">Ya</button>
+        <button id="confirm-no" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-5 py-2 rounded font-semibold">Batal</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!--🖥🖥🖥🖥🖥 Modal Setup Server 🖥🖥🖥🖥🖥-->
+<div id="modalSetupServer" class="fixed inset-0 z-50 bg-white overflow-auto p-6 hidden">
+  <div class="max-w-md mx-auto">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Server</h2>
+
+    <ul class="space-y-4">
+      <li>
+        <button onclick="openServerSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
+          <span class="text-lg">Setup Server</span>
+          <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+      </li>
+      <li>
+        <button onclick="openCenterSettings()" class="w-full flex items-center justify-between bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-semibold px-5 py-4 rounded-lg shadow">
+          <span class="text-lg">Center Server</span>
+          <i data-lucide="server" class="w-5 h-5"></i>
+        </button>
+      </li>
+    </ul>
+
+    <button onclick="closeSetupServerModal()" class="mt-8 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+      Tutup
+    </button>
+  </div>
+</div>
+
+<!-- ✅✅✅ MODAL KONTEN DINAMIS (SETUP/CENTER) ✅✅✅ -->
+<div id="modalContentServer" class="fixed inset-0 z-[9999] bg-white overflow-auto p-6 hidden"></div>
+
+<!-- ✅✅✅ TOAST ✅✅✅ -->
+<div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded shadow-lg z-[9999] text-sm transition-opacity duration-300 hidden"></div>
+
+
+<!-- ✅Modal Format Request ✅-->
+<div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
+  <div class="max-w-md mx-auto">
+    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
+
+    <!-- Mode daftar tombol -->
+    <div id="format-request-list" class="space-y-4"></div>
+
+    <!-- Mode form detail -->
+    <div id="format-request-form" class="space-y-4 hidden">
+      <button onclick="backToFormatList()" class="text-sm text-blue-500 font-medium underline mb-2">&larr; Kembali</button>
+      <h3 id="format-form-title" class="text-lg font-semibold text-gray-800"></h3>
+      <div class="floating-input">
+        <input id="formatInput" type="text" placeholder=" " class="border-gray-300" />
+        <label for="formatInput">Masukkan Format</label>
+      </div>
+      <button onclick="backToFormatList()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold shadow">
+        Simpan Format
+      </button>
+    </div>
+
+    <!-- Tombol Tutup -->
+    <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
+      Tutup
+    </button>
+  </div>
+</div>
+
+<!-- 🟢🟢🟢 MODAL SETUP TRANSAKSI 🟢🟢🟢 -->
+
+<body class="bg-gray-100">
+
+
+
+<!-- MODAL FULLSCREEN -->
+
+<div id="modalSetupTransaksi" class="fixed inset-0 z-[9999] bg-white hidden flex flex-col">
+  <!-- HEADER -->
+  <div class="bg-cyan-600 text-white p-4 flex flex-col space-y-1 shadow-md text-center">
+    <h2 class="text-lg font-bold">🛠️ Setup Format Transaksi</h2>
+ </div>
+
+
+
+
+<!-- ✅ AREA TETAP UNTUK TEKS BANTU -->
+<!-- ✅ TEKS BANTU FIXED DI ATAS FIELD -->
+<div id="bantuWrapper" class="fixed z-50 w-full top-0 left-0 px-4 pointer-events-none">
+  <p id="teksBantuGlobal"
+   class="absolute left-1/2 -translate-x-1/2 top-[85px] text-[11px] text-white bg-pink-700 px2 py-1 rounded shadow-md
+          opacity-0 scale-100 pointer-events-none transition-all duration-700 ease-in-out z-50 text-center
+          max-w-[90%] w-auto leading-snug">
+</p>
+</div>
+
+
+
+
+<!-- ✅ ISI FORM -->
+<div class="overflow-y-auto p-4 space-y-6 pb-24">
+
+
+<!-- Kelompok 1: Format Transaksi -->
+<div class="border border-blue-300 bg-blue-50 rounded-xl p-4 mb-6">
+  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi</h3>
+
+  <!-- Format Transaksi -->
+  <div class="relative mb-6">
+    <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
+    <div class="relative group">
+      <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform scale-0 opacity-0 pointer-events-none hidden transition-all duration-700 ease-out origin-top">
+        Wajib: [kodeproduk],[tujuan],[pin]<br>
+        Optional: [counter] atau [refid]
+      </p>
+      <textarea id="formatTransaksi"
+        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+      ></textarea>
+      <label
+        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-12 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+        Contoh: [kodeproduk].[tujuan].[pin]
+      </label>
+    </div>
+  </div>
+
+  <!-- Format Transaksi Qty -->
+  <div class="relative mb-6">
+    <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Qty</label>
+    <div class="relative group">
+      <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform scale-0 opacity-0 pointer-events-none hidden transition-all duration-700 ease-out origin-top">
+        Wajib: [kodeproduk],[tujuan],[pin],[qty]<br>
+        Optional: [counter] atau [refid]
+      </p>
+      <textarea id="formatQty"
+        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+      ></textarea>
+      <label
+        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-12 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+        Contoh: [kodeproduk].[tujuan].[pin].[qty]
+      </label>
+    </div>
+  </div>
+
+
+   <!-- Format Cek -->
+  <div class="relative mb-6">
+    <label class="block text-sm font-bold text-gray-700 mb-2">Format Cek</label>
+    <div class="relative group">
+      <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform scale-0 opacity-0 pointer-events-none hidden transition-all duration-700 ease-out origin-top">
+        Wajib: [kodeproduk],[tujuan],[pin],[qty]<br>
+        Optional: [counter] atau [refid]
+      </p>
+      <textarea id="formatCek"
+        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-green-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+      ></textarea>
+      <label
+        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-12 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+        Contoh: [kodeproduk].[tujuan].[pin].[qty]
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Kelompok 2: Format Password IP -->
+<div class="border border-green-300 bg-green-50 rounded-xl p-4 mb-6">
+  <h3 class="text-sm font-semibold text-green-700 mb-4">🔐 Format Password IP</h3>
+
+  <!-- Format Reset Password IP -->
+  <div class="relative mb-6">
+    <label class="block text-sm font-bold text-gray-700 mb-2">Format Reset Password IP</label>
+    <div class="relative group">
+      <textarea id="formatReset"
+        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+      ></textarea>
+      <label
+        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+        Format Reset Password IP
+      </label>
+    </div>
+  </div>
+
+  <!-- Format Ubah Password IP -->
+  <div class="relative mb-3">
+    <label class="block text-sm font-bold text-gray-700 mb-2">Format Ubah Password IP</label>
+    <div class="relative group">
+      <textarea id="formatUbah"
+        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+      ></textarea>
+      <label
+        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+        Format Ubah Password IP
+      </label>
+    </div>
+  </div>
+
+  <!-- Kata Kunci Sukses -->
+  <div class="relative group mb-3">
+    <textarea id="formatSukses" 
+       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
+    <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">Kata Kunci Sukses Ubah Password IP</label>
+  </div>
+
+  <!-- Kata Kunci Gagal -->
+  <div class="relative group mb-3">
+    <textarea id="formatGagal"
+       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
+    <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">Kata Kunci Gagal Ubah Password IP</label>
+  </div>
+</div>
+
+
+<!-- KELOMPOK 3: Komplain -->
+
+<div class="rounded-xl bg-yellow-50 border border-yellow-300 p-4 mb-8 shadow">
+     <h2 class="text-sm font-semibold text-yellow-500 mb-4">📣 Format Komplain</h2>
+
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Awalan Komplain</label>
+
+   <div class="relative group mb-3">
+    <textarea id="formatKompline"
+       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
+    <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
+      Contoh: K.[pesan]
+    </label>
+  </div>
+ </div>
+</div>
+
+
+<!-- NOTIFIKASI SIMPAN -->
+<div id="notif-simpan" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-[12px] text-white px-4 py-2 rounded-md shadow hidden z-[99999]">
+  Data berhasil disimpan!
+</div>
+
+  <!-- FOOTER -->
+  <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
+    <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
+    <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
+    </div>
+   </div>
+
+
+  <!-- SCRIPT -->
+  <script>
+    const menuItems = [
+      { label: "Setup Server", icon: "server", key: "server" },
+      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
+      { label: "Logo", icon: "image", key: "logo" },
+      { label: "Format Request", icon: "file-text", key: "format" },
+      { label: "Poin", icon: "star", key: "poin" },
+      { label: "Downline", icon: "users", key: "downline" },
+      { label: "Prabayar", icon: "phone", key: "prabayar" },
+      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
+      { label: "OTP", icon: "key", key: "otp" }
+    ];
+
+
+        let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
+    ];
+    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    let isDirty = false;
+
+    const submenuList = document.getElementById("submenu-list");
+    const grid = document.getElementById("menu-grid");
+
+    function renderMenus() {
+      grid.innerHTML = "";
+      menuItems.forEach(item => {
+        const box = document.createElement("div");
+        box.className = `cursor-pointer text-center p-4 transition-all rounded-xl shadow-md ${item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"}`;
+        box.innerHTML = `
+          <div class="flex justify-center mb-2 text-3xl text-gray-700">
+            <i data-lucide="${item.icon}"></i>
+          </div>
+          <div class="font-semibold text-sm text-gray-800">${item.label}</div>
+        `;
+
+box.onclick = () => {
+          if (item.key === "menu") showModal();
+          if (item.key === "server") showSetupServerModal();      
+          if (item.key === "format") showFormatRequestModal();
+    };
+        grid.appendChild(box);
+      });
+      lucide.createIcons();
+    }
+
+
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX < -30) {
+          document.querySelectorAll(".submenu-item").forEach(item => item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
+    }
+
+    function renderSubMenus() {
+      submenuList.innerHTML = "";
+      subMenus.forEach((menu, index) => {
+        const row = document.createElement("div");
+         const bgColor = menu.isCategory
+  ? menu.active
+    ? "bg-violet-300" // Kategori aktif
+    : "bg-violet-50" // Kategori nonaktif
+  : menu.active
+    ? "bg-cyan-600"  // Item aktif
+    : "bg-stone-200";  // Item nonaktif
+
+row.className = `submenu-item flex items-center justify-between border rounded p-2 ${bgColor} hover:shadow gap-3 relative`;
+        row.innerHTML = `
+          <div class="flex items-center gap-2 flex-1">
+            <input type="checkbox" class="accent-green-500 w-5 h-5" ${menu.active ? "checked" : ""} onchange="toggleActive(${index})" />
+            <input type="text" class="flex-grow p-2 border rounded text-sm" value="${menu.name}" onchange="updateName(${index}, this.value)" />
+            ${!menu.isCategory ? `
+              <div class="relative">
+                ${menu.icon ? `
+                  <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
+                  <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                ` : `
+                  <label class='w-10 h-9 bg-white border rounded flex items-center justify-center text-gray-300 text-xs cursor-pointer'>icon🪙
+                    <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
+                  </label>
+                `}
+              </div>` : ""}
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-600 cursor-move"></i>
+            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer delete-icon" onclick="confirmDelete(${index})"></i>
+          </div>`;
+        submenuList.appendChild(row);
+        enableSwipeToDelete(row);
+      });
+      lucide.createIcons();
+      updateRefreshButtonState();
+      renderSummary();
+    }
+
+    function updateName(index, value) {
+      subMenus[index].name = value;
+      isDirty = true;
+      updateRefreshButtonState();
+    }
+
+    function toggleActive(index) {
+      subMenus[index].active = !subMenus[index].active;
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    }
+
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          subMenus[index].icon = reader.result;
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function confirmDelete(index) {
+      showConfirmationModal(`Yakin ingin menghapus item: "${subMenus[index].name}"?`, () => {
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      });
+    }
+
+    function showModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      renderSubMenus();
+    }
+
+    function showConfirmationModal(message, onYes, onNo) {
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = message;
+      modal.classList.remove("hidden");
+      const yesBtn = document.getElementById("confirm-yes");
+      const noBtn = document.getElementById("confirm-no");
+      const cleanup = () => {
+        modal.classList.add("hidden");
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+      };
+      yesBtn.onclick = () => { cleanup(); onYes(); };
+      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
+    }
+
+    document.getElementById("btn-close").onclick = () => {
+      if (isDirty) {
+        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
+          document.getElementById("modal").classList.add("hidden");
+          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+          isDirty = false;
+          updateRefreshButtonState();
+        });
+      } else {
+        document.getElementById("modal").classList.add("hidden");
+      }
+    };
+
+    document.getElementById("btn-save").onclick = () => {
+      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+      localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+      const saveMsg = document.getElementById("save-msg");
+      saveMsg.classList.remove("hidden");
+      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
+    };
+
+    document.getElementById("btn-refresh").onclick = () => {
+      if (!isDirty) return;
+      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+        isDirty = false;
+        updateRefreshButtonState();
+        renderSubMenus();
+      });
+    };
+
+    document.getElementById("btn-add-menu").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    document.getElementById("btn-add-cat").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    const sortable = new Sortable(submenuList, {
+      animation: 150,
+      handle: ".lucide-grip-vertical",
+      onEnd: function (evt) {
+        const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
+        subMenus.splice(evt.newIndex, 0, movedItem);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    });
+
+    function renderSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(item => item.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").textContent =
+        `Total: ${total} | Aktif: ${aktif} | Nonaktif: ${nonaktif}`;
+    }
+
+    renderMenus();
+
+
+// 🖥🖥🖥🖥🖥 SETUP SERVER 🖥🖥🖥🖥🖥
+
+// ✅ TAMPILAN MODAL UTAMA
+function showSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.remove("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function closeSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function backToMainModal() {
+  showSetupServerModal();
+}
+
+// ✅ SETUP SERVER
+function openServerSettings() {
+  const saved = JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" };
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  modal.innerHTML = `
+    <div class="max-w-md mx-auto w-full">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Setup Server</h2>
+      <form onsubmit="submitServerSettings(event)" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Nama Server</label>
+          <input type="text" id="namaServer" value="${saved.nama}" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Alamat Server</label>
+          <textarea id="alamatServer" rows="10" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" required>${saved.alamat}</textarea>
+        </div>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">Simpan</button>
+        <button type="button" onclick="backToMainModal()" class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded">Kembali</button>
+      </form>
+    </div>
+  `;
+}
+
+function submitServerSettings(event) {
+  event.preventDefault();
+  const nama = document.getElementById("namaServer").value.trim();
+  const alamat = document.getElementById("alamatServer").value.trim();
+  if (!nama || !alamat) return alert("Semua kolom harus diisi.");
+  localStorage.setItem("setupServer", JSON.stringify({ nama, alamat }));
+  showToast("✅ Data Server berhasil disimpan!");
+}
+
+// ✅ BAGIAN CENTER
+let hasChanges = false;
+
+function openCenterSettings() {
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  const saved = JSON.parse(localStorage.getItem("centerServer")) || {
+    ip: { nama: "", server: "", host: "" },
+    jabber: { nama: "", server: "", host: "" },
+    nomor: { whatsapp: "", sms: "" }
+  };
+
+  modal.innerHTML = `
+    <div class="flex flex-col h-full bg-white p-4 rounded-lg shadow-md max-w-xl mx-auto">
+      <div class="border-b pb-3 mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Center Server</h2>
+      </div>
+      <div class="flex-1 overflow-y-auto space-y-6 pr-1">
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">IP Center</h3>
+          <div class="floating-input"><input type="text" id="ip-nama" value="${saved.ip.nama}" /><label>Nama Center</label></div>
+          <div class="floating-input"><input type="text" id="ip-server" value="${saved.ip.server}" /><label>Server Center</label></div>
+          <div class="floating-input"><input type="text" id="ip-host" value="${saved.ip.host}" /><label>Host</label></div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Jabber Center</h3>
+          <div class="floating-input"><input type="text" id="jabber-nama" value="${saved.jabber.nama}" /><label>Nama Center</label></div>
+          <div class="floating-input"><input type="text" id="jabber-server" value="${saved.jabber.server}" /><label>Server Center</label></div>
+          <div class="floating-input"><input type="text" id="jabber-host" value="${saved.jabber.host}" /><label>Host</label></div>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-cyan-700 mb-2">Nomor Center</h3>
+          <div class="floating-input"><input type="text" id="wa-center" value="${saved.nomor.whatsapp}" /><label>WhatsApp Center</label></div>
+          <div class="floating-input"><input type="text" id="sms-center" value="${saved.nomor.sms}" /><label>SMS Center</label></div>
+        </div>
+      </div>
+      <div class="mt-6 space-y-2">
+        <button onclick="submitCenterSettings()" class="w-full bg-green-600 text-white py-2 rounded font-semibold">Simpan</button>
+        <button onclick="handleBackFromCenterSettings()" class="w-full bg-gray-300 text-gray-800 py-2 rounded font-semibold">Kembali</button>
+      </div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    modal.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", () => {
+        hasChanges = true;
+      });
+    });
+  }, 100);
+}
+
+function handleBackFromCenterSettings() {
+  if (hasChanges && !confirm("Perubahan belum disimpan. Yakin ingin kembali?")) return;
+  showSetupServerModal();
+  document.getElementById("modalContentServer").classList.add("hidden");
+  hasChanges = false;
+}
+
+function submitCenterSettings() {
+  const data = {
+    ip: {
+      nama: document.getElementById("ip-nama").value.trim(),
+      server: document.getElementById("ip-server").value.trim(),
+      host: document.getElementById("ip-host").value.trim()
+    },
+    jabber: {
+      nama: document.getElementById("jabber-nama").value.trim(),
+      server: document.getElementById("jabber-server").value.trim(),
+      host: document.getElementById("jabber-host").value.trim()
+    },
+    nomor: {
+      whatsapp: document.getElementById("wa-center").value.trim(),
+      sms: document.getElementById("sms-center").value.trim()
+    }
+  };
+
+  localStorage.setItem("centerServer", JSON.stringify(data));
+  hasChanges = false;
+  showToast("✅ Data Center berhasil disimpan!");
+}
+
+// ✅ TOAST
+function showToast(message) {
+  const toast = document.getElementById("toast-message");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.style.opacity = "1";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
+
+// 📚📚📚📚📚FORMAT 📚📚📚📚📚
+const formatList = [
+  { label: "Setup Transaksi", icon: "file-text" },
+  { label: "Setup Laporan", icon: "bar-chart-2" },
+  { label: "Format Cek", icon: "search" },
+  { label: "Setup PIN", icon: "key" },
+  { label: "Topup", icon: "dollar-sign" }
+];
+
+let selectedFormat = "";
+
+function showFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
+
+function renderFormatList() {
+  const container = document.getElementById("format-request-list");
+  container.innerHTML = "";
+
+  formatList.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+    btn.innerHTML = `
+      <div class="flex items-center gap-3">
+        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+        <span class="text-base md:text-lg">${item.label}</span>
+      </div>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+    `;
+
+    // ✅ Perbaikan bagian ini:
+    btn.onclick = () => {
+      if (item.label === "Setup Transaksi") {
+        showSetupTransaksi(); // tampilkan modal Setup Transaksi
+      } else {
+        openFormatForm(item.label); // atau form isian lainnya
+      }
+    };
+
+    container.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
+
+
+// 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
+
+// Inisialisasi awal agar state bisa dikendalikan
+window.addEventListener("load", () => {
+  history.replaceState({ modal: false }, "", location.href);
+});
+
+function showSetupTransaksi() {
+  openSetupTransaksi(); // gunakan yang menyimpan data awal
+}
+
+
+
+// 📕📕📕📕 TEKS INFO
+
+  function showHint(text) {
+  const bantu = document.getElementById("teksBantuGlobal");
+  bantu.innerText = text; // gunakan \n di dalam text untuk baris baru
+  bantu.classList.remove("opacity-0", "scale-95");
+  bantu.classList.add("opacity-100", "scale-100");
+}
+
+function hideHint() {
+  const bantu = document.getElementById("teksBantuGlobal");
+  bantu.classList.remove("opacity-100", "scale-100");
+  bantu.classList.add("opacity-0", "scale-95");
+}
+
+// 📕📕📕
+
+
+function closeFormatRequestModal() {
+  const isInForm = !document.getElementById("format-request-form").classList.contains("hidden");
+  if (isInForm) {
+    backToFormatList();
+  } else {
+    document.getElementById("modalFormatRequest").classList.add("hidden");
+  }
+}
+
+function openSetupTransaksi() {
+  document.getElementById("modalSetupTransaksi").classList.remove("hidden");
+  loadSetupTransaksi();
+
+  setupDataAwal = JSON.stringify({
+    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+    formatQty: document.getElementById("formatQty").value.trim(),
+    formatCek: document.getElementById("formatCek").value.trim(),
+    formatUbah: document.getElementById("formatUbah").value.trim(),
+    formatReset: document.getElementById("formatReset").value.trim(),
+    formatSukses: document.getElementById("formatSukses").value.trim(),
+    formatGagal: document.getElementById("formatGagal").value.trim(),
+    formatKompline: document.getElementById("formatKompline").value.trim()
+  });
+
+  // Tambah state baru agar tombol kembali HP aktif
+  history.pushState({ modal: true }, "", "#setup");
+}
+
+document.querySelectorAll("textarea.custom-style").forEach(el => {
+  el.addEventListener("input", () => {
+    el.classList.toggle("filled", el.value.trim() !== "");
+  });
+});
+
+function isSetupChanged() {
+  const currentData = JSON.stringify({
+    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+    formatQty: document.getElementById("formatQty").value.trim(),
+    formatCek: document.getElementById("formatCek").value.trim(),
+    formatUbah: document.getElementById("formatUbah").value.trim(),
+    formatReset: document.getElementById("formatReset").value.trim(),
+    formatSukses: document.getElementById("formatSukses").value.trim(),
+    formatGagal: document.getElementById("formatGagal").value.trim(),
+    formatKompline: document.getElementById("formatKompline").value.trim()
+  });
+  return currentData !== setupDataAwal;
+}
+
+
+function saveSetupTransaksi() {
+  const data = {
+    formatTransaksi: document.getElementById("formatTransaksi").value.trim(),
+    formatQty: document.getElementById("formatQty").value.trim(),
+    formatCek: document.getElementById("formatCek").value.trim(),
+    formatUbah: document.getElementById("formatUbah").value.trim(),
+    formatReset: document.getElementById("formatReset").value.trim(),
+    formatSukses: document.getElementById("formatSukses").value.trim(),
+    formatGagal: document.getElementById("formatGagal").value.trim(),
+    formatKompline: document.getElementById("formatKompline").value.trim()
+  };
+
+  localStorage.setItem("setupTransaksi", JSON.stringify(data));
+
+  // Update state awal
+  setupDataAwal = JSON.stringify(data);
+
+  // Tampilkan notifikasi simpan
+  const notif = document.getElementById("notif-simpan");
+  notif.classList.remove("hidden", "opacity-0", "scale-95");
+  notif.classList.add("opacity-100", "scale-100");
+
+  // Sembunyikan setelah 2.5 detik
+  setTimeout(() => {
+    notif.classList.add("opacity-0", "scale-95");
+    notif.classList.remove("opacity-100", "scale-100");
+    setTimeout(() => notif.classList.add("hidden"), 300); // tunggu transisi selesai
+  }, 2500);
+}
+
+
+
+
+
+function loadSetupTransaksi() {
+  const saved = JSON.parse(localStorage.getItem("setupTransaksi"));
+  if (saved) {
+    document.getElementById("formatTransaksi").value = saved.formatTransaksi || "";
+    document.getElementById("formatQty").value = saved.formatQty || "";
+    document.getElementById("formatCek").value = saved.formatCek || "";
+    document.getElementById("formatUbah").value = saved.formatUbah || "";
+    document.getElementById("formatReset").value = saved.formatReset || "";
+    document.getElementById("formatSukses").value = saved.formatSukses || "";
+    document.getElementById("formatGagal").value = saved.formatGagal || "";
+    document.getElementById("formatKompline").value = saved.formatKompline || "";
+  }
+
+  document.querySelectorAll("textarea.custom-style").forEach(el => {
+    el.classList.toggle("filled", el.value.trim() !== "");
+  });
+}
+
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const textareas = document.querySelectorAll(".textarea-floating");
+
+    textareas.forEach((textarea) => {
+      const label = textarea.parentElement.querySelector(".floating-label");
+
+      const updateLabel = () => {
+        if (textarea.value.trim() !== "") {
+          label.classList.add("top-[-8px]", "text-[10px]");
+          label.classList.remove("top-4", "text-sm", "text-gray-300");
+        } else {
+          label.classList.add("top-4", "text-sm", "text-gray-300");
+          label.classList.remove("top-[-8px]", "text-[11px]");
+        }
+      };
+
+      textarea.addEventListener("input", updateLabel);
+      updateLabel(); // cek isi awal
+    });
+
+
+
+
+
+// BAGIAN BORDER KOLOM & POP-UP🖍🖍🖍🖍
+
+
+  const textarea = document.getElementById('format-transaksi'); 
+
+
+// BAGIAN TEKS BANTU  
+  document.querySelectorAll('.textarea-floating').forEach((textarea) => {  
+    const wrapper = textarea.closest('.group');  
+    const helpText = wrapper.querySelector('.help-text');  
+
+    textarea.addEventListener('focus', () => {  
+      helpText.classList.remove('hidden');  
+      setTimeout(() => {  
+        helpText.classList.add('scale-100', 'opacity-100');  
+      });  
+    });  
+
+    textarea.addEventListener('blur', () => {  
+      helpText.classList.remove('scale-100', 'opacity-100');  
+      setTimeout(() => {  
+        helpText.classList.add('hidden');  
+      });  
+    });  
+    });  
+  });  
+
+
+
+
+function closeSetupTransaksi() {
+  document.getElementById("modalSetupTransaksi").classList.add("hidden");
+  // Ganti state agar bisa buka modal ulang
+  history.replaceState({ modal: false }, "", location.href);
+}
+
+window.addEventListener("popstate", (e) => {
+  if (!document.getElementById("modalSetupTransaksi").classList.contains("hidden")) {
+    if (isSetupChanged()) {
+      const konfirmasi = confirm("Perubahan belum disimpan. Yakin ingin keluar?");
+      if (!konfirmasi) {
+        history.pushState({ modal: true }, "", "#setup");
+        return;
+      }
+    }
+    closeSetupTransaksi();
+  }
+});
+
+  </script>
+</body>
+</html>
