@@ -164,13 +164,6 @@ textarea.custom-style {
     transition: opacity 0.3s ease;
   }
 
-
-  #formatTransaksi.not-empty + .floating-label {
-    top: 0.75rem; /* Sesuaikan agar label naik */
-    font-size: 11px;
-    color: #2563eb; /* Warna biru atau sesuai tema Anda */
-  }
-
 </style>
 </head>
 <body class="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto">
@@ -319,35 +312,6 @@ textarea.custom-style {
 <div class="overflow-y-auto p-4 space-y-6 pb-24">
 
 
-<div class="border border-blue-300 bg-blue-50 rounded-xl p-4 mb-6">
-  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi Tes</h3>
-
-  <!-- Format Transaksi -->
-  <div class="relative mb-6">
-    <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
-    <div class="relative group">
-      <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform scale-0 opacity-0 pointer-events-none hidden transition-all duration-700 ease-out origin-top">
-        Wajib: [kodeproduk],[tujuan],[pin]<br>
-        Optional: [counter] atau [refid]
-      </p>
-      <textarea
-        id="formatTransaksi"
-        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
-        rows="2"
-        placeholder=" "
-      ></textarea>
-      <label
-        for="formatTransaksi"
-        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10"
-      >
-        Contoh: [kodeproduk].[tujuan].[pin]
-      </label>
-    </div>
-  </div>
-</div>
-
-
-
 <!-- Kelompok 1: Format Transaksi -->
 <div class="border border-blue-300 bg-blue-50 rounded-xl p-4 mb-6">
   <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi</h3>
@@ -473,7 +437,7 @@ textarea.custom-style {
 
   <label class="block text-sm font-bold text-gray-700 mb-2">Format Awalan Komplain</label>
 
-   <div class="relative mb-3">
+   <div class="relative group mb-3">
     <textarea id="formatKompline"
        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
     <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
@@ -485,7 +449,15 @@ textarea.custom-style {
 
 
 <!-- NOTIFIKASI SIMPAN -->
+<div id="notif-simpan" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-[12px] text-white px-4 py-2 rounded-md shadow hidden z-[99999]">
+  Data berhasil disimpan!
+</div>
 
+  <!-- FOOTER -->
+  <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
+    <button onclick="saveSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg shadow">Simpan</button>
+    <button onclick="closeSetupTransaksi()" class="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg shadow">Kembali</button>
+    </div>
    </div>
 
 
@@ -880,7 +852,43 @@ const formatList = [
   { label: "Topup", icon: "dollar-sign" }
 ];
 
+let selectedFormat = "";
 
+function showFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
+
+function renderFormatList() {
+  const container = document.getElementById("format-request-list");
+  container.innerHTML = "";
+
+  formatList.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+    btn.innerHTML = `
+      <div class="flex items-center gap-3">
+        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+        <span class="text-base md:text-lg">${item.label}</span>
+      </div>
+      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+    `;
+
+    // ✅ Perbaikan bagian ini:
+    btn.onclick = () => {
+      if (item.label === "Setup Transaksi") {
+        showSetupTransaksi(); // tampilkan modal Setup Transaksi
+      } else {
+        openFormatForm(item.label); // atau form isian lainnya
+      }
+    };
+
+    container.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
 
 
 // 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩
@@ -975,7 +983,23 @@ function saveSetupTransaksi() {
     formatKompline: document.getElementById("formatKompline").value.trim()
   };
 
+  localStorage.setItem("setupTransaksi", JSON.stringify(data));
 
+  // Update state awal
+  setupDataAwal = JSON.stringify(data);
+
+  // Tampilkan notifikasi simpan
+  const notif = document.getElementById("notif-simpan");
+  notif.classList.remove("hidden", "opacity-0", "scale-95");
+  notif.classList.add("opacity-100", "scale-100");
+
+  // Sembunyikan setelah 2.5 detik
+  setTimeout(() => {
+    notif.classList.add("opacity-0", "scale-95");
+    notif.classList.remove("opacity-100", "scale-100");
+    setTimeout(() => notif.classList.add("hidden"), 300); // tunggu transisi selesai
+  }, 2500);
+}
 
 
 
@@ -994,43 +1018,6 @@ function loadSetupTransaksi() {
     document.getElementById("formatKompline").value = saved.formatKompline || "";
   }
 
-let selectedFormat = "";
-
-function showFormatRequestModal() {
-  document.getElementById("modalFormatRequest").classList.remove("hidden");
-  renderFormatList();
-}
-
-function renderFormatList() {
-  const container = document.getElementById("format-request-list");
-  container.innerHTML = "";
-
-  formatList.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className =
-      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
-    btn.innerHTML = `
-      <div class="flex items-center gap-3">
-        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-        <span class="text-base md:text-lg">${item.label}</span>
-      </div>
-      <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
-    `;
-
-    // ✅ Perbaikan bagian ini:
-    btn.onclick = () => {
-      if (item.label === "Setup Transaksi") {
-        showSetupTransaksi(); // tampilkan modal Setup Transaksi
-      } else {
-        openFormatForm(item.label); // atau form isian lainnya
-      }
-    };
-
-    container.appendChild(btn);
-  });
-
-  lucide.createIcons();
-}
   document.querySelectorAll("textarea.custom-style").forEach(el => {
     el.classList.toggle("filled", el.value.trim() !== "");
   });
@@ -1110,26 +1097,6 @@ window.addEventListener("popstate", (e) => {
     closeSetupTransaksi();
   }
 });
-
-
-
-  window.addEventListener("DOMContentLoaded", () => {
-    const textarea = document.getElementById("formatTransaksi");
-
-    // Cek jika textarea sudah berisi saat halaman dimuat
-    if (textarea && textarea.value.trim() !== "") {
-      textarea.classList.add("not-empty");
-    }
-
-    // Update class saat user ketik atau hapus isi
-    textarea.addEventListener("input", () => {
-      if (textarea.value.trim() === "") {
-        textarea.classList.remove("not-empty");
-      } else {
-        textarea.classList.add("not-empty");
-      }
-    });
-  });
 
   </script>
 </body>
