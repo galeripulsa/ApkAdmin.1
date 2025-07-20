@@ -449,15 +449,19 @@ textarea.custom-style {
 </div>
 
 
-<!-- NOTIFIKASI SIMPAN -->
-<div id="notif-simpan" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-[12px] text-white px-4 py-2 rounded-md shadow hidden z-[99999]">
-  Data berhasil disimpan!
+<!-- MODAL NOTIFIKASI SIMPAN -->
+<div id="popupSimpanBerhasil" class="fixed inset-0 bg-black/50 z-[9999] hidden items-center justify-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+    <h2 class="text-lg font-bold text-green-600 mb-4">✅ Berhasil Disimpan</h2>
+    <p class="text-gray-700 mb-6">Format transaksi telah berhasil disimpan.</p>
+    <button id="btnOKSimpan" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">OK</button>
+  </div>
 </div>
 
   <!-- FOOTER -->
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
     <!-- Tombol Simpan -->
-<button id="btnSimpanTransaksi" class="...">Simpan</button>
+<button id="btnSimpanTransaksi" class="text-gray-700 bg-green-500 border border-yellow-300 p-4 mb-8 shadow">Simpan</button>
 
 <!-- Tombol Kembali -->
 <button id="btnKembaliTransaksi" class="...">Kembali</button>
@@ -1015,26 +1019,51 @@ function openSetupTransaksi() {
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  const btnSimpan = document.getElementById("btnSimpanTransaksi");
-  const btnKembali = document.getElementById("btnKembaliTransaksi");
+  document.addEventListener("DOMContentLoaded", () => {
+    const btnSimpan = document.getElementById("btnSimpanTransaksi");
+    const btnKembali = document.getElementById("btnKembaliTransaksi");
+    const textarea = document.getElementById("formatTransaksi");
+    const popupSimpan = document.getElementById("popupSimpanBerhasil");
+    const btnOKSimpan = document.getElementById("btnOKSimpan");
 
-  if (btnSimpan) {
-    btnSimpan.addEventListener("click", () => {
-      // aksi simpan
-      console.log("Simpan diklik");
-      // misal: close modal
-      document.getElementById("modalSetupTransaksi").classList.add("hidden");
-    });
-  }
+    if (btnSimpan) {
+      btnSimpan.addEventListener("click", () => {
+        const value = textarea.value.trim();
 
-  if (btnKembali) {
-    btnKembali.addEventListener("click", () => {
-      console.log("Kembali diklik");
-      document.getElementById("modalSetupTransaksi").classList.add("hidden");
-    });
-  }
-});
+        if (!value) {
+          alert("Format transaksi tidak boleh kosong.");
+          return;
+        }
+
+        // Simpan ke localStorage
+        localStorage.setItem("setup_format_transaksi", value);
+
+        // Tampilkan modal popup berhasil
+        popupSimpan.classList.remove("hidden");
+      });
+    }
+
+    if (btnOKSimpan) {
+      btnOKSimpan.addEventListener("click", () => {
+        // Tutup popup simpan
+        popupSimpan.classList.add("hidden");
+
+        // Tutup modal utama
+        document.getElementById("modalSetupTransaksi").classList.add("hidden");
+      });
+    }
+
+    if (btnKembali) {
+      btnKembali.addEventListener("click", () => {
+        document.getElementById("modalSetupTransaksi").classList.add("hidden");
+      });
+    }
+
+    const saved = localStorage.getItem("setup_format_transaksi");
+    if (saved && textarea) {
+      textarea.value = saved;
+    }
+  });
 
 </script>
 </body>
