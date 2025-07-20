@@ -967,10 +967,27 @@ function saveSetupTransaksi() {
   // Update setupDataAwal agar dianggap sudah disimpan
   setupDataAwal = JSON.stringify(data);
 
-  const notif = document.getElementById("notif-simpan");
-  notif.classList.remove("hidden");
-  setTimeout(() => notif.classList.add("hidden"), 2000);
-}
+  
+
+function showNotifSimpan() {
+    const notif = document.getElementById('notif-simpan');
+    notif.classList.remove('hidden');
+    notif.classList.add('flex');
+
+    setTimeout(() => {
+      notif.classList.add('hidden');
+      notif.classList.remove('flex');
+    }, 3000); // Notif hilang setelah 3 detik
+  }
+
+  function saveSetupTransaksi() {
+    // Logika simpan data di sini...
+    
+    // Setelah simpan berhasil, tampilkan notifikasi
+    showNotifSimpan();
+  }
+
+
 
 function loadSetupTransaksi() {
   const saved = JSON.parse(localStorage.getItem("setupTransaksi"));
