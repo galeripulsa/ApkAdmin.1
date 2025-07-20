@@ -966,34 +966,20 @@ function saveSetupTransaksi() {
     formatSukses: document.getElementById("formatSukses").value.trim(),
     formatGagal: document.getElementById("formatGagal").value.trim(),
     formatKompline: document.getElementById("formatKompline").value.trim()
- 
-// Setelah simpan berhasil, tampilkan notifikasi
-    showNotifSimpan();
- }
 
  };
 
-  localStorage.setItem("setupTransaksi", JSON.stringify(data));
+
+    localStorage.setItem("setupTransaksi", JSON.stringify(data));
 
   // Update setupDataAwal agar dianggap sudah disimpan
   setupDataAwal = JSON.stringify(data);
 
-  
+  const notif = document.getElementById("notif-simpan");
+  notif.classList.remove("hidden");
+  setTimeout(() => notif.classList.add("hidden"), 2000);
+}
 
-
-
-  function showNotifSimpan() {
-    const notif = document.getElementById('notif-simpan');
-    notif.classList.remove('hidden');
-    notif.classList.add('flex');
-
-    setTimeout(() => {
-      notif.classList.add('hidden');
-      notif.classList.remove('flex');
-    }, 3000); // Notif hilang setelah 3 detik
-  }
-
-  
     
     
 
