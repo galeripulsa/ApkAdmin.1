@@ -460,12 +460,13 @@ textarea.custom-style {
 
 <!-- POPUP KONFIRMASI -->
 
-    <div id="popupKonfirmasi" class="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex items-center justify-center hidden">
-  <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center mx-4">
+    <!-- POPUP KONFIRMASI -->
+<div id="popupKonfirmasi" class="fixed inset-0 bg-black bg-opacity-50 z-[99999] flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
     <p class="text-base font-semibold text-gray-800 mb-4">Apakah Anda ingin menyimpan perubahan?</p>
     <div class="flex justify-center gap-4">
-      <button id="btnBatal" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Batal</button>
-      <button id="btnYaSimpan" class="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700">Ya, Simpan</button>
+      <button id="btnYaSimpan" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">Ya</button>
+      <button id="btnTidakSimpan" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">Tidak</button>
     </div>
   </div>
 </div>
@@ -1029,100 +1030,85 @@ function openSetupTransaksi() {
 
   
   
-  const modalSetup = document.getElementById("modalSetupTransaksi");
+  
+document.addEventListener("DOMContentLoaded", () => {
+  const popup = document.getElementById("popupKonfirmasi");
   const btnSimpan = document.getElementById("btnSimpanTransaksi");
-  const popupKonfirmasi = document.getElementById("popupKonfirmasi");
-  const btnKonfirmasiYa = document.getElementById("btnYaSimpan");
-  const btnKonfirmasiTidak = document.getElementById("btnBatal");
+  const btnYaSimpan = document.getElementById("btnYaSimpan");
+  const btnTidakSimpan = document.getElementById("btnTidakSimpan");
+  const textarea = document.getElementById("formatTransaksi");
+  const modalSetup = document.getElementById("modalSetupTransaksi");
 
-  const allTextareas = Array.from(document.querySelectorAll("#modalSetupTransaksi textarea"));
-  let originalValues = {};
-  let perubahanTerjadi = false;
+  let isChanged = false;
+  let initialValue = localStorage.getItem("setup_format_transaksi") || "";
 
-  function bukaModal() {
-    modalSetup.classList.remove("hidden");
-    originalValues = {};
-    allTextareas.forEach(textarea => {
-      originalValues[textarea.id] = textarea.value.trim();
-    });
-    updateTombolSimpan();
-    history.pushState(null, null, location.href);
+  // Atur nilai awal
+  if (textarea) {
+    textarea.value = initialValue;
   }
 
-  function tutupModal() {
-    modalSetup.classList.add("hidden");
-    popupKonfirmasi.classList.add("hidden");
-    perubahanTerjadi = false;
+  // Fungsi aktif/nonaktif tombol simpan
+  function aktifkanTombolSimpan() {
+    isChanged = true;
+    btnSimpan.disabled = false;
+    btnSimpan.classList.remove("bg-gray-300", "border-gray-400", "cursor-not-allowed");
+    btnSimpan.classList.add("bg-yellow-300", "hover:bg-yellow-400", "cursor-pointer");
   }
 
-  function updateTombolSimpan() {
-    perubahanTerjadi = allTextareas.some(textarea => {
-      return textarea.value.trim() !== (originalValues[textarea.id] || "");
-    });
+  function nonaktifkanTombolSimpan() {
+    isChanged = false;
+    btnSimpan.disabled = true;
+    btnSimpan.classList.remove("bg-yellow-300", "hover:bg-yellow-400", "cursor-pointer");
+    btnSimpan.classList.add("bg-gray-300", "border-gray-400", "cursor-not-allowed");
+  }
 
-    if (perubahanTerjadi) {
-      btnSimpan.classList.remove("bg-gray-300", "text-gray-700", "cursor-not-allowed");
-      btnSimpan.classList.add("bg-cyan-600", "text-white");
-      btnSimpan.disabled = false;
-    } else {
-      btnSimpan.classList.remove("bg-cyan-600", "text-white");
-      btnSimpan.classList.add("bg-gray-300", "text-gray-700", "cursor-not-allowed");
-      btnSimpan.disabled = true;
+  // Deteksi perubahan textarea
+  textarea?.addEventListener("input", () => {
+    aktifkanTombolSimpan();
+  });
+
+  // Tombol simpan diklik → tampilkan popup
+  btnSimpan?.addEventListener("click", () => {
+    popup.classList.remove("hidden");
+  });
+
+  // Tombol "YA" pada popup → simpan & tutup modal
+  btnYaSimpan?.addEventListener("click", () => {
+    const value = textarea?.value.trim();
+    if (value) {
+      localStorage.setItem("setup_format_transaksi", value);
+      initialValue = value; // update nilai awal
     }
-  }
-
-  // Deteksi perubahan di semua textarea
-  allTextareas.forEach(textarea => {
-    textarea.addEventListener("input", updateTombolSimpan);
+    popup.classList.add("hidden");
+    modalSetup.classList.add("hidden");
+    nonaktifkanTombolSimpan();
   });
 
-  // Simpan data
-  btnSimpan.addEventListener("click", () => {
-    allTextareas.forEach(textarea => {
-      localStorage.setItem(textarea.id, textarea.value.trim());
-    });
-    originalValues = {};
-    allTextareas.forEach(textarea => {
-      originalValues[textarea.id] = textarea.value.trim();
-    });
-    perubahanTerjadi = false;
-    updateTombolSimpan();
-    alert("✅ Perubahan berhasil disimpan.");
+  // Tombol "TIDAK" pada popup → batalkan & reset
+  btnTidakSimpan?.addEventListener("click", () => {
+    textarea.value = initialValue; // reset ke nilai awal
+    popup.classList.add("hidden");
+    modalSetup.classList.add("hidden");
+    nonaktifkanTombolSimpan();
   });
 
-  // Cegah keluar jika ada perubahan saat back (tombol HP)
+  // Tombol back HP → jika ada perubahan tampilkan popup
   window.addEventListener("popstate", () => {
     if (!modalSetup.classList.contains("hidden")) {
-      if (perubahanTerjadi) {
-        popupKonfirmasi.classList.remove("hidden");
+      if (isChanged) {
+        popup.classList.remove("hidden");
         history.pushState(null, null, location.href); // cegah keluar
       } else {
-        tutupModal();
+        modalSetup.classList.add("hidden");
       }
     }
   });
 
-  btnKonfirmasiYa.addEventListener("click", () => {
-    tutupModal();
-  });
-
-  btnKonfirmasiTidak.addEventListener("click", () => {
-    popupKonfirmasi.classList.add("hidden");
-  });
-
-  // Auto-load dari localStorage saat halaman load
-  window.addEventListener("DOMContentLoaded", () => {
-    allTextareas.forEach(textarea => {
-      const saved = localStorage.getItem(textarea.id);
-      if (saved) {
-        textarea.value = saved;
-      }
-    });
-    updateTombolSimpan();
-  });
-
-  // Ekspor fungsi buka modal ke global
-  window.openSetupTransaksi = () => bukaModal();
+  // Saat modal dibuka, dorong ke history untuk cegah tombol back langsung keluar
+  if (!modalSetup.classList.contains("hidden")) {
+    history.pushState(null, null, location.href);
+  }
+});
 
 
  </script>
