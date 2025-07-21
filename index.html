@@ -1027,20 +1027,33 @@ function openSetupTransaksi() {
 
  
 
+  
   const modalSetup = document.getElementById("modalSetupTransaksi");
   const btnSimpan = document.getElementById("btnSimpanTransaksi");
-  const btnTutup = document.getElementById("btnTutupModal");
-  const popupKonfirmasi = document.getElementById("popupKonfirmasi");
-  const popupBatal = document.getElementById("popupKonfirmasiBatal");
-  const btnYaSimpan = document.getElementById("btnYaSimpan");
-  const btnTidakSimpan = document.getElementById("btnTidakSimpan");
-  const btnYaBatal = document.getElementById("btnYaBatal");
-  const btnTidakBatal = document.getElementById("btnTidakBatal");
   const formatTransaksiTextarea = document.getElementById("formatTransaksi");
-  const originalValue = formatTransaksiTextarea.value.trim();
+  const popupKonfirmasi = document.getElementById("popupKonfirmasi");
+  const btnKonfirmasiYa = document.getElementById("btnKonfirmasiYa");
+  const btnKonfirmasiTidak = document.getElementById("btnKonfirmasiTidak");
 
   let perubahanTerjadi = false;
+  let originalValue = "";
 
+  // Fungsi buka modal
+  function bukaModal() {
+    modalSetup.classList.remove("hidden");
+    originalValue = formatTransaksiTextarea.value.trim(); // simpan isi awal
+    updateTombolSimpan();
+    history.pushState(null, null, location.href); // tambahkan history agar bisa deteksi tombol kembali
+  }
+
+  // Fungsi tutup modal
+  function tutupModal() {
+    modalSetup.classList.add("hidden");
+    popupKonfirmasi.classList.add("hidden");
+    perubahanTerjadi = false;
+  }
+
+  // Update tombol simpan berdasarkan perubahan
   function updateTombolSimpan() {
     const currentValue = formatTransaksiTextarea.value.trim();
     perubahanTerjadi = currentValue !== originalValue;
@@ -1056,59 +1069,51 @@ function openSetupTransaksi() {
     }
   }
 
+  // Deteksi input di textarea
   formatTransaksiTextarea.addEventListener("input", updateTombolSimpan);
 
-  // Tombol Simpan
+  // Simpan data
   btnSimpan.addEventListener("click", () => {
-    popupKonfirmasi.classList.remove("hidden");
-  });
-
-  btnYaSimpan.addEventListener("click", () => {
-    popupKonfirmasi.classList.add("hidden");
+    originalValue = formatTransaksiTextarea.value.trim(); // update nilai awal
     perubahanTerjadi = false;
     updateTombolSimpan();
-    alert("Perubahan berhasil disimpan."); // Ganti dengan proses simpan asli jika ada
-  });
-
-  btnTidakSimpan.addEventListener("click", () => {
-    popupKonfirmasi.classList.add("hidden");
-  });
-
-  // Fungsi untuk tombol kembali HP
-  function showKonfirmasiKembali() {
-    if (perubahanTerjadi) {
-      popupBatal.classList.remove("hidden");
-    } else {
-      modalSetup.classList.add("hidden");
-    }
-  }
-
-  btnYaBatal.addEventListener("click", () => {
-    popupBatal.classList.add("hidden");
-    modalSetup.classList.add("hidden");
-    perubahanTerjadi = false;
-    updateTombolSimpan();
-  });
-
-  btnTidakBatal.addEventListener("click", () => {
-    popupBatal.classList.add("hidden");
+    alert("Perubahan disimpan!");
   });
 
   // Deteksi tombol kembali di HP
   window.addEventListener("popstate", () => {
     if (!modalSetup.classList.contains("hidden")) {
-      showKonfirmasiKembali();
-      history.pushState(null, null, location.href); // Cegah keluar
+      if (perubahanTerjadi) {
+        showKonfirmasiKembali();
+        history.pushState(null, null, location.href); // cegah keluar
+      } else {
+        tutupModal();
+      }
     }
   });
 
-  // Tombol tutup manual (silang)
-  btnTutup.addEventListener("click", () => {
-    showKonfirmasiKembali();
+  // Tampilkan pop-up konfirmasi
+  function showKonfirmasiKembali() {
+    popupKonfirmasi.classList.remove("hidden");
+  }
+
+  // Tombol YA → tetap tutup modal
+  btnKonfirmasiYa.addEventListener("click", () => {
+    tutupModal();
   });
 
-  // Push state untuk menangkap tombol back
-  history.pushState(null, null, location.href);
+  // Tombol TIDAK → batal tutup, tetap di modal
+  btnKonfirmasiTidak.addEventListener("click", () => {
+    popupKonfirmasi.classList.add("hidden");
+  });
+
+  // Auto deteksi jika textarea sudah terisi saat halaman load
+  window.addEventListener("DOMContentLoaded", () => {
+    if (formatTransaksiTextarea && formatTransaksiTextarea.value.trim() !== "") {
+      formatTransaksiTextarea.classList.add("not-empty");
+    }
+  });
+
 
  </script>
 </body>
