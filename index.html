@@ -1038,6 +1038,7 @@ function openSetupTransaksi() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const popup = document.getElementById("popupKonfirmasi");
+  const btnSimpan = document.getElementById("btnSimpanTransaksi"); // ✅ TAMBAH
   const btnKembali = document.getElementById("btnKembaliTransaksi");
   const btnBatal = document.getElementById("btnBatal");
   const btnYaSimpan = document.getElementById("btnYaSimpan");
@@ -1062,6 +1063,10 @@ document.addEventListener("DOMContentLoaded", () => {
       modalSetup.classList.add("hidden");
     }
   }
+
+  btnSimpan?.addEventListener("click", () => {           // ✅ INI DITAMBAHKAN
+    popup.classList.remove("hidden");
+  });
 
   btnKembali?.addEventListener("click", () => {
     showKonfirmasiKembali();
@@ -1102,6 +1107,6 @@ document.addEventListener("DOMContentLoaded", () => {
     history.pushState(null, null, location.href);
   }
 });
-</script>
+ </script>
 </body>
 </html>
