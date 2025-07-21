@@ -451,7 +451,11 @@ textarea.custom-style {
 
   <!-- FOOTER -->
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
-   <!-- TOMBOL SIMPAN -->
+   
+
+
+   
+  <!-- TOMBOL SIMPAN -->
 <button id="btnSimpanFormat" class="bg-gray-300 text-gray-500 px-4 py-2 rounded-md cursor-not-allowed" disabled>
   💾 Simpan
 </button>
@@ -466,6 +470,7 @@ textarea.custom-style {
     </div>
   </div>
 </div>
+
 
 
 
@@ -563,7 +568,7 @@ row.className = `submenu-item flex items-center justify-between border rounded p
                   <img src="${menu.icon}" class="w-10 h-10 rounded border object-cover cursor-pointer" onclick="document.getElementById('icon-${index}').click()" />
                   <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                 ` : `
-                  <label class='w-10 h-9 bg-white border rounded flex items-center justify-center text-gray-300 text-xs cursor-pointer'>icon🪙
+                  <label class='w-10 h-9 bg-white border rounded flex items-center justify-center text-gray-300 text-xs cursor-pointer'>+ icon
                     <input id="icon-${index}" type='file' accept='image/*' class='hidden' onchange='uploadIcon(event, ${index})' />
                   </label>
                 `}
@@ -1024,9 +1029,6 @@ function openSetupTransaksi() {
  
 
   
-   
-   
-  
   window.onload = function () {
     const textareas = document.querySelectorAll("textarea");
     const btnSimpan = document.getElementById("btnSimpanFormat");
@@ -1037,12 +1039,12 @@ function openSetupTransaksi() {
     let originalValues = {};
     let adaPerubahan = false;
 
-    // Simpan nilai awal setiap textarea
+    // Simpan nilai awal
     textareas.forEach((textarea) => {
       originalValues[textarea.id] = textarea.value;
     });
 
-    // Fungsi cek perubahan
+    // Cek perubahan
     function cekPerubahan() {
       adaPerubahan = Array.from(textareas).some((textarea) => {
         return textarea.value !== originalValues[textarea.id];
@@ -1058,22 +1060,27 @@ function openSetupTransaksi() {
       btnSimpan.classList.toggle("cursor-not-allowed", !adaPerubahan);
     }
 
-    // Deteksi input di semua textarea
+    // Deteksi input
     textareas.forEach((textarea) => {
       textarea.addEventListener("input", cekPerubahan);
     });
 
-    // Simpan perubahan
+    // Tombol simpan
     btnSimpan.addEventListener("click", () => {
       textareas.forEach((textarea) => {
         originalValues[textarea.id] = textarea.value;
       });
       adaPerubahan = false;
       cekPerubahan();
-      alert("Perubahan berhasil disimpan!");
+      // Notifikasi simpan berhasil
+      const success = document.createElement("div");
+      success.textContent = "Perubahan berhasil disimpan.";
+      success.className = "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-md z-[9999]";
+      document.body.appendChild(success);
+      setTimeout(() => success.remove(), 2000);
     });
 
-    // Tombol YA simpan
+    // Tombol YA simpan di modal
     btnYaSimpan.addEventListener("click", () => {
       textareas.forEach((textarea) => {
         originalValues[textarea.id] = textarea.value;
@@ -1081,10 +1088,9 @@ function openSetupTransaksi() {
       adaPerubahan = false;
       cekPerubahan();
       popupKonfirmasiSimpan.classList.add("hidden");
-      alert("Perubahan disimpan.");
     });
 
-    // Tombol TIDAK -> batalkan dan reset
+    // Tombol TIDAK → batalkan perubahan
     btnTidakSimpan.addEventListener("click", () => {
       textareas.forEach((textarea) => {
         textarea.value = originalValues[textarea.id];
@@ -1094,17 +1100,18 @@ function openSetupTransaksi() {
       popupKonfirmasiSimpan.classList.add("hidden");
     });
 
-    // Cegah tombol kembali jika ada perubahan
+    // Deteksi tombol back browser (Android atau gesture)
     window.addEventListener("popstate", (e) => {
       if (adaPerubahan) {
         popupKonfirmasiSimpan.classList.remove("hidden");
-        history.pushState(null, null, location.href); // Cegah keluar
+        history.pushState(null, null, location.href); // Dorong lagi supaya tidak keluar
       }
     });
 
-    // Tambahkan satu history agar bisa deteksi tombol back
+    // Tambah dummy state agar popstate bisa terdeteksi
     history.pushState(null, null, location.href);
   };
+
 
  </script>
 </body>
