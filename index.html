@@ -1119,18 +1119,7 @@ function openSetupTransaksi() {
       cekPerubahan();
     });
 
-    // ✅ BACK BUTTON (TOMBOL KEMBALI DI HP)
-    window.addEventListener("popstate", function (e) {
-      if (adaPerubahan) {
-        e.preventDefault();
-        modalKonfirmasi.classList.remove("hidden");
-        history.pushState(null, null, location.href); // Blok kembali
-      }
-    });
-
-    // Cegah default Back
-    history.pushState(null, null, location.href);
-  });
+    
 
 
 // ↩️↩️ Tombol Kembali
