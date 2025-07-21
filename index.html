@@ -253,24 +253,7 @@ textarea.custom-style {
 <!-- ✅Modal Format Request ✅-->
 
 <div id="modalFormatRequest" class="fixed inset-0 z-[9999] bg-gradient-to-b from-blue-50 to-blue-100 p-6 overflow-auto hidden">
-  <div class="max-w-md mx-auto">
-    <h2 class="text-xl font-bold text-center text-gray-800 mb-6">Format Request</h2>
-
-    <!-- Mode daftar tombol -->
-    <div id="format-request-list" class="space-y-4"></div>
-
-    <!-- Mode form detail -->
-    <div id="format-request-form" class="space-y-4 hidden">
-      <button onclick="backToFormatList()" class="text-sm text-blue-500 font-medium underline mb-2">&larr; Kembali</button>
-      <h3 id="format-form-title" class="text-lg font-semibold text-gray-800"></h3>
-      <div class="floating-input">
-        <input id="formatInput" type="text" placeholder=" " class="border-gray-300" />
-        <label for="formatInput">Masukkan Format</label>
-      </div>
-      <button onclick="backToFormatList()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-semibold shadow">
-        Simpan Format
-      </button>
-    </div>
+ 
 
     <!-- Tombol Tutup -->
     <button onclick="closeFormatRequestModal()" class="mt-10 w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg font-semibold shadow">
