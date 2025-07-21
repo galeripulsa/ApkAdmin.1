@@ -456,7 +456,7 @@ textarea.custom-style {
 
    
   <!-- ✅ TOMBOL SIMPAN -->
-<button id="btnSimpanFormat" class="bg-yellow-600 text-white px-4 py-2 rounded-lg mt-4 opacity-50 cursor-not-allowed" disabled>Simpan</button>
+<button id="btnSimpanFormat" class="bg-yellow-600 text-white px-4 py-2 rounded-lg mt-4 item-center opacity-50 cursor-not-allowed" disabled>Simpan</button>
 
 
 <!-- ✅ MODAL KONFIRMASI SIMPAN -->
@@ -471,7 +471,7 @@ textarea.custom-style {
 </div>
 
 <!-- ✅ NOTIFIKASI BERHASIL -->
-<div id="popupBerhasil" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hidden z-50">
+<div id="popupBerhasil" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-2 py-2 rounded-lg shadow-lg hidden z-50">
   Perubahan berhasil disimpan!
 </div>
 
@@ -1042,7 +1042,6 @@ function openSetupTransaksi() {
  
 
   
-
   window.addEventListener("DOMContentLoaded", () => {
     const textareaList = document.querySelectorAll("textarea");
     const btnSimpan = document.getElementById("btnSimpanFormat");
@@ -1053,8 +1052,12 @@ function openSetupTransaksi() {
     let originalValues = {};
     let adaPerubahan = false;
 
-    // Simpan nilai awal setiap textarea
+    // Load data dari localStorage (jika ada)
     textareaList.forEach(textarea => {
+      const savedValue = localStorage.getItem("textarea_" + textarea.id);
+      if (savedValue !== null) {
+        textarea.value = savedValue;
+      }
       originalValues[textarea.id] = textarea.value;
     });
 
@@ -1075,7 +1078,7 @@ function openSetupTransaksi() {
     });
 
     // TOMBOL SIMPAN DITEKAN
-    btnSimpan.addEventListener("click", (e) => {
+    btnSimpan.addEventListener("click", () => {
       if (adaPerubahan) {
         modalKonfirmasi.classList.remove("hidden");
       }
@@ -1083,9 +1086,11 @@ function openSetupTransaksi() {
 
     // TOMBOL YA → Simpan
     btnYa.addEventListener("click", () => {
-      // Simpan nilai terbaru ke original
       textareaList.forEach(textarea => {
         originalValues[textarea.id] = textarea.value;
+
+        // Simpan ke localStorage
+        localStorage.setItem("textarea_" + textarea.id, textarea.value);
       });
       modalKonfirmasi.classList.add("hidden");
       adaPerubahan = false;
@@ -1108,13 +1113,11 @@ function openSetupTransaksi() {
       adaPerubahan = false;
       cekPerubahan();
     });
-    
+
+    cekPerubahan(); // inisialisasi kondisi tombol saat load
   });
 
-
-// ↩️↩️ Tombol Kembali
-
-   
+  // ↩️↩️ Tombol Kembali
   let formChanged = false;
 
   // Deteksi perubahan di semua textarea
@@ -1128,9 +1131,10 @@ function openSetupTransaksi() {
   document.getElementById("btnKembaliYa").addEventListener("click", () => {
     document.getElementById("popupKonfirmasiKembali").classList.add("hidden");
 
-    // Reset semua textarea (jika ingin menghapus perubahan yang belum disimpan)
+    // Reset semua textarea ke data terakhir tersimpan
     document.querySelectorAll("#modalSetupTransaksi textarea").forEach(textarea => {
-      textarea.value = textarea.defaultValue; // kembali ke nilai awal
+      const savedValue = localStorage.getItem("textarea_" + textarea.id);
+      textarea.value = savedValue ?? textarea.defaultValue;
     });
 
     formChanged = false;
@@ -1156,7 +1160,7 @@ function openSetupTransaksi() {
     }
   });
 
-  // Push initial state to enable back button tracking
+  // Push initial state untuk tracking tombol kembali
   history.pushState(null, null);
 
 
