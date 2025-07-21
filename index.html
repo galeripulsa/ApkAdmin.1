@@ -1028,63 +1028,73 @@ function openSetupTransaksi() {
  
 
   
+  
   const modalSetup = document.getElementById("modalSetupTransaksi");
   const btnSimpan = document.getElementById("btnSimpanTransaksi");
-  const formatTransaksiTextarea = document.getElementById("formatTransaksi");
   const popupKonfirmasi = document.getElementById("popupKonfirmasi");
-  const btnKonfirmasiYa = document.getElementById("btnKonfirmasiYa");
-  const btnKonfirmasiTidak = document.getElementById("btnKonfirmasiTidak");
+  const btnKonfirmasiYa = document.getElementById("btnYaSimpan");
+  const btnKonfirmasiTidak = document.getElementById("btnBatal");
 
+  const allTextareas = Array.from(document.querySelectorAll("#modalSetupTransaksi textarea"));
+  let originalValues = {};
   let perubahanTerjadi = false;
-  let originalValue = "";
 
-  // Fungsi buka modal
   function bukaModal() {
     modalSetup.classList.remove("hidden");
-    originalValue = formatTransaksiTextarea.value.trim(); // simpan isi awal
+    originalValues = {};
+    allTextareas.forEach(textarea => {
+      originalValues[textarea.id] = textarea.value.trim();
+    });
     updateTombolSimpan();
-    history.pushState(null, null, location.href); // tambahkan history agar bisa deteksi tombol kembali
+    history.pushState(null, null, location.href);
   }
 
-  // Fungsi tutup modal
   function tutupModal() {
     modalSetup.classList.add("hidden");
     popupKonfirmasi.classList.add("hidden");
     perubahanTerjadi = false;
   }
 
-  // Update tombol simpan berdasarkan perubahan
   function updateTombolSimpan() {
-    const currentValue = formatTransaksiTextarea.value.trim();
-    perubahanTerjadi = currentValue !== originalValue;
+    perubahanTerjadi = allTextareas.some(textarea => {
+      return textarea.value.trim() !== (originalValues[textarea.id] || "");
+    });
 
     if (perubahanTerjadi) {
-      btnSimpan.classList.remove("bg-gray-300", "text-gray-500", "cursor-not-allowed");
+      btnSimpan.classList.remove("bg-gray-300", "text-gray-700", "cursor-not-allowed");
       btnSimpan.classList.add("bg-cyan-600", "text-white");
       btnSimpan.disabled = false;
     } else {
       btnSimpan.classList.remove("bg-cyan-600", "text-white");
-      btnSimpan.classList.add("bg-gray-300", "text-gray-500", "cursor-not-allowed");
+      btnSimpan.classList.add("bg-gray-300", "text-gray-700", "cursor-not-allowed");
       btnSimpan.disabled = true;
     }
   }
 
-  // Deteksi input di textarea
-  formatTransaksiTextarea.addEventListener("input", updateTombolSimpan);
+  // Deteksi perubahan di semua textarea
+  allTextareas.forEach(textarea => {
+    textarea.addEventListener("input", updateTombolSimpan);
+  });
 
   // Simpan data
   btnSimpan.addEventListener("click", () => {
-    originalValue = formatTransaksiTextarea.value.trim(); // update nilai awal
+    allTextareas.forEach(textarea => {
+      localStorage.setItem(textarea.id, textarea.value.trim());
+    });
+    originalValues = {};
+    allTextareas.forEach(textarea => {
+      originalValues[textarea.id] = textarea.value.trim();
+    });
     perubahanTerjadi = false;
     updateTombolSimpan();
-    alert("Perubahan disimpan!");
+    alert("✅ Perubahan berhasil disimpan.");
   });
 
-  // Deteksi tombol kembali di HP
+  // Cegah keluar jika ada perubahan saat back (tombol HP)
   window.addEventListener("popstate", () => {
     if (!modalSetup.classList.contains("hidden")) {
       if (perubahanTerjadi) {
-        showKonfirmasiKembali();
+        popupKonfirmasi.classList.remove("hidden");
         history.pushState(null, null, location.href); // cegah keluar
       } else {
         tutupModal();
@@ -1092,27 +1102,27 @@ function openSetupTransaksi() {
     }
   });
 
-  // Tampilkan pop-up konfirmasi
-  function showKonfirmasiKembali() {
-    popupKonfirmasi.classList.remove("hidden");
-  }
-
-  // Tombol YA → tetap tutup modal
   btnKonfirmasiYa.addEventListener("click", () => {
     tutupModal();
   });
 
-  // Tombol TIDAK → batal tutup, tetap di modal
   btnKonfirmasiTidak.addEventListener("click", () => {
     popupKonfirmasi.classList.add("hidden");
   });
 
-  // Auto deteksi jika textarea sudah terisi saat halaman load
+  // Auto-load dari localStorage saat halaman load
   window.addEventListener("DOMContentLoaded", () => {
-    if (formatTransaksiTextarea && formatTransaksiTextarea.value.trim() !== "") {
-      formatTransaksiTextarea.classList.add("not-empty");
-    }
+    allTextareas.forEach(textarea => {
+      const saved = localStorage.getItem(textarea.id);
+      if (saved) {
+        textarea.value = saved;
+      }
+    });
+    updateTombolSimpan();
   });
+
+  // Ekspor fungsi buka modal ke global
+  window.openSetupTransaksi = () => bukaModal();
 
 
  </script>
