@@ -456,7 +456,7 @@ textarea.custom-style {
 
    
   <!-- ✅ TOMBOL SIMPAN -->
-<button id="btnSimpanFormat" class="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4 opacity-50 cursor-not-allowed" disabled>Simpan</button>
+<button id="btnSimpanFormat" class="bg-yellow-600 text-white px-4 py-2 rounded-lg mt-4 opacity-50 cursor-not-allowed" disabled>Simpan</button>
 
 <!-- ✅ MODAL KONFIRMASI SIMPAN -->
 <div id="popupKonfirmasi" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
@@ -486,6 +486,16 @@ textarea.custom-style {
 </div>
 
 
+<!-- ✅ POPUP KONFIRMASI KEMBALI -->
+<div id="popupKonfirmasiKembali" class="fixed inset-0 bg-black bg-opacity-50 z-[99999] hidden items-center justify-center">
+  <div class="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
+    <p class="text-base font-semibold text-gray-800 mb-4">Perubahan belum disimpan!<br>Yakin ingin kembali?</p>
+    <div class="flex justify-center gap-4 mt-4">
+      <button id="btnKembaliYa" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">YA</button>
+      <button id="btnKembaliTidak" class="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded">TIDAK</button>
+    </div>
+  </div>
+</div>
 
     </div>
    </div>
@@ -1121,6 +1131,48 @@ function openSetupTransaksi() {
     // Cegah default Back
     history.pushState(null, null, location.href);
   });
+
+
+// ↩️↩️ Tombol Kembali
+
+  let formChanged = false;
+
+  // Deteksi perubahan di semua textarea
+  document.querySelectorAll("textarea").forEach(textarea => {
+    textarea.addEventListener("input", () => {
+      formChanged = true;
+    });
+  });
+
+  // Tombol YA di popup konfirmasi kembali
+  document.getElementById("btnKembaliYa").addEventListener("click", () => {
+    document.getElementById("popupKonfirmasiKembali").classList.add("hidden");
+    formChanged = false;
+    document.getElementById("modalSetupTransaksi").classList.add("hidden");
+    document.getElementById("modalMenuTransaksi").classList.remove("hidden");
+  });
+
+  // Tombol TIDAK di popup konfirmasi kembali
+  document.getElementById("btnKembaliTidak").addEventListener("click", () => {
+    document.getElementById("popupKonfirmasiKembali").classList.add("hidden");
+  });
+
+  // Tombol kembali HP (Android)
+  window.addEventListener("popstate", function (event) {
+    if (document.getElementById("modalSetupTransaksi").classList.contains("flex")) {
+      if (formChanged) {
+        history.pushState(null, null); // cegah keluar
+        document.getElementById("popupKonfirmasiKembali").classList.remove("hidden");
+      } else {
+        document.getElementById("modalSetupTransaksi").classList.add("hidden");
+        document.getElementById("modalMenuTransaksi").classList.remove("hidden");
+      }
+    }
+  });
+
+  // Push initial state to enable back button tracking
+  history.pushState(null, null);
+
 
  </script>
 </body>
