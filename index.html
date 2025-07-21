@@ -452,7 +452,11 @@ textarea.custom-style {
   <!-- FOOTER -->
   <div class="bg-cyan-600 text-white p-4 flex justify-between items-center shadow-md">
     <!-- Tombol Simpan -->
-<button id="btnSimpanTransaksi" class="text-gray-700 bg-white border border-yellow-300 p-4 shadow">Simpan</button>
+<button id="btnSimpanTransaksi" 
+  class="text-gray-700 bg-gray-300 border border-gray-400 p-4 shadow cursor-not-allowed transition-all duration-300" 
+  disabled>
+  Simpan
+</button>
 
 <!-- POPUP KONFIRMASI -->
 
@@ -468,19 +472,7 @@ textarea.custom-style {
 
 
 <!-- Tombol Kembali -->
-<button id="btnKembaliTransaksi" class="...">Kembali</button>
 
-<!-- MODAL PERINGATAN -->
-<div id="modalBelumSimpan" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] hidden">
-  <div class="bg-white rounded-lg shadow-lg p-6 text-center max-w-sm w-full">
-    <p class="mb-4 text-gray-800 font-semibold">Perubahan belum disimpan.<br>
-Yakin ingin kembali?</p>
-    <div class="flex justify-center space-x-4">
-      <button id="btnBatalKembali" class="px-4 py-2 bg-gray-300 rounded hover:bg-green-500">Batal</button>
-      <button id="btnTetapKembali" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Tetap Kembali</button>
-    </div>
-  </div>
-</div>
     </div>
    </div>
 
@@ -1035,66 +1027,74 @@ function openSetupTransaksi() {
 
  
 
-
-document.addEventListener("DOMContentLoaded", () => {
-  const popup = document.getElementById("popupKonfirmasi");
-  const btnSimpan = document.getElementById("btnSimpanTransaksi"); // ✅ TAMBAH
-  const btnKembali = document.getElementById("btnKembaliTransaksi");
-  const btnBatal = document.getElementById("btnBatal");
-  const btnYaSimpan = document.getElementById("btnYaSimpan");
-  const textarea = document.getElementById("formatTransaksi");
-  const btnBatalKembali = document.getElementById("btnBatalKembali");
-  const btnTetapKembali = document.getElementById("btnTetapKembali");
-  const modalBelumSimpan = document.getElementById("modalBelumSimpan");
   const modalSetup = document.getElementById("modalSetupTransaksi");
+  const btnSimpan = document.getElementById("btnSimpanTransaksi");
+  const btnTutup = document.getElementById("btnTutupModal");
+  const popupKonfirmasi = document.getElementById("popupKonfirmasi");
+  const popupBatal = document.getElementById("popupKonfirmasiBatal");
+  const btnYaSimpan = document.getElementById("btnYaSimpan");
+  const btnTidakSimpan = document.getElementById("btnTidakSimpan");
+  const btnYaBatal = document.getElementById("btnYaBatal");
+  const btnTidakBatal = document.getElementById("btnTidakBatal");
+  const formatTransaksiTextarea = document.getElementById("formatTransaksi");
+  const originalValue = formatTransaksiTextarea.value.trim();
 
-  let isChanged = false;
+  let perubahanTerjadi = false;
 
-  if (textarea) {
-    textarea.addEventListener("input", () => {
-      isChanged = true;
-    });
+  function updateTombolSimpan() {
+    const currentValue = formatTransaksiTextarea.value.trim();
+    perubahanTerjadi = currentValue !== originalValue;
+
+    if (perubahanTerjadi) {
+      btnSimpan.classList.remove("bg-gray-300", "text-gray-500", "cursor-not-allowed");
+      btnSimpan.classList.add("bg-cyan-600", "text-white");
+      btnSimpan.disabled = false;
+    } else {
+      btnSimpan.classList.remove("bg-cyan-600", "text-white");
+      btnSimpan.classList.add("bg-gray-300", "text-gray-500", "cursor-not-allowed");
+      btnSimpan.disabled = true;
+    }
   }
 
+  formatTransaksiTextarea.addEventListener("input", updateTombolSimpan);
+
+  // Tombol Simpan
+  btnSimpan.addEventListener("click", () => {
+    popupKonfirmasi.classList.remove("hidden");
+  });
+
+  btnYaSimpan.addEventListener("click", () => {
+    popupKonfirmasi.classList.add("hidden");
+    perubahanTerjadi = false;
+    updateTombolSimpan();
+    alert("Perubahan berhasil disimpan."); // Ganti dengan proses simpan asli jika ada
+  });
+
+  btnTidakSimpan.addEventListener("click", () => {
+    popupKonfirmasi.classList.add("hidden");
+  });
+
+  // Fungsi untuk tombol kembali HP
   function showKonfirmasiKembali() {
-    if (isChanged) {
-      modalBelumSimpan.classList.remove("hidden");
+    if (perubahanTerjadi) {
+      popupBatal.classList.remove("hidden");
     } else {
       modalSetup.classList.add("hidden");
     }
   }
 
-  btnSimpan?.addEventListener("click", () => {           // ✅ INI DITAMBAHKAN
-    popup.classList.remove("hidden");
-  });
-
-  btnKembali?.addEventListener("click", () => {
-    showKonfirmasiKembali();
-  });
-
-  btnBatal?.addEventListener("click", () => {
-    popup.classList.add("hidden");
-  });
-
-  btnYaSimpan?.addEventListener("click", () => {
-    const value = textarea?.value.trim();
-    if (value) {
-      localStorage.setItem("setup_format_transaksi", value);
-    }
-    popup.classList.add("hidden");
+  btnYaBatal.addEventListener("click", () => {
+    popupBatal.classList.add("hidden");
     modalSetup.classList.add("hidden");
+    perubahanTerjadi = false;
+    updateTombolSimpan();
   });
 
-  btnBatalKembali?.addEventListener("click", () => {
-    modalBelumSimpan.classList.add("hidden");
+  btnTidakBatal.addEventListener("click", () => {
+    popupBatal.classList.add("hidden");
   });
 
-  btnTetapKembali?.addEventListener("click", () => {
-    modalBelumSimpan.classList.add("hidden");
-    modalSetup.classList.add("hidden");
-  });
-
-  // Deteksi tombol kembali browser
+  // Deteksi tombol kembali di HP
   window.addEventListener("popstate", () => {
     if (!modalSetup.classList.contains("hidden")) {
       showKonfirmasiKembali();
@@ -1102,11 +1102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Push state jika modal dibuka
-  if (!modalSetup.classList.contains("hidden")) {
-    history.pushState(null, null, location.href);
-  }
-});
+  // Tombol tutup manual (silang)
+  btnTutup.addEventListener("click", () => {
+    showKonfirmasiKembali();
+  });
+
+  // Push state untuk menangkap tombol back
+  history.pushState(null, null, location.href);
+
  </script>
 </body>
 </html>
