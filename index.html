@@ -305,43 +305,46 @@ textarea.custom-style {
 
 <!-- Kelompok 1: Format Transaksi -->
 <div class="border border-blue-300 bg-blue-50 rounded-xl p-4 mb-6">
-  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi</h3>
+  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi Uji</h3>
 
   <!-- Format Transaksi -->
   <div class="relative mb-6">
-    <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
-    <div class="relative group">
-      <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform scale-0 opacity-0 pointer-events-none hidden transition-all duration-700 ease-out origin-top">
-        Wajib: [kodeproduk],[tujuan],[pin]<br>
-        Optional: [counter] atau [refid]
-      </p>
-     <div class="relative">
-  <textarea
-    id="formatTransaksi"
-    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
-           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
-    rows="2"
-    placeholder=" "
-    required></textarea>
+  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
 
-  <label
-    for="formatTransaksi"
-    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
-           peer-placeholder-shown:top-4 
-           peer-placeholder-shown:text-sm 
-           peer-placeholder-shown:text-gray-400 
-           peer-focus:top-[-8px] 
-           peer-focus:text-[11px] 
-           peer-focus:text-blue-600 
-           peer-valid:top-[-8px] 
-           peer-valid:text-[11px] 
-           peer-valid:text-gray-400 
-           pointer-events-none z-10">
-   Contoh: [kodeproduk].[tujuan].[pin]
-   </label>
-   </div>
+  <div class="relative group">
+    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 transform 
+               scale-0 opacity-0 pointer-events-none hidden transition-all duration-300 ease-out origin-top">
+      Wajib: [kodeproduk],[tujuan],[pin]<br>
+      Optional: [counter] atau [refid]
+    </p>
+
+    <div class="relative">
+      <textarea
+        id="formatTransaksi"
+        class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+               focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
+        rows="2"
+        placeholder=" "
+        required></textarea>
+
+      <label
+        for="formatTransaksi"
+        class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+               peer-placeholder-shown:top-4 
+               peer-placeholder-shown:text-sm 
+               peer-placeholder-shown:text-gray-400 
+               peer-focus:top-[-8px] 
+               peer-focus:text-[11px] 
+               peer-focus:text-blue-600 
+               peer-valid:top-[-8px] 
+               peer-valid:text-[11px] 
+               peer-valid:text-gray-400 
+               pointer-events-none z-10">
+        Contoh: [kodeproduk].[tujuan].[pin]
+      </label>
+    </div>
   </div>
-  </div>
+</div>
 
   <!-- Format Transaksi Qty -->
   <div class="relative mb-6">
@@ -1061,109 +1064,107 @@ function openSetupTransaksi() {
 
 
   class SetupTransaksi {
-    constructor() {
-      this.textareas = {
-        formatTransaksi: document.getElementById('formatTransaksi'),
-        formatQty: document.getElementById('formatQty'),
-        formatCek: document.getElementById('formatCek'),
-        formatSN: document.getElementById('formatSN'),
-        formatCS: document.getElementById('formatCS'),
-      };
+  constructor() {
+    this.textareas = {
+      formatTransaksi: document.getElementById('formatTransaksi'),
+      formatQty: document.getElementById('formatQty'),
+      formatCek: document.getElementById('formatCek'),
+      formatSN: document.getElementById('formatSN'),
+      formatCS: document.getElementById('formatCS'),
+    };
 
-      this.helpTexts = document.querySelectorAll('.help-text');
-      this.modal = document.getElementById('modalSetupTransaksi');
-      this.notif = document.getElementById('notif-simpan');
-      this.hasChanges = false;
+    this.modal = document.getElementById('modalSetupTransaksi');
+    this.notif = document.getElementById('notif-simpan');
+    this.hasChanges = false;
 
-      this.setupEvents();
-      this.loadData();
-    }
+    this.setupEvents();
+    this.loadData();
+  }
 
-    setupEvents() {
-      Object.values(this.textareas).forEach(textarea => {
-        textarea.addEventListener('input', () => this.handleInputChange());
-        textarea.addEventListener('focus', (e) => this.showHelpText(e.target));
-        textarea.addEventListener('blur', (e) => this.hideHelpText(e.target));
-      });
+  setupEvents() {
+    Object.values(this.textareas).forEach(textarea => {
+      textarea.addEventListener('input', () => this.handleInputChange());
+      textarea.addEventListener('focus', (e) => this.showHelpText(e.target));
+      textarea.addEventListener('blur', (e) => this.hideHelpText(e.target));
+    });
 
-      window.addEventListener('popstate', () => this.closeModal());
-    }
+    window.addEventListener('popstate', () => this.closeModal());
+  }
 
-    handleInputChange() {
-      this.hasChanges = true;
-      Object.entries(this.textareas).forEach(([key, textarea]) => {
-        const label = textarea.previousElementSibling;
-        if (label && label.tagName === 'LABEL') {
-          label.classList.toggle('text-gray-300', textarea.value.trim() === '');
-        }
-      });
-    }
-
-    showHelpText(target) {
-      const helpText = target.parentElement.querySelector('.help-text');
-      if (helpText) {
-        helpText.classList.remove('opacity-0', 'scale-95');
-        helpText.classList.add('opacity-100', 'scale-100');
+  handleInputChange() {
+    this.hasChanges = true;
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      const label = textarea.previousElementSibling;
+      if (label && label.tagName === 'LABEL') {
+        label.classList.toggle('text-gray-300', textarea.value.trim() === '');
       }
-    }
+    });
+  }
 
-    hideHelpText(target) {
-      const helpText = target.parentElement.querySelector('.help-text');
-      if (helpText) {
-        helpText.classList.remove('opacity-100', 'scale-100');
-        helpText.classList.add('opacity-0', 'scale-95');
-      }
-    }
-
-    openModal() {
-      this.modal.classList.remove('hidden');
-      history.pushState(null, null, location.href);
-    }
-
-    closeModal() {
-      if (this.hasChanges && !confirm("Ada perubahan yang belum disimpan. Tutup tanpa menyimpan?")) {
-        history.pushState(null, null, location.href);
-        return;
-      }
-      this.modal.classList.add('hidden');
-      this.hasChanges = false;
-    }
-
-    saveData() {
-      Object.entries(this.textareas).forEach(([key, textarea]) => {
-        localStorage.setItem(key, textarea.value);
-      });
-      this.hasChanges = false;
-      this.showNotification();
-    }
-
-    loadData() {
-      Object.entries(this.textareas).forEach(([key, textarea]) => {
-        const saved = localStorage.getItem(key);
-        if (saved !== null) textarea.value = saved;
-      });
-      this.handleInputChange();
-    }
-
-    showNotification() {
-      this.notif.classList.remove('hidden', 'scale-95', 'opacity-0');
-      this.notif.classList.add('scale-100', 'opacity-100');
-      setTimeout(() => {
-        this.notif.classList.remove('scale-100', 'opacity-100');
-        this.notif.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => this.notif.classList.add('hidden'), 300);
-      }, 1000);
+  showHelpText(textarea) {
+    const helpText = textarea.closest(".relative").previousElementSibling;
+    if (helpText && helpText.classList.contains("help-text")) {
+      helpText.classList.remove("scale-0", "opacity-0", "pointer-events-none", "hidden");
+      helpText.classList.add("scale-100", "opacity-100");
     }
   }
 
-  // Inisialisasi setelah DOM siap
-  window.addEventListener('DOMContentLoaded', () => {
-    const setupTransaksi = new SetupTransaksi();
+  hideHelpText(textarea) {
+    const helpText = textarea.closest(".relative").previousElementSibling;
+    if (helpText && helpText.classList.contains("help-text")) {
+      helpText.classList.remove("scale-100", "opacity-100");
+      helpText.classList.add("scale-0", "opacity-0", "pointer-events-none");
+    }
+  }
 
-    // Ekspor metode global jika dibutuhkan tombol HTML
-    window.openSetupTransaksi = () => setupTransaksi.openModal();
-    window.saveSetupTransaksi = () => setupTransaksi.saveData();
-  });
+  openModal() {
+    this.modal.classList.remove('hidden');
+    history.pushState(null, null, location.href);
+  }
+
+  closeModal() {
+    if (this.hasChanges && !confirm("Ada perubahan yang belum disimpan. Tutup tanpa menyimpan?")) {
+      history.pushState(null, null, location.href);
+      return;
+    }
+    this.modal.classList.add('hidden');
+    this.hasChanges = false;
+  }
+
+  saveData() {
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      localStorage.setItem(key, textarea.value);
+    });
+    this.hasChanges = false;
+    this.showNotification();
+  }
+
+  loadData() {
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      const saved = localStorage.getItem(key);
+      if (saved !== null) textarea.value = saved;
+    });
+    this.handleInputChange();
+  }
+
+  showNotification() {
+    this.notif.classList.remove('hidden', 'scale-95', 'opacity-0');
+    this.notif.classList.add('scale-100', 'opacity-100');
+    setTimeout(() => {
+      this.notif.classList.remove('scale-100', 'opacity-100');
+      this.notif.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => this.notif.classList.add('hidden'), 300);
+    }, 1000);
+  }
+}
+
+// Inisialisasi setelah DOM siap
+window.addEventListener('DOMContentLoaded', () => {
+  const setupTransaksi = new SetupTransaksi();
+
+  window.openSetupTransaksi = () => setupTransaksi.openModal();
+  window.saveSetupTransaksi = () => setupTransaksi.saveData();
+});
 
  
 
