@@ -308,48 +308,45 @@ textarea.custom-style {
   <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi</h3>
 
   <!-- Format Transaksi -->
-<div class="relative mb-6">
-  <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi</label>
+<div class="relative mb-6 group">
 
-  <div class="relative group">
+  <!-- LABEL -->
+  <label class="block text-sm font-bold text-gray-700 mb-1">Format Transaksi Tes</label>
 
-    <!-- TEKS BANTU MELAYANG -->
-    <p class="help-text absolute -top-14 left-0 text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md 
-               w-full transition-all duration-300 ease-in-out transform scale-0 opacity-0 pointer-events-none 
-               group-focus-within:scale-100 group-focus-within:opacity-100 group-focus-within:pointer-events-auto z-20">
-      Wajib: [kodeproduk],[tujuan],[pin]<br>
-      Optional: [counter] atau [refid]
-    </p>
+   <!-- TEKS BANTU DI BAWAHNYA -->
+  <p class="transition-all duration-300 text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md mt-2 
+            max-h-0 overflow-hidden opacity-0 group-focus-within:max-h-32 group-focus-within:opacity-100">
+    Wajib: [kodeproduk],[tujuan],[pin]<br>
+    Optional: [counter] atau [refid]
+  </p>
 
-    <!-- TEXTAREA + FLOATING LABEL -->
-    <div class="relative">
-      <textarea
-        id="formatTransaksi"
-        class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
-               focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
-        rows="2"
-        placeholder=" "
-        required></textarea>
+  <!-- TEXTAREA + FLOATING LABEL -->
+  <div class="relative">
+    <textarea
+      id="formatTransaksi"
+      class="peer w-full text-sm pl-3 pt-3 pb-2 rounded-md placeholder-transparent 
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+      rows="2"
+      placeholder=" "
+      required></textarea>
 
-      <label
-        for="formatTransaksi"
-        class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
-               peer-placeholder-shown:top-4 
-               peer-placeholder-shown:text-sm 
-               peer-placeholder-shown:text-gray-400 
-               peer-focus:top-[-8px] 
-               peer-focus:text-[11px] 
-               peer-focus:text-blue-600 
-               peer-valid:top-[-8px] 
-               peer-valid:text-[11px] 
-               peer-valid:text-gray-400 
-               pointer-events-none z-10">
-        Contoh: [kodeproduk].[tujuan].[pin]
-      </label>
-    </div>
-
+    <label
+      for="formatTransaksi"
+      class="absolute left-2 top-3 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+             peer-placeholder-shown:top-3 
+             peer-placeholder-shown:text-sm 
+             peer-placeholder-shown:text-gray-400 
+             peer-focus:top-[-8px] 
+             peer-focus:text-[11px] 
+             peer-focus:text-blue-600 
+             peer-valid:top-[-8px] 
+             peer-valid:text-[11px] 
+             peer-valid:text-gray-400 
+             pointer-events-none z-10">
+      Contoh: [kodeproduk].[tujuan].[pin]
+    </label>
+   </div>
   </div>
-</div>
 
   <!-- Format Transaksi Qty -->
   <div class="relative mb-6">
