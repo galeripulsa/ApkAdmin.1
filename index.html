@@ -305,7 +305,7 @@ textarea.custom-style {
 
 <!-- Kelompok 1: Format Transaksi -->
 <div class="border border-blue-300 bg-blue-50 rounded-xl p-4 mb-6">
-  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi Uji</h3>
+  <h3 class="text-sm font-semibold text-blue-700 mb-4">🧾 Format Transaksi</h3>
 
   <!-- Format Transaksi -->
 <div class="relative mb-6">
@@ -313,16 +313,15 @@ textarea.custom-style {
 
   <div class="relative group">
 
-    <!-- TEKS BANTU -->
-    <p class="help-text text-xs text-gray-600 bg-yellow-200 px-3 py-2 rounded-md mb-2 
-               transition-all duration-300 ease-in-out transform scale-95 opacity-0 
-               group-focus-within:scale-100 group-focus-within:opacity-100 
-               group-focus-within:pointer-events-auto">
+    <!-- TEKS BANTU MELAYANG -->
+    <p class="help-text absolute -top-14 left-0 text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md 
+               w-full transition-all duration-300 ease-in-out transform scale-0 opacity-0 pointer-events-none 
+               group-focus-within:scale-100 group-focus-within:opacity-100 group-focus-within:pointer-events-auto z-20">
       Wajib: [kodeproduk],[tujuan],[pin]<br>
       Optional: [counter] atau [refid]
     </p>
 
-    <!-- TEXTAREA -->
+    <!-- TEXTAREA + FLOATING LABEL -->
     <div class="relative">
       <textarea
         id="formatTransaksi"
