@@ -335,11 +335,12 @@ textarea.custom-style {
            peer-focus:text-blue-600 
            peer-valid:top-[-8px] 
            peer-valid:text-[11px] 
-           peer-valid:text-blue-600 
+           peer-valid:text-gray-400 
            pointer-events-none z-10">
    Contoh: [kodeproduk].[tujuan].[pin]
-  </label>
-</div>
+   </label>
+   </div>
+  </div>
   </div>
 
   <!-- Format Transaksi Qty -->
@@ -370,13 +371,13 @@ textarea.custom-style {
            peer-focus:text-blue-600 
            peer-valid:top-[-8px] 
            peer-valid:text-[11px] 
-           peer-valid:text-blue-600 
+           peer-valid:text-gray-400 
            pointer-events-none z-10">
     Contoh: [kodeproduk].[tujuan].[pin].[qty]
   </label>
-</div>>
+     </div>
     </div>
-  </div>
+   </div>
 
 
    <!-- Format Cek -->
@@ -408,14 +409,14 @@ textarea.custom-style {
            peer-focus:text-blue-600 
            peer-valid:top-[-8px] 
            peer-valid:text-[11px] 
-           peer-valid:text-blue-600 
+           peer-valid:text-gray-400 
            pointer-events-none z-10">
     Format Cek Qty
   </label>
-</div>
+     </div>
     </div>
+   </div>
   </div>
-</div>
 
 <!-- Kelompok 2: Format Password IP -->
 <div class="border border-green-300 bg-green-50 rounded-xl p-4 mb-6">
@@ -425,46 +426,116 @@ textarea.custom-style {
   <div class="relative mb-6">
     <label class="block text-sm font-bold text-gray-700 mb-2">Format Reset Password IP</label>
     <div class="relative group">
-      <textarea id="formatReset"
-        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
-        rows="2"
-        placeholder=" "
-      ></textarea>
-      <label
-        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
-        Format Reset Password IP
-      </label>
+      <textarea
+    id="formatReset"
+    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+    rows="2"
+    placeholder=" "
+    required></textarea>
+
+  <label
+    for="formatReset"
+    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+           peer-placeholder-shown:top-4 
+           peer-placeholder-shown:text-sm 
+           peer-placeholder-shown:text-gray-400 
+           peer-focus:top-[-8px] 
+           peer-focus:text-[11px] 
+           peer-focus:text-blue-600 
+           peer-valid:top-[-8px] 
+           peer-valid:text-[11px] 
+           peer-valid:text-gray-400 
+           pointer-events-none z-10">
+    Contoh: RESET.[paswordbaru].[password]
+  </label>
+     </div>
     </div>
-  </div>
+   
+  
 
   <!-- Format Ubah Password IP -->
   <div class="relative mb-3">
     <label class="block text-sm font-bold text-gray-700 mb-2">Format Ubah Password IP</label>
     <div class="relative group">
-      <textarea id="formatUbah"
-        class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300"
-        rows="2"
-        placeholder=" "
-      ></textarea>
-      <label
-        class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">
-        Format Ubah Password IP
-      </label>
+      <textarea
+    id="formatUbah"
+    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+    rows="2"
+    placeholder=" "
+    required></textarea>
+
+  <label
+    for="formatUbah"
+    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+           peer-placeholder-shown:top-4 
+           peer-placeholder-shown:text-sm 
+           peer-placeholder-shown:text-gray-400 
+           peer-focus:top-[-8px] 
+           peer-focus:text-[11px] 
+           peer-focus:text-blue-600 
+           peer-valid:top-[-8px] 
+           peer-valid:text-[11px] 
+           peer-valid:text-gray-400 
+           pointer-events-none z-10">
+    Contoh: UBAH.[paswordbaru].[password]
+  </label>
     </div>
   </div>
 
   <!-- Kata Kunci Sukses -->
   <div class="relative group mb-3">
-    <textarea id="formatSukses" 
-       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
-    <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">Kata Kunci Sukses Ubah Password IP</label>
+    <textarea
+    id="formatSukses"
+    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+    rows="2"
+    placeholder=" "
+    required></textarea>
+
+  <label
+    for="formatSukses"
+    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+           peer-placeholder-shown:top-4 
+           peer-placeholder-shown:text-sm 
+           peer-placeholder-shown:text-gray-400 
+           peer-focus:top-[-8px] 
+           peer-focus:text-[11px] 
+           peer-focus:text-blue-600 
+           peer-valid:top-[-8px] 
+           peer-valid:text-[11px] 
+           peer-valid:text-gray-400 
+           pointer-events-none z-10">
+    Kata Kunci Sukses Ubah Password IP
+  </label>
   </div>
 
   <!-- Kata Kunci Gagal -->
   <div class="relative group mb-3">
-    <textarea id="formatGagal"
-       class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" rows="2" placeholder=" "></textarea>
-    <label class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-[-8px] peer-focus:text-[11px] peer-focus:text-blue-600 ease-out pointer-events-none z-10">Kata Kunci Gagal Ubah Password IP</label>
+      <textarea
+    id="formatGagal"
+    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+    rows="2"
+    placeholder=" "
+    required></textarea>
+
+  <label
+    for="formatGagal"
+    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+           peer-placeholder-shown:top-4 
+           peer-placeholder-shown:text-sm 
+           peer-placeholder-shown:text-gray-400 
+           peer-focus:top-[-8px] 
+           peer-focus:text-[11px] 
+           peer-focus:text-blue-600 
+           peer-valid:top-[-8px] 
+           peer-valid:text-[11px] 
+           peer-valid:text-gray-400 
+           pointer-events-none z-10">
+    Kata Kunci Gagal Ubah Password IP
+  </label>
   </div>
 </div>
 
@@ -478,25 +549,28 @@ textarea.custom-style {
 
    <div class="relative group mb-3">
      <textarea
-  class="peer textarea-floating w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent focus:outline-none 
-         focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
-  rows="2"
-  placeholder=" "
-  required></textarea>
-    <label
-  class="floating-label absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
-         peer-placeholder-shown:top-4 
-         peer-placeholder-shown:text-sm 
-         peer-placeholder-shown:text-gray-400 
-         peer-focus:top-[-8px] 
-         peer-focus:text-[11px] 
-         peer-focus:text-blue-600 
-         peer-valid:top-[-8px] 
-         peer-valid:text-[11px] 
-         peer-valid:text-blue-600 
-         pointer-events-none z-10">
-  Contoh: K.[pesan]
-</label>
+    id="formatKompline"
+    class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+           focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+    rows="2"
+    placeholder=" "
+    required></textarea>
+
+  <label
+    for="formatKompline"
+    class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+           peer-placeholder-shown:top-4 
+           peer-placeholder-shown:text-sm 
+           peer-placeholder-shown:text-gray-400 
+           peer-focus:top-[-8px] 
+           peer-focus:text-[11px] 
+           peer-focus:text-blue-600 
+           peer-valid:top-[-8px] 
+           peer-valid:text-[11px] 
+           peer-valid:text-gray-400 
+           pointer-events-none z-10">
+    Contoh: K.[pesan]
+  </label>
   </div>
  </div>
 </div>
