@@ -1169,6 +1169,18 @@ function openSetupTransaksi() {
     }
   }
 
+const inputQty = document.getElementById("formatQty");
+  const teksBantu = document.getElementById("teksBantuQty");
+
+  inputQty.addEventListener("focus", () => {
+    teksBantu.classList.remove("max-h-0", "opacity-0");
+    teksBantu.classList.add("max-h-32", "opacity-100");
+  });
+
+  inputQty.addEventListener("blur", () => {
+    teksBantu.classList.remove("max-h-32", "opacity-100");
+    teksBantu.classList.add("max-h-0", "opacity-0");
+  });
 
 
   openModal() {
