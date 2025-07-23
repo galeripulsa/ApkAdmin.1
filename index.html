@@ -385,6 +385,50 @@ textarea.custom-style {
   </div>
  </div>
 
+<!-- Format Cek -->
+<div class="relative mb-6">
+  <label class="block text-sm font-bold text-gray-700 mb-1">Format Cek</label>
+  
+  <div class="relative group flex flex-col space-y-1">
+    <!-- Teks bantu -->
+    <p class="transition-all duration-300 ease-in-out text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md 
+              overflow-hidden max-h-0 opacity-0 scale-95 transform origin-top
+              group-focus-within:max-h-24 
+              group-focus-within:opacity-100 
+              group-focus-within:scale-100">
+      Wajib: [kodeproduk],[tujuan],[pin],[qty]<br>
+      Optional: [counter] atau [refid]
+    </p>
+
+    <!-- Textarea -->
+    <div class="relative">
+      <textarea
+        id="formatCek"
+        class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+               focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+        rows="2"
+        placeholder=" "
+        required></textarea>
+
+      <label
+        for="formatCek"
+        class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+               peer-placeholder-shown:top-4 
+               peer-placeholder-shown:text-sm 
+               peer-placeholder-shown:text-gray-400 
+               peer-focus:top-[-8px] 
+               peer-focus:text-[11px] 
+               peer-focus:text-blue-600 
+               peer-valid:top-[-8px] 
+               peer-valid:text-[11px] 
+               peer-valid:text-gray-400 
+               pointer-events-none z-10">
+        Format Cek Qty
+      </label>
+    </div>
+  </div>
+</div>
+  
   <!-- 🔴✅Format Transaksi Qty -->
   <div class="relative mb-6">
     <label class="block text-sm font-bold text-gray-700 mb-2">Format Transaksi Qty</label>
