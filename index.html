@@ -298,7 +298,7 @@ textarea.custom-style {
   <label class="block text-sm font-bold text-gray-700 mb-0">Format Transaksi Umum</label>
 
   <!-- Teks bantu (muncul saat fokus) -->
-  <p class="transition-all duration-300 ease-in-out text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md 
+  <p class="transition-all duration-300 ease-in-out text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md mb-2
             overflow-hidden max-h-0 opacity-0 scale-x-0 transform origin-center
             group-focus-within:max-h-32 
             group-focus-within:opacity-100 
@@ -338,54 +338,49 @@ textarea.custom-style {
 </div>
 
 
-   <div class="relative">
-    <label class="block text-sm font-bold text-gray-700 pb-2 mb-2">Format Transaksi Umum</label>
+<div class="relative group flex flex-col space-y-1">
+  <!-- Label utama -->
+  <label class="text-sm font-bold text-gray-700">Format Transaksi Umum 🖍</label>
 
-  <!-- 🔴✅Format Transaksi -->
-  
-    
-    <!-- TEKS BANTU -->
-    <div class="relative group pb-1">
-    <p class="transition-all duration-300 ease-in-out text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md mb-2 
-              overflow-hidden max-h-0 opacity-0 scale-x-0 transform origin-center
-              group-focus-within:max-h-32 
-              group-focus-within:opacity-100 
-              group-focus-within:scale-x-100 
-              group-focus-within:duration-1000 
-              group-focus-within:ease-out 
-              mt-1">
-      Wajib: [kodeproduk],[tujuan],[pin]<br>
-      Optional: [counter] atau [refid]
-    </p>
-   </div>
+  <!-- Teks bantu (muncul saat fokus) -->
+  <p class="transition-all duration-300 ease-in-out text-xs text-gray-700 bg-yellow-200 px-3 py-2 rounded-md 
+            overflow-hidden max-h-0 opacity-0 scale-x-0 transform origin-center
+            group-focus-within:max-h-32 
+            group-focus-within:opacity-100 
+            group-focus-within:scale-x-100 
+            group-focus-within:duration-1000 
+            group-focus-within:ease-out">
+    Wajib: [kodeproduk],[tujuan],[pin]<br>
+    Optional: [counter] atau [refid]
+  </p>
 
-    <!-- TEXTAREA -->
-    <div class="relative group">
-      <textarea
-        id="formatTransaksi"
-        class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
-               focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
-        rows="2"
-        placeholder=" "
-        required></textarea>
+  <!-- Textarea + floating label -->
+  <div class="relative">
+    <textarea
+      id="formatTransaksi"
+      class="peer w-full text-sm pl-3 pt-3 pb-1 rounded-md placeholder-transparent 
+             focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-300 transition-all duration-300" 
+      rows="2"
+      placeholder=" "
+      required></textarea>
 
-      <label
-        for="formatTransaksi"
-        class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
-               peer-placeholder-shown:top-4 
-               peer-placeholder-shown:text-sm 
-               peer-placeholder-shown:text-gray-400 
-               peer-focus:top-[-8px] 
-               peer-focus:text-[11px] 
-               peer-focus:text-blue-600 
-               peer-valid:top-[-8px] 
-               peer-valid:text-[11px] 
-               peer-valid:text-gray-400 
-               pointer-events-none z-10">
-        Contoh: [kodeproduk].[tujuan].[pin]
-      </label>
-    </div>   
-   </div>
+    <label
+      for="formatTransaksi"
+      class="absolute left-2 top-4 text-sm text-gray-400 bg-white px-1 transition-all duration-200 ease-out
+             peer-placeholder-shown:top-4 
+             peer-placeholder-shown:text-sm 
+             peer-placeholder-shown:text-gray-400 
+             peer-focus:top-[-8px] 
+             peer-focus:text-[11px] 
+             peer-focus:text-blue-600 
+             peer-valid:top-[-8px] 
+             peer-valid:text-[11px] 
+             peer-valid:text-gray-400 
+             pointer-events-none z-10">
+      Contoh: [kodeproduk].[tujuan].[pin]
+    </label>
+  </div>
+</div>
   
 
 
