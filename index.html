@@ -1,394 +1,1106 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Server, LayoutGrid, Image as ImageIcon, FileText, Star, Users, 
-  Phone, CreditCard, Key, RefreshCw, Trash2, GripVertical, 
-  Settings, ChevronRight, Save, X, CheckCircle 
-} from 'lucide-react';
+bantu analisa code ini:
 
-// --- KOMPONEN UTILS ---
-
-// Toast Notification Component
-const Toast = ({ message, isVisible, onClose }) => {
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(onClose, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, onClose]);
-
-  if (!isVisible) return null;
-
-  return (
-    <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-xl z-[9999] transition-opacity duration-300 flex items-center gap-2">
-      <CheckCircle size={18} className="text-green-400" />
-      {message}
-    </div>
-  );
-};
-
-// Modal Wrapper
-const Modal = ({ isOpen, onClose, title, children, footer }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
-        <div className="p-4 border-b flex justify-between items-center bg-cyan-600 text-white rounded-t-xl">
-          <h2 className="font-bold text-lg">{title}</h2>
-          <button onClick={onClose} className="hover:bg-cyan-700 p-1 rounded"><X size={20} /></button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4">
-          {children}
-        </div>
-        {footer && <div className="p-4 border-t bg-gray-50 rounded-b-xl">{footer}</div>}
-      </div>
-    </div>
-  );
-};
-
-// Floating Input Component (Reusable)
-const FloatingInput = ({ id, label, value, onChange, type = "text", placeholder = " " }) => (
-  <div className="relative mt-4">
-    <input
-      type={type}
-      id={id}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className="peer w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
-    />
-    <label
-      htmlFor={id}
-      className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5 peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-cyan-600 peer-focus:bg-white peer-focus:px-1 pointer-events-none bg-transparent"
-    >
-      {label}
-    </label>
-  </div>
-);
-
-// --- KOMPONEN UTAMA ---
-
-export default function AdminPanel() {
-  // State Global
-  const [activeModal, setActiveModal] = useState(null); // 'menu', 'server', 'format', null
-  const [toast, setToast] = useState({ show: false, message: '' });
-
-  // State Data Menu Transaksi
-  const [subMenus, setSubMenus] = useState(() => {
-    const saved = localStorage.getItem("subMenus");
-    return saved ? JSON.parse(saved) : [{ name: "Pulsa Reguler", icon: null, active: true, isCategory: false }];
-  });
-  const [tempSubMenus, setTempSubMenus] = useState(subMenus);
-  const [isDirty, setIsDirty] = useState(false);
-
-  // State Data Server
-  const [serverData, setServerData] = useState(() => JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" });
   
-  // State Data Format Transaksi
-  const [formatData, setFormatData] = useState(() => {
-    const saved = localStorage.getItem("formatTransaksiData");
-    return saved ? JSON.parse(saved) : {
-      formatTransaksi: "",
-      formatQty: "",
-      formatCek: "",
-      formatReset: "",
-      formatUbah: "",
-      formatSukses: "",
-      formatGagal: "",
-      formatKomplain: ""
-    };
-  });
-
-  // Helper: Show Toast
-  const showToast = (msg) => {
-    setToast({ show: true, message: msg });
-  };
-
-  // --- LOGIC MENU TRANSAKSI ---
-
-  const handleMenuChange = (index, field, value) => {
-    const newMenus = [...subMenus];
-    newMenus[index][field] = value;
-    setSubMenus(newMenus);
-    setIsDirty(true);
-  };
-
-  const toggleActive = (index) => {
-    const newMenus = [...subMenus];
-    newMenus[index].active = !newMenus[index].active;
-    setSubMenus(newMenus);
-    setIsDirty(true);
-  };
-
-  const deleteMenu = (index) => {
-    if (window.confirm(`Hapus "${subMenus[index].name}"?`)) {
-      const newMenus = subMenus.filter((_, i) => i !== index);
-      setSubMenus(newMenus);
-      setIsDirty(true);
-    }
-  };
-
-  const addMenu = (isCategory) => {
-    setSubMenus([{ name: "", icon: null, active: false, isCategory } , ...subMenus]);
-    setIsDirty(true);
-  };
-
-  const saveMenus = () => {
-    localStorage.setItem("subMenus", JSON.stringify(subMenus));
-    setTempSubMenus(subMenus);
-    setIsDirty(false);
-    showToast("Perubahan Menu Berhasil Disimpan");
-    setActiveModal(null);
-  };
-
-  const cancelMenus = () => {
-    if (isDirty) {
-      if (window.confirm("Perubahan belum disimpan. Batalkan?")) {
-        setSubMenus(tempSubMenus);
-        setIsDirty(false);
-        setActiveModal(null);
-      }
-    } else {
-      setActiveModal(null);
-    }
-  };
-
-  const handleIconUpload = (e, index) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        handleMenuChange(index, 'icon', reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Simple Drag Drop Handler (Move Up/Down logic for simplicity in React without heavy libs)
-  // Note: For full drag drop, use @dnd-kit or react-beautiful-dnd. 
-  // Here we simulate sort by moving items in array if needed, but for this code snippet, 
-  // I'll stick to basic array manipulation to keep it dependency-light.
   
-  // --- LOGIC SERVER ---
-  const saveServer = () => {
-    localStorage.setItem("setupServer", JSON.stringify(serverData));
-    showToast("Data Server Disimpan");
-    setActiveModal(null);
-  };
+  Web Panel Admin Galeri Pulsa
+  
+  
+  
+  
 
-  // --- LOGIC FORMAT ---
-  const handleFormatChange = (field, value) => {
-    setFormatData(prev => ({ ...prev, [field]: value }));
-  };
+  /* Blok semua seleksi teks secara default */
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-  const saveFormat = () => {
-    localStorage.setItem("formatTransaksiData", JSON.stringify(formatData));
-    showToast("Format Transaksi Disimpan");
-    setActiveModal(null);
-  };
+  /* Izinkan seleksi hanya untuk input dan textarea */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
 
+    /* 🅰️🅰️ Menu Trx 🅰️🅰️ */
 
-  // --- RENDER HELPERS ---
+    .submenu-item {
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      position: relative;
+    }
+    .submenu-item .delete-icon {
+      display: none;
+    }
+    .submenu-item.show-delete .delete-icon {
+      display: inline-block;
+    }
+ 
 
-  const renderMainMenu = () => {
-    const items = [
-      { label: "Setup Server", icon: Server, key: "server", color: "bg-white" },
-      { label: "Menu Transaksi", icon: LayoutGrid, key: "menu", color: "bg-yellow-100 ring-2 ring-yellow-400" },
-      { label: "Logo", icon: ImageIcon, key: "logo", color: "bg-white" },
-      { label: "Format Request", icon: FileText, key: "format", color: "bg-white" },
-      { label: "Poin", icon: Star, key: "poin", color: "bg-white" },
-      { label: "Downline", icon: Users, key: "downline", color: "bg-white" },
-      { label: "Prabayar", icon: Phone, key: "prabayar", color: "bg-white" },
-      { label: "Pascabayar", icon: CreditCard, key: "pascabayar", color: "bg-white" },
-      { label: "OTP", icon: Key, key: "otp", color: "bg-white" }
+  /* 🖥🖥🖥🖥🖥 Server Center 🖥🖥🖥 */
+
+/* ✅ Floating Label */
+.floating-input {
+  position: relative;
+  margin-top: 1.5rem;
+}
+.floating-input input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 5px;
+  color: gray;
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 8px;
+  font-size: 0.75rem;
+  color: #06b6d4;
+}
+
+/* ✅ Toast Style */
+toast-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+/* 💠💠💠💠💠 LIST FORMAT */
+.floating-input {
+  position: relative;
+  margin-top: 1rem;
+}
+.floating-input input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  outline: none;
+}
+.floating-input label {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  background: white;
+  padding: 0 4px;
+  color: #999;
+  pointer-events: none;
+  transition: 0.2s ease;
+}
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+  top: -5px;
+  left: 8px;
+  font-size: 0.75rem;
+  color: #ccc;
+}
+textarea.custom-style {
+    transition: all 0.2s ease;
+    border: 1px solid #d1d5db; /* gray-300 */
+    padding-left: 12px;
+    padding-right: 12px;
+    box-shadow: none;
+  }
+  textarea.custom-style:focus {
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  textarea.custom-style.filled {
+    border-color: #16a34a; /* green-600 */
+    box-shadow: 0 0 4px rgba(22, 163, 74, 0.3);
+  }
+
+  :root {
+    --radius: 3px; /* Ubah angka ini untuk semua sudut */
+  }
+
+  #format-transaksi {
+    border-radius: var(--radius);
+  }
+
+  .help-text {
+    border-radius: var(--radius);
+  }
+
+  .floating-label {
+    border-radius: calc(var(--radius) / 2); /* Boleh beda jika ingin lebih kecil */
+  }
+
+  #notif-simpan {
+    transition: opacity 0.3s ease;
+  }
+
+  
+    Apk Admin
+  
+  
+
+  
+  
+
+    
+      
+      
+        ⚙️ Pengaturan Menu & Kategori
+
+      
+      
+        ➕ Menu
+        📁 Kategori
+      
+           Refresh
+        
+      
+    
+
+      
+      
+        
+      
+
+      
+      
+        ✅ Perubahan berhasil disimpan.
+        Total: 0 | Aktif: 0 | Nonaktif: 0
+        💾 SIMPAN
+        ❌ TUTUP
+      
+    
+  
+
+  
+  
+    
+      Apakah Anda yakin ingin menghapus item ini?
+      
+        Ya
+        Batal
+      
+    
+  
+
+  
+    Pengaturan Server
+
+    
+      
+        
+          Setup Server
+          
+        
+      
+      
+        
+          Center Server
+          
+        
+      
+    
+
+    
+      Tutup
+    
+  
+
+ 
+ 
+    Format Request
+
+    
+    
+
+    
+
+    
+    
+      Tutup
+    
+  
+
+  
+  
+    🛠️ Setup Format Transaksi
+ 
+
+  🧾 Format Transaksi
+
+  
+  Format Transaksi Umum
+
+  
+  
+    Wajib: [kodeproduk],[tujuan],[pin]
+    Optional: [counter] atau [refid]
+  
+ 
+
+  
+  
+    
+
+    
+      Contoh: [kodeproduk].[tujuan].[pin]
+    
+   
+  
+
+  
+  Format Transaksi Umum
+
+  
+  
+  
+    Wajib: [kodeproduk],[tujuan],[pin]
+    Optional: [counter] atau [refid]
+  
+
+    
+    
+
+    
+      Contoh: [kodeproduk].[tujuan].[pin]
+    
+  
+ 
+
+  Format Cek
+  
+  
+    
+    
+      Wajib: [kodeproduk],[tujuan],[pin],[qty]
+      Optional: [counter] atau [refid]
+    
+
+    
+    
+      
+
+      
+        Format Cek Qty
+      
+    
+  
+
+  
+  
+  
+    Format Transaksi Qty
+
+    
+      
+        Wajib: [kodeproduk],[tujuan],[pin],[qty]
+        Optional: [counter] atau [refid]
+      
+      
+  
+
+  
+    Contoh: [kodeproduk].[tujuan].[pin].[qty]
+  
+     
+    
+   
+
+   
+  
+    Format Cek
+    
+      
+        Wajib: [kodeproduk],[tujuan],[pin],[qty]
+        Optional: [counter] atau [refid]
+      
+
+      
+  
+
+  
+    Format Cek Qty
+  
+     
+    
+   
+  
+ 
+
+  🔐 Format Password IP
+
+  
+  
+    Format Reset Password IP
+    
+      
+
+  
+    Contoh: RESET.[paswordbaru].[password]
+  
+     
+    
+   
+  
+
+  
+  
+    Format Ubah Password IP
+    
+      
+
+  
+    Contoh: UBAH.[paswordbaru].[password]
+  
+    
+  
+
+  
+  
+    
+
+  
+    Kata Kunci Sukses Ubah Password IP
+  
+  
+
+  
+  
+      
+
+  
+    Kata Kunci Gagal Ubah Password IP
+  
+  
+
+     📣 Format Komplain tes
+
+  Format Awalan Komplain
+
+  
+    Wajib: [kodeproduk],[tujuan],[pin]
+    Optional: [counter] atau [refid]
+  
+
+   
+     
+
+  
+    Contoh: K.[pesan]
+  
+  
+ 
+
+   
+
+   
+
+  
+    💾 Simpan Perubahan
+  
+
+  
+    Apakah Anda ingin menyimpan perubahan?
+    
+      Ya
+      Tidak
+    
+  
+
+  Perubahan berhasil disimpan!
+
+  
+    Perubahan belum disimpan!Yakin ingin kembali?
+    
+      YA
+      TIDAK
+    
+  
+
+    
+   
+
+  
+  
+    const menuItems = [
+      { label: "Setup Server", icon: "server", key: "server" },
+      { label: "Menu Transaksi", icon: "layout-grid", key: "menu" },
+      { label: "Logo", icon: "image", key: "logo" },
+      { label: "Format Request", icon: "file-text", key: "format" },
+      { label: "Poin", icon: "star", key: "poin" },
+      { label: "Downline", icon: "users", key: "downline" },
+      { label: "Prabayar", icon: "phone", key: "prabayar" },
+      { label: "Pascabayar", icon: "credit-card", key: "pascabayar" },
+      { label: "OTP", icon: "key", key: "otp" }
     ];
 
-    return (
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mb-6">
-        {items.map((item) => (
-          <div
-            key={item.key}
-            onClick={() => {
-              if (item.key === 'menu') setActiveModal('menu');
-              if (item.key === 'server') setActiveModal('server');
-              if (item.key === 'format') setActiveModal('format');
-            }}
-            className={`cursor-pointer flex flex-col items-center justify-center p-4 rounded-xl shadow-md transition-transform hover:scale-105 ${item.color}`}
-          >
-            <item.icon className="w-8 h-8 text-gray-700 mb-2" />
-            <span className="text-xs font-semibold text-center text-gray-800">{item.label}</span>
-          </div>
-        ))}
-      </div>
-    );
+        let subMenus = JSON.parse(localStorage.getItem("subMenus")) || [
+      { name: "Pulsa Reguler", icon: null, active: true, isCategory: false }
+    ];
+    let tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+    let isDirty = false;
+
+    const submenuList = document.getElementById("submenu-list");
+    const grid = document.getElementById("menu-grid");
+
+    function renderMenus() {
+      grid.innerHTML = "";
+      menuItems.forEach(item => {
+        const box = document.createElement("div");
+        box.className = cursor-pointer text-center p-4 transition-all rounded-xl shadow-md {item.key === "menu" ? "bg-yellow-300 ring-2 ring-yellow-400" : "bg-white"};
+        box.innerHTML = 
+          
+            
+          
+          {item.label}
+        ;
+
+box.onclick = () => {
+          if (item.key === "menu") showModal();
+          if (item.key === "server") showSetupServerModal();      
+          if (item.key === "format") showFormatRequestModal();
+    };
+        grid.appendChild(box);
+      });
+      lucide.createIcons();
+    }
+
+    function updateRefreshButtonState() {
+      document.getElementById("btn-refresh").disabled = !isDirty;
+    }
+
+    function enableSwipeToDelete(row) {
+      let startX = 0;
+      row.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+      });
+      row.addEventListener("touchmove", (e) => {
+        const deltaX = e.touches[0].clientX - startX;
+        if (deltaX  item.classList.remove("show-delete"));
+          row.classList.add("show-delete");
+        } else if (deltaX > 30) {
+          row.classList.remove("show-delete");
+        }
+      });
+    }
+
+    function renderSubMenus() {
+      submenuList.innerHTML = "";
+      subMenus.forEach((menu, index) => {
+        const row = document.createElement("div");
+         const bgColor = menu.isCategory
+  ? menu.active
+    ? "bg-violet-300" // Kategori aktif
+    : "bg-violet-50" // Kategori nonaktif
+  : menu.active
+    ? "bg-cyan-600"  // Item aktif
+    : "bg-stone-200";  // Item nonaktif
+
+row.className = submenu-item flex items-center justify-between border rounded p-2 {bgColor} hover:shadow gap-3 relative;
+        row.innerHTML = 
+          
+            
+            
+            {!menu.isCategory ? 
+              
+                {menu.icon ? 
+                  
+                  
+                 : 
+                  + icon
+                    
+                  
+                }
+               : ""}
+          
+          
+            
+            
+          ;
+        submenuList.appendChild(row);
+        enableSwipeToDelete(row);
+      });
+      lucide.createIcons();
+      updateRefreshButtonState();
+      renderSummary();
+    }
+
+    function updateName(index, value) {
+      subMenus[index].name = value;
+      isDirty = true;
+      updateRefreshButtonState();
+    }
+
+    function toggleActive(index) {
+      subMenus[index].active = !subMenus[index].active;
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    }
+
+    function uploadIcon(e, index) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          subMenus[index].icon = reader.result;
+          isDirty = true;
+          updateRefreshButtonState();
+          renderSubMenus();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function confirmDelete(index) {
+      showConfirmationModal(Yakin ingin menghapus item: "{subMenus[index].name}"?, () => {
+        subMenus.splice(index, 1);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      });
+    }
+
+    function showModal() {
+      document.getElementById("modal").classList.remove("hidden");
+      renderSubMenus();
+    }
+
+    function showConfirmationModal(message, onYes, onNo) {
+      const modal = document.getElementById("confirm-modal");
+      document.getElementById("confirm-message").innerText = message;
+      modal.classList.remove("hidden");
+      const yesBtn = document.getElementById("confirm-yes");
+      const noBtn = document.getElementById("confirm-no");
+      const cleanup = () => {
+        modal.classList.add("hidden");
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+      };
+      yesBtn.onclick = () => { cleanup(); onYes(); };
+      noBtn.onclick = () => { cleanup(); if (onNo) onNo(); };
+    }
+
+    document.getElementById("btn-close").onclick = () => {
+      if (isDirty) {
+        showConfirmationModal("Perubahan belum disimpan. Tutup tanpa menyimpan?", () => {
+          document.getElementById("modal").classList.add("hidden");
+          subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+          isDirty = false;
+          updateRefreshButtonState();
+        });
+      } else {
+        document.getElementById("modal").classList.add("hidden");
+      }
+    };
+
+    document.getElementById("btn-save").onclick = () => {
+      tempSubMenus = JSON.parse(JSON.stringify(subMenus));
+      localStorage.setItem("subMenus", JSON.stringify(subMenus));
+      isDirty = false;
+      updateRefreshButtonState();
+      const saveMsg = document.getElementById("save-msg");
+      saveMsg.classList.remove("hidden");
+      setTimeout(() => saveMsg.classList.add("hidden"), 2000);
+    };
+
+    document.getElementById("btn-refresh").onclick = () => {
+      if (!isDirty) return;
+      showConfirmationModal("Yakin ingin membatalkan perubahan?", () => {
+        subMenus = JSON.parse(JSON.stringify(tempSubMenus));
+        isDirty = false;
+        updateRefreshButtonState();
+        renderSubMenus();
+      });
+    };
+
+    document.getElementById("btn-add-menu").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: false });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    document.getElementById("btn-add-cat").onclick = () => {
+      subMenus.unshift({ name: "", icon: null, active: false, isCategory: true });
+      isDirty = true;
+      updateRefreshButtonState();
+      renderSubMenus();
+    };
+
+    const sortable = new Sortable(submenuList, {
+      animation: 150,
+      handle: ".lucide-grip-vertical",
+      onEnd: function (evt) {
+        const movedItem = subMenus.splice(evt.oldIndex, 1)[0];
+        subMenus.splice(evt.newIndex, 0, movedItem);
+        isDirty = true;
+        updateRefreshButtonState();
+        renderSubMenus();
+      }
+    });
+
+    function renderSummary() {
+      const total = subMenus.length;
+      const aktif = subMenus.filter(item => item.active).length;
+      const nonaktif = total - aktif;
+      document.getElementById("summary-info").textContent =
+        Total: {total} | Aktif: {aktif} | Nonaktif: {nonaktif};
+    }
+
+    renderMenus();
+
+// 🖥🖥🖥🖥🖥 SETUP SERVER 🖥🖥🖥🖥🖥
+
+// ✅ TAMPILAN MODAL UTAMA
+function showSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.remove("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function closeSetupServerModal() {
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  document.getElementById("modalContentServer").classList.add("hidden");
+}
+
+function backToMainModal() {
+  showSetupServerModal();
+}
+
+// ✅ SETUP SERVER
+function openServerSettings() {
+  const saved = JSON.parse(localStorage.getItem("setupServer")) || { nama: "", alamat: "" };
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  modal.innerHTML = 
+    
+      Setup Server
+      
+        
+          Nama Server
+          
+        
+        
+          Alamat Server
+          {saved.alamat}
+        
+        Simpan
+        Kembali
+      
+    
+  ;
+}
+
+function submitServerSettings(event) {
+  event.preventDefault();
+  const nama = document.getElementById("namaServer").value.trim();
+  const alamat = document.getElementById("alamatServer").value.trim();
+  if (!nama || !alamat) return alert("Semua kolom harus diisi.");
+  localStorage.setItem("setupServer", JSON.stringify({ nama, alamat }));
+  showToast("✅ Data Server berhasil disimpan!");
+}
+
+// ✅ BAGIAN CENTER
+let hasChanges = false;
+
+function openCenterSettings() {
+  const modal = document.getElementById("modalContentServer");
+  document.getElementById("modalSetupServer").classList.add("hidden");
+  modal.classList.remove("hidden");
+
+  const saved = JSON.parse(localStorage.getItem("centerServer")) || {
+    ip: { nama: "", server: "", host: "" },
+    jabber: { nama: "", server: "", host: "" },
+    nomor: { whatsapp: "", sms: "" }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 p-4 max-w-screen-md mx-auto font-sans">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Admin Panel</h1>
-      </div>
+  modal.innerHTML = 
+    
+      
+        Center Server
+      
+      
+        
+          IP Center
+          Nama Center
+          Server Center
+          Host
+        
+        
+          Jabber Center
+          Nama Center
+          Server Center
+          Host
+        
+        
+          Nomor Center
+          WhatsApp Center
+          SMS Center
+        
+      
+      
+        Simpan
+        Kembali
+      
+    
+  ;
 
-      {renderMainMenu()}
-
-      {/* MODAL MENU TRANSAKSI */}
-      <Modal
-        isOpen={activeModal === 'menu'}
-        onClose={cancelMenus}
-        title="⚙️ Pengaturan Menu & Kategori"
-        footer={
-          <div className="space-y-3">
-             <div className="flex justify-between text-sm text-gray-600 font-medium">
-                <span>Total: {subMenus.length}</span>
-                <span>Aktif: {subMenus.filter(m => m.active).length}</span>
-             </div>
-             <button onClick={saveMenus} className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold shadow flex justify-center items-center gap-2">
-               <Save size={18} /> SIMPAN PERUBAHAN
-             </button>
-          </div>
-        }
-      >
-        <div className="flex gap-2 mb-4">
-          <button onClick={() => addMenu(false)} className="flex-1 bg-purple-100 text-purple-700 py-2 rounded text-sm font-medium hover:bg-purple-200">➕ Menu</button>
-          <button onClick={() => addMenu(true)} className="flex-1 bg-violet-100 text-violet-700 py-2 rounded text-sm font-medium hover:bg-violet-200">📁 Kategori</button>
-        </div>
-
-        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-          {subMenus.map((menu, index) => (
-            <div key={index} className={`flex items-center gap-2 p-2 rounded-lg border ${menu.isCategory ? (menu.active ? 'bg-violet-100 border-violet-300' : 'bg-gray-50') : (menu.active ? 'bg-cyan-50 border-cyan-200' : 'bg-gray-50')}`}>
-              <input type="checkbox" checked={menu.active} onChange={() => toggleActive(index)} className="w-5 h-5 accent-green-500 cursor-pointer" />
-              
-              <input 
-                type="text" 
-                value={menu.name} 
-                onChange={(e) => handleMenuChange(index, 'name', e.target.value)}
-                className="flex-1 p-2 border rounded text-sm focus:border-cyan-500 outline-none"
-                placeholder="Nama Menu..."
-              />
-
-              {!menu.isCategory && (
-                <div className="relative w-10 h-10 flex-shrink-0">
-                  {menu.icon ? (
-                    <img src={menu.icon} alt="icon" className="w-full h-full object-cover rounded border cursor-pointer" onClick={() => document.getElementById(`icon-input-${index}`).click()} />
-                  ) : (
-                    <div onClick={() => document.getElementById(`icon-input-${index}`).click()} className="w-full h-full bg-white border rounded flex items-center justify-center text-xs text-gray-400 cursor-pointer hover:bg-gray-50">+</div>
-                  )}
-                  <input id={`icon-input-${index}`} type="file" accept="image/*" className="hidden" onChange={(e) => handleIconUpload(e, index)} />
-                </div>
-              )}
-
-              <button onClick={() => deleteMenu(index)} className="p-2 text-red-500 hover:bg-red-50 rounded">
-                <Trash2 size={18} />
-              </button>
-              <div className="cursor-move text-gray-400">
-                <GripVertical size={18} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
-
-      {/* MODAL SETUP SERVER */}
-      <Modal
-        isOpen={activeModal === 'server'}
-        onClose={() => setActiveModal(null)}
-        title="🖥️ Pengaturan Server"
-        footer={
-          <button onClick={saveServer} className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-2 rounded-lg font-semibold shadow">
-            Simpan Server
-          </button>
-        }
-      >
-        <div className="space-y-4">
-          <FloatingInput 
-            id="serverName" 
-            label="Nama Server" 
-            value={serverData.nama} 
-            onChange={(e) => setServerData({...serverData, nama: e.target.value})} 
-          />
-          <div className="relative mt-4">
-            <textarea
-              id="serverAddr"
-              rows="4"
-              value={serverData.alamat}
-              onChange={(e) => setServerData({...serverData, alamat: e.target.value})}
-              className="peer w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-              placeholder=" "
-            ></textarea>
-            <label htmlFor="serverAddr" className="absolute left-3 top-2 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5 peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-cyan-600 peer-focus:bg-white peer-focus:px-1 pointer-events-none">Alamat Server / IP</label>
-          </div>
-          
-          <div className="mt-6 pt-4 border-t">
-             <h3 className="font-semibold text-gray-700 mb-2">Center Info (Contoh)</h3>
-             <FloatingInput id="waCenter" label="WhatsApp Center" value="" onChange={()=>{}} />
-             <FloatingInput id="smsCenter" label="SMS Center" value="" onChange={()=>{}} />
-          </div>
-        </div>
-      </Modal>
-
-      {/* MODAL FORMAT TRANSAKSI */}
-      <Modal
-        isOpen={activeModal === 'format'}
-        onClose={() => setActiveModal(null)}
-        title="📝 Format Transaksi"
-        footer={
-          <button onClick={saveFormat} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold shadow">
-            Simpan Format
-          </button>
-        }
-      >
-        <div className="space-y-6">
-          {/* Group 1 */}
-          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <h3 className="text-sm font-bold text-blue-800 mb-3">Format Utama</h3>
-            
-            <div className="mb-4 relative group">
-               <textarea
-                rows={2}
-                className="w-full p-2 border rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none"
-                placeholder="[kode].[tujuan].[pin]"
-                value={formatData.formatTransaksi}
-                onChange={(e) => handleFormatChange('formatTransaksi', e.target.value)}
-              />
-              <label className="text-xs text-gray-500 block mt-1">Format Transaksi Umum</label>
-              <p className="text-[10px] text-yellow-700 bg-yellow-100 p-1 rounded mt-1 hidden group-focus-within:block">Wajib: [kodeproduk],[tujuan],[pin]</p>
-            </div>
-
-            <div className="mb-2">
-               <textarea
-                rows={2}
-                className="w-full p-2 border rounded text-sm focus:ring-2 focus:ring-blue-400 outline-none"
-                placeholder="[kode].[tujuan].[pin].[qty]"
-                value={formatData.formatQty}
-                onChange={(e) => handleFormatChange('formatQty', e.target.value)}
-              />
-              <label className="text-xs text-gray-500 block mt-1">Format Transaksi Qty</label>
-            </div>
-          </div>
-
-          {/* Group 2 */}
-          <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-            <h3 className="text-sm font-bold text-green-800 mb-3">Password IP</h3>
-             <FloatingInput 
-                id="fmtReset" 
-                label="Format Reset Password" 
-                value={formatData.formatReset} 
-                onChange={(e) => handleFormatChange('formatReset', e.target.value)} 
-              />
-             <FloatingInput 
-                id="fmtUbah" 
-                label="Format Ubah Password" 
-                value={formatData.formatUbah} 
-                onChange={(e) => handleFormatChange('formatUbah', e.target.value)} 
-              />
-          </div>
-        </div>
-      </Modal>
-
-      <Toast 
-        message={toast.message} 
-        isVisible={toast.show} 
-        onClose={() => setToast({ ...toast, show: false })} 
-      />
-    </div>
-  );
+  setTimeout(() => {
+    modal.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", () => {
+        hasChanges = true;
+      });
+    });
+  }, 100);
 }
+
+function handleBackFromCenterSettings() {
+  if (hasChanges && !confirm("Perubahan belum disimpan. Yakin ingin kembali?")) return;
+  showSetupServerModal();
+  document.getElementById("modalContentServer").classList.add("hidden");
+  hasChanges = false;
+}
+
+function submitCenterSettings() {
+  const data = {
+    ip: {
+      nama: document.getElementById("ip-nama").value.trim(),
+      server: document.getElementById("ip-server").value.trim(),
+      host: document.getElementById("ip-host").value.trim()
+    },
+    jabber: {
+      nama: document.getElementById("jabber-nama").value.trim(),
+      server: document.getElementById("jabber-server").value.trim(),
+      host: document.getElementById("jabber-host").value.trim()
+    },
+    nomor: {
+      whatsapp: document.getElementById("wa-center").value.trim(),
+      sms: document.getElementById("sms-center").value.trim()
+    }
+  };
+
+  localStorage.setItem("centerServer", JSON.stringify(data));
+  hasChanges = false;
+  showToast("✅ Data Center berhasil disimpan!");
+}
+
+// ✅ TOAST
+function showToast(message) {
+  const toast = document.getElementById("toast-message");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.style.opacity = "1";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 2500);
+}
+
+// 📚📚📚📚📚FORMAT 📚📚📚📚📚
+const formatList = [
+  { label: "Setup Transaksi", icon: "file-text" },
+  { label: "Setup Laporan", icon: "bar-chart-2" },
+  { label: "Format Cek", icon: "search" },
+  { label: "Setup PIN", icon: "key" },
+  { label: "Topup", icon: "dollar-sign" }
+];
+
+let selectedFormat = "";
+
+function showFormatRequestModal() {
+  document.getElementById("modalFormatRequest").classList.remove("hidden");
+  renderFormatList();
+}
+
+function renderFormatList() {
+  const container = document.getElementById("format-request-list");
+  container.innerHTML = "";
+
+  formatList.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className =
+      "w-full flex items-center justify-between px-5 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-500 to-cyan-400 hover:brightness-110 transition";
+    btn.innerHTML = 
+      
+        
+        ${item.label}
+      
+      
+    ;
+
+// 🆔🅰️🅰️🅰️🅰️🅰️ TES
+
+function openSetupTransaksi() {
+  const modal = document.getElementById('modalSetupTransaksi');
+  if (modal) {
+    modal.classList.remove('hidden');
+  }
+}
+
+    // ✅ Perbaikan bagian ini:
+    btn.onclick = () => {
+  if (item.label === "Setup Transaksi") {
+    openSetupTransaksi(); 
+  } else {
+    openFormatForm(item.label);
+  }
+};
+    container.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
+
+// 🟥🟥🟥🟥🟥 SETUP TRANSAKSI 🟩🟩🟩🟩🟩 
+
+  class SetupTransaksi {
+  constructor() {
+    this.textareas = {
+      formatTransaksi: document.getElementById('formatTransaksi'),
+      formatQty: document.getElementById('formatQty'),
+      formatCek: document.getElementById('formatCek'),
+      formatSN: document.getElementById('formatSN'),
+      formatCS: document.getElementById('formatCS'),
+    };
+
+    this.modal = document.getElementById('modalSetupTransaksi');
+    this.notif = document.getElementById('notif-simpan');
+    this.hasChanges = false;
+
+    this.setupEvents();
+    this.loadData();
+  }
+
+  setupEvents() {
+    Object.values(this.textareas).forEach(textarea => {
+      textarea.addEventListener('input', () => this.handleInputChange());
+      textarea.addEventListener('focus', (e) => this.showHelpText(e.target));
+      textarea.addEventListener('blur', (e) => this.hideHelpText(e.target));
+    });
+
+    window.addEventListener('popstate', () => this.closeModal());
+  }
+
+  handleInputChange() {
+    this.hasChanges = true;
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      const label = textarea.previousElementSibling;
+      if (label && label.tagName === 'LABEL') {
+        label.classList.toggle('text-gray-300', textarea.value.trim() === '');
+      }
+    });
+  }
+
+  showHelpText(textarea) {
+    const helpText = textarea.closest(".relative").previousElementSibling;
+    if (helpText && helpText.classList.contains("help-text")) {
+      helpText.classList.remove("scale-0", "opacity-0", "pointer-events-none", "hidden");
+      helpText.classList.add("scale-100", "opacity-100");
+    }
+  }
+
+  hideHelpText(textarea) {
+    const helpText = textarea.closest(".relative").previousElementSibling;
+    if (helpText && helpText.classList.contains("help-text")) {
+      helpText.classList.remove("scale-100", "opacity-100");
+      helpText.classList.add("scale-0", "opacity-0", "pointer-events-none");
+    }
+  }
+
+  openModal() {
+    this.modal.classList.remove('hidden');
+    history.pushState(null, null, location.href);
+  }
+
+  closeModal() {
+    if (this.hasChanges && !confirm("Ada perubahan yang belum disimpan. Tutup tanpa menyimpan?")) {
+      history.pushState(null, null, location.href);
+      return;
+    }
+    this.modal.classList.add('hidden');
+    this.hasChanges = false;
+  }
+
+  saveData() {
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      localStorage.setItem(key, textarea.value);
+    });
+    this.hasChanges = false;
+    this.showNotification();
+  }
+
+  loadData() {
+    Object.entries(this.textareas).forEach(([key, textarea]) => {
+      const saved = localStorage.getItem(key);
+      if (saved !== null) textarea.value = saved;
+    });
+    this.handleInputChange();
+  }
+
+  showNotification() {
+    this.notif.classList.remove('hidden', 'scale-95', 'opacity-0');
+    this.notif.classList.add('scale-100', 'opacity-100');
+    setTimeout(() => {
+      this.notif.classList.remove('scale-100', 'opacity-100');
+      this.notif.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => this.notif.classList.add('hidden'), 300);
+    }, 1000);
+  }
+}
+
+// Inisialisasi setelah DOM siap
+window.addEventListener('DOMContentLoaded', () => {
+  const setupTransaksi = new SetupTransaksi();
+
+  window.openSetupTransaksi = () => setupTransaksi.openModal();
+  window.saveSetupTransaksi = () => setupTransaksi.saveData();
+});
+
+  
+  
+  window.addEventListener("DOMContentLoaded", () => {
+    const textareaList = document.querySelectorAll("textarea");
+    const btnSimpan = document.getElementById("btnSimpanFormat");
+    const modalKonfirmasi = document.getElementById("popupKonfirmasi");
+    const btnYa = document.getElementById("btnYaSimpan");
+    const btnTidak = document.getElementById("btnTidakSimpan");
+
+    let originalValues = {};
+    let adaPerubahan = false;
+
+    // Load data dari localStorage (jika ada)
+    textareaList.forEach(textarea => {
+      const savedValue = localStorage.getItem("textarea_" + textarea.id);
+      if (savedValue !== null) {
+        textarea.value = savedValue;
+      }
+      originalValues[textarea.id] = textarea.value;
+    });
+
+    function cekPerubahan() {
+      adaPerubahan = Array.from(textareaList).some(textarea => {
+        return textarea.value !== originalValues[textarea.id];
+      });
+      btnSimpan.disabled = !adaPerubahan;
+      btnSimpan.classList.toggle("bg-gray-300", !adaPerubahan);
+      btnSimpan.classList.toggle("text-gray-500", !adaPerubahan);
+      btnSimpan.classList.toggle("cursor-not-allowed", !adaPerubahan);
+      btnSimpan.classList.toggle("bg-green-600", adaPerubahan);
+      btnSimpan.classList.toggle("text-white", adaPerubahan);
+    }
+
+    textareaList.forEach(textarea => {
+    textarea.addEventListener("input", () => {
+  cekPerubahan();
+  // Simpan otomatis setiap perubahan
+  localStorage.setItem("textarea_" + textarea.id, textarea.value);
+   });
+    });
+
+    // TOMBOL SIMPAN DITEKAN
+    btnSimpan.addEventListener("click", () => {
+      if (adaPerubahan) {
+        modalKonfirmasi.classList.remove("hidden");
+      }
+    });
+
+    // TOMBOL YA → Simpan
+    btnYa.addEventListener("click", () => {
+      textareaList.forEach(textarea => {
+        originalValues[textarea.id] = textarea.value;
+
+        // Simpan ke localStorage
+        localStorage.setItem("textarea_" + textarea.id, textarea.value);
+      });
+      modalKonfirmasi.classList.add("hidden");
+      adaPerubahan = false;
+      cekPerubahan();
+
+      // ✅ Notifikasi simpan
+      const notif = document.createElement("div");
+      notif.innerText = "✅ Perubahan berhasil disimpan.";
+      notif.className = "fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-[99999]";
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    });
+
+    // TOMBOL TIDAK → Batalkan Perubahan
+    btnTidak.addEventListener("click", () => {
+      textareaList.forEach(textarea => {
+        textarea.value = originalValues[textarea.id];
+      });
+      modalKonfirmasi.classList.add("hidden");
+      adaPerubahan = false;
+      cekPerubahan();
+    });
+
+    cekPerubahan(); // inisialisasi kondisi tombol saat load
+  });
+
+  // ↩️↩️ Tombol Kembali
+  let formChanged = false;
+
+  // Deteksi perubahan di semua textarea
+  document.querySelectorAll("textarea").forEach(textarea => {
+    textarea.addEventListener("input", () => {
+      formChanged = true;
+    });
+  });
+
+  // Tombol YA di popup konfirmasi kembali
+  document.getElementById("btnKembaliYa").addEventListener("click", () => {
+    document.getElementById("popupKonfirmasiKembali").classList.add("hidden");
+
+    // Reset semua textarea ke data terakhir tersimpan
+    document.querySelectorAll("#modalSetupTransaksi textarea").forEach(textarea => {
+      const savedValue = localStorage.getItem("textarea_" + textarea.id);
+      textarea.value = savedValue ?? textarea.defaultValue;
+    });
+
+    formChanged = false;
+    document.getElementById("modalSetupTransaksi").classList.add("hidden");
+    document.getElementById("modalMenuTransaksi").classList.remove("hidden");
+  });
+
+  // Tombol TIDAK di popup konfirmasi kembali
+  document.getElementById("btnKembaliTidak").addEventListener("click", () => {
+    document.getElementById("popupKonfirmasiKembali").classList.add("hidden");
+  });
+
+  // Tombol kembali HP (Android)
+  window.addEventListener("popstate", function (event) {
+    if (document.getElementById("modalSetupTransaksi").classList.contains("flex")) {
+      if (formChanged) {
+        history.pushState(null, null); // cegah keluar
+        document.getElementById("popupKonfirmasiKembali").classList.remove("hidden");
+      } else {
+        document.getElementById("modalSetupTransaksi").classList.add("hidden");
+        document.getElementById("modalMenuTransaksi").classList.remove("hidden");
+      }
+    }
+  });
+
+  // Push initial state untuk tracking tombol kembali
+  history.pushState(null, null);
