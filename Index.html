@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Galeri Pulsa</title>
+
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+
+<style>
+
+body{
+
+    background:#f3f4f6;
+
+}
+
+
+
+.menu-card{
+
+    transition:.2s;
+
+}
+
+
+
+.menu-card:active{
+
+    transform:scale(.96);
+
+}
+
+
+
+.modal{
+
+    display:none;
+
+}
+
+
+
+.modal.show{
+
+    display:flex;
+
+}
+
+</style>
+
+
+
+</head>
+
+<body class="max-w-md mx-auto min-h-screen p-4">
+
+
+
+<!-- HEADER -->
+
+<div class="mb-5">
+
+    <h1 class="text-2xl font-bold text-cyan-700">
+
+        Admin Galeri
+
+    </h1>
+
+    <p class="text-sm text-gray-500">
+
+        Web Panel Admin Galeri Pulsa
+
+    </p>
+
+</div>
+
+
+
+<!-- MENU -->
+
+<div class="grid grid-cols-3 gap-3">
+
+
+
+    <div onclick="openModal('serverModal')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="server" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Setup Server</p>
+
+    </div>
+
+
+
+    <div onclick="openModal('trxModal')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="layout-grid" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Menu Transaksi</p>
+
+    </div>
+
+
+
+    <div onclick="alert('Prabayar')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="smartphone" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Prabayar</p>
+
+    </div>
+
+
+
+    <div onclick="alert('Pascabayar')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="credit-card" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Pascabayar</p>
+
+    </div>
+
+
+
+    <div onclick="openModal('formatModal')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="file-text" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Format Request</p>
+
+    </div>
+
+
+
+    <div onclick="alert('OTP')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="key-round" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">OTP</p>
+
+    </div>
+
+
+
+    <div onclick="alert('Poin')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="star" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Poin</p>
+
+    </div>
+
+
+
+    <div onclick="alert('Downline')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="users" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Downline</p>
+
+    </div>
+
+
+
+    <div onclick="alert('Logo')" class="menu-card bg-white rounded-xl shadow p-4 text-center cursor-pointer">
+
+        <i data-lucide="image" class="mx-auto w-8 h-8"></i>
+
+        <p class="mt-2 text-sm font-semibold">Logo</p>
+
+    </div>
+
+
+
+</div>
+
+
+
+<!-- MODAL SETUP SERVER -->
+
+<div id="serverModal" class="modal fixed inset-0 bg-white z-50 flex-col p-4">
+
+
+
+    <h2 class="text-xl font-bold mb-5">
+
+        Setup Server
+
+    </h2>
+
+
+
+    <input
+
+        id="namaServer"
+
+        class="w-full border rounded-lg p-3 mb-3"
+
+        placeholder="Nama Server">
+
+
+
+    <textarea
+
+        id="alamatServer"
+
+        class="w-full border rounded-lg p-3 mb-3"
+
+        rows="4"
+
+        placeholder="Alamat Server"></textarea>
+
+
+
+    <button
+
+        onclick="simpanServer()"
+
+        class="bg-green-600 text-white p-3 rounded-lg">
+
+        Simpan
+
+    </button>
+
+
+
+    <button
+
+        onclick="closeModal('serverModal')"
+
+        class="bg-red-500 text-white p-3 rounded-lg mt-2">
+
+        Tutup
+
+    </button>
+
+
+
+</div>
+
+
+
+<!-- MODAL MENU TRANSAKSI -->
+
+<div id="trxModal" class="modal fixed inset-0 bg-white z-50 flex-col p-4">
+
+
+
+    <h2 class="text-xl font-bold mb-4">
+
+        Menu Transaksi
+
+    </h2>
+
+
+
+    <div class="flex gap-2 mb-4">
+
+
+
+        <button
+
+            onclick="tambahMenu()"
+
+            class="flex-1 bg-cyan-600 text-white p-2 rounded">
+
+            + Menu
+
+        </button>
+
+
+
+        <button
+
+            onclick="tambahKategori()"
+
+            class="flex-1 bg-violet-600 text-white p-2 rounded">
+
+            + Kategori
+
+        </button>
+
+
+
+    </div>
+
+
+
+    <div
+
+        id="menuList"
+
+        class="flex-1 overflow-auto border rounded p-2">
+
+    </div>
+
+
+
+    <button
+
+        onclick="closeModal('trxModal')"
+
+        class="bg-red-500 text-white p-3 rounded mt-4">
+
+        Tutup
+
+    </button>
+
+
+
+</div>
+
+
+
+<!-- MODAL FORMAT -->
+
+<div id="formatModal" class="modal fixed inset-0 bg-white z-50 flex-col p-4">
+
+
+
+    <h2 class="text-xl font-bold mb-4">
+
+        Format Request
+
+    </h2>
+
+
+
+    <div class="space-y-3">
+
+
+
+        <button class="w-full bg-cyan-600 text-white p-3 rounded">
+
+            Setup Transaksi
+
+        </button>
+
+
+
+        <button class="w-full bg-cyan-600 text-white p-3 rounded">
+
+            Setup Laporan
+
+        </button>
+
+
+
+        <button class="w-full bg-cyan-600 text-white p-3 rounded">
+
+            Format Cek
+
+        </button>
+
+
+
+        <button class="w-full bg-cyan-600 text-white p-3 rounded">
+
+            Setup PIN
+
+        </button>
+
+
+
+        <button class="w-full bg-cyan-600 text-white p-3 rounded">
+
+            Topup
+
+        </button>
+
+
+
+    </div>
+
+
+
+    <button
+
+        onclick="closeModal('formatModal')"
+
+        class="bg-red-500 text-white p-3 rounded mt-4">
+
+        Tutup
+
+    </button>
+
+
+
+</div>
+
+
+
+<script>
+
+
+
+function openModal(id){
+
+    document.getElementById(id).classList.add("show");
+
+}
+
+
+
+function closeModal(id){
+
+    document.getElementById(id).classList.remove("show");
+
+}
+
+
+
+function simpanServer(){
+
+
+
+    const data = {
+
+        nama:document.getElementById("namaServer").value,
+
+        alamat:document.getElementById("alamatServer").value
+
+    };
+
+
+
+    localStorage.setItem(
+
+        "setupServer",
+
+        JSON.stringify(data)
+
+    );
+
+
+
+    alert("Data berhasil disimpan");
+
+}
+
+
+
+function tambahMenu(){
+
+
+
+    const nama = prompt("Nama Menu");
+
+
+
+    if(!nama) return;
+
+
+
+    const list = document.getElementById("menuList");
+
+
+
+    list.innerHTML += `
+
+    <div class="bg-cyan-100 p-3 rounded mb-2">
+
+        ${nama}
+
+    </div>`;
+
+}
+
+
+
+function tambahKategori(){
+
+
+
+    const nama = prompt("Nama Kategori");
+
+
+
+    if(!nama) return;
+
+
+
+    const list = document.getElementById("menuList");
+
+
+
+    list.innerHTML += `
+
+    <div class="bg-violet-100 p-3 rounded mb-2 font-bold">
+
+        ${nama}
+
+    </div>`;
+
+}
+
+
+
+lucide.createIcons();
+
+
+
+</script>
+
+
+
+</body>
+
+  </html>
