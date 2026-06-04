@@ -8,6 +8,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 <style>
 .menu-active{
@@ -92,6 +93,15 @@ body{
     display:none;
     z-index:9999;
 }
+
+.drag-handle{
+    cursor:grab;
+}
+
+.drag-handle:active{
+    cursor:grabbing;
+}
+
 </style>
 </head>
 <body class="max-w-screen-md mx-auto p-4">
@@ -908,6 +918,14 @@ type="checkbox"
 ${item.checked ? 'checked' : ''}
 onchange="toggleTransaksi(${index})">
 
+<i
+data-lucide="grip-vertical"
+class="drag-handle text-gray-400">
+</i>
+
+<i data-lucide="${item.icon}"></i>
+
+
 <input
 value="${item.nama}"
 class="flex-1 bg-transparent outline-none font-bold"
@@ -939,7 +957,7 @@ onchange="toggleTransaksi(${index})">
 
 <i
 data-lucide="grip-vertical"
-class="text-gray-400 cursor-move">
+class="drag-handle text-gray-400">
 </i>
 
 <i data-lucide="${item.icon}"></i>
@@ -965,6 +983,51 @@ list.appendChild(div);
 });
 
 lucide.createIcons();
+
+initDragDrop();
+
+}
+
+function initDragDrop(){
+
+    const list =
+    document.getElementById("transaksiList");
+
+    if(!list) return;
+
+    Sortable.create(list,{
+
+        animation:150,
+
+        handle:".drag-handle",
+
+        delay:500,
+
+        delayOnTouchOnly:true,
+
+        onEnd:function(evt){
+
+            const moved =
+            transaksiItems.splice(
+                evt.oldIndex,
+                1
+            )[0];
+
+            transaksiItems.splice(
+                evt.newIndex,
+                0,
+                moved
+            );
+
+            transaksiChanged = true;
+
+            enableButton(
+                "saveTransaksiBtn"
+            );
+
+        }
+
+    });
 
 }
 
