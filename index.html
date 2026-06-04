@@ -10,6 +10,21 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
+.menu-active{
+    background:linear-gradient(135deg,#0891b2,#2563eb);
+    color:white;
+    transform:translateY(-3px);
+    box-shadow:0 10px 20px rgba(0,0,0,.15);
+}
+
+.menu-active .menu-label{
+    color:white;
+}
+
+.menu-active i{
+    color:white;
+}
+
 body{
     background:#f1f5f9;
 }
@@ -339,7 +354,7 @@ document.getElementById("menuGrid");
 
 grid.innerHTML="";
 
-menus.forEach(menu=>{
+menus.forEach((menu,index)=>{
 
 const card =
 document.createElement("div");
@@ -347,24 +362,34 @@ document.createElement("div");
 card.className =
 "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
 
+card.dataset.index = index;
+
 card.innerHTML=`
 <div class="flex justify-center mb-3">
-<i data-lucide="${menu.icon}"></i>
+    <i data-lucide="${menu.icon}"></i>
 </div>
-<div class="font-semibold text-gray-700">
-${menu.label}
+<div class="menu-label font-semibold text-gray-700">
+    ${menu.label}
 </div>
 `;
 
 card.onclick=()=>{
 
-if(menu.action==="server"){
-openServer();
-}
+    document
+    .querySelectorAll(".card-menu")
+    .forEach(el=>{
+        el.classList.remove("menu-active");
+    });
 
-if(menu.action==="center"){
-openCenter();
-}
+    card.classList.add("menu-active");
+
+    if(menu.action==="server"){
+        openServer();
+    }
+
+    if(menu.action==="center"){
+        openCenter();
+    }
 
 };
 
