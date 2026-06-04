@@ -142,9 +142,13 @@ onclick="confirmSaveServer()"
 disabled
 class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
 
+Simpan
+
+</button>
+
 <button
-onclick="closeServer()"
-class="flex-1 bg-red-500 text-white py-3 rounded-xl">
+onclick="checkCloseServer()"
+class="flex-1 bg-red-500 text-white py-4 rounded-xl">
 
 Tutup
 
@@ -253,10 +257,51 @@ Simpan
 </button>
 
     <button
-    onclick="closeCenter()"
+    onclick="checkCloseCenter()"
     class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg">
         Tutup
     </button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MODAL KONFIRMASI -->
+
+<div id="confirmModal"
+class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+
+<div class="bg-white rounded-3xl w-full max-w-sm p-5 shadow-xl">
+
+<h3 id="confirmTitle"
+class="text-lg font-bold text-gray-800 mb-3">
+Konfirmasi
+</h3>
+
+<p id="confirmMessage"
+class="text-gray-600">
+Pesan konfirmasi
+</p>
+
+<div class="flex gap-3 mt-6">
+
+<button
+onclick="closeConfirmModal()"
+class="flex-1 bg-gray-200 py-3 rounded-xl">
+
+Batal
+
+</button>
+
+<button
+id="confirmOkBtn"
+class="flex-1 bg-green-600 text-white py-3 rounded-xl">
+
+OK
+
+</button>
 
 </div>
 
@@ -270,6 +315,7 @@ Simpan
 
 let centerChanged = false;
 let serverChanged = false;
+let confirmAction = null;
 
 const menus = [
 
@@ -568,13 +614,11 @@ function confirmSaveCenter(){
 
 if(!centerChanged) return;
 
-if(confirm(
-"Apakah Anda yakin ingin menyimpan perubahan Center?"
-)){
-
-saveCenter();
-
-}
+showConfirm(
+"Konfirmasi Simpan",
+"Apakah Anda yakin ingin menyimpan perubahan Center?",
+saveCenter
+);
 
 }
 
@@ -582,15 +626,89 @@ function confirmSaveServer(){
 
 if(!serverChanged) return;
 
-if(confirm(
-"Apakah Anda yakin ingin menyimpan perubahan Server?"
-)){
+showConfirm(
+"Konfirmasi Simpan",
+"Apakah Anda yakin ingin menyimpan perubahan Server?",
+saveServer
+);
 
-saveServer();
+}
+
+function checkCloseCenter(){
+
+if(centerChanged){
+
+showConfirm(
+"Perubahan Belum Disimpan",
+"Masih ada perubahan yang belum disimpan. Yakin ingin keluar?",
+closeCenter
+);
+
+return;
 
 }
 
+closeCenter();
+
 }
+
+function checkCloseServer(){
+
+if(serverChanged){
+
+showConfirm(
+"Perubahan Belum Disimpan",
+"Masih ada perubahan yang belum disimpan. Yakin ingin keluar?",
+closeServer
+);
+
+return;
+
+}
+
+closeServer();
+
+}
+
+function showConfirm(title,message,action){
+
+document
+.getElementById("confirmTitle")
+.innerText = title;
+
+document
+.getElementById("confirmMessage")
+.innerText = message;
+
+confirmAction = action;
+
+document
+.getElementById("confirmModal")
+.classList.remove("hidden");
+
+}
+
+function closeConfirmModal(){
+
+document
+.getElementById("confirmModal")
+.classList.add("hidden");
+
+}
+
+document.addEventListener("click",(e)=>{
+
+if(e.target.id==="confirmOkBtn"){
+
+if(confirmAction){
+confirmAction();
+}
+
+closeConfirmModal();
+
+}
+
+});
 
 watchCenterChanges();
 watchServerChanges();
