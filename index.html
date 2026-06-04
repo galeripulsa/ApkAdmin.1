@@ -411,34 +411,6 @@ let serverChanged = false;
 let transaksiChanged = false;
 let confirmAction = null;
 
-function showConfirm(title,message,action){
-
-    document.getElementById("confirmTitle").innerText = title;
-
-    document.getElementById("confirmMessage").innerText = message;
-
-    confirmAction = action;
-
-    document.getElementById("confirmModal")
-    .classList.remove("hidden");
-
-}
-
-function closeConfirm(){
-
-    document.getElementById("confirmModal")
-    .classList.add("hidden");
-
-}
-
-function executeConfirm(){
-
-    if(typeof confirmAction === "function"){
-        confirmAction();
-    }
-
-    closeConfirm();
-
 
 const menus = [
 
@@ -1077,6 +1049,36 @@ JSON.parse(data);
 renderTransaksi();
 
 }
+
+
+function showConfirm(title,message,action){
+
+    document.getElementById("confirmTitle").innerText = title;
+
+    document.getElementById("confirmMessage").innerText = message;
+
+    confirmAction = action;
+
+    document.getElementById("confirmModal")
+    .classList.remove("hidden");
+
+}
+
+function closeConfirm(){
+
+    document.getElementById("confirmModal")
+    .classList.add("hidden");
+
+}
+
+function executeConfirm(){
+
+    if(typeof confirmAction === "function"){
+        confirmAction();
+    }
+
+    closeConfirm();
+ }
 
 watchCenterChanges();
 watchServerChanges();
