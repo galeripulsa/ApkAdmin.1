@@ -324,6 +324,86 @@ OK
 
 </div>
 
+
+<!-- MENU TRANSAKSI -->
+
+<div id="transaksiModal"
+class="modal fixed inset-0 bg-white z-50 overflow-auto">
+
+<div class="w-full">
+
+    <!-- HEADER -->
+
+    <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
+
+        <div class="flex items-center justify-between">
+
+            <h2 class="font-bold text-xl">
+                Menu Transaksi
+            </h2>
+
+            <div class="flex gap-2">
+
+                <button
+                onclick="addMenu()"
+                class="bg-green-500 px-3 py-2 rounded-xl">
+                    + Menu
+                </button>
+
+                <button
+                onclick="addKategori()"
+                class="bg-yellow-500 px-3 py-2 rounded-xl">
+                    + Kategori
+                </button>
+
+                <button
+                onclick="renderTransaksi()"
+                class="bg-blue-500 px-3 py-2 rounded-xl">
+                    Refresh
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LIST -->
+
+    <div
+    id="transaksiList"
+    class="p-3 space-y-2">
+    </div>
+
+    <!-- FOOTER -->
+
+    <div
+    class="sticky bottom-0 bg-white border-t p-3 flex gap-3">
+
+        <button
+        id="saveTransaksiBtn"
+        onclick="saveTransaksi()"
+        disabled
+        class="flex-1 bg-gray-400 text-white py-3 rounded-xl">
+
+            Simpan
+
+        </button>
+
+        <button
+        onclick="closeTransaksi()"
+        class="flex-1 bg-red-500 text-white py-3 rounded-xl">
+
+            Tutup
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -331,6 +411,7 @@ OK
 let centerChanged = false;
 let serverChanged = false;
 let confirmAction = null;
+let transaksiChanged = false;
 
 const menus = [
 
@@ -416,6 +497,10 @@ card.onclick=()=>{
        openTransaksi();
     }
 
+    if(menu.action==="transaksi"){
+       openTransaksi();
+    }
+
 };
 
 grid.appendChild(card);
@@ -488,6 +573,7 @@ document.getElementById("alamatKonter").value=
 data.alamat || "";
 
 }
+
 
 function openCenter(){
 
@@ -678,7 +764,7 @@ if(!serverChanged) return;
 
 showConfirm(
 "Konfirmasi Simpan",
-"Apakah Anda yakin ingin menyimpan perubahan Server?",
+"Apakah Anda yakin ingin menyimpan perubahan Server ?",
 saveServer
 );
 
@@ -690,7 +776,7 @@ if(centerChanged){
 
 showConfirm(
 "Perubahan Belum Disimpan",
-"Masih ada perubahan yang belum disimpan. Yakin ingin keluar?",
+"Yakin ingin keluar?",
 closeCenter
 );
 
@@ -708,7 +794,7 @@ if(serverChanged){
 
 showConfirm(
 "Perubahan Belum Disimpan",
-"Masih ada perubahan yang belum disimpan. Yakin ingin keluar?",
+"Yakin ingin keluar?",
 closeServer
 );
 
@@ -759,6 +845,209 @@ closeConfirmModal();
 }
 
 });
+
+function openTransaksi(){
+
+    document
+    .getElementById("transaksiModal")
+    .classList.add("show");
+
+    loadTransaksi();
+
+    transaksiChanged = false;
+
+    disableButton("saveTransaksiBtn");
+
+}
+
+function closeTransaksi(){
+
+    if(transaksiChanged){
+
+        showConfirm(
+            "Perubahan belum disimpan. Yakin ingin keluar?",
+            ()=>{
+
+                transaksiChanged=false;
+
+                document
+                .getElementById("transaksiModal")
+                .classList.remove("show");
+
+            }
+        );
+
+        return;
+    }
+
+    document
+    .getElementById("transaksiModal")
+    .classList.remove("show");
+
+}
+
+function renderTransaksi(){
+
+const list =
+document.getElementById("transaksiList");
+
+list.innerHTML="";
+
+transaksiItems.forEach((item,index)=>{
+
+const div =
+document.createElement("div");
+
+if(item.type==="kategori"){
+
+div.innerHTML=`
+
+<div class="bg-yellow-100 p-3 rounded-xl flex gap-2">
+
+<input
+value="${item.nama}"
+class="flex-1 bg-transparent outline-none font-bold"
+oninput="updateTransaksi(${index},this.value)">
+
+<button
+onclick="hapusTransaksi(${index})">
+
+🗑️
+
+</button>
+
+</div>
+
+`;
+
+}else{
+
+div.innerHTML=`
+
+<div class="bg-white shadow p-3 rounded-xl flex gap-3 items-center">
+
+<i data-lucide="${item.icon}"></i>
+
+<input
+value="${item.nama}"
+class="flex-1 outline-none"
+oninput="updateTransaksi(${index},this.value)">
+
+<button
+onclick="hapusTransaksi(${index})">
+
+🗑️
+
+</button>
+
+</div>
+
+`;
+
+}
+
+list.appendChild(div);
+
+});
+
+lucide.createIcons();
+
+}
+
+function addMenu(){
+
+transaksiItems.push({
+
+type:"menu",
+nama:"Menu Baru",
+icon:"circle"
+
+});
+
+transaksiChanged=true;
+
+enableButton("saveTransaksiBtn");
+
+renderTransaksi();
+
+}
+
+function addKategori(){
+
+transaksiItems.push({
+
+type:"kategori",
+nama:"Kategori Baru"
+
+});
+
+transaksiChanged=true;
+
+enableButton("saveTransaksiBtn");
+
+renderTransaksi();
+
+}
+
+function updateTransaksi(index,value){
+
+transaksiItems[index].nama=value;
+
+transaksiChanged=true;
+
+enableButton("saveTransaksiBtn");
+
+}
+
+function hapusTransaksi(index){
+
+showConfirm(
+"Yakin ingin menghapus item ini?",
+()=>{
+
+transaksiItems.splice(index,1);
+
+transaksiChanged=true;
+
+enableButton("saveTransaksiBtn");
+
+renderTransaksi();
+
+}
+);
+
+}
+
+function saveTransaksi(){
+
+localStorage.setItem(
+"transaksiItems",
+JSON.stringify(transaksiItems)
+);
+
+transaksiChanged=false;
+
+disableButton("saveTransaksiBtn");
+
+toast("Menu Transaksi Disimpan");
+
+}
+
+function loadTransaksi(){
+
+const data =
+localStorage.getItem("transaksiItems");
+
+if(data){
+
+transaksiItems =
+JSON.parse(data);
+
+}
+
+renderTransaksi();
+
+}
 
 watchCenterChanges();
 watchServerChanges();
