@@ -897,21 +897,17 @@ if(item.type==="kategori"){
 
 div.innerHTML=`
 
-<div class="${
-item.checked
-? 'bg-yellow-100 border-2 border-yellow-500'
-: 'bg-yellow-100'
-} p-3 rounded-xl flex gap-2 items-center">
+<div class="flex gap-1">
 
-<input
-type="checkbox"
-${item.checked ? 'checked' : ''}
-onchange="toggleTransaksi(${index})">
+<button
+onclick="moveUp(${index})">
+⬆️
+</button>
 
-<input
-value="${item.nama}"
-class="flex-1 bg-transparent outline-none font-bold"
-oninput="updateTransaksi(${index},this.value)">
+<button
+onclick="moveDown(${index})">
+⬇️
+</button>
 
 <button
 onclick="hapusTransaksi(${index})">
@@ -926,23 +922,17 @@ onclick="hapusTransaksi(${index})">
 
 div.innerHTML=`
 
-<div class="${
-item.checked
-? 'bg-green-100 border-2 border-green-500'
-: 'bg-white'
-} p-3 rounded-xl flex gap-2 items-center">
+<div class="flex gap-1">
 
-<input
-type="checkbox"
-${item.checked ? 'checked' : ''}
-onchange="toggleTransaksi(${index})">
+<button
+onclick="moveUp(${index})">
+⬆️
+</button>
 
-<i data-lucide="${item.icon}"></i>
-
-<input
-value="${item.nama}"
-class="flex-1 outline-none"
-oninput="updateTransaksi(${index},this.value)">
+<button
+onclick="moveDown(${index})">
+⬇️
+</button>
 
 <button
 onclick="hapusTransaksi(${index})">
@@ -950,7 +940,6 @@ onclick="hapusTransaksi(${index})">
 </button>
 
 </div>
-
 `;
 
 }
