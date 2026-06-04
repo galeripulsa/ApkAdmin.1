@@ -137,12 +137,10 @@ placeholder=" "></textarea>
 <div class="mt-5 flex gap-2">
 
 <button
-onclick="saveServer()"
-class="flex-1 bg-green-600 text-white py-3 rounded-xl">
-
-Simpan
-
-</button>
+id="saveServerBtn"
+onclick="confirmSaveServer()"
+disabled
+class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
 
 <button
 onclick="closeServer()"
@@ -245,10 +243,14 @@ class="modal fixed inset-0 bg-white z-50 overflow-auto">
 <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
 
     <button
-    onclick="saveCenter()"
-    class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg">
-        Simpan
-    </button>
+id="saveCenterBtn"
+onclick="confirmSaveCenter()"
+disabled
+class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
+
+Simpan
+
+</button>
 
     <button
     onclick="closeCenter()"
@@ -265,6 +267,9 @@ class="modal fixed inset-0 bg-white z-50 overflow-auto">
 <div id="toast" class="toast"></div>
 
 <script>
+
+let centerChanged = false;
+let serverChanged = false;
 
 const menus = [
 
@@ -332,7 +337,11 @@ document
 .classList.add("show");
 
 loadServer();
+serverChanged = false;
 
+setTimeout(()=>{
+disableButton("saveServerBtn");
+},100);
 }
 
 function closeServer(){
@@ -360,6 +369,9 @@ localStorage.setItem(
 JSON.stringify(data)
 );
 
+serverChanged = false;
+
+disableButton("saveServerBtn");
 toast("Data Server Disimpan");
 
 }
@@ -388,7 +400,11 @@ document
 .classList.add("show");
 
 loadCenter();
+centerChanged = false;
 
+setTimeout(()=>{
+disableButton("saveCenterBtn");
+},100);
 }
 
 function closeCenter(){
@@ -427,6 +443,9 @@ localStorage.setItem(
 JSON.stringify(data)
 );
 
+centerChanged = false;
+
+disableButton("saveCenterBtn");
 toast("Data Center Disimpan");
 
 }
@@ -467,6 +486,114 @@ t.style.display="none";
 
 }
 
+function enableButton(btnId){
+
+const btn = document.getElementById(btnId);
+
+btn.disabled = false;
+
+btn.classList.remove(
+"bg-gray-400",
+"cursor-not-allowed"
+);
+
+btn.classList.add("bg-green-600");
+
+}
+
+function disableButton(btnId){
+
+const btn = document.getElementById(btnId);
+
+btn.disabled = true;
+
+btn.classList.remove("bg-green-600");
+
+btn.classList.add(
+"bg-gray-400",
+"cursor-not-allowed"
+);
+
+}
+
+function watchCenterChanges(){
+
+[
+ipNama,
+ipServer,
+ipHost,
+
+jabberNama,
+jabberServer,
+jabberHost,
+
+waCenter,
+smsCenter
+
+].forEach(field=>{
+
+field.addEventListener("input",()=>{
+
+centerChanged = true;
+
+enableButton("saveCenterBtn");
+
+});
+
+});
+
+}
+
+function watchServerChanges(){
+
+[
+document.getElementById("namaKonter"),
+document.getElementById("alamatKonter")
+
+].forEach(field=>{
+
+field.addEventListener("input",()=>{
+
+serverChanged = true;
+
+enableButton("saveServerBtn");
+
+});
+
+});
+
+}
+
+function confirmSaveCenter(){
+
+if(!centerChanged) return;
+
+if(confirm(
+"Apakah Anda yakin ingin menyimpan perubahan Center?"
+)){
+
+saveCenter();
+
+}
+
+}
+
+function confirmSaveServer(){
+
+if(!serverChanged) return;
+
+if(confirm(
+"Apakah Anda yakin ingin menyimpan perubahan Server?"
+)){
+
+saveServer();
+
+}
+
+}
+
+watchCenterChanges();
+watchServerChanges();
 renderMenus();
 
 </script>
