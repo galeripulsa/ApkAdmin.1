@@ -283,47 +283,45 @@ Simpan
 
 </div>
 
+
 <!-- MODAL KONFIRMASI -->
 
 <div id="confirmModal"
-class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4">
+class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
 
-<div class="bg-white rounded-3xl w-full max-w-sm p-5 shadow-xl">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
 
-<h3 id="confirmTitle"
-class="text-lg font-bold text-gray-800 mb-3">
-Konfirmasi
-</h3>
+        <h3 id="confirmTitle"
+            class="text-xl font-bold text-gray-800 mb-2">
+        </h3>
 
-<p id="confirmMessage"
-class="text-gray-600">
-Pesan konfirmasi
-</p>
+        <p id="confirmMessage"
+           class="text-gray-600 mb-6">
+        </p>
 
-<div class="flex gap-3 mt-6">
+        <div class="flex gap-3">
 
-<button
-onclick="closeConfirmModal()"
-class="flex-1 bg-gray-200 py-3 rounded-xl">
+            <button
+            onclick="closeConfirm()"
+            class="flex-1 bg-gray-200 py-3 rounded-xl">
 
-Batal
+                Batal
 
-</button>
+            </button>
 
-<button
-id="confirmOkBtn"
-class="flex-1 bg-green-600 text-white py-3 rounded-xl">
+            <button
+            onclick="executeConfirm()"
+            class="flex-1 bg-green-600 text-white py-3 rounded-xl">
 
-OK
+                OK
 
-</button>
+            </button>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </div>
-
 
 <!-- MENU TRANSAKSI -->
 
@@ -865,17 +863,18 @@ function closeTransaksi(){
     if(transaksiChanged){
 
         showConfirm(
-            "Perubahan belum disimpan. Yakin ingin keluar?",
-            ()=>{
+"Perubahan Belum Disimpan",
+"Yakin ingin keluar tanpa menyimpan perubahan?",
+()=>{
 
-                transaksiChanged=false;
+    transaksiChanged = false;
 
-                document
-                .getElementById("transaksiModal")
-                .classList.remove("show");
+    document
+    .getElementById("transaksiModal")
+    .classList.remove("show");
 
-            }
-        );
+}
+);
 
         return;
     }
@@ -1002,16 +1001,17 @@ enableButton("saveTransaksiBtn");
 function hapusTransaksi(index){
 
 showConfirm(
+"Konfirmasi Hapus",
 "Yakin ingin menghapus item ini?",
 ()=>{
 
-transaksiItems.splice(index,1);
+    transaksiItems.splice(index,1);
 
-transaksiChanged=true;
+    transaksiChanged = true;
 
-enableButton("saveTransaksiBtn");
+    enableButton("saveTransaksiBtn");
 
-renderTransaksi();
+    renderTransaksi();
 
 }
 );
