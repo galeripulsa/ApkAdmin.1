@@ -896,7 +896,16 @@ if(item.type==="kategori"){
 
 div.innerHTML=`
 
-<div class="bg-yellow-100 p-3 rounded-xl flex gap-2">
+<div class="${
+item.checked
+? 'bg-green-100 border-2 border-green-500'
+: 'bg-yellow-100'
+} p-3 rounded-xl flex gap-2 items-center">
+
+<input
+type="checkbox"
+${item.checked ? 'checked' : ''}
+onchange="toggleTransaksi(${index})">
 
 <input
 value="${item.nama}"
@@ -905,9 +914,7 @@ oninput="updateTransaksi(${index},this.value)">
 
 <button
 onclick="hapusTransaksi(${index})">
-
 🗑️
-
 </button>
 
 </div>
@@ -918,7 +925,16 @@ onclick="hapusTransaksi(${index})">
 
 div.innerHTML=`
 
-<div class="bg-white shadow p-3 rounded-xl flex gap-3 items-center">
+<div class="${
+item.checked
+? 'bg-green-100 border-2 border-green-500'
+: 'bg-white'
+} shadow p-3 rounded-xl flex gap-3 items-center">
+
+<input
+type="checkbox"
+${item.checked ? 'checked' : ''}
+onchange="toggleTransaksi(${index})">
 
 <i data-lucide="${item.icon}"></i>
 
@@ -929,9 +945,7 @@ oninput="updateTransaksi(${index},this.value)">
 
 <button
 onclick="hapusTransaksi(${index})">
-
 🗑️
-
 </button>
 
 </div>
@@ -1008,6 +1022,19 @@ setTimeout(()=>{
 
 },100);
 
+function toggleTransaksi(index){
+
+    transaksiItems[index].checked =
+        !transaksiItems[index].checked;
+
+    transaksiChanged = true;
+
+    enableButton("saveTransaksiBtn");
+
+    renderTransaksi();
+
+}
+
 function updateTransaksi(index,value){
 
 transaksiItems[index].nama=value;
@@ -1064,6 +1091,16 @@ transaksiItems =
 JSON.parse(data);
 
 }
+
+transaksiItems.forEach(item=>{
+
+    if(item.checked === undefined){
+
+        item.checked = false;
+
+    }
+
+});
 
 renderTransaksi();
 
