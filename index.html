@@ -410,6 +410,37 @@ let centerChanged = false;
 let serverChanged = false;
 let confirmAction = null;
 let transaksiChanged = false;
+let confirmAction = null;
+
+function showConfirm(title,message,action){
+
+    document.getElementById("confirmTitle").innerText = title;
+
+    document.getElementById("confirmMessage").innerText = message;
+
+    confirmAction = action;
+
+    document.getElementById("confirmModal")
+    .classList.remove("hidden");
+
+}
+
+function closeConfirm(){
+
+    document.getElementById("confirmModal")
+    .classList.add("hidden");
+
+}
+
+function executeConfirm(){
+
+    if(typeof confirmAction === "function"){
+        confirmAction();
+    }
+
+    closeConfirm();
+
+}
 
 const menus = [
 
