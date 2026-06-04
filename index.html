@@ -956,38 +956,63 @@ lucide.createIcons();
 
 function addMenu(){
 
-transaksiItems.push({
+    transaksiItems.unshift({
 
-type:"menu",
-nama:"Menu Baru",
-icon:"circle"
+        type:"menu",
+        nama:"Menu Baru",
+        icon:"circle"
 
-});
+    });
 
-transaksiChanged=true;
+    transaksiChanged = true;
 
-enableButton("saveTransaksiBtn");
+    enableButton("saveTransaksiBtn");
 
-renderTransaksi();
+    renderTransaksi();
 
 }
+
+setTimeout(()=>{
+
+    const inputs =
+    document.querySelectorAll("#transaksiList input");
+
+    if(inputs.length){
+        inputs[0].focus();
+        inputs[0].select();
+    }
+
+},100);
+
 
 function addKategori(){
 
-transaksiItems.push({
+    transaksiItems.unshift({
 
-type:"kategori",
-nama:"Kategori Baru"
+        type:"kategori",
+        nama:"Kategori Baru"
 
-});
+    });
 
-transaksiChanged=true;
+    transaksiChanged = true;
 
-enableButton("saveTransaksiBtn");
+    enableButton("saveTransaksiBtn");
 
-renderTransaksi();
+    renderTransaksi();
 
 }
+
+setTimeout(()=>{
+
+    const inputs =
+    document.querySelectorAll("#transaksiList input");
+
+    if(inputs.length){
+        inputs[0].focus();
+        inputs[0].select();
+    }
+
+},100);
 
 function updateTransaksi(index,value){
 
