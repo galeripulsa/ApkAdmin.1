@@ -1053,7 +1053,7 @@ class="drag-handle cursor-move">
 
                     <div class="flex-1">
 
-                <input
+            <input
 type="text"
 value="${item.nama === 'Menu Baru' ? '' : item.nama}"
 placeholder="Menu Baru"
@@ -1064,6 +1064,20 @@ w-full
 outline-none
 bg-transparent
 font-semibold"
+oninput="updateTransaksi(${index},this.value)">
+
+     <input
+type="text"
+value="${item.nama === 'Kategori Baru' ? '' : item.nama}"
+placeholder="Kategori Baru"
+onfocus="this.placeholder=''"
+onblur="if(this.value===''){this.placeholder='Kategori Baru'}"
+class="
+flex-1
+bg-transparent
+outline-none
+font-bold
+text-lg"
 oninput="updateTransaksi(${index},this.value)">
 
 
