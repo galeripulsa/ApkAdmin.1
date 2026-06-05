@@ -1352,21 +1352,22 @@ function pilihIcon(index){
 
 function gantiIcon(event,index){
 
-    const file =
-    event.target.files[0];
+    const file = event.target.files[0];
 
     if(!file) return;
 
-    const reader =
-    new FileReader();
+    const reader = new FileReader();
 
-    reader.onload=function(e){
+    reader.onload = function(e){
 
         transaksiItems[index].iconData =
         e.target.result;
 
-        simpanData();
+        // Hanya update tampilan
         renderTransaksi();
+
+        // Tidak menyimpan ke localStorage
+        // simpanData(); ← HAPUS
 
     };
 
