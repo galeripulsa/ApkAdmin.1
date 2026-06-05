@@ -987,12 +987,21 @@ function renderTransaksi(){
                     text-lg"
                     oninput="updateTransaksi(${index},this.value)">
 
-                    <button
-                    onclick="hapusTransaksi(${index})">
+                    ${item.swiped ? `
 
-                        <i data-lucide="trash-2"></i>
+<button
+onclick="hapusTransaksi(${index})"
+class="
+bg-red-500
+text-white
+p-2
+rounded-xl">
 
-                    </button>
+<i data-lucide="trash-2"></i>
+
+</button>
+
+` : ''}
 
                     <i
                     data-lucide="grip-vertical"
@@ -1057,13 +1066,21 @@ function renderTransaksi(){
 
                     </div>
 
-                    <button
-                    onclick="hapusTransaksi(${index})"
-                    class="text-red-500">
+                    ${item.swiped ? `
 
-                        <i data-lucide="trash-2"></i>
+<button
+onclick="hapusTransaksi(${index})"
+class="
+bg-red-500
+text-white
+p-2
+rounded-xl">
 
-                    </button>
+<i data-lucide="trash-2"></i>
+
+</button>
+
+` : ''}
 
                     <i
                     data-lucide="grip-vertical"
