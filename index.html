@@ -1079,7 +1079,37 @@ function renderTransaksi(){
             `;
         }
 
-        list.appendChild(div);
+        let startX = 0;
+
+div.addEventListener("touchstart",(e)=>{
+
+    startX = e.touches[0].clientX;
+
+});
+
+div.addEventListener("touchend",(e)=>{
+
+    const endX =
+    e.changedTouches[0].clientX;
+
+    const diff =
+    startX - endX;
+
+    if(diff > 80){
+
+        swipeLeft(index);
+
+    }
+
+    if(diff < -80){
+
+        swipeRight(index);
+
+    }
+
+});
+
+list.appendChild(div);
 
     });
 
@@ -1232,6 +1262,22 @@ function toggleTransaksi(index){
 
 }
 
+function swipeLeft(index){
+
+    transaksiItems[index].swiped = true;
+
+    renderTransaksi();
+
+}
+
+function swipeRight(index){
+
+    transaksiItems[index].swiped = false;
+
+    renderTransaksi();
+
+}
+
 function updateTransaksi(index,value){
 
     transaksiItems[index].nama = value;
@@ -1292,10 +1338,12 @@ function loadTransaksi(){
     transaksiItems.forEach(item=>{
 
         if(item.checked === undefined){
+    item.checked = false;
+}
 
-            item.checked = false;
-
-        }
+if(item.swiped === undefined){
+    item.swiped = false;
+}
 
     });
 
