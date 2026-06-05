@@ -1043,17 +1043,38 @@ class="drag-handle cursor-move">
                     onchange="toggleTransaksi(${index})"
                     class="w-5 h-5">
 
-                    <div class="
-                    w-12 h-12
-                    rounded-xl
-                    bg-cyan-100
-                    flex
-                    items-center
-                    justify-center">
+                   <div
+onclick="pilihIcon(${index})"
+class="
+w-12 h-12
+rounded-xl
+bg-cyan-100
+flex
+items-center
+justify-center
+overflow-hidden
+cursor-pointer">
 
-                        <i data-lucide="${item.icon}"></i>
+${item.iconData ?
 
-                    </div>
+`<img
+src="${item.iconData}"
+class="w-full h-full object-cover">`
+
+:
+
+`<i data-lucide="${item.icon || 'image'}"></i>`
+
+}
+
+</div>
+
+<input
+type="file"
+id="fileIcon${index}"
+accept="image/*"
+hidden
+onchange="gantiIcon(event,${index})">
 
                     <div class="flex-1">
 
@@ -1321,6 +1342,38 @@ function updateTransaksi(index,value){
 
 }
 
+function pilihIcon(index){
+
+    document
+    .getElementById(`fileIcon${index}`)
+    .click();
+
+}
+
+function gantiIcon(event,index){
+
+    const file =
+    event.target.files[0];
+
+    if(!file) return;
+
+    const reader =
+    new FileReader();
+
+    reader.onload=function(e){
+
+        transaksiItems[index].iconData =
+        e.target.result;
+
+        simpanData();
+        renderTransaksi();
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
 function hapusTransaksi(index){
 
     const namaItem =
@@ -1419,6 +1472,25 @@ function executeConfirm(){
 
     closeConfirm();
  }
+
+function simpanData(){
+
+    localStorage.setItem(
+        "transaksiItems",
+        JSON.stringify(transaksiItems)
+    );
+
+}
+
+const data =
+localStorage.getItem("transaksiItems");
+
+if(data){
+
+    transaksiItems =
+    JSON.parse(data);
+
+}
 
 watchCenterChanges();
 watchServerChanges();
