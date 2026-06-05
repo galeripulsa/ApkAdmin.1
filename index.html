@@ -947,7 +947,7 @@ div.innerHTML=`
 <div class="${
 item.checked
 ? 'bg-green-100 border-2 border-green-500'
-: 'bg-yellow'
+: 'bg-yellow-100'
 } shadow p-3 rounded-xl flex gap-3 items-center">
 
 <input
@@ -955,22 +955,24 @@ type="checkbox"
 ${item.checked ? 'checked' : ''}
 onchange="toggleTransaksi(${index})">
 
-<i
-data-lucide="grip-vertical"
-class="drag-handle cursor-move text-gray-400">
-</i>
-
+${item.icon ? `
 <i data-lucide="${item.icon}"></i>
+` : ''}
 
 <input
 value="${item.nama}"
-class="flex-1 outline-none"
+class="flex-1 outline-none bg-transparent"
 oninput="updateTransaksi(${index},this.value)">
 
 <button
 onclick="hapusTransaksi(${index})">
 🗑️
 </button>
+
+<i
+data-lucide="grip-vertical"
+class="drag-handle cursor-move text-gray-400">
+</i>
 
 </div>
 
