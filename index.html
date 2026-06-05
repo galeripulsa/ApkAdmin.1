@@ -1053,14 +1053,18 @@ class="drag-handle cursor-move">
 
                     <div class="flex-1">
 
-                        <input
-                        value="${item.nama}"
-                        class="
-                        w-full
-                        outline-none
-                        bg-transparent
-                        font-semibold"
-                        oninput="updateTransaksi(${index},this.value)">
+                <input
+type="text"
+value="${item.nama === 'Menu Baru' ? '' : item.nama}"
+placeholder="Menu Baru"
+onfocus="this.placeholder=''"
+onblur="if(this.value===''){this.placeholder='Menu Baru'}"
+class="
+w-full
+outline-none
+bg-transparent
+font-semibold"
+oninput="updateTransaksi(${index},this.value)">
 
                         <div class="
                         text-xs
