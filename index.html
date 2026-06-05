@@ -102,6 +102,22 @@ body{
     cursor:grabbing;
 }
 
+.drag-handle{
+    touch-action:none;
+}
+
+#transaksiList > div{
+    margin-bottom:10px;
+}
+
+#transaksiList .sortable-ghost{
+    opacity:.4;
+}
+
+#transaksiList .sortable-chosen{
+    transform:scale(1.02);
+}
+
 </style>
 </head>
 <body class="max-w-screen-md mx-auto p-4">
@@ -351,27 +367,59 @@ class="modal fixed inset-0 bg-white z-50 overflow-auto">
                 Menu Transaksi
             </h2>
 
-            <div class="flex gap-2">
+            <div class="flex gap-3 mb-4">
 
-                <button
-                onclick="addMenu()"
-                class="bg-green-500 px-3 py-2 rounded-xl">
-                    + Menu
-                </button>
+<button
+onclick="addMenu()"
+class="
+flex-1
+bg-cyan-600
+text-white
+py-3
+rounded-2xl
+font-bold">
 
-                <button
-                onclick="addKategori()"
-                class="bg-yellow-500 px-3 py-2 rounded-xl">
-                    + Kategori
-                </button>           
++ Menu
 
-            </div>
+</button>
+
+<button
+onclick="addKategori()"
+class="
+flex-1
+bg-orange-500
+text-white
+py-3
+rounded-2xl
+font-bold">
+
++ Kategori
+
+</button>
+
+</div>
 
         </div>
 
     </div>
 
     <!-- LIST -->
+<div
+class="
+bg-white
+rounded-2xl
+shadow
+p-3
+mb-3">
+
+<div id="transaksiInfo"
+class="text-sm text-slate-600">
+
+0 Menu • 0 Kategori
+
+</div>
+
+</div>
 
     <div
     id="transaksiList"
@@ -900,41 +948,55 @@ list.innerHTML="";
 
 transaksiItems.forEach((item,index)=>{
 
-const div =
-document.createElement("div");
+const div = document.createElement("div");
 
 if(item.type==="kategori"){
 
 div.innerHTML=`
 
-<div class="${
-item.checked
-? 'bg-yellow-100 border-2 border-yellow-500'
-: 'bg-yellow-100'
-} p-3 rounded-xl flex gap-2 items-center">
+<div class="
+bg-gradient-to-r
+from-amber-400
+to-orange-500
+text-white
+rounded-2xl
+p-4
+shadow-lg">
 
-<input
-type="checkbox"
-${item.checked ? 'checked' : ''}
-onchange="toggleTransaksi(${index})">
+    <div class="flex items-center gap-3">
 
-<i
-data-lucide="grip-vertical"
-class="drag-handle cursor-move text-gray-400">
-</i>
+        <input
+        type="checkbox"
+        ${item.checked ? 'checked' : ''}
+        onchange="toggleTransaksi(${index})"
+        class="w-5 h-5">
 
-<i data-lucide="${item.icon}"></i>
+        <i data-lucide="folder-open"></i>
 
+        <input
+        value="${item.nama}"
+        class="
+        flex-1
+        bg-transparent
+        outline-none
+        font-bold
+        text-lg"
+        oninput="updateTransaksi(${index},this.value)">
 
-<input
-value="${item.nama}"
-class="flex-1 bg-transparent outline-none font-bold"
-oninput="updateTransaksi(${index},this.value)">
+        <button
+        onclick="hapusTransaksi(${index})"
+        class="hover:scale-110">
 
-<button
-onclick="hapusTransaksi(${index})">
-🗑️
-</button>
+            <i data-lucide="trash-2"></i>
+
+        </button>
+
+        <i
+        data-lucide="grip-vertical"
+        class="drag-handle cursor-move">
+        </i>
+
+    </div>
 
 </div>
 
@@ -944,35 +1006,75 @@ onclick="hapusTransaksi(${index})">
 
 div.innerHTML=`
 
-<div class="${
-item.checked
-? 'bg-green-100 border-2 border-green-500'
-: 'bg-yellow-100'
-} shadow p-3 rounded-xl flex gap-3 items-center">
+<div class="
+${item.checked
+? 'bg-green-50 border-2 border-green-500'
+: 'bg-white border border-slate-200'}
+rounded-2xl
+p-4
+shadow-sm
+transition-all">
 
-<input
-type="checkbox"
-${item.checked ? 'checked' : ''}
-onchange="toggleTransaksi(${index})">
+    <div class="flex items-center gap-3">
 
-${item.icon ? `
-<i data-lucide="${item.icon}"></i>
-` : ''}
+        <input
+        type="checkbox"
+        ${item.checked ? 'checked' : ''}
+        onchange="toggleTransaksi(${index})"
+        class="w-5 h-5">
 
-<input
-value="${item.nama}"
-class="flex-1 outline-none bg-transparent"
-oninput="updateTransaksi(${index},this.value)">
+        <div class="
+        w-12 h-12
+        rounded-xl
+        bg-cyan-100
+        flex
+        items-center
+        justify-center">
 
-<button
-onclick="hapusTransaksi(${index})">
-🗑️
-</button>
+            <i data-lucide="${item.icon}"></i>
 
-<i
-data-lucide="grip-vertical"
-class="drag-handle cursor-move text-gray-400">
-</i>
+        </div>
+
+        <div class="flex-1">
+
+            <input
+            value="${item.nama}"
+            class="
+            w-full
+            outline-none
+            bg-transparent
+            font-semibold"
+            oninput="updateTransaksi(${index},this.value)">
+
+            <div class="
+            text-xs
+            text-slate-500">
+
+                Menu Transaksi
+
+            </div>
+
+        </div>
+
+        <button
+        onclick="hapusTransaksi(${index})"
+        class="
+        text-red-500
+        hover:scale-110">
+
+            <i data-lucide="trash-2"></i>
+
+        </button>
+
+        <i
+        data-lucide="grip-vertical"
+        class="
+        drag-handle
+        cursor-move
+        text-slate-400">
+        </i>
+
+    </div>
 
 </div>
 
@@ -983,6 +1085,21 @@ class="drag-handle cursor-move text-gray-400">
 list.appendChild(div);
 
 });
+
+const totalMenu =
+transaksiItems.filter(
+x=>x.type==="menu"
+).length;
+
+const totalKategori =
+transaksiItems.filter(
+x=>x.type==="kategori"
+).length;
+
+document.getElementById(
+"transaksiInfo"
+).innerText =
+`${totalMenu} Menu • ${totalKategori} Kategori`;
 
 lucide.createIcons();
 
