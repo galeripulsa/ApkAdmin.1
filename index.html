@@ -975,17 +975,21 @@ function renderTransaksi(){
                     onchange="toggleTransaksi(${index})"
                     class="w-5 h-5">
 
-                    <i data-lucide="folder-open"></i>
+    <i data-lucide="folder-open"></i>
 
-                    <input
-                    value="${item.nama}"
-                    class="
-                    flex-1
-                    bg-transparent
-                    outline-none
-                    font-bold
-                    text-lg"
-                    oninput="updateTransaksi(${index},this.value)">
+             <input
+type="text"
+value="${item.nama === 'Kategori Baru' ? '' : item.nama}"
+placeholder="Nama Kategori"
+onfocus="this.placeholder=''"
+onblur="if(this.value===''){this.placeholder='Nama Kategori'}"
+class="
+flex-1
+bg-transparent
+outline-none
+font-bold
+text-lg"
+oninput="updateTransaksi(${index},this.value)">
 
        <div class="ml-auto flex items-center gap-2">
 
@@ -1056,9 +1060,9 @@ class="drag-handle cursor-move">
             <input
 type="text"
 value="${item.nama === 'Menu Baru' ? '' : item.nama}"
-placeholder="Menu Baru"
+placeholder="Nama Menu"
 onfocus="this.placeholder=''"
-onblur="if(this.value===''){this.placeholder='Menu Baru'}"
+onblur="if(this.value===''){this.placeholder='Nama Menu'}"
 class="
 w-full
 outline-none
@@ -1066,22 +1070,7 @@ bg-transparent
 font-semibold"
 oninput="updateTransaksi(${index},this.value)">
 
-     <input
-type="text"
-value="${item.nama === 'Kategori Baru' ? '' : item.nama}"
-placeholder="Kategori Baru"
-onfocus="this.placeholder=''"
-onblur="if(this.value===''){this.placeholder='Kategori Baru'}"
-class="
-flex-1
-bg-transparent
-outline-none
-font-bold
-text-lg"
-oninput="updateTransaksi(${index},this.value)">
-
-
-                    </div>
+       </div>
 
          <div class="ml-auto flex items-center gap-2">
 
