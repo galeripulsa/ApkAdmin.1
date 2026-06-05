@@ -350,12 +350,11 @@ class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-cente
 
 </div>
 
+
 <!-- MENU TRANSAKSI -->
 
 <div id="transaksiModal"
-class="modal fixed inset-0 bg-white z-50 overflow-auto">
-
-<div class="w-full">
+class="modal fixed inset-0 bg-white z-50 flex flex-col">
 
     <!-- HEADER -->
 
@@ -367,75 +366,91 @@ class="modal fixed inset-0 bg-white z-50 overflow-auto">
                 Menu Transaksi
             </h2>
 
-            <div class="flex gap-3 mb-4">
+            <div class="flex gap-3">
 
-<button
-onclick="addMenu()"
-class="
-flex-1
-bg-cyan-500
-text-white
-py-3
-rounded-2xl
-font-bold">
+                <button
+                onclick="addMenu()"
+                class="
+                bg-cyan-500
+                text-white
+                px-4
+                py-3
+                rounded-2xl
+                font-bold">
 
-+ Menu
+                    + Menu
 
-</button>
+                </button>
 
-<button
-onclick="addKategori()"
-class="
-flex-1
-bg-orange-500
-text-white
-py-1
-rounded-2xl
-font-bold">
+                <button
+                onclick="addKategori()"
+                class="
+                bg-orange-500
+                text-white
+                px-4
+                py-3
+                rounded-2xl
+                font-bold">
 
-+ Kategori
+                    + Kategori
 
-</button>
+                </button>
 
-</div>
+            </div>
 
         </div>
 
     </div>
 
-    <!-- LIST -->
-<div
-class="
-bg-white
-rounded-2xl
-shadow
-p-3
-mb-3">
+    <!-- AREA KONTEN YANG SCROLL -->
 
-<div id="transaksiInfo"
-class="text-sm text-slate-600">
+    <div class="flex-1 overflow-y-auto">
 
-0 Menu • 0 Kategori
+        <div
+        class="
+        bg-white
+        rounded-2xl
+        shadow
+        p-3
+        m-3">
 
-</div>
+            <div id="transaksiInfo"
+            class="text-sm text-slate-600">
 
-</div>
+                0 Menu • 0 Kategori
 
-    <div
-    id="transaksiList"
-    class="p-3 space-y-2">
+            </div>
+
+        </div>
+
+        <div
+        id="transaksiList"
+        class="p-3 space-y-2">
+        </div>
+
     </div>
 
-    <!-- FOOTER -->
+    <!-- FOOTER TETAP DI BAWAH -->
 
     <div
-    class="sticky bottom-0 bg-white border-t p-3 flex gap-3">
+    class="
+    bg-white
+    border-t
+    p-3
+    flex
+    gap-3
+    shrink-0">
 
         <button
         id="saveTransaksiBtn"
         onclick="saveTransaksi()"
         disabled
-        class="flex-1 bg-gray-400 text-white py-3 rounded-xl">
+        class="
+        flex-1
+        bg-gray-400
+        text-white
+        py-3
+        rounded-xl">
 
             Simpan
 
@@ -443,7 +458,12 @@ class="text-sm text-slate-600">
 
         <button
         onclick="closeTransaksi()"
-        class="flex-1 bg-red-500 text-white py-3 rounded-xl">
+        class="
+        flex-1
+        bg-red-500
+        text-white
+        py-3
+        rounded-xl">
 
             Tutup
 
