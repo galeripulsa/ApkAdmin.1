@@ -987,15 +987,21 @@ function renderTransaksi(){
                     text-lg"
                     oninput="updateTransaksi(${index},this.value)">
 
-                    ${item.swiped ? `
+       <div class="ml-auto flex items-center gap-2">
+
+${item.swiped ? `
 
 <button
 onclick="hapusTransaksi(${index})"
 class="
 bg-red-500
 text-white
-p-2
-rounded-xl">
+w-10
+h-10
+rounded-xl
+flex
+items-center
+justify-center">
 
 <i data-lucide="trash-2"></i>
 
@@ -1003,12 +1009,12 @@ rounded-xl">
 
 ` : ''}
 
-                    <i
-                    data-lucide="grip-vertical"
-                    class="drag-handle cursor-move">
-                    </i>
+<i
+data-lucide="grip-vertical"
+class="drag-handle cursor-move">
+</i>
 
-                </div>
+</div>
 
             </div>
             `;
@@ -1066,15 +1072,21 @@ rounded-xl">
 
                     </div>
 
-                    ${item.swiped ? `
+         <div class="ml-auto flex items-center gap-2">
+
+${item.swiped ? `
 
 <button
 onclick="hapusTransaksi(${index})"
 class="
 bg-red-500
 text-white
-p-2
-rounded-xl">
+w-10
+h-10
+rounded-xl
+flex
+items-center
+justify-center">
 
 <i data-lucide="trash-2"></i>
 
@@ -1082,15 +1094,15 @@ rounded-xl">
 
 ` : ''}
 
-                    <i
-                    data-lucide="grip-vertical"
-                    class="
-                    drag-handle
-                    cursor-move
-                    text-slate-400">
-                    </i>
+<i
+data-lucide="grip-vertical"
+class="
+drag-handle
+cursor-move
+text-slate-400">
+</i>
 
-                </div>
+</div>
 
             </div>
             `;
@@ -1281,7 +1293,11 @@ function toggleTransaksi(index){
 
 function swipeLeft(index){
 
-    transaksiItems[index].swiped = true;
+    transaksiItems.forEach((item,i)=>{
+
+        item.swiped = (i === index);
+
+    });
 
     renderTransaksi();
 
@@ -1307,16 +1323,21 @@ function updateTransaksi(index,value){
 
 function hapusTransaksi(index){
 
+    const namaItem =
+    transaksiItems[index].nama;
+
     showConfirm(
         "Konfirmasi Hapus",
-        "Yakin ingin menghapus item ini?",
+        `Yakin ingin menghapus "${namaItem}" ?`,
         ()=>{
 
             transaksiItems.splice(index,1);
 
             transaksiChanged = true;
 
-            enableButton("saveTransaksiBtn");
+            enableButton(
+                "saveTransaksiBtn"
+            );
 
             renderTransaksi();
 
