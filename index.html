@@ -1886,6 +1886,41 @@ function loadTransaksi(){
 }
 
 
+function gantiIcon(index){
+
+    const picker = document.createElement("input");
+
+    picker.type = "file";
+    picker.accept = "image/*";
+
+    picker.onchange = function(e){
+
+        const file = e.target.files[0];
+
+        if(!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function(evt){
+
+            transaksiItems[index].iconFile = evt.target.result;
+
+            transaksiChanged = true;
+
+            enableButton("saveTransaksiBtn");
+
+            renderTransaksi();
+
+        };
+
+        reader.readAsDataURL(file);
+
+    };
+
+    picker.click();
+
+}
+
 window.onload = function(){
 
     renderMenus();
