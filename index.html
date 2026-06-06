@@ -1524,24 +1524,13 @@ cursor-pointer">
 
                         <input
 type="text"
-value="${item.nama === 'Menu Baru' ? '' : item.nama}"
-placeholder="Nama Menu"
-onfocus="this.placeholder=''"
-onblur="if(this.value===''){this.placeholder='Nama Menu'}"
+value="${item.nama}"
 class="
 w-full
 outline-none
 bg-transparent
 font-semibold"
 oninput="updateTransaksi(${index},this.value)">
-
-                        <div class="
-                        text-xs
-                        text-slate-500">
-
-                            Menu Transaksi
-
-                        </div>
 
                     </div>
 
