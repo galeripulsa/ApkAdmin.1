@@ -1523,14 +1523,17 @@ cursor-pointer">
                     <div class="flex-1">
 
                         <input
-                        type="text"
-                        value="${item.nama}"
-                        class="
-                        w-full
-                        outline-none
-                        bg-transparent
-                        font-semibold"
-                        oninput="updateTransaksi(${index},this.value)">
+type="text"
+value="${item.nama === 'Menu Baru' ? '' : item.nama}"
+placeholder="Nama Menu"
+onfocus="this.placeholder=''"
+onblur="if(this.value===''){this.placeholder='Nama Menu'}"
+class="
+w-full
+outline-none
+bg-transparent
+font-semibold"
+oninput="updateTransaksi(${index},this.value)">
 
                         <div class="
                         text-xs
