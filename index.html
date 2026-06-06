@@ -604,6 +604,15 @@ onchange="pilihIcon(event)">
 
 <script>
 
+window.onerror = function(message, source, line, column){
+    console.error(
+        "ERROR:",
+        message,
+        "Baris:", line
+    );
+};
+
+
 let centerChanged = false;
 let serverChanged = false;
 let transaksiChanged = false;
