@@ -349,13 +349,12 @@ class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-cente
     </div>
 
 </div>
-
 <!-- MENU TRANSAKSI -->
-
 <div id="transaksiModal"
-class="modal hidden fixed inset-0 bg-white z-50 flex flex-col">
-    <!-- HEADER -->
+style="display:none"
+class="modal fixed inset-0 bg-white z-50 flex flex-col">
 
+    <!-- HEADER -->
     <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
 
         <div class="flex items-center justify-between">
@@ -400,8 +399,7 @@ class="modal hidden fixed inset-0 bg-white z-50 flex flex-col">
 
     </div>
 
-    <!-- AREA KONTEN YANG SCROLL -->
-
+    <!-- AREA KONTEN -->
     <div class="flex-1 overflow-y-auto">
 
         <div
@@ -423,13 +421,12 @@ class="modal hidden fixed inset-0 bg-white z-50 flex flex-col">
 
         <div
         id="transaksiList"
-        class="p-3 space-y-2">
+        class="p-3 space-y-2 pb-24">
         </div>
 
     </div>
 
-    <!-- FOOTER TETAP DI BAWAH -->
-
+    <!-- FOOTER -->
     <div
     class="
     bg-white
@@ -918,12 +915,9 @@ closeConfirmModal();
 let sortableInstance = null;
 
 function openTransaksi(){
-
-    document
-    .getElementById("transaksiModal")
-    .classList.remove("hidden");
-
+    document.getElementById("transaksiModal").style.display = "flex";
 }
+
 
     loadTransaksi();
 
@@ -953,10 +947,7 @@ function closeTransaksi(){
 
         return;
     }
-
-    document
-    .getElementById("transaksiModal")
-    .classList.remove("show");
+    document.getElementById("transaksiModal").style.display = "none";
 
 }
 
