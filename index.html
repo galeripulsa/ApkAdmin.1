@@ -6,11 +6,29 @@
 
 <title>Admin Galeri Pulsa V2</title>
 
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide Icon -->
 <script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- Sortable -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 <style>
+
+/* ===============================
+   GLOBAL STYLE
+================================ */
+
+body{
+    background:#f1f5f9;
+}
+
+/* ===============================
+   MENU AKTIF
+================================ */
+
 .menu-active{
     background:linear-gradient(135deg,#0891b2,#2563eb);
     color:white;
@@ -18,17 +36,14 @@
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 }
 
-.menu-active .menu-label{
-    color:white;
-}
-
+.menu-active .menu-label,
 .menu-active i{
     color:white;
 }
 
-body{
-    background:#f1f5f9;
-}
+/* ===============================
+   CARD MENU
+================================ */
 
 .card-menu{
     transition:.25s;
@@ -38,6 +53,10 @@ body{
     transform:translateY(-4px);
 }
 
+/* ===============================
+   MODAL
+================================ */
+
 .modal{
     display:none;
 }
@@ -45,6 +64,10 @@ body{
 .modal.show{
     display:flex;
 }
+
+/* ===============================
+   FLOATING LABEL
+================================ */
 
 .floating{
     position:relative;
@@ -72,14 +95,19 @@ body{
     pointer-events:none;
 }
 
-.floating input:focus+label,
-.floating input:not(:placeholder-shown)+label,
-.floating textarea:focus+label,
-.floating textarea:not(:placeholder-shown)+label{
+.floating input:focus + label,
+.floating input:not(:placeholder-shown) + label,
+.floating textarea:focus + label,
+.floating textarea:not(:placeholder-shown) + label{
+
     top:-10px;
     font-size:12px;
     color:#0891b2;
 }
+
+/* ===============================
+   TOAST
+================================ */
 
 .toast{
     position:fixed;
@@ -94,17 +122,22 @@ body{
     z-index:9999;
 }
 
+/* ===============================
+   DRAG HANDLE
+================================ */
+
 .drag-handle{
     cursor:grab;
+    touch-action:none;
 }
 
 .drag-handle:active{
     cursor:grabbing;
 }
 
-.drag-handle{
-    touch-action:none;
-}
+/* ===============================
+   SORTABLE EFFECT
+================================ */
 
 #transaksiList > div{
     margin-bottom:10px;
@@ -119,20 +152,27 @@ body{
 }
 
 </style>
+
 </head>
+
 <body class="max-w-screen-md mx-auto p-4">
 
-<!-- HEADER -->
+<!-- ======================================================
+     HEADER
+====================================================== -->
 
 <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
 
     <div class="flex items-center gap-4">
 
         <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+
             <i data-lucide="shield" class="text-cyan-600"></i>
+
         </div>
 
         <div>
+
             <h1 class="text-2xl font-bold">
                 Admin Galeri Pulsa
             </h1>
@@ -140,1291 +180,18 @@ body{
             <p class="text-sm opacity-90">
                 agusbaba1987@gmail.com
             </p>
+
         </div>
 
     </div>
 
 </div>
 
-<!-- MENU -->
+<!-- ======================================================
+     MENU UTAMA
+====================================================== -->
 
 <div id="menuGrid"
-class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
-</div>
-
-<!-- SETUP SERVER -->
-
-<div id="serverModal"
-class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
-
-<div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-6">
-
-<h2 class="text-xl font-bold text-cyan-700 mb-4">
-Setup Server
-</h2>
-
-<div class="floating">
-<input id="namaKonter" placeholder=" ">
-<label>Nama Konter</label>
-</div>
-
-<div class="floating">
-<textarea id="alamatKonter"
-rows="4"
-placeholder=" "></textarea>
-<label>Alamat Konter</label>
-</div>
-
-<div class="mt-5 flex gap-2">
-
-<button
-id="saveServerBtn"
-onclick="confirmSaveServer()"
-disabled
-class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
-
-Simpan
-
-</button>
-
-<button
-onclick="checkCloseServer()"
-class="flex-1 bg-red-500 text-white py-4 rounded-xl">
-
-Tutup
-
-</button>
+     class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
 
 </div>
-
-</div>
-</div>
-
-<!-- SETUP CENTER -->
-
-<div id="centerModal"
-class="modal fixed inset-0 bg-white z-50 overflow-auto">
-<div class="w-full px-2">
-
-
-    <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50 flex items-center justify-between">
-
-            <h2 class="font-bold text-xl">
-                Setup Center
-            </h2>
-    </div>
-
-<!-- IP -->
-
-<div class="grid md:grid-cols-2 gap-4">
-
-    <!-- IP -->
-    <div class="bg-white p-5 rounded-2xl shadow">
-
-        <h3 class="font-bold text-cyan-600 text-lg mb-2">
-            IP Center
-        </h3>
-
-        <div class="floating">
-            <input id="ipNama" placeholder=" ">
-            <label>Nama Center</label>
-        </div>
-
-        <div class="floating">
-            <input id="ipServer" placeholder=" ">
-            <label>Server Center</label>
-        </div>
-
-        <div class="floating">
-            <input id="ipHost" placeholder=" ">
-            <label>Host</label>
-        </div>
-
-    </div>
-
-    <!-- JABBER -->
-    <div class="bg-white p-5 rounded-2xl shadow">
-
-        <h3 class="font-bold text-cyan-600 text-lg mb-2">
-            Jabber Center
-        </h3>
-
-        <div class="floating">
-            <input id="jabberNama" placeholder=" ">
-            <label>Nama Center</label>
-        </div>
-
-        <div class="floating">
-            <input id="jabberServer" placeholder=" ">
-            <label>Server Center</label>
-        </div>
-
-        <div class="floating">
-            <input id="jabberHost" placeholder=" ">
-            <label>Host</label>
-        </div>
-
-    </div>
-
-</div>
-
-<div class="bg-white p-5 rounded-2xl shadow mt-4">
-
-    <h3 class="font-bold text-cyan-600 text-lg mb-2">
-        Nomor Center
-    </h3>
-
-    <div class="floating">
-        <input id="waCenter" placeholder=" ">
-        <label>WhatsApp Center</label>
-    </div>
-
-    <div class="floating">
-        <input id="smsCenter" placeholder=" ">
-        <label>SMS Center</label>
-    </div>
-
-</div>
-
-<div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
-
-    <button
-id="saveCenterBtn"
-onclick="confirmSaveCenter()"
-disabled
-class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
-
-Simpan
-
-</button>
-
-    <button
-    onclick="checkCloseCenter()"
-    class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg">
-        Tutup
-    </button>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- MODAL KONFIRMASI -->
-
-<div id="confirmModal"
-class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
-
-    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
-
-        <h3 id="confirmTitle"
-            class="text-xl font-bold text-gray-800 mb-2">
-        </h3>
-
-        <p id="confirmMessage"
-           class="text-gray-600 mb-6">
-        </p>
-
-        <div class="flex gap-3">
-
-            <button
-            onclick="closeConfirm()"
-            class="flex-1 bg-gray-200 py-3 rounded-xl">
-
-                Batal
-
-            </button>
-
-            <button
-            onclick="executeConfirm()"
-            class="flex-1 bg-green-600 text-white py-3 rounded-xl">
-
-                OK
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- MENU TRANSAKSI -->
-
-<div id="transaksiModal"
-class="modal fixed inset-0 bg-white z-50 overflow-auto">
-
-<div class="w-full">
-
-    <!-- HEADER -->
-
-    <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
-
-        <div class="flex items-center justify-between">
-
-            <h2 class="font-bold text-xl">
-                Menu Transaksi
-            </h2>
-
-            <div class="flex gap-3 mb-4">
-
-<button
-onclick="addMenu()"
-class="
-flex-1
-bg-cyan-600
-text-white
-py-3
-rounded-2xl
-font-bold">
-
-+ Menu
-
-</button>
-
-<button
-onclick="addKategori()"
-class="
-flex-1
-bg-orange-500
-text-white
-py-3
-rounded-2xl
-font-bold">
-
-+ Kategori
-
-</button>
-
-</div>
-
-        </div>
-
-    </div>
-
-    <!-- LIST -->
-<div
-class="
-bg-white
-rounded-2xl
-shadow
-p-3
-mb-3">
-
-<div id="transaksiInfo"
-class="text-sm text-slate-600">
-
-0 Menu • 0 Kategori
-
-</div>
-
-</div>
-
-    <div
-    id="transaksiList"
-    class="p-3 space-y-2">
-    </div>
-
-    <!-- FOOTER -->
-
-    <div
-    class="sticky bottom-0 bg-white border-t p-3 flex gap-3">
-
-        <button
-        id="saveTransaksiBtn"
-        onclick="saveTransaksi()"
-        disabled
-        class="flex-1 bg-gray-400 text-white py-3 rounded-xl">
-
-            Simpan
-
-        </button>
-
-        <button
-        onclick="closeTransaksi()"
-        class="flex-1 bg-red-500 text-white py-3 rounded-xl">
-
-            Tutup
-
-        </button>
-
-    </div>
-
-</div>
-
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script>
-
-let centerChanged = false;
-let serverChanged = false;
-let transaksiChanged = false;
-let confirmAction = null;
-
-
-const menus = [
-
-{label:"Setup Server",icon:"server",action:"server"},
-{label:"Setup Center",icon:"database",action:"center"},
-{label:"Menu Transaksi",icon:"layout-grid",action:"transaksi"},
-{label:"Prabayar",icon:"smartphone"},
-{label:"Pascabayar",icon:"credit-card"},
-{label:"Format Request",icon:"file-text"},
-{label:"Logo",icon:"image"},
-{label:"OTP",icon:"key-round"},
-{label:"Poin",icon:"star"},
-{label:"Downline",icon:"users"}
-
-];
-
-let transaksiItems = [
-
-{
-type:"kategori",
-nama:"PRODUK DIGITAL"
-},
-
-{
-type:"menu",
-nama:"Pulsa Reguler",
-icon:"smartphone"
-},
-
-{
-type:"menu",
-nama:"Paket Data",
-icon:"wifi"
-}
-
-];
-
-function renderMenus(){
-
-const grid =
-document.getElementById("menuGrid");
-
-grid.innerHTML="";
-
-menus.forEach((menu,index)=>{
-
-const card =
-document.createElement("div");
-
-card.className =
-"card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
-
-card.dataset.index = index;
-
-card.innerHTML=`
-<div class="flex justify-center mb-3">
-    <i data-lucide="${menu.icon}"></i>
-</div>
-<div class="menu-label font-semibold text-gray-700">
-    ${menu.label}
-</div>
-`;
-
-card.onclick=()=>{
-
-    document
-    .querySelectorAll(".card-menu")
-    .forEach(el=>{
-        el.classList.remove("menu-active");
-    });
-
-    card.classList.add("menu-active");
-
-    if(menu.action==="server"){
-        openServer();
-    }
-
-    if(menu.action==="center"){
-        openCenter();
-    }
-
-    if(menu.action==="transaksi"){
-       openTransaksi();
-    }
-
-    if(menu.action==="transaksi"){
-       openTransaksi();
-    }
-
-};
-
-grid.appendChild(card);
-
-});
-
-lucide.createIcons();
-
-}
-
-function openServer(){
-
-document
-.getElementById("serverModal")
-.classList.add("show");
-
-loadServer();
-serverChanged = false;
-
-setTimeout(()=>{
-disableButton("saveServerBtn");
-},100);
-}
-
-function closeServer(){
-
-document
-.getElementById("serverModal")
-.classList.remove("show");
-
-}
-
-function saveServer(){
-
-const data={
-
-nama:
-document.getElementById("namaKonter").value,
-
-alamat:
-document.getElementById("alamatKonter").value
-
-};
-
-localStorage.setItem(
-"setupServer",
-JSON.stringify(data)
-);
-
-serverChanged = false;
-
-disableButton("saveServerBtn");
-toast("Data Server Disimpan");
-
-}
-
-function loadServer(){
-
-const data=
-JSON.parse(
-localStorage.getItem("setupServer")
-);
-
-if(!data) return;
-
-document.getElementById("namaKonter").value=
-data.nama || "";
-
-document.getElementById("alamatKonter").value=
-data.alamat || "";
-
-}
-
-
-function openCenter(){
-
-document
-.getElementById("centerModal")
-.classList.add("show");
-
-loadCenter();
-centerChanged = false;
-
-setTimeout(()=>{
-disableButton("saveCenterBtn");
-},100);
-}
-
-function closeCenter(){
-
-document
-.getElementById("centerModal")
-.classList.remove("show");
-
-}
-
-function saveCenter(){
-
-const data={
-
-ip:{
-nama:ipNama.value,
-server:ipServer.value,
-host:ipHost.value
-},
-
-jabber:{
-nama:jabberNama.value,
-server:jabberServer.value,
-host:jabberHost.value
-},
-
-nomor:{
-wa:waCenter.value,
-sms:smsCenter.value
-}
-
-};
-
-localStorage.setItem(
-"centerServer",
-JSON.stringify(data)
-);
-
-centerChanged = false;
-
-disableButton("saveCenterBtn");
-toast("Data Center Disimpan");
-
-}
-
-function loadCenter(){
-
-const data=
-JSON.parse(
-localStorage.getItem("centerServer")
-);
-
-if(!data) return;
-
-ipNama.value=data.ip?.nama||"";
-ipServer.value=data.ip?.server||"";
-ipHost.value=data.ip?.host||"";
-
-jabberNama.value=data.jabber?.nama||"";
-jabberServer.value=data.jabber?.server||"";
-jabberHost.value=data.jabber?.host||"";
-
-waCenter.value=data.nomor?.wa||"";
-smsCenter.value=data.nomor?.sms||"";
-
-}
-
-function toast(msg){
-
-const t=
-document.getElementById("toast");
-
-t.innerText=msg;
-t.style.display="block";
-
-setTimeout(()=>{
-t.style.display="none";
-},2500);
-
-}
-
-function enableButton(btnId){
-
-const btn = document.getElementById(btnId);
-
-btn.disabled = false;
-
-btn.classList.remove(
-"bg-gray-400",
-"cursor-not-allowed"
-);
-
-btn.classList.add("bg-green-600");
-
-}
-
-function disableButton(btnId){
-
-const btn = document.getElementById(btnId);
-
-btn.disabled = true;
-
-btn.classList.remove("bg-green-600");
-
-btn.classList.add(
-"bg-gray-400",
-"cursor-not-allowed"
-);
-
-}
-
-function watchCenterChanges(){
-
-[
-ipNama,
-ipServer,
-ipHost,
-
-jabberNama,
-jabberServer,
-jabberHost,
-
-waCenter,
-smsCenter
-
-].forEach(field=>{
-
-field.addEventListener("input",()=>{
-
-centerChanged = true;
-
-enableButton("saveCenterBtn");
-
-});
-
-});
-
-}
-
-function watchServerChanges(){
-
-[
-document.getElementById("namaKonter"),
-document.getElementById("alamatKonter")
-
-].forEach(field=>{
-
-field.addEventListener("input",()=>{
-
-serverChanged = true;
-
-enableButton("saveServerBtn");
-
-});
-
-});
-
-}
-
-function confirmSaveCenter(){
-
-if(!centerChanged) return;
-
-showConfirm(
-"Konfirmasi Simpan",
-"Apakah Anda yakin ingin menyimpan perubahan Center?",
-saveCenter
-);
-
-}
-
-function confirmSaveServer(){
-
-if(!serverChanged) return;
-
-showConfirm(
-"Konfirmasi Simpan",
-"Apakah Anda yakin ingin menyimpan perubahan Server ?",
-saveServer
-);
-
-}
-
-function checkCloseCenter(){
-
-if(centerChanged){
-
-showConfirm(
-"Perubahan Belum Disimpan",
-"Yakin ingin keluar?",
-closeCenter
-);
-
-return;
-
-}
-
-closeCenter();
-
-}
-
-function checkCloseServer(){
-
-if(serverChanged){
-
-showConfirm(
-"Perubahan Belum Disimpan",
-"Yakin ingin keluar?",
-closeServer
-);
-
-return;
-
-}
-
-closeServer();
-
-}
-
-function showConfirm(title,message,action){
-
-document
-.getElementById("confirmTitle")
-.innerText = title;
-
-document
-.getElementById("confirmMessage")
-.innerText = message;
-
-confirmAction = action;
-
-document
-.getElementById("confirmModal")
-.classList.remove("hidden");
-
-}
-
-function closeConfirmModal(){
-
-document
-.getElementById("confirmModal")
-.classList.add("hidden");
-
-}
-
-document.addEventListener("click",(e)=>{
-
-if(e.target.id==="confirmOkBtn"){
-
-if(confirmAction){
-confirmAction();
-}
-
-closeConfirmModal();
-
-}
-
-});
-
-
-let sortableInstance = null;
-
-function openTransaksi(){
-
-    document
-    .getElementById("transaksiModal")
-    .classList.add("show");
-
-    loadTransaksi();
-
-    transaksiChanged = false;
-
-    disableButton("saveTransaksiBtn");
-
-}
-
-function closeTransaksi(){
-
-    if(transaksiChanged){
-
-        showConfirm(
-            "Perubahan Belum Disimpan",
-            "Yakin ingin keluar tanpa menyimpan perubahan?",
-            ()=>{
-
-                transaksiChanged = false;
-
-                document
-                .getElementById("transaksiModal")
-                .classList.remove("show");
-
-            }
-        );
-
-        return;
-    }
-
-    document
-    .getElementById("transaksiModal")
-    .classList.remove("show");
-
-}
-
-function renderTransaksi(){
-
-    const list =
-    document.getElementById("transaksiList");
-
-    list.innerHTML="";
-
-    transaksiItems.forEach((item,index)=>{
-
-        const div =
-        document.createElement("div");
-
-        if(item.type==="kategori"){
-
-            div.innerHTML=`
-
-            <div class="
-            bg-gradient-to-r
-            from-amber-400
-            to-orange-500
-            text-white
-            rounded-2xl
-            p-4
-            shadow-lg">
-
-                <div class="flex items-center gap-3">
-
-                    <input
-                    type="checkbox"
-                    ${item.checked ? "checked" : ""}
-                    onchange="toggleTransaksi(${index})"
-                    class="w-5 h-5">
-
-                    <i data-lucide="folder-open"></i>
-
-                    <input
-                    value="${item.nama}"
-                    class="
-                    flex-1
-                    bg-transparent
-                    outline-none
-                    font-bold
-                    text-lg"
-                    oninput="updateTransaksi(${index},this.value)">
-
-       <div class="ml-auto flex items-center gap-2">
-
-${item.swiped ? `
-
-<button
-onclick="hapusTransaksi(${index})"
-class="
-bg-red-500
-text-white
-w-10
-h-10
-rounded-xl
-flex
-items-center
-justify-center">
-
-<i data-lucide="trash-2"></i>
-
-</button>
-
-` : ''}
-
-<i
-data-lucide="grip-vertical"
-class="drag-handle cursor-move">
-</i>
-
-</div>
-
-            </div>
-            `;
-
-        }else{
-
-            div.innerHTML=`
-
-            <div class="
-            ${item.checked
-                ? "bg-green-50 border-2 border-green-500"
-                : "bg-white border border-slate-200"}
-            rounded-2xl
-            p-4
-            shadow-sm">
-
-                <div class="flex items-center gap-3">
-
-                    <input
-                    type="checkbox"
-                    ${item.checked ? "checked" : ""}
-                    onchange="toggleTransaksi(${index})"
-                    class="w-5 h-5">
-
-                    <div class="
-                    w-12 h-12
-                    rounded-xl
-                    bg-cyan-100
-                    flex
-                    items-center
-                    justify-center">
-
-                        <i data-lucide="${item.icon}"></i>
-
-                    </div>
-
-                    <div class="flex-1">
-
-                        <input
-                        value="${item.nama}"
-                        class="
-                        w-full
-                        outline-none
-                        bg-transparent
-                        font-semibold"
-                        oninput="updateTransaksi(${index},this.value)">
-
-                        <div class="
-                        text-xs
-                        text-slate-500">
-
-                            Menu Transaksi
-
-                        </div>
-
-                    </div>
-
-         <div class="ml-auto flex items-center gap-2">
-
-${item.swiped ? `
-
-<button
-onclick="hapusTransaksi(${index})"
-class="
-bg-red-500
-text-white
-w-10
-h-10
-rounded-xl
-flex
-items-center
-justify-center">
-
-<i data-lucide="trash-2"></i>
-
-</button>
-
-` : ''}
-
-<i
-data-lucide="grip-vertical"
-class="
-drag-handle
-cursor-move
-text-slate-400">
-</i>
-
-</div>
-
-            </div>
-            `;
-        }
-
-        let startX = 0;
-
-div.addEventListener("touchstart",(e)=>{
-
-    startX = e.touches[0].clientX;
-
-});
-
-div.addEventListener("touchend",(e)=>{
-
-    const endX =
-    e.changedTouches[0].clientX;
-
-    const diff =
-    startX - endX;
-
-    if(diff > 80){
-
-        swipeLeft(index);
-
-    }
-
-    if(diff < -80){
-
-        swipeRight(index);
-
-    }
-
-});
-
-list.appendChild(div);
-
-    });
-
-    const totalMenu =
-    transaksiItems.filter(
-        x=>x.type==="menu"
-    ).length;
-
-    const totalKategori =
-    transaksiItems.filter(
-        x=>x.type==="kategori"
-    ).length;
-
-    document.getElementById(
-        "transaksiInfo"
-    ).innerText =
-    `${totalMenu} Menu • ${totalKategori} Kategori`;
-
-    lucide.createIcons();
-
-    initDragDrop();
-
-}
-
-function initDragDrop(){
-
-    const list =
-    document.getElementById("transaksiList");
-
-    if(!list) return;
-
-    if(sortableInstance){
-        sortableInstance.destroy();
-    }
-
-    sortableInstance =
-    Sortable.create(list,{
-
-        animation:150,
-
-        handle:".drag-handle",
-
-        delay:500,
-
-        delayOnTouchOnly:true,
-
-        onEnd:function(evt){
-
-            const moved =
-            transaksiItems.splice(
-                evt.oldIndex,
-                1
-            )[0];
-
-            transaksiItems.splice(
-                evt.newIndex,
-                0,
-                moved
-            );
-
-            transaksiChanged = true;
-
-            enableButton(
-                "saveTransaksiBtn"
-            );
-
-            renderTransaksi();
-
-        }
-
-    });
-
-}
-
-function addMenu(){
-
-    transaksiItems.unshift({
-
-        type:"menu",
-        nama:"Menu Baru",
-        icon:"circle",
-        checked:false
-
-    });
-
-    transaksiChanged = true;
-
-    enableButton("saveTransaksiBtn");
-
-    renderTransaksi();
-
-    setTimeout(()=>{
-
-        const inputs =
-        document.querySelectorAll(
-            "#transaksiList input[type='text']"
-        );
-
-        if(inputs.length){
-            inputs[0].focus();
-            inputs[0].select();
-        }
-
-    },100);
-
-}
-
-function addKategori(){
-
-    transaksiItems.unshift({
-
-        type:"kategori",
-        nama:"Kategori Baru",
-        checked:false
-
-    });
-
-    transaksiChanged = true;
-
-    enableButton("saveTransaksiBtn");
-
-    renderTransaksi();
-
-    setTimeout(()=>{
-
-        const inputs =
-        document.querySelectorAll(
-            "#transaksiList input[type='text']"
-        );
-
-        if(inputs.length){
-            inputs[0].focus();
-            inputs[0].select();
-        }
-
-    },100);
-
-}
-
-function toggleTransaksi(index){
-
-    transaksiItems[index].checked =
-    !transaksiItems[index].checked;
-
-    transaksiChanged = true;
-
-    enableButton("saveTransaksiBtn");
-
-    renderTransaksi();
-
-}
-
-function swipeLeft(index){
-
-    transaksiItems.forEach((item,i)=>{
-
-        item.swiped = (i === index);
-
-    });
-
-    renderTransaksi();
-
-}
-
-function swipeRight(index){
-
-    transaksiItems[index].swiped = false;
-
-    renderTransaksi();
-
-}
-
-function updateTransaksi(index,value){
-
-    transaksiItems[index].nama = value;
-
-    transaksiChanged = true;
-
-    enableButton("saveTransaksiBtn");
-
-}
-
-function hapusTransaksi(index){
-
-    const namaItem =
-    transaksiItems[index].nama;
-
-    showConfirm(
-        "Konfirmasi Hapus",
-        `Yakin ingin menghapus "${namaItem}" ?`,
-        ()=>{
-
-            transaksiItems.splice(index,1);
-
-            transaksiChanged = true;
-
-            enableButton(
-                "saveTransaksiBtn"
-            );
-
-            renderTransaksi();
-
-        }
-    );
-
-}
-
-function saveTransaksi(){
-
-    localStorage.setItem(
-        "transaksiItems",
-        JSON.stringify(transaksiItems)
-    );
-
-    transaksiChanged = false;
-
-    disableButton("saveTransaksiBtn");
-
-    toast("Menu Transaksi Disimpan");
-
-}
-
-function loadTransaksi(){
-
-    const data =
-    localStorage.getItem("transaksiItems");
-
-    if(data){
-
-        transaksiItems =
-        JSON.parse(data);
-
-    }
-
-    transaksiItems.forEach(item=>{
-
-        if(item.checked === undefined){
-    item.checked = false;
-}
-
-if(item.swiped === undefined){
-    item.swiped = false;
-}
-
-    });
-
-    renderTransaksi();
-
-}
-
-
-
-function showConfirm(title,message,action){
-
-    document.getElementById("confirmTitle").innerText = title;
-
-    document.getElementById("confirmMessage").innerText = message;
-
-    confirmAction = action;
-
-    document.getElementById("confirmModal")
-    .classList.remove("hidden");
-
-}
-
-function closeConfirm(){
-
-    document.getElementById("confirmModal")
-    .classList.add("hidden");
-
-}
-
-function executeConfirm(){
-
-    if(typeof confirmAction === "function"){
-        confirmAction();
-    }
-
-    closeConfirm();
- }
-
-watchCenterChanges();
-watchServerChanges();
-renderMenus();
-
-</script>
-
-</body>
-</html>
