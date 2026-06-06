@@ -573,6 +573,106 @@ body{
 
 </div>
 
+<!-- ===================================================== -->
+<!-- MENU TRANSAKSI -->
+<!-- ===================================================== -->
+
+<div id="transaksiModal"
+class="modal fixed inset-0 bg-white z-50 overflow-hidden">
+
+    <div class="flex flex-col h-full">
+
+        <!-- HEADER -->
+        <div class="sticky top-0 bg-cyan-600 text-white shadow z-40">
+
+            <div class="p-4">
+
+                <div class="flex items-center justify-between">
+
+                    <h2 class="font-bold text-xl">
+                        Menu Transaksi
+                    </h2>
+
+                    <div id="transaksiInfo"
+                    class="text-sm">
+
+                        0 Menu • 0 Kategori
+
+                    </div>
+
+                </div>
+
+                <div class="flex gap-3 mt-4">
+
+                    <button
+                    onclick="addMenu()"
+                    class="flex-1 bg-white text-cyan-700 py-3 rounded-2xl font-bold">
+
+                        + Menu
+
+                    </button>
+
+                    <button
+                    onclick="addKategori()"
+                    class="flex-1 bg-orange-500 text-white py-3 rounded-2xl font-bold">
+
+                        + Kategori
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LIST MENU -->
+        <div id="transaksiList"
+        class="flex-1 overflow-auto p-3 space-y-3">
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="sticky bottom-0 bg-white border-t p-3 flex gap-3 shadow">
+
+            <button
+            id="saveTransaksiBtn"
+            onclick="saveTransaksi()"
+            disabled
+            class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-2xl font-bold">
+
+                Simpan
+
+            </button>
+
+            <button
+            onclick="closeTransaksi()"
+            class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold">
+
+                Tutup
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================================== -->
+<!-- INPUT PILIH ICON -->
+<!-- ===================================================== -->
+
+<input
+id="iconPicker"
+type="file"
+accept="image/*"
+class="hidden"
+onchange="pilihIcon(event)">
+<!-- ===================================================== -->
+<!-- END MENU TRANSAKSI -->
+<!-- ===================================================== -->
+
 
 <!-- ======================================================
      TOAST NOTIFICATION
@@ -598,6 +698,7 @@ let confirmAction = null;
 
 let sortableInstance = null;
 
+let selectedIconIndex = null;
 
 /* ======================================================
    MENU UTAMA
@@ -1129,6 +1230,653 @@ function confirmSaveTransaksi(){
 /* ======================================================
    INISIALISASI
 ====================================================== */
+
+
+/* ===================================================== */
+/* MENU TRANSAKSI - DATA DAN FUNGSI DASAR */
+/* ===================================================== */
+
+let sortableInstance = null;
+let transaksiChanged = false;
+
+let transaksiItems =
+JSON.parse(localStorage.getItem("transaksiItems")) || [
+
+    {
+        type:"kategori",
+        nama:"PRODUK DIGITAL",
+        checked:false,
+        swiped:false
+    },
+
+    {
+        type:"menu",
+        nama:"Pulsa Reguler",
+        icon:"smartphone",
+        iconFile:"",
+        checked:false,
+        swiped:false
+    },
+
+    {
+        type:"menu",
+        nama:"Paket Data",
+        icon:"wifi",
+        iconFile:"",
+        checked:false,
+        swiped:false
+    }
+
+];
+
+
+/* ===================================================== */
+/* BUKA MENU TRANSAKSI */
+/* ===================================================== */
+
+function openTransaksi(){
+
+    document
+        .getElementById("transaksiModal")
+        .classList.add("show");
+
+    loadTransaksi();
+
+    transaksiChanged = false;
+
+    disableButton("saveTransaksiBtn");
+}
+
+
+/* ===================================================== */
+/* TUTUP MENU TRANSAKSI */
+/* ===================================================== */
+
+function closeTransaksi(){
+
+    if(transaksiChanged){
+
+        showConfirm(
+            "Perubahan Belum Disimpan",
+            "Yakin ingin keluar tanpa menyimpan perubahan?",
+            function(){
+
+                transaksiChanged = false;
+
+                document
+                    .getElementById("transaksiModal")
+                    .classList.remove("show");
+
+            }
+        );
+
+        return;
+    }
+
+    document
+        .getElementById("transaksiModal")
+        .classList.remove("show");
+}
+
+
+/* ===================================================== */
+/* UPDATE JUMLAH MENU DAN KATEGORI */
+/* ===================================================== */
+
+function updateTransaksiInfo(){
+
+    const totalMenu =
+        transaksiItems.filter(
+            item => item.type === "menu"
+        ).length;
+
+    const totalKategori =
+        transaksiItems.filter(
+            item => item.type === "kategori"
+        ).length;
+
+    document.getElementById(
+        "transaksiInfo"
+    ).innerText =
+    `${totalMenu} Menu • ${totalKategori} Kategori`;
+}
+
+
+/* ===================================================== */
+/* TAMBAH MENU */
+/* ===================================================== */
+
+function addMenu(){
+
+    transaksiItems.unshift({
+
+        type: "menu",
+
+        nama: "Menu Baru",
+
+        icon: "circle",
+
+        iconFile: "",
+
+        checked: false,
+
+        swiped: false
+    });
+
+    transaksiChanged = true;
+
+    enableButton("saveTransaksiBtn");
+
+    renderTransaksi();
+
+    fokusInputPertama();
+}
+
+
+/* ===================================================== */
+/* TAMBAH KATEGORI */
+/* ===================================================== */
+
+function addKategori(){
+
+    transaksiItems.unshift({
+
+        type: "kategori",
+
+        nama: "Kategori Baru",
+
+        checked: false,
+
+        swiped: false
+    });
+
+    transaksiChanged = true;
+
+    enableButton("saveTransaksiBtn");
+
+    renderTransaksi();
+
+    fokusInputPertama();
+}
+
+
+/* ===================================================== */
+/* FOKUS INPUT PERTAMA */
+/* ===================================================== */
+
+function fokusInputPertama(){
+
+    setTimeout(function(){
+
+        const inputs =
+            document.querySelectorAll(
+                "#transaksiList input[type='text']"
+            );
+
+        if(inputs.length){
+
+            inputs[0].focus();
+
+            inputs[0].select();
+        }
+
+    },100);
+}
+
+
+/* ===================================================== */
+/* UPDATE NAMA MENU/KATEGORI */
+/* ===================================================== */
+
+function updateTransaksi(index,value){
+
+    transaksiItems[index].nama = value;
+
+    transaksiChanged = true;
+
+    enableButton("saveTransaksiBtn");
+}
+
+
+/* ===================================================== */
+/* CENTANG MENU */
+/* ===================================================== */
+
+function toggleTransaksi(index){
+
+    transaksiItems[index].checked =
+        !transaksiItems[index].checked;
+
+    transaksiChanged = true;
+
+    enableButton("saveTransaksiBtn");
+
+    renderTransaksi();
+}
+
+
+/* ===================================================== */
+/* SWIPE KIRI */
+/* ===================================================== */
+
+function swipeLeft(index){
+
+    transaksiItems.forEach(function(item,i){
+
+        item.swiped = (i === index);
+
+    });
+
+    renderTransaksi();
+}
+
+
+/* ===================================================== */
+/* SWIPE KANAN */
+/* ===================================================== */
+
+function swipeRight(index){
+
+    transaksiItems[index].swiped = false;
+
+    renderTransaksi();
+}
+
+
+/* ===================================================== */
+/* MENU TRANSAKSI - RENDER LIST */
+/* ===================================================== */
+
+function renderTransaksi(){
+
+    const list =
+    document.getElementById("transaksiList");
+
+    list.innerHTML = "";
+
+    transaksiItems.forEach((item,index)=>{
+
+        const div =
+        document.createElement("div");
+
+        /* ===== KATEGORI ===== */
+
+        if(item.type === "kategori"){
+
+            div.innerHTML = `
+
+            <div class="
+            bg-gradient-to-r
+            from-amber-400
+            to-orange-500
+            text-white
+            rounded-2xl
+            p-4
+            shadow-lg">
+
+                <div class="flex items-center gap-3">
+
+                    <input
+                    type="checkbox"
+                    ${item.checked ? "checked" : ""}
+                    onchange="toggleTransaksi(${index})"
+                    class="w-5 h-5">
+
+                    <i data-lucide="folder-open"></i>
+
+                    <input
+                    type="text"
+                    value="${item.nama}"
+                    class="
+                    flex-1
+                    bg-transparent
+                    outline-none
+                    font-bold
+                    text-lg"
+                    oninput="updateTransaksi(${index},this.value)">
+
+                    <div class="ml-auto flex items-center gap-2">
+
+                        ${item.swiped ? `
+
+                        <button
+                        onclick="hapusTransaksi(${index})"
+                        class="
+                        bg-red-500
+                        text-white
+                        w-10
+                        h-10
+                        rounded-xl
+                        flex
+                        items-center
+                        justify-center">
+
+                            <i data-lucide="trash-2"></i>
+
+                        </button>
+
+                        ` : ""}
+
+                        <i
+                        data-lucide="grip-vertical"
+                        class="drag-handle cursor-move">
+                        </i>
+
+                    </div>
+
+                </div>
+
+            </div>
+            `;
+
+        }
+
+        /* ===== MENU ===== */
+
+        else{
+
+            div.innerHTML = `
+
+            <div class="
+            ${item.checked
+                ? "bg-green-50 border-2 border-green-500"
+                : "bg-white border border-slate-200"}
+            rounded-2xl
+            p-4
+            shadow-sm">
+
+                <div class="flex items-center gap-3">
+
+                    <input
+                    type="checkbox"
+                    ${item.checked ? "checked" : ""}
+                    onchange="toggleTransaksi(${index})"
+                    class="w-5 h-5">
+
+                  cursor-pointer
+
+  <div
+onclick="gantiIcon(${index})"
+class="
+w-12 h-12
+rounded-xl
+bg-cyan-100
+flex
+items-center
+justify-center
+overflow-hidden
+cursor-pointer">
+
+                        ${
+                        item.iconFile
+                        ? `<img src="${item.iconFile}"
+                             class="w-full h-full object-cover">`
+                        : `<i data-lucide="${item.icon}"></i>`
+                        }
+
+                    </div>
+
+                    <div class="flex-1">
+
+                        <input
+                        type="text"
+                        value="${item.nama}"
+                        class="
+                        w-full
+                        outline-none
+                        bg-transparent
+                        font-semibold"
+                        oninput="updateTransaksi(${index},this.value)">
+
+                        <div class="
+                        text-xs
+                        text-slate-500">
+
+                            Menu Transaksi
+
+                        </div>
+
+                    </div>
+
+                    <div class="ml-auto flex items-center gap-2">
+
+                        ${item.swiped ? `
+
+                        <button
+                        onclick="hapusTransaksi(${index})"
+                        class="
+                        bg-red-500
+                        text-white
+                        w-10
+                        h-10
+                        rounded-xl
+                        flex
+                        items-center
+                        justify-center">
+
+                            <i data-lucide="trash-2"></i>
+
+                        </button>
+
+                        ` : ""}
+
+                        <i
+                        data-lucide="grip-vertical"
+                        class="
+                        drag-handle
+                        cursor-move
+                        text-slate-400">
+                        </i>
+
+                    </div>
+
+                </div>
+
+            </div>
+            `;
+        }
+
+        /* ===== SWIPE ===== */
+
+        let startX = 0;
+
+        div.addEventListener("touchstart",(e)=>{
+
+            startX =
+            e.touches[0].clientX;
+
+        });
+
+        div.addEventListener("touchend",(e)=>{
+
+            const endX =
+            e.changedTouches[0].clientX;
+
+            const diff =
+            startX - endX;
+
+            if(diff > 80){
+
+                swipeLeft(index);
+
+            }
+
+            if(diff < -80){
+
+                swipeRight(index);
+
+            }
+
+        });
+
+        list.appendChild(div);
+
+    });
+
+    updateTransaksiInfo();
+
+    lucide.createIcons();
+
+    initDragDrop();
+}
+
+
+/* ===================================================== */
+/* HAPUS ITEM */
+/* ===================================================== */
+
+function hapusTransaksi(index){
+
+    const namaItem =
+    transaksiItems[index].nama;
+
+    showConfirm(
+        "Konfirmasi Hapus",
+        `Yakin ingin menghapus "${namaItem}" ?`,
+        ()=>{
+
+            transaksiItems.splice(index,1);
+
+            transaksiChanged = true;
+
+            enableButton(
+                "saveTransaksiBtn"
+            );
+
+            renderTransaksi();
+
+        }
+    );
+}
+
+
+/* ===================================================== */
+/* DRAG & DROP */
+/* ===================================================== */
+
+function initDragDrop(){
+
+    const list =
+    document.getElementById("transaksiList");
+
+    if(!list) return;
+
+    if(sortableInstance){
+
+        sortableInstance.destroy();
+
+    }
+
+    sortableInstance =
+    Sortable.create(list,{
+
+        animation:150,
+
+        handle:".drag-handle",
+
+        delay:500,
+
+        delayOnTouchOnly:true,
+
+        onEnd:function(evt){
+
+            const moved =
+            transaksiItems.splice(
+                evt.oldIndex,
+                1
+            )[0];
+
+            transaksiItems.splice(
+                evt.newIndex,
+                0,
+                moved
+            );
+
+            transaksiChanged = true;
+
+            enableButton(
+                "saveTransaksiBtn"
+            );
+
+            renderTransaksi();
+
+        }
+
+    });
+
+}
+
+/* ===================================================== */
+/* SIMPAN MENU TRANSAKSI */
+/* ===================================================== */
+
+function saveTransaksi(){
+
+    localStorage.setItem(
+        "transaksiItems",
+        JSON.stringify(transaksiItems)
+    );
+
+    transaksiChanged = false;
+
+    disableButton("saveTransaksiBtn");
+
+    toast("Menu Transaksi berhasil disimpan");
+
+    loadTransaksi();
+
+}
+
+/* ===================================================== */
+/* LOAD MENU TRANSAKSI */
+/* ===================================================== */
+
+function loadTransaksi(){
+
+    const data =
+    localStorage.getItem("transaksiItems");
+
+    if(data){
+
+        transaksiItems =
+        JSON.parse(data);
+
+    }
+
+    transaksiItems.forEach(item=>{
+
+        if(item.checked === undefined){
+
+            item.checked = false;
+
+        }
+
+        if(item.swiped === undefined){
+
+            item.swiped = false;
+
+        }
+
+        if(item.icon === undefined){
+
+            item.icon = "circle";
+
+        }
+
+        if(item.iconFile === undefined){
+
+            item.iconFile = "";
+
+        }
+
+    });
+
+    renderTransaksi();
+
+    updateTransaksiInfo();
+
+}
+
 
 window.onload = function(){
 
