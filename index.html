@@ -353,8 +353,7 @@ class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-cente
 <!-- MENU TRANSAKSI -->
 
 <div id="transaksiModal"
-class="modal fixed inset-0 bg-white z-50 flex flex-col">
-
+class="hidden fixed inset-0 bg-white z-50 flex flex-col">
     <!-- HEADER -->
 
     <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
@@ -922,7 +921,9 @@ function openTransaksi(){
 
     document
     .getElementById("transaksiModal")
-    .classList.add("show");
+    .classList.remove("hidden");
+
+}
 
     loadTransaksi();
 
@@ -945,7 +946,7 @@ function closeTransaksi(){
 
                 document
                 .getElementById("transaksiModal")
-                .classList.remove("show");
+                .classList.add("hidden");
 
             }
         );
