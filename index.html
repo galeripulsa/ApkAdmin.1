@@ -206,7 +206,7 @@ Tutup
 class="modal fixed inset-0 bg-white z-50 overflow-auto">
 <div class="w-full px-2">
 
-    
+
     <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50 flex items-center justify-between">
 
             <h2 class="font-bold text-xl">
@@ -349,12 +349,16 @@ class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-cente
     </div>
 
 </div>
+
 <!-- MENU TRANSAKSI -->
+
 <div id="transaksiModal"
-style="display:none"
-class="modal fixed inset-0 bg-white z-50 flex flex-col">
+class="modal fixed inset-0 bg-white z-50 overflow-auto">
+
+<div class="w-full">
 
     <!-- HEADER -->
+
     <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
 
         <div class="flex items-center justify-between">
@@ -363,89 +367,75 @@ class="modal fixed inset-0 bg-white z-50 flex flex-col">
                 Menu Transaksi
             </h2>
 
-            <div class="flex gap-3">
+            <div class="flex gap-3 mb-4">
 
-                <button
-                onclick="addMenu()"
-                class="
-                bg-cyan-500
-                text-white
-                px-4
-                py-3
-                rounded-2xl
-                font-bold">
+<button
+onclick="addMenu()"
+class="
+flex-1
+bg-cyan-600
+text-white
+py-3
+rounded-2xl
+font-bold">
 
-                    + Menu
++ Menu
 
-                </button>
+</button>
 
-                <button
-                onclick="addKategori()"
-                class="
-                bg-orange-500
-                text-white
-                px-4
-                py-3
-                rounded-2xl
-                font-bold">
+<button
+onclick="addKategori()"
+class="
+flex-1
+bg-orange-500
+text-white
+py-3
+rounded-2xl
+font-bold">
 
-                    + Kategori
++ Kategori
 
-                </button>
+</button>
 
-            </div>
+</div>
 
         </div>
 
     </div>
 
-    <!-- AREA KONTEN -->
-    <div class="flex-1 overflow-y-auto">
+    <!-- LIST -->
+<div
+class="
+bg-white
+rounded-2xl
+shadow
+p-3
+mb-3">
 
-        <div
-        class="
-        bg-white
-        rounded-2xl
-        shadow
-        p-3
-        m-3">
+<div id="transaksiInfo"
+class="text-sm text-slate-600">
 
-            <div id="transaksiInfo"
-            class="text-sm text-slate-600">
+0 Menu • 0 Kategori
 
-                0 Menu • 0 Kategori
+</div>
 
-            </div>
+</div>
 
-        </div>
-
-        <div
-        id="transaksiList"
-        class="p-3 space-y-2 pb-24">
-        </div>
-
+    <div
+    id="transaksiList"
+    class="p-3 space-y-2">
     </div>
 
     <!-- FOOTER -->
+
     <div
-    class="
-    bg-white
-    border-t
-    p-3
-    flex
-    gap-3
-    shrink-0">
+    class="sticky bottom-0 bg-white border-t p-3 flex gap-3">
 
         <button
         id="saveTransaksiBtn"
         onclick="saveTransaksi()"
         disabled
-        class="
-        flex-1
-        bg-gray-400
-        text-white
-        py-3
-        rounded-xl">
+        class="flex-1 bg-gray-400 text-white py-3 rounded-xl">
 
             Simpan
 
@@ -453,18 +443,15 @@ class="modal fixed inset-0 bg-white z-50 flex flex-col">
 
         <button
         onclick="closeTransaksi()"
-        class="
-        flex-1
-        bg-red-500
-        text-white
-        py-3
-        rounded-xl">
+        class="flex-1 bg-red-500 text-white py-3 rounded-xl">
 
             Tutup
 
         </button>
 
     </div>
+
+</div>
 
 </div>
 
@@ -915,9 +902,10 @@ closeConfirmModal();
 let sortableInstance = null;
 
 function openTransaksi(){
-    document.getElementById("transaksiModal").style.display = "flex";
-}
 
+    document
+    .getElementById("transaksiModal")
+    .classList.add("show");
 
     loadTransaksi();
 
@@ -940,14 +928,17 @@ function closeTransaksi(){
 
                 document
                 .getElementById("transaksiModal")
-                .classList.add("hidden");
+                .classList.remove("show");
 
             }
         );
 
         return;
     }
-    document.getElementById("transaksiModal").style.display = "none";
+
+    document
+    .getElementById("transaksiModal")
+    .classList.remove("show");
 
 }
 
@@ -984,21 +975,17 @@ function renderTransaksi(){
                     onchange="toggleTransaksi(${index})"
                     class="w-5 h-5">
 
-    <i data-lucide="folder-open"></i>
+                    <i data-lucide="folder-open"></i>
 
-             <input
-type="text"
-value="${item.nama === 'Kategori Baru' ? '' : item.nama}"
-placeholder="Nama Kategori"
-onfocus="this.placeholder=''"
-onblur="if(this.value===''){this.placeholder='Nama Kategori'}"
-class="
-flex-1
-bg-transparent
-outline-none
-font-bold
-text-lg"
-oninput="updateTransaksi(${index},this.value)">
+                    <input
+                    value="${item.nama}"
+                    class="
+                    flex-1
+                    bg-transparent
+                    outline-none
+                    font-bold
+                    text-lg"
+                    oninput="updateTransaksi(${index},this.value)">
 
        <div class="ml-auto flex items-center gap-2">
 
@@ -1034,17 +1021,17 @@ class="drag-handle cursor-move">
 
         }else{
 
-  div.innerHTML=`
+            div.innerHTML=`
 
-        <div class="
-        ${item.checked
-        ? "bg-green-50 border-2 border-green-500"
-        : "bg-white border border-slate-200"}
+            <div class="
+            ${item.checked
+                ? "bg-green-50 border-2 border-green-500"
+                : "bg-white border border-slate-200"}
             rounded-2xl
             p-4
             shadow-sm">
 
-  <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3">
 
                     <input
                     type="checkbox"
@@ -1052,55 +1039,38 @@ class="drag-handle cursor-move">
                     onchange="toggleTransaksi(${index})"
                     class="w-5 h-5">
 
-                   <div
-onclick="pilihIcon(${index})"
-class="
-w-12 h-12
-rounded-xl
-bg-cyan-100
-flex
-items-center
-justify-center
-overflow-hidden
-cursor-pointer">
+                    <div class="
+                    w-12 h-12
+                    rounded-xl
+                    bg-cyan-100
+                    flex
+                    items-center
+                    justify-center">
 
-${item.iconData ?
+                        <i data-lucide="${item.icon}"></i>
 
-`<img
-src="${item.iconData}"
-class="w-full h-full object-cover">`
-
-:
-
-`<i data-lucide="${item.icon || 'image'}"></i>`
-
-}
-
-</div>
-
-<input
-type="file"
-id="fileIcon${index}"
-accept="image/*"
-hidden
-onchange="gantiIcon(event,${index})">
+                    </div>
 
                     <div class="flex-1">
 
-            <input
-type="text"
-value="${item.nama === 'Menu Baru' ? '' : item.nama}"
-placeholder="Nama Menu"
-onfocus="this.placeholder=''"
-onblur="if(this.value===''){this.placeholder='Nama Menu'}"
-class="
-w-full
-outline-none
-bg-transparent
-font-semibold"
-oninput="updateTransaksi(${index},this.value)">
+                        <input
+                        value="${item.nama}"
+                        class="
+                        w-full
+                        outline-none
+                        bg-transparent
+                        font-semibold"
+                        oninput="updateTransaksi(${index},this.value)">
 
-       </div>
+                        <div class="
+                        text-xs
+                        text-slate-500">
+
+                            Menu Transaksi
+
+                        </div>
+
+                    </div>
 
          <div class="ml-auto flex items-center gap-2">
 
@@ -1351,39 +1321,6 @@ function updateTransaksi(index,value){
 
 }
 
-function pilihIcon(index){
-
-    document
-    .getElementById(`fileIcon${index}`)
-    .click();
-
-}
-
-function gantiIcon(event,index){
-
-    const file = event.target.files[0];
-
-    if(!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-
-        transaksiItems[index].iconData =
-        e.target.result;
-
-        // Hanya update tampilan
-        renderTransaksi();
-
-        // Tidak menyimpan ke localStorage
-        // simpanData(); ← HAPUS
-
-    };
-
-    reader.readAsDataURL(file);
-
-}
-
 function hapusTransaksi(index){
 
     const namaItem =
@@ -1482,25 +1419,6 @@ function executeConfirm(){
 
     closeConfirm();
  }
-
-function simpanData(){
-
-    localStorage.setItem(
-        "transaksiItems",
-        JSON.stringify(transaksiItems)
-    );
-
-}
-
-const data =
-localStorage.getItem("transaksiItems");
-
-if(data){
-
-    transaksiItems =
-    JSON.parse(data);
-
-}
 
 watchCenterChanges();
 watchServerChanges();
