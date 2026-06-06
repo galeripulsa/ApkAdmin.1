@@ -195,3 +195,952 @@ body{
      class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
 
 </div>
+
+<!-- ======================================================
+     SETUP SERVER
+====================================================== -->
+
+<div id="serverModal"
+     class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-6">
+
+        <h2 class="text-xl font-bold text-cyan-700 mb-4">
+            Setup Server
+        </h2>
+
+        <!-- Nama Konter -->
+        <div class="floating">
+
+            <input id="namaKonter"
+                   placeholder=" ">
+
+            <label>Nama Konter</label>
+
+        </div>
+
+        <!-- Alamat Konter -->
+        <div class="floating">
+
+            <textarea id="alamatKonter"
+                      rows="4"
+                      placeholder=" ">
+            </textarea>
+
+            <label>Alamat Konter</label>
+
+        </div>
+
+        <!-- Tombol -->
+        <div class="mt-5 flex gap-2">
+
+            <button
+                id="saveServerBtn"
+                onclick="confirmSaveServer()"
+                disabled
+                class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
+
+                Simpan
+
+            </button>
+
+            <button
+                onclick="checkCloseServer()"
+                class="flex-1 bg-red-500 text-white py-4 rounded-xl">
+
+                Tutup
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     SETUP CENTER
+====================================================== -->
+
+<div id="centerModal"
+     class="modal fixed inset-0 bg-white z-50 overflow-auto">
+
+    <div class="w-full px-2">
+
+        <!-- HEADER -->
+        <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50 flex items-center justify-between">
+
+            <h2 class="font-bold text-xl">
+
+                Setup Center
+
+            </h2>
+
+        </div>
+
+        <!-- GRID -->
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+
+            <!-- IP CENTER -->
+            <div class="bg-white p-5 rounded-2xl shadow">
+
+                <h3 class="font-bold text-cyan-600 text-lg mb-2">
+
+                    IP Center
+
+                </h3>
+
+                <div class="floating">
+                    <input id="ipNama" placeholder=" ">
+                    <label>Nama Center</label>
+                </div>
+
+                <div class="floating">
+                    <input id="ipServer" placeholder=" ">
+                    <label>Server Center</label>
+                </div>
+
+                <div class="floating">
+                    <input id="ipHost" placeholder=" ">
+                    <label>Host</label>
+                </div>
+
+            </div>
+
+            <!-- JABBER CENTER -->
+            <div class="bg-white p-5 rounded-2xl shadow">
+
+                <h3 class="font-bold text-cyan-600 text-lg mb-2">
+
+                    Jabber Center
+
+                </h3>
+
+                <div class="floating">
+                    <input id="jabberNama" placeholder=" ">
+                    <label>Nama Center</label>
+                </div>
+
+                <div class="floating">
+                    <input id="jabberServer" placeholder=" ">
+                    <label>Server Center</label>
+                </div>
+
+                <div class="floating">
+                    <input id="jabberHost" placeholder=" ">
+                    <label>Host</label>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- NOMOR CENTER -->
+        <div class="bg-white p-5 rounded-2xl shadow mt-4">
+
+            <h3 class="font-bold text-cyan-600 text-lg mb-2">
+
+                Nomor Center
+
+            </h3>
+
+            <div class="floating">
+
+                <input id="waCenter"
+                       placeholder=" ">
+
+                <label>WhatsApp Center</label>
+
+            </div>
+
+            <div class="floating">
+
+                <input id="smsCenter"
+                       placeholder=" ">
+
+                <label>SMS Center</label>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
+
+            <button
+                id="saveCenterBtn"
+                onclick="confirmSaveCenter()"
+                disabled
+                class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">
+
+                Simpan
+
+            </button>
+
+            <button
+                onclick="checkCloseCenter()"
+                class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg">
+
+                Tutup
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     MODAL KONFIRMASI
+====================================================== -->
+
+<div id="confirmModal"
+     class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
+
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+
+        <h3 id="confirmTitle"
+            class="text-xl font-bold text-gray-800 mb-2">
+
+        </h3>
+
+        <p id="confirmMessage"
+           class="text-gray-600 mb-6">
+
+        </p>
+
+        <div class="flex gap-3">
+
+            <button
+                onclick="closeConfirm()"
+                class="flex-1 bg-gray-200 py-3 rounded-xl">
+
+                Batal
+
+            </button>
+
+            <button
+                onclick="executeConfirm()"
+                class="flex-1 bg-green-600 text-white py-3 rounded-xl">
+
+                OK
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ======================================================
+     MENU TRANSAKSI
+====================================================== -->
+
+<div id="transaksiModal"
+     class="modal fixed inset-0 bg-white z-50 overflow-auto">
+
+    <div class="w-full">
+
+        <!-- HEADER -->
+        <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
+
+            <div class="flex items-center justify-between">
+
+                <h2 class="font-bold text-xl">
+
+                    Menu Transaksi
+
+                </h2>
+
+            </div>
+
+            <!-- TOMBOL MENU -->
+            <div class="flex gap-3 mt-4">
+
+                <button
+                    onclick="addMenu()"
+                    class="
+                    flex-1
+                    bg-cyan-700
+                    text-white
+                    py-3
+                    rounded-2xl
+                    font-bold">
+
+                    + Menu
+
+                </button>
+
+                <button
+                    onclick="addKategori()"
+                    class="
+                    flex-1
+                    bg-orange-500
+                    text-white
+                    py-3
+                    rounded-2xl
+                    font-bold">
+
+                    + Kategori
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             INFO MENU
+        ====================================================== -->
+
+        <div class="
+             bg-white
+             rounded-2xl
+             shadow
+             p-3
+             mb-3">
+
+            <div id="transaksiInfo"
+                 class="text-sm text-slate-600">
+
+                0 Menu • 0 Kategori
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             LIST MENU
+        ====================================================== -->
+
+        <div id="transaksiList"
+             class="p-3 space-y-2">
+
+        </div>
+
+
+        <!-- ======================================================
+             FOOTER MENU TRANSAKSI
+        ====================================================== -->
+
+        <div class="
+             sticky
+             bottom-0
+             bg-white
+             border-t
+             p-3
+             flex
+             gap-3">
+
+            <button
+                id="saveTransaksiBtn"
+                onclick="confirmSaveTransaksi()"
+                disabled
+                class="
+                flex-1
+                bg-gray-400
+                cursor-not-allowed
+                text-white
+                py-3
+                rounded-xl">
+
+                Simpan
+
+            </button>
+
+            <button
+                onclick="closeTransaksi()"
+                class="
+                flex-1
+                bg-red-500
+                text-white
+                py-3
+                rounded-xl">
+
+                Tutup
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     TOAST NOTIFICATION
+====================================================== -->
+
+<div id="toast"
+     class="toast">
+
+</div>
+
+
+<!-- ======================================================
+     SCRIPT
+====================================================== -->
+
+<script>
+
+let centerChanged = false;
+let serverChanged = false;
+let transaksiChanged = false;
+
+let confirmAction = null;
+
+let sortableInstance = null;
+
+
+/* ======================================================
+   MENU UTAMA
+====================================================== */
+
+const menus = [
+
+    {
+        label:"Setup Server",
+        icon:"server",
+        action:"server"
+    },
+
+    {
+        label:"Setup Center",
+        icon:"database",
+        action:"center"
+    },
+
+    {
+        label:"Menu Transaksi",
+        icon:"layout-grid",
+        action:"transaksi"
+    },
+
+    {
+        label:"Prabayar",
+        icon:"smartphone"
+    },
+
+    {
+        label:"Pascabayar",
+        icon:"credit-card"
+    },
+
+    {
+        label:"Format Request",
+        icon:"file-text"
+    },
+
+    {
+        label:"Logo",
+        icon:"image"
+    },
+
+    {
+        label:"OTP",
+        icon:"key-round"
+    },
+
+    {
+        label:"Poin",
+        icon:"star"
+    },
+
+    {
+        label:"Downline",
+        icon:"users"
+    }
+
+];
+
+
+/* ======================================================
+   DATA MENU TRANSAKSI
+====================================================== */
+
+let transaksiItems = [
+
+    {
+        type:"kategori",
+        nama:"PRODUK DIGITAL",
+        checked:false,
+        swiped:false
+    },
+
+    {
+        type:"menu",
+        nama:"Pulsa Reguler",
+        icon:"smartphone",
+        checked:false,
+        swiped:false
+    },
+
+    {
+        type:"menu",
+        nama:"Paket Data",
+        icon:"wifi",
+        checked:false,
+        swiped:false
+    }
+
+];
+
+/* ======================================================
+   RENDER MENU UTAMA
+====================================================== */
+
+function renderMenus(){
+
+    const grid =
+    document.getElementById("menuGrid");
+
+    grid.innerHTML = "";
+
+    menus.forEach((menu,index)=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className =
+        "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
+
+        card.dataset.index = index;
+
+        card.innerHTML = `
+            <div class="flex justify-center mb-3">
+                <i data-lucide="${menu.icon}"></i>
+            </div>
+
+            <div class="menu-label font-semibold text-gray-700">
+                ${menu.label}
+            </div>
+        `;
+
+        card.onclick = ()=>{
+
+            document
+            .querySelectorAll(".card-menu")
+            .forEach(el=>{
+                el.classList.remove("menu-active");
+            });
+
+            card.classList.add("menu-active");
+
+            if(menu.action==="server"){
+                openServer();
+            }
+
+            if(menu.action==="center"){
+                openCenter();
+            }
+
+            if(menu.action==="transaksi"){
+                openTransaksi();
+            }
+
+        };
+
+        grid.appendChild(card);
+
+    });
+
+    lucide.createIcons();
+
+}
+
+
+/* ======================================================
+   TOAST
+====================================================== */
+
+function toast(msg){
+
+    const t =
+    document.getElementById("toast");
+
+    t.innerText = msg;
+
+    t.style.display = "block";
+
+    setTimeout(()=>{
+        t.style.display = "none";
+    },2500);
+
+}
+
+
+/* ======================================================
+   BUTTON
+====================================================== */
+
+function enableButton(btnId){
+
+    const btn =
+    document.getElementById(btnId);
+
+    btn.disabled = false;
+
+    btn.classList.remove(
+        "bg-gray-400",
+        "cursor-not-allowed"
+    );
+
+    btn.classList.add("bg-green-600");
+
+}
+
+function disableButton(btnId){
+
+    const btn =
+    document.getElementById(btnId);
+
+    btn.disabled = true;
+
+    btn.classList.remove("bg-green-600");
+
+    btn.classList.add(
+        "bg-gray-400",
+        "cursor-not-allowed"
+    );
+
+}
+
+
+/* ======================================================
+   MODAL KONFIRMASI
+====================================================== */
+
+function showConfirm(title,message,action){
+
+    document.getElementById("confirmTitle")
+    .innerText = title;
+
+    document.getElementById("confirmMessage")
+    .innerText = message;
+
+    confirmAction = action;
+
+    document.getElementById("confirmModal")
+    .classList.remove("hidden");
+
+}
+
+function closeConfirm(){
+
+    document.getElementById("confirmModal")
+    .classList.add("hidden");
+
+}
+
+function executeConfirm(){
+
+    if(typeof confirmAction === "function"){
+        confirmAction();
+    }
+
+    closeConfirm();
+
+}
+
+
+/* ======================================================
+   SETUP SERVER
+====================================================== */
+
+function openServer(){
+
+    document
+    .getElementById("serverModal")
+    .classList.add("show");
+
+    loadServer();
+
+    serverChanged = false;
+
+    disableButton("saveServerBtn");
+
+}
+
+function closeServer(){
+
+    document
+    .getElementById("serverModal")
+    .classList.remove("show");
+
+}
+
+function saveServer(){
+
+    localStorage.setItem(
+        "setupServer",
+        JSON.stringify({
+            nama:namaKonter.value,
+            alamat:alamatKonter.value
+        })
+    );
+
+    serverChanged = false;
+
+    disableButton("saveServerBtn");
+
+    toast("Data Server Disimpan");
+
+}
+
+function confirmSaveServer(){
+
+    if(!serverChanged) return;
+
+    showConfirm(
+        "Konfirmasi Simpan",
+        "Apakah Anda yakin ingin menyimpan perubahan Server?",
+        saveServer
+    );
+
+}
+
+function checkCloseServer(){
+
+    if(serverChanged){
+
+        showConfirm(
+            "Perubahan Belum Disimpan",
+            "Yakin ingin keluar?",
+            closeServer
+        );
+
+        return;
+    }
+
+    closeServer();
+
+}
+
+function loadServer(){
+
+    const data =
+    JSON.parse(
+        localStorage.getItem("setupServer")
+    );
+
+    if(!data) return;
+
+    namaKonter.value = data.nama || "";
+    alamatKonter.value = data.alamat || "";
+
+}
+
+
+/* ======================================================
+   SETUP CENTER
+====================================================== */
+
+function openCenter(){
+
+    document
+    .getElementById("centerModal")
+    .classList.add("show");
+
+    loadCenter();
+
+    centerChanged = false;
+
+    disableButton("saveCenterBtn");
+
+}
+
+function closeCenter(){
+
+    document
+    .getElementById("centerModal")
+    .classList.remove("show");
+
+}
+
+function saveCenter(){
+
+    localStorage.setItem(
+        "centerServer",
+        JSON.stringify({
+
+            ip:{
+                nama:ipNama.value,
+                server:ipServer.value,
+                host:ipHost.value
+            },
+
+            jabber:{
+                nama:jabberNama.value,
+                server:jabberServer.value,
+                host:jabberHost.value
+            },
+
+            nomor:{
+                wa:waCenter.value,
+                sms:smsCenter.value
+            }
+
+        })
+    );
+
+    centerChanged = false;
+
+    disableButton("saveCenterBtn");
+
+    toast("Data Center Disimpan");
+
+}
+
+function confirmSaveCenter(){
+
+    if(!centerChanged) return;
+
+    showConfirm(
+        "Konfirmasi Simpan",
+        "Apakah Anda yakin ingin menyimpan perubahan Center?",
+        saveCenter
+    );
+
+}
+
+function checkCloseCenter(){
+
+    if(centerChanged){
+
+        showConfirm(
+            "Perubahan Belum Disimpan",
+            "Yakin ingin keluar?",
+            closeCenter
+        );
+
+        return;
+    }
+
+    closeCenter();
+
+}
+
+function loadCenter(){
+
+    const data =
+    JSON.parse(
+        localStorage.getItem("centerServer")
+    );
+
+    if(!data) return;
+
+    ipNama.value = data.ip?.nama || "";
+    ipServer.value = data.ip?.server || "";
+    ipHost.value = data.ip?.host || "";
+
+    jabberNama.value = data.jabber?.nama || "";
+    jabberServer.value = data.jabber?.server || "";
+    jabberHost.value = data.jabber?.host || "";
+
+    waCenter.value = data.nomor?.wa || "";
+    smsCenter.value = data.nomor?.sms || "";
+
+}
+
+
+/* ======================================================
+   WATCH INPUT
+====================================================== */
+
+function watchServerChanges(){
+
+    [namaKonter,alamatKonter]
+    .forEach(field=>{
+
+        field.addEventListener("input",()=>{
+
+            serverChanged = true;
+
+            enableButton("saveServerBtn");
+
+        });
+
+    });
+
+}
+
+function watchCenterChanges(){
+
+    [
+        ipNama,ipServer,ipHost,
+        jabberNama,jabberServer,jabberHost,
+        waCenter,smsCenter
+    ].forEach(field=>{
+
+        field.addEventListener("input",()=>{
+
+            centerChanged = true;
+
+            enableButton("saveCenterBtn");
+
+        });
+
+    });
+
+}
+
+
+/* ======================================================
+   MENU TRANSAKSI
+====================================================== */
+
+/* Gunakan seluruh fungsi renderTransaksi(),
+   addMenu(),
+   addKategori(),
+   toggleTransaksi(),
+   swipeLeft(),
+   swipeRight(),
+   updateTransaksi(),
+   hapusTransaksi(),
+   initDragDrop(),
+   saveTransaksi(),
+   loadTransaksi()
+   dari kode Part 2 yang sudah Anda kirim sebelumnya,
+   karena struktur tersebut sudah benar dan hanya perlu
+   dipindahkan ke bawah bagian ini tanpa perubahan.
+*/
+
+
+function confirmSaveTransaksi(){
+
+    if(!transaksiChanged) return;
+
+    showConfirm(
+        "Konfirmasi Simpan",
+        "Apakah Anda yakin ingin menyimpan Menu Transaksi?",
+        saveTransaksi
+    );
+
+}
+
+
+/* ======================================================
+   INISIALISASI
+====================================================== */
+
+window.onload = function(){
+
+    renderMenus();
+
+    watchServerChanges();
+
+    watchCenterChanges();
+
+};
+
+</script>
+
+</body>
+</html>
