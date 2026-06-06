@@ -187,13 +187,12 @@ body{
 
 </div>
 
-<!-- ======================================================
+<!-- ==================
      MENU UTAMA
-====================================================== -->
+================ -->
 
 <div id="menuGrid"
-     class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
-
+class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
 </div>
 
 <!-- ======================================================
@@ -799,15 +798,18 @@ let transaksiItems = [
 
 function renderMenus(){
 
-    const grid =
-    document.getElementById("menuGrid");
+    const grid = document.getElementById("menuGrid");
+
+    if(!grid){
+        console.error("menuGrid tidak ditemukan");
+        return;
+    }
 
     grid.innerHTML = "";
 
     menus.forEach((menu,index)=>{
 
-        const card =
-        document.createElement("div");
+        const card = document.createElement("div");
 
         card.className =
         "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
@@ -826,11 +828,8 @@ function renderMenus(){
 
         card.onclick = ()=>{
 
-            document
-            .querySelectorAll(".card-menu")
-            .forEach(el=>{
-                el.classList.remove("menu-active");
-            });
+            document.querySelectorAll(".card-menu")
+            .forEach(el=>el.classList.remove("menu-active"));
 
             card.classList.add("menu-active");
 
@@ -1174,21 +1173,31 @@ function watchServerChanges(){
 
 function watchCenterChanges(){
 
-    [
-        ipNama,ipServer,ipHost,
-        jabberNama,jabberServer,jabberHost,
-        waCenter,smsCenter
-    ].forEach(field=>{
+[
+document.getElementById("ipNama"),
+document.getElementById("ipServer"),
+document.getElementById("ipHost"),
 
-        field.addEventListener("input",()=>{
+document.getElementById("jabberNama"),
+document.getElementById("jabberServer"),
+document.getElementById("jabberHost"),
 
-            centerChanged = true;
+document.getElementById("waCenter"),
+document.getElementById("smsCenter")
 
-            enableButton("saveCenterBtn");
+].forEach(field=>{
 
-        });
+    if(!field) return;
+
+    field.addEventListener("input",()=>{
+
+        centerChanged = true;
+
+        enableButton("saveCenterBtn");
 
     });
+
+});
 
 }
 
