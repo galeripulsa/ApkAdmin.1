@@ -76,8 +76,13 @@ body{
     padding:14px;
     outline:none;
     background:white;
-    resize:none; /* Hilangkan garis seret manual */
-    overflow:hidden; /* Sembunyikan scroll */
+    resize:none;
+    overflow:hidden;
+}
+
+/* Khusus Alamat Konter awalnya tinggi 5 baris */
+#alamatKonter {
+    min-height: 120px; /* Ini setara sekitar 5 baris */
 }
 
 .floating label{
@@ -175,13 +180,14 @@ body{
     <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-6">
         <h2 class="text-xl font-bold text-cyan-700 mb-4">Setup Server</h2>
 
+        <!-- KOLOM LANGSUNG DI BAWAH JUDUL (Paling Atas) -->
         <div class="floating">
             <input id="namaKonter" placeholder=" ">
             <label>Nama Konter</label>
         </div>
 
         <div class="floating">
-            <textarea id="alamatKonter" rows="1" placeholder=" "></textarea>
+            <textarea id="alamatKonter" placeholder=" "></textarea>
             <label>Alamat Konter</label>
         </div>
 
@@ -307,10 +313,7 @@ let sortableInstance = null;
 // FUNGSI AUTO GROW / OTOMATIS MELEBAR KOTAK
 /* ============================================= */
 function autoGrow(element) {
-    // Kembalikan ke tinggi awal dulu
     element.style.height = "auto";
-    
-    // Atur tinggi sesuai isi teks
     element.style.height = (element.scrollHeight) + "px";
 }
 
@@ -481,7 +484,7 @@ function watchServerChanges(){
         field.addEventListener("input", ()=>{
             serverChanged = true;
             enableButton("saveServerBtn");
-            autoGrow(field); // Panggil fungsi auto grow saat ngetik
+            autoGrow(field);
         });
     });
 }
