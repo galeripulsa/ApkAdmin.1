@@ -576,8 +576,8 @@ function renderTransaksi(){
         const div = document.createElement("div");
         if(item.type === "kategori"){
             div.innerHTML = `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-4 shadow-lg">
-                <div class="flex items-center gap-3 h-12">
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
+                <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
                     <i data-lucide="folder-open"></i>
                     <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)">
@@ -589,8 +589,8 @@ function renderTransaksi(){
             </div>`;
         }else{
             div.innerHTML = `
-            <div class="bg-white rounded-2xl p-4 shadow-lg border border-slate-200">
-                <div class="flex items-center gap-3 h-12">
+            <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
+                <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
                     <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
@@ -714,14 +714,14 @@ function openPreview(){
     transaksiItems.forEach(item=>{
         if(item.type === "kategori"){
             html += `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-4 shadow-lg mb-4">
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg mb-4">
                 <h3 class="font-bold text-lg">${item.nama}</h3>
             </div>
             `;
         } else {
             if(item.checked){
                 html += `
-                <div class="bg-white rounded-2xl p-4 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
+                <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
                     <div class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
                     </div>
