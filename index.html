@@ -152,7 +152,7 @@ body{
 
 <body class="max-w-screen-md mx-auto p-4">
 
-<!-- HEADER -->
+<!-- HEADER UTAMA -->
 <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
     <div class="flex items-center gap-4">
         <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
@@ -177,23 +177,27 @@ body{
 
 <!-- SETUP SERVER -->
 <div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
-    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl p-6">
-        <h2 class="text-xl font-bold text-cyan-700 mb-4">Setup Server</h2>
-
-        <!-- KOLOM LANGSUNG DI BAWAH JUDUL (Paling Atas) -->
-        <div class="floating">
-            <input id="namaKonter" placeholder=" ">
-            <label>Nama Konter</label>
+    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
+        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
+        <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
+            <h2 class="text-xl font-bold">Setup Server</h2>
         </div>
 
-        <div class="floating">
-            <textarea id="alamatKonter" placeholder=" "></textarea>
-            <label>Alamat Konter</label>
-        </div>
+        <div class="p-6">
+            <div class="floating">
+                <input id="namaKonter" placeholder=" ">
+                <label>Nama Konter</label>
+            </div>
 
-        <div class="mt-5 flex gap-2">
-            <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">Simpan</button>
-            <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl">Tutup</button>
+            <div class="floating">
+                <textarea id="alamatKonter" placeholder=" "></textarea>
+                <label>Alamat Konter</label>
+            </div>
+
+            <div class="mt-5 flex gap-2">
+                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">Simpan</button>
+                <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl">Tutup</button>
+            </div>
         </div>
     </div>
 </div>
@@ -201,7 +205,8 @@ body{
 <!-- SETUP CENTER -->
 <div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full px-2">
-        <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50 flex items-center justify-between">
+        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
+        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
             <h2 class="font-bold text-xl">Setup Center</h2>
         </div>
 
@@ -249,7 +254,8 @@ body{
 <!-- MENU TRANSAKSI -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
-        <div class="sticky top-0 bg-cyan-600 text-white p-3 z-50">
+        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
+        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-xl">Menu Transaksi</h2>
             </div>
@@ -277,6 +283,7 @@ body{
 <!-- ===================================================== -->
 <div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
+        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-xl">Tampilan User</h2>
