@@ -33,10 +33,12 @@ body{
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 }
 
-/* PASTIKAN ICON DAN TEXT DI DALAMNYA JADI PUTIH */
-.menu-active i,
+/* CARA PALING AMPUH: UBAH SEMUA DIDALAMNYA JADI PUTIH */
+.menu-active svg,
 .menu-active .menu-label{
-    color:white !important;
+    stroke: white !important;
+    color: white !important;
+    fill: none !important;
 }
 
 /* ===============================
@@ -263,7 +265,7 @@ body{
             <div class="flex gap-3 mt-4">
                 <button onclick="addMenu()" class="flex-1 bg-cyan-700 hover:bg-cyan-800 text-white py-3 rounded-2xl font-bold">+ Menu</button>
                 <!-- TOMBOL KATEGORI WARNA SAMA DENGAN BG ICON -->
-                <button onclick="addKategori()" class="flex-1 bg-cyan-500 hover:bg-cyan-700 text-slate-700 py-3 rounded-2xl font-bold">+ Kategori</button>
+                <button onclick="addKategori()" class="flex-1 bg-cyan-600 hover:bg-cyan-400 text-slate-700 py-3 rounded-2xl font-bold">+ Kategori</button>
             </div>
         </div>
 
@@ -349,37 +351,12 @@ function renderMenus(){
         card.className = "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="flex justify-center mb-3"><i data-lucide="${menu.icon}" class="text-slate-800"></i></div>
+            <div class="flex justify-center mb-3"><i data-lucide="${menu.icon}" stroke-width="1.5"></i></div>
             <div class="menu-label font-semibold text-gray-700">${menu.label}</div>
         `;
         card.onclick = ()=>{
-            // Kembalikan semua menu ke warna semula
-            document.querySelectorAll(".card-menu").forEach(el=>{
-                el.classList.remove("menu-active");
-                let ic = el.querySelector("i");
-                if(ic) {
-                    ic.classList.remove("text-white");
-                    ic.classList.add("text-slate-800");
-                }
-                let lbl = el.querySelector(".menu-label");
-                if(lbl) {
-                    lbl.classList.remove("text-white");
-                    lbl.classList.add("text-gray-700");
-                }
-            });
-
-            // Ubah menu yang diklik jadi aktif
+            document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
             card.classList.add("menu-active");
-            let activeIcon = card.querySelector("i");
-            if(activeIcon) {
-                activeIcon.classList.remove("text-slate-800");
-                activeIcon.classList.add("text-white");
-            }
-            let activeLabel = card.querySelector(".menu-label");
-            if(activeLabel) {
-                activeLabel.classList.remove("text-gray-700");
-                activeLabel.classList.add("text-white");
-            }
 
             if(menu.action==="server") openServer();
             if(menu.action==="center") openCenter();
