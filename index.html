@@ -156,6 +156,13 @@ body{
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
+
+    <!-- TOMBOL PREVIEW -->
+    <div class="mt-4 flex justify-end">
+        <button onclick="openPreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold shadow hover:bg-gray-100 transition">
+            <i data-lucide="eye" class="w-4 h-4 inline mr-1"></i> Lihat Tampilan User
+        </button>
+    </div>
 </div>
 
 <!-- MENU UTAMA -->
@@ -256,6 +263,29 @@ body{
         </div>
     </div>
 </div>
+
+<!-- ===================================================== -->
+<!-- MODAL PREVIEW TAMPILAN USER -->
+<!-- ===================================================== -->
+<div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
+    <div class="w-full">
+        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-xl">Tampilan User</h2>
+                <button onclick="closePreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold">
+                    Tutup
+                </button>
+            </div>
+        </div>
+
+        <div id="previewContent" class="p-4 pb-24">
+            <!-- Konten preview akan diisi lewat JS -->
+        </div>
+    </div>
+</div>
+<!-- ===================================================== -->
+<!-- END MODAL PREVIEW -->
+<!-- ===================================================== -->
 
 <!-- TOAST -->
 <div id="toast" class="toast"></div>
@@ -656,6 +686,59 @@ function gantiIcon(index){
 function confirmSaveTransaksi(){
     if(!transaksiChanged) return;
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan Menu Transaksi?", saveTransaksi);
+}
+
+/* ===================================================== */
+/* FUNGSI PREVIEW TAMPILAN USER */
+/* ===================================================== */
+function openPreview(){
+    const modal = document.getElementById("previewModal");
+    const content = document.getElementById("previewContent");
+    
+    let html = "";
+
+    // Ambil data server
+    const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
+
+    // Header Preview
+    html += `
+    <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold">${serverData.nama}</h2>
+            <p class="text-sm opacity-90 mt-1">${serverData.alamat}</p>
+        </div>
+    </div>
+    `;
+
+    // Render Menu yang dicentang saja
+    transaksiItems.forEach(item=>{
+        if(item.type === "kategori"){
+            html += `
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-4 shadow-lg mb-4">
+                <h3 class="font-bold text-lg">${item.nama}</h3>
+            </div>
+            `;
+        } else {
+            if(item.checked){
+                html += `
+                <div class="bg-white rounded-2xl p-4 shadow-sm mb-3 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden">
+                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
+                    </div>
+                    <span class="font-semibold text-gray-700">${item.nama}</span>
+                </div>
+                `;
+            }
+        }
+    });
+
+    content.innerHTML = html;
+    modal.classList.add("show");
+    lucide.createIcons();
+}
+
+function closePreview(){
+    document.getElementById("previewModal").classList.remove("show");
 }
 
 window.onload = function(){
