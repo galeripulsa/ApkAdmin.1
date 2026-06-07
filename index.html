@@ -76,6 +76,8 @@ body{
     padding:14px;
     outline:none;
     background:white;
+    resize:none; /* Hilangkan garis seret manual */
+    overflow:hidden; /* Sembunyikan scroll */
 }
 
 .floating label{
@@ -179,7 +181,7 @@ body{
         </div>
 
         <div class="floating">
-            <textarea id="alamatKonter" rows="4" placeholder=" "></textarea>
+            <textarea id="alamatKonter" rows="1" placeholder=" "></textarea>
             <label>Alamat Konter</label>
         </div>
 
@@ -301,6 +303,17 @@ let transaksiChanged = false;
 let confirmAction = null;
 let sortableInstance = null;
 
+/* ============================================= */
+// FUNGSI AUTO GROW / OTOMATIS MELEBAR KOTAK
+/* ============================================= */
+function autoGrow(element) {
+    // Kembalikan ke tinggi awal dulu
+    element.style.height = "auto";
+    
+    // Atur tinggi sesuai isi teks
+    element.style.height = (element.scrollHeight) + "px";
+}
+
 /* MENU UTAMA */
 const menus = [
     {label:"Setup Server", icon:"server", action:"server"},
@@ -382,6 +395,11 @@ function openServer(){
     loadServer();
     serverChanged = false;
     disableButton("saveServerBtn");
+    
+    // Jalankan auto grow saat modal dibuka
+    setTimeout(() => {
+        autoGrow(alamatKonter);
+    }, 100);
 }
 function closeServer(){
     document.getElementById("serverModal").classList.remove("show");
@@ -463,6 +481,7 @@ function watchServerChanges(){
         field.addEventListener("input", ()=>{
             serverChanged = true;
             enableButton("saveServerBtn");
+            autoGrow(field); // Panggil fungsi auto grow saat ngetik
         });
     });
 }
