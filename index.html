@@ -28,14 +28,9 @@ body{
 ================================ */
 .menu-active{
     background:linear-gradient(135deg,#0891b2,#2563eb);
-    color:white !important;
+    color:white;
     transform:translateY(-3px);
     box-shadow:0 10px 20px rgba(0,0,0,.15);
-}
-
-.menu-active .menu-label,
-.menu-active i{
-    color:white !important;
 }
 
 /* ===============================
@@ -350,7 +345,6 @@ function renderMenus(){
         card.dataset.index = index;
         card.innerHTML = `
             <div class="flex justify-center mb-3">
-                <!-- MENU UTAMA: ICON WARNA HITAM/GELAP, BACKGROUND TRANSPARAN -->
                 <div class="w-12 h-12 rounded-xl bg-transparent flex items-center justify-center">
                     <i data-lucide="${menu.icon}" class="text-slate-800"></i>
                 </div>
@@ -358,16 +352,33 @@ function renderMenus(){
             <div class="menu-label font-semibold text-gray-700">${menu.label}</div>
         `;
         card.onclick = ()=>{
+            // KEMBALIKAN SEMUA MENU KE WARNA ASLI
             document.querySelectorAll(".card-menu").forEach(el=>{
                 el.classList.remove("menu-active");
-                // Kembalikan warna icon jadi hitam saat tidak aktif
-                const icon = el.querySelector("i");
-                if(icon) icon.classList.remove("text-white");
+                let ic = el.querySelector("i");
+                if(ic) {
+                    ic.classList.remove("text-white");
+                    ic.classList.add("text-slate-800");
+                }
+                let lbl = el.querySelector(".menu-label");
+                if(lbl) {
+                    lbl.classList.remove("text-white");
+                    lbl.classList.add("text-gray-700");
+                }
             });
+
+            // UBAH MENU YANG DIKLIK JADI AKTIF (PUTIH)
             card.classList.add("menu-active");
-            // Ubah warna icon jadi putih saat aktif
-            const activeIcon = card.querySelector("i");
-            if(activeIcon) activeIcon.classList.add("text-white");
+            let activeIcon = card.querySelector("i");
+            if(activeIcon) {
+                activeIcon.classList.remove("text-slate-800");
+                activeIcon.classList.add("text-white");
+            }
+            let activeLabel = card.querySelector(".menu-label");
+            if(activeLabel) {
+                activeLabel.classList.remove("text-gray-700");
+                activeLabel.classList.add("text-white");
+            }
 
             if(menu.action==="server") openServer();
             if(menu.action==="center") openCenter();
