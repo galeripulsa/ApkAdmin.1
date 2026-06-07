@@ -33,6 +33,11 @@ body{
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 }
 
+.menu-active .menu-label,
+.menu-active i{
+    color:white;
+}
+
 /* ===============================
    CARD MENU
 ================================ */
@@ -150,7 +155,6 @@ body{
 <!-- HEADER UTAMA -->
 <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
     <div class="flex items-center gap-4">
-        <!-- ICON HEADER: BACKGROUND PUTIH POLOS, ICON WARNA CYAN -->
         <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
@@ -257,8 +261,8 @@ body{
             </div>
             <div class="flex gap-3 mt-4">
                 <button onclick="addMenu()" class="flex-1 bg-cyan-700 hover:bg-cyan-800 text-white py-3 rounded-2xl font-bold">+ Menu</button>
-                <!-- TOMBOL KATEGORI: WARNA SAMA DENGAN KOLOM KATEGORI -->
-                <button onclick="addKategori()" class="flex-1 bg-gradient-to-r from-amber-400 to-orange-500 hover:opacity-90 text-white py-3 rounded-2xl font-bold">+ Kategori</button>
+                <!-- TOMBOL KATEGORI WARNA SAMA DENGAN BG ICON -->
+                <button onclick="addKategori()" class="flex-1 bg-cyan-100 hover:bg-cyan-200 text-slate-700 py-3 rounded-2xl font-bold">+ Kategori</button>
             </div>
         </div>
 
@@ -344,42 +348,12 @@ function renderMenus(){
         card.className = "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="flex justify-center mb-3">
-                <div class="w-12 h-12 rounded-xl bg-transparent flex items-center justify-center">
-                    <i data-lucide="${menu.icon}" class="text-slate-800"></i>
-                </div>
-            </div>
+            <div class="flex justify-center mb-3"><i data-lucide="${menu.icon}"></i></div>
             <div class="menu-label font-semibold text-gray-700">${menu.label}</div>
         `;
         card.onclick = ()=>{
-            // KEMBALIKAN SEMUA MENU KE WARNA ASLI
-            document.querySelectorAll(".card-menu").forEach(el=>{
-                el.classList.remove("menu-active");
-                let ic = el.querySelector("i");
-                if(ic) {
-                    ic.classList.remove("text-white");
-                    ic.classList.add("text-slate-800");
-                }
-                let lbl = el.querySelector(".menu-label");
-                if(lbl) {
-                    lbl.classList.remove("text-white");
-                    lbl.classList.add("text-gray-700");
-                }
-            });
-
-            // UBAH MENU YANG DIKLIK JADI AKTIF (PUTIH)
+            document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
             card.classList.add("menu-active");
-            let activeIcon = card.querySelector("i");
-            if(activeIcon) {
-                activeIcon.classList.remove("text-slate-800");
-                activeIcon.classList.add("text-white");
-            }
-            let activeLabel = card.querySelector(".menu-label");
-            if(activeLabel) {
-                activeLabel.classList.remove("text-gray-700");
-                activeLabel.classList.add("text-white");
-            }
-
             if(menu.action==="server") openServer();
             if(menu.action==="center") openCenter();
             if(menu.action==="transaksi") openTransaksi();
@@ -648,9 +622,8 @@ function renderTransaksi(){
             <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
                 <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
-                    <!-- DI SINI JADI TRANSPARAN + BORDER -->
-                    <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
+                    <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden cursor-pointer">
+                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
                     </div>
                     <div class="flex-1">
                         <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)">
@@ -779,9 +752,8 @@ function openPreview(){
             if(item.checked){
                 html += `
                 <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <!-- DI PREVIEW JUGA TRANSPARAN + BORDER -->
-                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
+                    <div class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden">
+                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
                     </div>
                     <span class="font-semibold text-gray-700">${item.nama}</span>
                 </div>
