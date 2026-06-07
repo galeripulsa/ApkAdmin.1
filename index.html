@@ -155,8 +155,8 @@ body{
 <!-- HEADER UTAMA -->
 <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
     <div class="flex items-center gap-4">
-        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <i data-lucide="shield" class="text-cyan-600"></i>
+        <div class="w-16 h-16 bg-white/20 border border-white/40 rounded-full flex items-center justify-center">
+            <i data-lucide="shield" class="text-white"></i>
         </div>
         <div>
             <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
@@ -348,7 +348,11 @@ function renderMenus(){
         card.className = "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
         card.dataset.index = index;
         card.innerHTML = `
-            <div class="flex justify-center mb-3"><i data-lucide="${menu.icon}"></i></div>
+            <div class="flex justify-center mb-3">
+                <div class="w-12 h-12 border border-slate-300 rounded-xl flex items-center justify-center bg-transparent">
+                    <i data-lucide="${menu.icon}" class="text-cyan-600"></i>
+                </div>
+            </div>
             <div class="menu-label font-semibold text-gray-700">${menu.label}</div>
         `;
         card.onclick = ()=>{
@@ -622,8 +626,8 @@ function renderTransaksi(){
             <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
                 <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
-                    <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden cursor-pointer">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
+                    <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
+                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
                         <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)">
@@ -752,8 +756,8 @@ function openPreview(){
             if(item.checked){
                 html += `
                 <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center overflow-hidden">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}"></i>`}
+                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
+                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <span class="font-semibold text-gray-700">${item.nama}</span>
                 </div>
