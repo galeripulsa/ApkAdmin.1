@@ -136,7 +136,7 @@ body{
 }
 
 /* ========================================== */
-/* STYLE MODAL PRABAYAR - FULL SCREEN */
+/* STYLE MODAL PRABAYAR - FULL SCREEN SCROLL */
 /* ========================================== */
 .submenu-modal {
     position: fixed;
@@ -149,6 +149,7 @@ body{
     display: none;
     align-items: flex-start;
     padding-top: 0;
+    overflow-y: auto; /* <<< TAMBAHAN INI AGAR BISA SCROLL */
 }
 
 .submenu-modal.show {
@@ -188,7 +189,7 @@ body{
 }
 
 /* ========================================== */
-/* STYLE DETAIL PRODUK (PULSA REGULER) */
+/* STYLE DETAIL PRODUK - KOLOM TURUN KE BAWAH */
 /* ========================================== */
 .operator-section {
     margin-bottom: 25px;
@@ -206,10 +207,9 @@ body{
     gap: 10px;
 }
 
-.row-input {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+/* UBAH DARI GRID JADI BLOCK AGAR TURUN KE BAWAH */
+.col-input {
+    display: block;
 }
 </style>
 </head>
@@ -500,7 +500,7 @@ function openPulsaReguler(){
                 ${op}
             </div>
             
-            <div class="row-input">
+            <div class="col-input">
                 <div class="floating">
                     <input type="text" placeholder=" ">
                     <label>Cek Harga</label>
