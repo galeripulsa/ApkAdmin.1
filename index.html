@@ -45,6 +45,7 @@ body{
     display:flex;
 }
 
+/* STYLE FLOATING LABEL (GLOBAL) */
 .floating{
     position:relative;
     margin-top:20px;
@@ -52,7 +53,7 @@ body{
 
 .floating input,
 .floating textarea{
-    width:100%;
+    width: 100%;
     border:1px solid #cbd5e1;
     border-radius:12px;
     padding:14px;
@@ -60,10 +61,6 @@ body{
     background:white;
     resize:none;
     overflow:hidden;
-}
-
-#alamatKonter {
-    min-height: 120px;
 }
 
 .floating label{
@@ -150,8 +147,8 @@ body{
     background: rgba(0,0,0,0.5);
     z-index: 9998;
     display: none;
-    align-items: flex-start; /* Ubah jadi flex-start agar muncul dari atas */
-    padding-top: 0; /* Hilangkan jarak atas */
+    align-items: flex-start;
+    padding-top: 0;
 }
 
 .submenu-modal.show {
@@ -161,8 +158,8 @@ body{
 .submenu-content {
     background: white;
     width: 100%;
-    min-height: 100vh; /* Buat tinggi penuh layar */
-    border-radius: 0; /* Hilangkan radius agar full */
+    min-height: 100vh;
+    border-radius: 0;
     padding: 20px;
     padding-bottom: 100px;
     transform: translateY(-100%);
@@ -188,6 +185,31 @@ body{
 .submenu-item:hover {
     background: #e0f2fe;
     color: #0891b2;
+}
+
+/* ========================================== */
+/* STYLE DETAIL PRODUK (PULSA REGULER) */
+/* ========================================== */
+.operator-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.operator-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0f172a;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.row-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 </style>
 </head>
@@ -314,7 +336,7 @@ body{
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL SUB MENU PRABAYAR - FULL SCREEN -->
+<!-- MODAL SUB MENU PRABAYAR -->
 <!-- ========================================== -->
 <div id="prabayarModal" class="submenu-modal">
     <div class="submenu-content">
@@ -327,6 +349,25 @@ body{
         
         <div id="prabayarList">
             <!-- List akan diisi lewat JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL DETAIL PULSA REGULER -->
+<!-- ========================================== -->
+<div id="pulsaRegulerModal" class="submenu-modal">
+    <div class="submenu-content">
+        <div class="flex items-center justify-between mb-6">
+            <button onclick="backToPrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
+                <i data-lucide="arrow-left" class="w-7 h-7"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-slate-800">Pulsa Reguler</h3>
+            <div></div> <!-- Spacer -->
+        </div>
+        
+        <div id="operatorList">
+            <!-- Daftar Operator + Inputan akan muncul di sini -->
         </div>
     </div>
 </div>
@@ -364,7 +405,7 @@ const menus = [
 ];
 
 const subMenuPrabayar = [
-    {nama: "Pulsa Reguler", icon: "phone"},
+    {nama: "Pulsa Reguler", icon: "phone", action: "pulsaReguler"},
     {nama: "Pulsa Transfer", icon: "send"},
     {nama: "Paket Internet", icon: "wifi"},
     {nama: "Paket Telpon dan SMS", icon: "message-square"},
@@ -372,6 +413,16 @@ const subMenuPrabayar = [
     {nama: "Voucher TV", icon: "tv"},
     {nama: "E-wallet", icon: "wallet"},
     {nama: "Transfer Uang", icon: "dollar-sign"}
+];
+
+// DATA OPERATOR
+const operators = [
+    "Telkomsel",
+    "Indosat",
+    "XL",
+    "Axis",
+    "Tri",
+    "Smartfren"
 ];
 
 function renderMenus(){
@@ -400,6 +451,7 @@ function renderMenus(){
     lucide.createIcons();
 }
 
+// >>> FUNGSI BUKA MENU PRABAYAR <<<
 function openPrabayar(){
     const modal = document.getElementById("prabayarModal");
     const listContainer = document.getElementById("prabayarList");
@@ -412,6 +464,12 @@ function openPrabayar(){
             <i data-lucide="${item.icon}" class="w-7 h-7"></i>
             <span class="font-medium text-lg">${item.nama}</span>
         `;
+        
+        // Event Klik
+        if(item.action === "pulsaReguler"){
+            div.onclick = openPulsaReguler;
+        }
+        
         listContainer.appendChild(div);
     });
 
@@ -421,6 +479,48 @@ function openPrabayar(){
 
 function closePrabayar(){
     document.getElementById("prabayarModal").classList.remove("show");
+}
+
+// >>> FUNGSI BUKA DETAIL PULSA REGULER <<<
+function openPulsaReguler(){
+    // Tutup menu utama prabayar
+    document.getElementById("prabayarModal").classList.remove("show");
+    
+    const modal = document.getElementById("pulsaRegulerModal");
+    const container = document.getElementById("operatorList");
+    
+    container.innerHTML = "";
+    
+    operators.forEach(op => {
+        const div = document.createElement("div");
+        div.className = "operator-section";
+        div.innerHTML = `
+            <div class="operator-name">
+                <i data-lucide="signal" class="w-6 h-6 text-cyan-600"></i>
+                ${op}
+            </div>
+            
+            <div class="row-input">
+                <div class="floating">
+                    <input type="text" placeholder=" ">
+                    <label>Cek Harga</label>
+                </div>
+                <div class="floating">
+                    <input type="text" placeholder=" ">
+                    <label>Nama Produk</label>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    modal.classList.add("show");
+    lucide.createIcons();
+}
+
+function backToPrabayar(){
+    document.getElementById("pulsaRegulerModal").classList.remove("show");
+    document.getElementById("prabayarModal").classList.add("show");
 }
 
 function toast(msg){
