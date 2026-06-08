@@ -284,7 +284,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Global Solution</h1>
+            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -661,17 +661,6 @@ function checkForChanges(){
             disableButton("saveTransaksiBtn");
         }
     }
-    
-    // Cek untuk form di dalam operator list (sederhana)
-    // Jika ada input yang terisi, anggap ada perubahan
-    const anyInputFilled = document.querySelectorAll('.operator-body input');
-    let hasChange = false;
-    anyInputFilled.forEach(input => {
-        if(input.value.trim() !== '') hasChange = true;
-    });
-    
-    // Untuk halaman operator, kita tidak punya tombol simpan spesifik di desain ini
-    // Jadi logikanya sudah terintegrasi di bagian lain
 }
 
 function showConfirm(title,message,action,isError=false){
@@ -854,7 +843,8 @@ function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
 }
 function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalData)){
+    // Gunakan originalTransaksi untuk bandingkan
+    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
         enableButton("saveTransaksiBtn");
     } else {
         disableButton("saveTransaksiBtn");
@@ -865,7 +855,7 @@ function checkTransaksiChange(){
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
-    originalData = getCurrentTransaksi();
+    // originalData = getCurrentTransaksi(); // HAPUS BARIS INI
     checkTransaksiChange();
 }
 function closeTransaksi(){
@@ -1061,7 +1051,7 @@ function initDragDrop(){
 }
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalData = getCurrentTransaksi();
+    originalTransaksi = getCurrentTransaksi(); // Update data asli
     toast("Menu Transaksi berhasil disimpan");
     checkTransaksiChange();
 }
@@ -1076,7 +1066,8 @@ function loadTransaksi(){
             {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
         ];
     }
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
+    // Simpan data awal ke originalTransaksi
+    originalTransaksi = getCurrentTransaksi();
 }
 
 function gantiIcon(index){
