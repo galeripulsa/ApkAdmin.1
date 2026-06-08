@@ -144,7 +144,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Global Apk</h1>
+            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -579,12 +579,7 @@ function fokusInputPertama(){
     },100);
 }
 
-// === PERBAIKAN: Saat mulai ngetik, tombol hapus hilang ===
 function updateTransaksi(index,value){
-    // Baris ini kuncinya bos
-    if(activeSwipeIndex !== -1){
-        hideAllDeleteButtons();
-    }
     transaksiItems[index].nama = value;
     checkTransaksiChange();
 }
@@ -638,7 +633,7 @@ function renderTransaksi(){
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index}, this.value)">
+                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="hideAllDeleteButtons();" oninput="updateTransaksi(${index}, this.value)">
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
@@ -658,7 +653,7 @@ function renderTransaksi(){
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
-                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index}, this.value)">
+                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" onclick="hideAllDeleteButtons();" oninput="updateTransaksi(${index}, this.value)">
                     </div>
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
