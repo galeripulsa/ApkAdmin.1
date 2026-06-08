@@ -41,18 +41,18 @@ body{
     display:none;
 }
 
-.modal.show {
+.modal.show{
     display:flex;
 }
 
 /* STYLE FLOATING LABEL (GLOBAL) */
-.floating {
+.floating{
     position:relative;
     margin-top:20px;
 }
 
 .floating input,
-.floating textarea {
+.floating textarea{
     width: 100%;
     border:1px solid #cbd5e1;
     border-radius:12px;
@@ -63,7 +63,7 @@ body{
     overflow:hidden;
 }
 
-.floating label {
+.floating label{
     position:absolute;
     left:12px;
     top:14px;
@@ -77,13 +77,13 @@ body{
 .floating input:focus + label,
 .floating input:not(:placeholder-shown) + label,
 .floating textarea:focus + label,
-.floating textarea:not(:placeholder-shown) + label {
+.floating textarea:not(:placeholder-shown) + label{
     top:-10px;
     font-size:12px;
     color:#0891b2;
 }
 
-.toast {
+.toast{
     position:fixed;
     bottom:20px;
     left:50%;
@@ -96,24 +96,24 @@ body{
     z-index:9999;
 }
 
-.drag-handle {
+.drag-handle{
     cursor:grab;
     touch-action:none;
 }
 
-.drag-handle:active {
+.drag-handle:active{
     cursor:grabbing;
 }
 
-#transaksiList > div {
+#transaksiList > div{
     margin-bottom:10px;
 }
 
-#transaksiList .sortable-ghost {
+#transaksiList .sortable-ghost{
     opacity:.4;
 }
 
-#transaksiList .sortable-chosen {
+#transaksiList .sortable-chosen{
     transform:scale(1.02);
 }
 
@@ -249,30 +249,6 @@ body{
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
-/* ========================================== */
-/* STYLE TOMBOL SIMPAN DINAMIS */
-/* ========================================== */
-.btn-save {
-    transition: all 0.3s ease;
-}
-
-.btn-save:disabled {
-    background-color: #94a3b8 !important;
-    cursor: not-allowed !important;
-    opacity: 0.7;
-}
-
-.btn-save:not(:disabled) {
-    background-color: #16a34a !important;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
-}
 </style>
 </head>
 
@@ -313,7 +289,7 @@ body{
                 <label>Alamat Konter</label>
             </div>
             <div class="mt-5 flex gap-2">
-                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 text-white py-4 rounded-xl btn-click btn-save">Simpan</button>
+                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
                 <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
             </div>
         </div>
@@ -345,7 +321,7 @@ body{
             <div class="floating"><input id="smsCenter" placeholder=" "><label>SMS Center</label></div>
         </div>
         <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
-            <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 text-white py-4 rounded-xl btn-click btn-save">Simpan</button>
+            <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
             <button onclick="checkCloseCenter()" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg btn-click">Tutup</button>
         </div>
     </div>
@@ -376,7 +352,7 @@ body{
         </div>
         <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex gap-3 z-50 max-w-screen-md mx-auto">
-            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 text-white py-4 rounded-xl btn-click btn-save">Simpan</button>
+            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
             <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
         </div>
     </div>
@@ -578,11 +554,11 @@ function openOperatorList(title, actionType){
             </div>
             <div class="operator-body">
                 <div class="floating">
-                    <input type="text" placeholder=" " oninput="checkForChanges()">
+                    <input type="text" placeholder=" ">
                     <label>Cek Harga</label>
                 </div>
                 <div class="floating">
-                    <input type="text" placeholder=" " oninput="checkForChanges()">
+                    <input type="text" placeholder=" ">
                     <label>Nama Produk</label>
                 </div>
             </div>
@@ -598,7 +574,6 @@ function openOperatorList(title, actionType){
 // >>> FUNGSI BUKA/TUTUP FORM <<<
 function toggleOperator(wrapper){
     wrapper.classList.toggle("open");
-    checkForChanges(); // Cek perubahan saat dibuka/tutup
 }
 
 function backToPrabayarFromList(){
@@ -613,54 +588,17 @@ function toast(msg){
     setTimeout(()=>t.style.display = "none", 2500);
 }
 
-// >>> LOGIC TOMBOL SIMPAN DINAMIS <<<
-let originalData = {}; // Menyimpan data awal
-
 function enableButton(btnId){
     const btn = document.getElementById(btnId);
-    if(btn) {
-        btn.disabled = false;
-    }
+    btn.disabled = false;
+    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+    btn.classList.add("bg-green-600");
 }
-
 function disableButton(btnId){
     const btn = document.getElementById(btnId);
-    if(btn) {
-        btn.disabled = true;
-    }
-}
-
-// Fungsi umum untuk mengecek apakah ada perubahan
-function checkForChanges(){
-    // Cek untuk Setup Server
-    if(document.getElementById("serverModal").classList.contains("show")){
-        const current = getServerData();
-        if(JSON.stringify(current) !== JSON.stringify(originalData)){
-            enableButton("saveServerBtn");
-        } else {
-            disableButton("saveServerBtn");
-        }
-    }
-
-    // Cek untuk Setup Center
-    if(document.getElementById("centerModal").classList.contains("show")){
-        const current = getCenterData();
-        if(JSON.stringify(current) !== JSON.stringify(originalData)){
-            enableButton("saveCenterBtn");
-        } else {
-            disableButton("saveCenterBtn");
-        }
-    }
-
-    // Cek untuk Menu Transaksi
-    if(document.getElementById("transaksiModal").classList.contains("show")){
-        const current = getCurrentTransaksi();
-        if(JSON.stringify(current) !== JSON.stringify(originalData)){
-            enableButton("saveTransaksiBtn");
-        } else {
-            disableButton("saveTransaksiBtn");
-        }
-    }
+    btn.disabled = true;
+    btn.classList.remove("bg-green-600");
+    btn.classList.add("bg-gray-400", "cursor-not-allowed");
 }
 
 function showConfirm(title,message,action,isError=false){
@@ -704,8 +642,9 @@ function getServerData(){
     };
 }
 function checkServerChange(){
+    const original = JSON.parse(localStorage.getItem("setupServer")) || {nama:"", alamat:""};
     const current = getServerData();
-    if(JSON.stringify(current) !== JSON.stringify(originalData)){
+    if(JSON.stringify(current) !== JSON.stringify(original)){
         enableButton("saveServerBtn");
     } else {
         disableButton("saveServerBtn");
@@ -713,8 +652,7 @@ function checkServerChange(){
 }
 function openServer(){
     document.getElementById("serverModal").classList.add("show");
-    loadServer(); // Load data dulu
-    originalData = getServerData(); // Simpan sebagai data asli
+    loadServer();
     checkServerChange();
     setTimeout(() => { autoGrow(alamatKonter); }, 100);
 }
@@ -724,7 +662,6 @@ function closeServer(){
 function saveServer(){
     localStorage.setItem("setupServer", JSON.stringify(getServerData()));
     toast("Data Server Disimpan");
-    originalData = getServerData(); // Update data asli setelah simpan
     checkServerChange();
 }
 function confirmSaveServer(){
@@ -767,8 +704,9 @@ function getCenterData(){
     };
 }
 function checkCenterChange(){
+    const original = JSON.parse(localStorage.getItem("centerServer")) || {ip:{}, jabber:{}, nomor:{}};
     const current = getCenterData();
-    if(JSON.stringify(current) !== JSON.stringify(originalData)){
+    if(JSON.stringify(current) !== JSON.stringify(original)){
         enableButton("saveCenterBtn");
     } else {
         disableButton("saveCenterBtn");
@@ -777,7 +715,6 @@ function checkCenterChange(){
 function openCenter(){
     document.getElementById("centerModal").classList.add("show");
     loadCenter();
-    originalData = getCenterData();
     checkCenterChange();
 }
 function closeCenter(){
@@ -786,7 +723,6 @@ function closeCenter(){
 function saveCenter(){
     localStorage.setItem("centerServer", JSON.stringify(getCenterData()));
     toast("Data Center Disimpan");
-    originalData = getCenterData();
     checkCenterChange();
 }
 function confirmSaveCenter(){
@@ -843,7 +779,6 @@ function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
 }
 function checkTransaksiChange(){
-    // Gunakan originalTransaksi untuk bandingkan
     if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
         enableButton("saveTransaksiBtn");
     } else {
@@ -855,7 +790,6 @@ function checkTransaksiChange(){
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
-    // originalData = getCurrentTransaksi(); // HAPUS BARIS INI
     checkTransaksiChange();
 }
 function closeTransaksi(){
@@ -1051,7 +985,7 @@ function initDragDrop(){
 }
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = getCurrentTransaksi(); // Update data asli
+    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
     toast("Menu Transaksi berhasil disimpan");
     checkTransaksiChange();
 }
@@ -1066,8 +1000,9 @@ function loadTransaksi(){
             {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
         ];
     }
-    // Simpan data awal ke originalTransaksi
-    originalTransaksi = getCurrentTransaksi();
+    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
+    renderTransaksi();
+    updateTransaksiInfo();
 }
 
 function gantiIcon(index){
