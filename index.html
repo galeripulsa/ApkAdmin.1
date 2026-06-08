@@ -160,7 +160,15 @@ body{
 }
 
 .blink {
-    animation: blink 0.5s ease-in-out 1; /* Berkedip 3 kali */
+    animation: blink 0.5s ease-in-out 1; /* Berkedip 1 kali */
+}
+
+/* ===============================
+   EFEK KLIK TOMBOL (ADA GERAKAN)
+================================ */
+.btn-click:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
 }
 </style>
 </head>
@@ -181,7 +189,7 @@ body{
 
     <!-- TOMBOL PREVIEW -->
     <div class="mt-4 flex justify-end">
-        <button onclick="openPreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold shadow hover:bg-gray-100 transition">
+        <button onclick="openPreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold shadow transition btn-click">
             <i data-lucide="eye" class="w-4 h-4 inline mr-1"></i> Lihat Tampilan User
         </button>
     </div>
@@ -210,8 +218,8 @@ body{
             </div>
 
             <div class="mt-5 flex gap-2">
-                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">Simpan</button>
-                <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl">Tutup</button>
+                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
+                <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
             </div>
         </div>
     </div>
@@ -248,8 +256,8 @@ body{
         </div>
 
         <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
-            <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">Simpan</button>
-            <button onclick="checkCloseCenter()" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg">Tutup</button>
+            <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
+            <button onclick="checkCloseCenter()" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg btn-click">Tutup</button>
         </div>
     </div>
 </div>
@@ -260,8 +268,8 @@ body{
         <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
         <p id="confirmMessage" class="text-gray-600 mb-6"></p>
         <div class="flex gap-3">
-            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl">OK</button>
+            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
+            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
         </div>
     </div>
 </div>
@@ -275,10 +283,10 @@ body{
                 <h2 class="font-bold text-2xl">Menu Transaksi</h2>
             </div>
 
-         <!-- TOMBOL MENU & KATEGORI DENGAN ID -->
+         <!-- TOMBOL MENU & KATEGORI - 1 WARNA TANPA HOVER -->
             <div class="flex gap-3 mt-4 mb-2">
-                <button id="btnMenu" onclick="addMenu()" class="flex-1 bg-cyan-700 text-white py-3 rounded-2xl font-bold border-2 border-white">+ Menu</button>
-                <button id="btnKategori" onclick="addKategori()" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white py-3 rounded-2xl font-bold border-2 border-white">+ Kategori</button>
+                <button id="btnMenu" onclick="addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
+                <button id="btnKategori" onclick="addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
             </div>
 
      <div class="bg-white rounded-md px-3">
@@ -289,8 +297,8 @@ body{
         <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
 
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex gap-3 z-50 max-w-screen-md mx-auto">
-            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl">Simpan</button>
-            <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl">Tutup</button>
+            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
+            <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
         </div>
     </div>
 </div>
@@ -304,7 +312,7 @@ body{
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-xl">Tampilan User</h2>
-                <button onclick="closePreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold">
+                <button onclick="closePreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold btn-click">
                     Tutup
                 </button>
             </div>
@@ -567,7 +575,7 @@ function addMenu(){
     document.getElementById('btnMenu').classList.add('blink');
     setTimeout(() => {
         document.getElementById('btnMenu').classList.remove('blink');
-    }, 1500);
+    }, 500);
 
     transaksiItems.unshift({
         type: "menu",
@@ -589,7 +597,7 @@ function addKategori(){
     document.getElementById('btnKategori').classList.add('blink');
     setTimeout(() => {
         document.getElementById('btnKategori').classList.remove('blink');
-    }, 1500);
+    }, 500);
 
     transaksiItems.unshift({
         type: "kategori",
@@ -646,7 +654,7 @@ function renderTransaksi(){
                     <i data-lucide="folder-open"></i>
                     <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)">
                     <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i data-lucide="trash-2"></i></button>` : ""}
+                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
                     </div>
                 </div>
@@ -664,7 +672,7 @@ function renderTransaksi(){
                         <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)">
                     </div>
                     <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i data-lucide="trash-2"></i></button>` : ""}
+                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
                     </div>
                 </div>
