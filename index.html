@@ -134,9 +134,56 @@ body{
     transition: transform 0.1s ease;
 }
 
-/* Class khusus tombol hapus */
 .btn-delete {
-    display: none; /* Default tersembunyi */
+    display: none;
+}
+
+/* STYLE UNTUK SUB MENU */
+.submenu-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9998;
+    display: none;
+    align-items: flex-end;
+}
+
+.submenu-modal.show {
+    display: flex;
+}
+
+.submenu-content {
+    background: white;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    padding-bottom: 30px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+}
+
+.submenu-modal.show .submenu-content {
+    transform: translateY(0);
+}
+
+.submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submenu-item:hover {
+    background: #e0f2fe;
+    color: #0891b2;
 }
 </style>
 </head>
@@ -163,23 +210,21 @@ body{
 
 <div id="menuGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6"></div>
 
+<!-- MODAL SERVER -->
 <div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
         <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
             <h2 class="text-xl font-bold">Setup Server</h2>
         </div>
-
         <div class="p-6">
             <div class="floating">
                 <input id="namaKonter" placeholder=" ">
                 <label>Nama Konter</label>
             </div>
-
             <div class="floating">
                 <textarea id="alamatKonter" placeholder=" "></textarea>
                 <label>Alamat Konter</label>
             </div>
-
             <div class="mt-5 flex gap-2">
                 <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
                 <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
@@ -188,12 +233,12 @@ body{
     </div>
 </div>
 
+<!-- MODAL CENTER -->
 <div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full px-2">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
             <h2 class="font-bold text-xl">Setup Center</h2>
         </div>
-
         <div class="grid md:grid-cols-2 gap-4 mt-4">
             <div class="bg-white p-5 rounded-2xl shadow">
                 <h3 class="font-bold text-cyan-600 text-lg mb-2">IP Center</h3>
@@ -201,7 +246,6 @@ body{
                 <div class="floating"><input id="ipServer" placeholder=" "><label>Server Center</label></div>
                 <div class="floating"><input id="ipHost" placeholder=" "><label>Host</label></div>
             </div>
-
             <div class="bg-white p-5 rounded-2xl shadow">
                 <h3 class="font-bold text-cyan-600 text-lg mb-2">Jabber Center</h3>
                 <div class="floating"><input id="jabberNama" placeholder=" "><label>Nama Center</label></div>
@@ -209,13 +253,11 @@ body{
                 <div class="floating"><input id="jabberHost" placeholder=" "><label>Host</label></div>
             </div>
         </div>
-
         <div class="bg-white p-5 rounded-2xl shadow mt-4">
             <h3 class="font-bold text-cyan-600 text-lg mb-2">Nomor Center</h3>
             <div class="floating"><input id="waCenter" placeholder=" "><label>WhatsApp Center</label></div>
             <div class="floating"><input id="smsCenter" placeholder=" "><label>SMS Center</label></div>
         </div>
-
         <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
             <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
             <button onclick="checkCloseCenter()" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg btn-click">Tutup</button>
@@ -223,6 +265,7 @@ body{
     </div>
 </div>
 
+<!-- MODAL KONFIRMASI -->
 <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
         <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
@@ -232,25 +275,22 @@ body{
     </div>
 </div>
 
+<!-- MODAL TRANSAKSI -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-2xl">Menu Transaksi</h2>
             </div>
-
             <div class="flex gap-3 mt-4 mb-2">
                 <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
                 <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
             </div>
-
             <div class="bg-white rounded-md px-3">
                 <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
             </div>
         </div>
-
         <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
-
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex gap-3 z-50 max-w-screen-md mx-auto">
             <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
             <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
@@ -258,6 +298,7 @@ body{
     </div>
 </div>
 
+<!-- MODAL PREVIEW -->
 <div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
@@ -268,8 +309,25 @@ body{
                 </button>
             </div>
         </div>
-
         <div id="previewContent" class="p-4 pb-24">
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL SUB MENU PRABAYAR (BARU) -->
+<!-- ========================================== -->
+<div id="prabayarModal" class="submenu-modal">
+    <div class="submenu-content">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-800">Menu Prabayar</h3>
+            <button onclick="closePrabayar()" class="bg-gray-100 p-2 rounded-full btn-click">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <div id="prabayarList">
+            <!-- List akan diisi lewat JS -->
         </div>
     </div>
 </div>
@@ -289,22 +347,34 @@ function autoGrow(element) {
     element.style.height = (element.scrollHeight) + "px";
 }
 
-// FUNGSI KEAMANAN: Mengamankan teks dari karakter yang merusak HTML
 function escapeHtml(text) {
     return text.replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+// DATA MENU UTAMA
 const menus = [
     {label:"Setup Server", icon:"server", action:"server"},
     {label:"Setup Center", icon:"database", action:"center"},
     {label:"Menu Transaksi", icon:"layout-grid", action:"transaksi"},
-    {label:"Prabayar", icon:"smartphone"},
+    {label:"Prabayar", icon:"smartphone", action:"prabayar"}, // <-- YANG BARU
     {label:"Pascabayar", icon:"credit-card"},
     {label:"Format Request", icon:"file-text"},
     {label:"Logo", icon:"image"},
     {label:"OTP", icon:"key-round"},
     {label:"Poin", icon:"star"},
     {label:"Downline", icon:"users"}
+];
+
+// DATA SUB MENU PRABAYAR
+const subMenuPrabayar = [
+    {nama: "Pulsa Reguler", icon: "phone"},
+    {nama: "Pulsa Transfer", icon: "send"},
+    {nama: "Paket Internet", icon: "wifi"},
+    {nama: "Paket Telpon dan SMS", icon: "message-square"},
+    {nama: "Voucher Games", icon: "gamepad-2"},
+    {nama: "Voucher TV", icon: "tv"},
+    {nama: "E-wallet", icon: "wallet"},
+    {nama: "Transfer Uang", icon: "dollar-sign"}
 ];
 
 function renderMenus(){
@@ -326,10 +396,37 @@ function renderMenus(){
             if(menu.action==="server") openServer();
             if(menu.action==="center") openCenter();
             if(menu.action==="transaksi") openTransaksi();
+            if(menu.action==="prabayar") openPrabayar(); // <-- EVENT KLIK PRABAYAR
         };
         grid.appendChild(card);
     });
     lucide.createIcons();
+}
+
+// >>> FUNGSI BUKA TUTUP SUB MENU PRABAYAR <<<
+function openPrabayar(){
+    const modal = document.getElementById("prabayarModal");
+    const listContainer = document.getElementById("prabayarList");
+    
+    // Render list item
+    listContainer.innerHTML = "";
+    subMenuPrabayar.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerHTML = `
+            <i data-lucide="${item.icon}" class="w-6 h-6"></i>
+            <span class="font-medium">${item.nama}</span>
+        `;
+        // Bisa ditambahkan onclick untuk masing-masing menu nanti
+        listContainer.appendChild(div);
+    });
+
+    modal.classList.add("show");
+    lucide.createIcons();
+}
+
+function closePrabayar(){
+    document.getElementById("prabayarModal").classList.remove("show");
 }
 
 function toast(msg){
@@ -607,14 +704,12 @@ function toggleTransaksi(index){
     renderTransaksi();
 }
 
-// >>> PERBAIKAN: Fungsi sembunyikan tombol hapus <<<
 function hideAllDeleteButtons(){
     transaksiItems.forEach(item => {
         item.swiped = false;
     });
     activeSwipeIndex = -1;
     
-    // Cari berdasarkan class khusus yang sudah dibuat
     const allDeleteButtons = document.querySelectorAll('.btn-delete');
     allDeleteButtons.forEach(btn => {
         btn.style.display = 'none';
@@ -622,7 +717,7 @@ function hideAllDeleteButtons(){
 }
 
 function swipeLeft(index){
-    hideAllDeleteButtons(); // Sembunyikan yang lain dulu
+    hideAllDeleteButtons();
     transaksiItems[index].swiped = true;
     activeSwipeIndex = index;
     renderTransaksi();
@@ -640,8 +735,6 @@ function renderTransaksi(){
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
-
-        // >>> PERBAIKAN: Pakai fungsi escapeHtml <<<
         const safeNama = escapeHtml(item.nama);
 
         if(item.type === "kategori"){
