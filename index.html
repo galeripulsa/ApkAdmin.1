@@ -33,7 +33,6 @@ body{
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 }
 
-/* CARA PALING AMPUH: UBAH SEMUA DIDALAMNYA JADI PUTIH */
 .menu-active svg,
 .menu-active .menu-label{
     stroke: white !important;
@@ -85,7 +84,7 @@ body{
 
 /* Khusus Alamat Konter awalnya tinggi 5 baris */
 #alamatKonter {
-    min-height: 120px; /* Ini setara sekitar 5 baris */
+    min-height: 120px;
 }
 
 .floating label{
@@ -160,11 +159,11 @@ body{
 }
 
 .blink {
-    animation: blink 0.5s ease-in-out 1; /* Berkedip 1 kali */
+    animation: blink 0.5s ease-in-out 1;
 }
 
 /* ===============================
-   EFEK KLIK TOMBOL (ADA GERAKAN)
+   EFEK KLIK TOMBOL
 ================================ */
 .btn-click:active {
     transform: scale(0.95);
@@ -201,7 +200,6 @@ body{
 <!-- SETUP SERVER -->
 <div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
-        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
         <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
             <h2 class="text-xl font-bold">Setup Server</h2>
         </div>
@@ -228,7 +226,6 @@ body{
 <!-- SETUP CENTER -->
 <div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full px-2">
-        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
             <h2 class="font-bold text-xl">Setup Center</h2>
         </div>
@@ -277,22 +274,20 @@ body{
 <!-- MENU TRANSAKSI -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
-        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-2xl">Menu Transaksi</h2>
             </div>
 
-         <!-- TOMBOL MENU & KATEGORI - 1 WARNA TANPA HOVER -->
             <div class="flex gap-3 mt-4 mb-2">
                 <button id="btnMenu" onclick="addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
                 <button id="btnKategori" onclick="addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
             </div>
 
-     <div class="bg-white rounded-md px-3">
-            <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
+            <div class="bg-white rounded-md px-3">
+                <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
+            </div>
         </div>
-      </div>
 
         <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
 
@@ -308,7 +303,6 @@ body{
 <!-- ===================================================== -->
 <div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
-        <!-- HEADER MODAL SAMA DENGAN HEADER UTAMA -->
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold text-xl">Tampilan User</h2>
@@ -335,14 +329,11 @@ window.onerror = function(message, source, line, column){
     console.error("ERROR:", message, "Baris:", line);
 };
 
-let centerChanged = false;
-let serverChanged = false;
-let transaksiChanged = false;
 let confirmAction = null;
 let sortableInstance = null;
 
 /* ============================================= */
-// FUNGSI AUTO GROW / OTOMATIS MELEBAR KOTAK
+// FUNGSI AUTO GROW
 /* ============================================= */
 function autoGrow(element) {
     element.style.height = "auto";
@@ -425,36 +416,43 @@ function executeConfirm(){
     closeConfirm();
 }
 
-/* SETUP SERVER */
+/* ============================================= */
+// LOGIC SERVER
+/* ============================================= */
+function getServerData(){
+    return {
+        nama: namaKonter.value.trim(),
+        alamat: alamatKonter.value.trim()
+    };
+}
+function checkServerChange(){
+    const original = JSON.parse(localStorage.getItem("setupServer")) || {nama:"", alamat:""};
+    const current = getServerData();
+    if(JSON.stringify(current) !== JSON.stringify(original)){
+        enableButton("saveServerBtn");
+    } else {
+        disableButton("saveServerBtn");
+    }
+}
 function openServer(){
     document.getElementById("serverModal").classList.add("show");
     loadServer();
-    serverChanged = false;
-    disableButton("saveServerBtn");
-
-    // Jalankan auto grow saat modal dibuka
-    setTimeout(() => {
-        autoGrow(alamatKonter);
-    }, 100);
+    checkServerChange(); // Cek kondisi awal
+    setTimeout(() => { autoGrow(alamatKonter); }, 100);
 }
 function closeServer(){
     document.getElementById("serverModal").classList.remove("show");
 }
 function saveServer(){
-    localStorage.setItem("setupServer", JSON.stringify({
-        nama:namaKonter.value,
-        alamat:alamatKonter.value
-    }));
-    serverChanged = false;
-    disableButton("saveServerBtn");
+    localStorage.setItem("setupServer", JSON.stringify(getServerData()));
     toast("Data Server Disimpan");
+    checkServerChange(); // Nonaktifkan tombol setelah simpan
 }
 function confirmSaveServer(){
-    if(!serverChanged) return;
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Server?", saveServer);
 }
 function checkCloseServer(){
-    if(serverChanged){
+    if(!document.getElementById("saveServerBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer);
         return;
     }
@@ -462,37 +460,63 @@ function checkCloseServer(){
 }
 function loadServer(){
     const data = JSON.parse(localStorage.getItem("setupServer"));
-    if(!data) return;
-    namaKonter.value = data.nama || "";
-    alamatKonter.value = data.alamat || "";
+    if(data){
+        namaKonter.value = data.nama || "";
+        alamatKonter.value = data.alamat || "";
+    } else {
+        namaKonter.value = "";
+        alamatKonter.value = "";
+    }
 }
 
-/* SETUP CENTER */
+/* ============================================= */
+// LOGIC CENTER
+/* ============================================= */
+function getCenterData(){
+    return {
+        ip:{
+            nama: ipNama.value.trim(),
+            server: ipServer.value.trim(),
+            host: ipHost.value.trim()
+        },
+        jabber:{
+            nama: jabberNama.value.trim(),
+            server: jabberServer.value.trim(),
+            host: jabberHost.value.trim()
+        },
+        nomor:{
+            wa: waCenter.value.trim(),
+            sms: smsCenter.value.trim()
+        }
+    };
+}
+function checkCenterChange(){
+    const original = JSON.parse(localStorage.getItem("centerServer")) || {ip:{}, jabber:{}, nomor:{}};
+    const current = getCenterData();
+    if(JSON.stringify(current) !== JSON.stringify(original)){
+        enableButton("saveCenterBtn");
+    } else {
+        disableButton("saveCenterBtn");
+    }
+}
 function openCenter(){
     document.getElementById("centerModal").classList.add("show");
     loadCenter();
-    centerChanged = false;
-    disableButton("saveCenterBtn");
+    checkCenterChange();
 }
 function closeCenter(){
     document.getElementById("centerModal").classList.remove("show");
 }
 function saveCenter(){
-    localStorage.setItem("centerServer", JSON.stringify({
-        ip:{nama:ipNama.value, server:ipServer.value, host:ipHost.value},
-        jabber:{nama:jabberNama.value, server:jabberServer.value, host:jabberHost.value},
-        nomor:{wa:waCenter.value, sms:smsCenter.value}
-    }));
-    centerChanged = false;
-    disableButton("saveCenterBtn");
+    localStorage.setItem("centerServer", JSON.stringify(getCenterData()));
     toast("Data Center Disimpan");
+    checkCenterChange();
 }
 function confirmSaveCenter(){
-    if(!centerChanged) return;
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Center?", saveCenter);
 }
 function checkCloseCenter(){
-    if(centerChanged){
+    if(!document.getElementById("saveCenterBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter);
         return;
     }
@@ -500,63 +524,69 @@ function checkCloseCenter(){
 }
 function loadCenter(){
     const data = JSON.parse(localStorage.getItem("centerServer"));
-    if(!data) return;
-    ipNama.value = data.ip?.nama || "";
-    ipServer.value = data.ip?.server || "";
-    ipHost.value = data.ip?.host || "";
-    jabberNama.value = data.jabber?.nama || "";
-    jabberServer.value = data.jabber?.server || "";
-    jabberHost.value = data.jabber?.host || "";
-    waCenter.value = data.nomor?.wa || "";
-    smsCenter.value = data.nomor?.sms || "";
+    if(data){
+        ipNama.value = data.ip?.nama || "";
+        ipServer.value = data.ip?.server || "";
+        ipHost.value = data.ip?.host || "";
+        jabberNama.value = data.jabber?.nama || "";
+        jabberServer.value = data.jabber?.server || "";
+        jabberHost.value = data.jabber?.host || "";
+        waCenter.value = data.nomor?.wa || "";
+        smsCenter.value = data.nomor?.sms || "";
+    } else {
+        ipNama.value = ""; ipServer.value = ""; ipHost.value = "";
+        jabberNama.value = ""; jabberServer.value = ""; jabberHost.value = "";
+        waCenter.value = ""; smsCenter.value = "";
+    }
 }
 
-/* WATCH INPUT */
+/* ============================================= */
+// WATCH INPUTS
+/* ============================================= */
 function watchServerChanges(){
     [namaKonter, alamatKonter].forEach(field=>{
         field.addEventListener("input", ()=>{
-            serverChanged = true;
-            enableButton("saveServerBtn");
+            checkServerChange();
             autoGrow(field);
         });
     });
 }
 function watchCenterChanges(){
     [
-        document.getElementById("ipNama"),
-        document.getElementById("ipServer"),
-        document.getElementById("ipHost"),
-        document.getElementById("jabberNama"),
-        document.getElementById("jabberServer"),
-        document.getElementById("jabberHost"),
-        document.getElementById("waCenter"),
-        document.getElementById("smsCenter")
+        ipNama, ipServer, ipHost,
+        jabberNama, jabberServer, jabberHost,
+        waCenter, smsCenter
     ].forEach(field=>{
-        if(!field) return;
-        field.addEventListener("input", ()=>{
-            centerChanged = true;
-            enableButton("saveCenterBtn");
-        });
+        field.addEventListener("input", checkCenterChange);
     });
 }
 
-/* MENU TRANSAKSI DATA */
-let transaksiItems = JSON.parse(localStorage.getItem("transaksiItems")) || [
-    {type:"kategori", nama:"PRODUK DIGITAL", checked:false, swiped:false},
-    {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, swiped:false},
-    {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
-];
+/* ============================================= */
+// LOGIC TRANSAKSI
+/* ============================================= */
+let transaksiItems = [];
+let originalTransaksi = []; // Simpan data asli untuk pembanding
+
+function getCurrentTransaksi(){
+    return JSON.parse(JSON.stringify(transaksiItems)); // Copy data
+}
+function checkTransaksiChange(){
+    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
+        enableButton("saveTransaksiBtn");
+    } else {
+        disableButton("saveTransaksiBtn");
+    }
+    updateTransaksiInfo();
+}
 
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
-    transaksiChanged = false;
-    disableButton("saveTransaksiBtn");
+    checkTransaksiChange();
 }
 function closeTransaksi(){
-    if(transaksiChanged){
+    if(!document.getElementById("saveTransaksiBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar tanpa menyimpan perubahan?", ()=>{
-            transaksiChanged = false;
             document.getElementById("transaksiModal").classList.remove("show");
         });
         return;
@@ -569,44 +599,26 @@ function updateTransaksiInfo(){
     document.getElementById("transaksiInfo").innerText = `${totalMenu} Menu • ${totalKategori} Kategori`;
 }
 
-// FUNGSI TAMBAH MENU DENGAN EFEK BERKEDIP
 function addMenu(){
-    // Efek berkedip
     document.getElementById('btnMenu').classList.add('blink');
-    setTimeout(() => {
-        document.getElementById('btnMenu').classList.remove('blink');
-    }, 500);
+    setTimeout(() => { document.getElementById('btnMenu').classList.remove('blink'); }, 500);
 
     transaksiItems.unshift({
-        type: "menu",
-        nama: "Menu Baru",
-        icon: "circle",
-        iconFile: "",
-        checked: false,
-        swiped: false
+        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, swiped: false
     });
-    transaksiChanged = true;
-    enableButton("saveTransaksiBtn");
+    checkTransaksiChange();
     renderTransaksi();
     fokusInputPertama();
 }
 
-// FUNGSI TAMBAH KATEGORI DENGAN EFEK BERKEDIP
 function addKategori(){
-    // Efek berkedip
     document.getElementById('btnKategori').classList.add('blink');
-    setTimeout(() => {
-        document.getElementById('btnKategori').classList.remove('blink');
-    }, 500);
+    setTimeout(() => { document.getElementById('btnKategori').classList.remove('blink'); }, 500);
 
     transaksiItems.unshift({
-        type: "kategori",
-        nama: "Kategori Baru",
-        checked: false,
-        swiped: false
+        type: "kategori", nama: "Kategori Baru", checked: false, swiped: false
     });
-    transaksiChanged = true;
-    enableButton("saveTransaksiBtn");
+    checkTransaksiChange();
     renderTransaksi();
     fokusInputPertama();
 }
@@ -614,27 +626,20 @@ function addKategori(){
 function fokusInputPertama(){
     setTimeout(()=>{
         const inputs = document.querySelectorAll("#transaksiList input[type='text']");
-        if(inputs.length){
-            inputs[0].focus();
-            inputs[0].select();
-        }
+        if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
     },100);
 }
 function updateTransaksi(index,value){
     transaksiItems[index].nama = value;
-    transaksiChanged = true;
-    enableButton("saveTransaksiBtn");
+    checkTransaksiChange();
 }
 function toggleTransaksi(index){
     transaksiItems[index].checked = !transaksiItems[index].checked;
-    transaksiChanged = true;
-    enableButton("saveTransaksiBtn");
+    checkTransaksiChange();
     renderTransaksi();
 }
 function swipeLeft(index){
-    transaksiItems.forEach(function(item,i){
-        item.swiped = (i === index);
-    });
+    transaksiItems.forEach(function(item,i){ item.swiped = (i === index); });
     renderTransaksi();
 }
 function swipeRight(index){
@@ -664,7 +669,6 @@ function renderTransaksi(){
             <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
                 <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
-                    <!-- YANG INI DIUBAH: TRANSPARAN + BORDER -->
                     <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
@@ -688,7 +692,6 @@ function renderTransaksi(){
         });
         list.appendChild(div);
     });
-    updateTransaksiInfo();
     lucide.createIcons();
     initDragDrop();
 }
@@ -696,8 +699,7 @@ function hapusTransaksi(index){
     const namaItem = transaksiItems[index].nama;
     showConfirm("Konfirmasi Hapus", `Yakin ingin menghapus "${namaItem}" ?`, ()=>{
         transaksiItems.splice(index,1);
-        transaksiChanged = true;
-        enableButton("saveTransaksiBtn");
+        checkTransaksiChange();
         renderTransaksi();
     });
 }
@@ -713,28 +715,29 @@ function initDragDrop(){
         onEnd:function(evt){
             const moved = transaksiItems.splice(evt.oldIndex,1)[0];
             transaksiItems.splice(evt.newIndex,0,moved);
-            transaksiChanged = true;
-            enableButton("saveTransaksiBtn");
-            renderTransaksi();
+            checkTransaksiChange();
         }
     });
 }
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    transaksiChanged = false;
-    disableButton("saveTransaksiBtn");
+    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems)); // Update data asli
     toast("Menu Transaksi berhasil disimpan");
-    loadTransaksi();
+    checkTransaksiChange();
 }
 function loadTransaksi(){
     const data = localStorage.getItem("transaksiItems");
-    if(data) transaksiItems = JSON.parse(data);
-    transaksiItems.forEach(item=>{
-        if(item.checked === undefined) item.checked = false;
-        if(item.swiped === undefined) item.swiped = false;
-        if(item.icon === undefined) item.icon = "circle";
-        if(item.iconFile === undefined) item.iconFile = "";
-    });
+    if(data){
+        transaksiItems = JSON.parse(data);
+    } else {
+        transaksiItems = [
+            {type:"kategori", nama:"PRODUK DIGITAL", checked:false, swiped:false},
+            {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, swiped:false},
+            {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
+        ];
+    }
+    // Salin sebagai data asli untuk pembanding
+    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
     renderTransaksi();
     updateTransaksiInfo();
 }
@@ -748,8 +751,7 @@ function gantiIcon(index){
         const reader = new FileReader();
         reader.onload = function(evt){
             transaksiItems[index].iconFile = evt.target.result;
-            transaksiChanged = true;
-            enableButton("saveTransaksiBtn");
+            checkTransaksiChange();
             renderTransaksi();
         };
         reader.readAsDataURL(file);
@@ -757,23 +759,19 @@ function gantiIcon(index){
     picker.click();
 }
 function confirmSaveTransaksi(){
-    if(!transaksiChanged) return;
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan Menu Transaksi?", saveTransaksi);
 }
 
-/* ===================================================== */
-/* FUNGSI PREVIEW TAMPILAN USER */
-/* ===================================================== */
+/* ============================================= */
+// PREVIEW
+/* ============================================= */
 function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
 
     let html = "";
-
-    // Ambil data server
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
 
-    // Header Preview
     html += `
     <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="text-center">
@@ -783,7 +781,6 @@ function openPreview(){
     </div>
     `;
 
-    // Render Menu yang dicentang saja
     transaksiItems.forEach(item=>{
         if(item.type === "kategori"){
             html += `
@@ -795,7 +792,6 @@ function openPreview(){
             if(item.checked){
                 html += `
                 <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <!-- DI PREVIEW JUGA DIUBAH: TRANSPARAN + BORDER -->
                     <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
