@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Apk Admin Galeri Pulsa V2</title>
+<title>Admin Galeri Pulsa V2</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
@@ -223,7 +223,6 @@ body{
         <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
         <p id="confirmMessage" class="text-gray-600 mb-6"></p>
         <div class="flex gap-3" id="confirmButtons">
-            <!-- Tombol akan diatur lewat JS -->
         </div>
     </div>
 </div>
@@ -352,17 +351,15 @@ function showConfirm(title,message,action,isError=false){
     btnContainer.innerHTML = "";
 
     if(isError){
-        // Hanya tombol OK untuk pesan error
         const okBtn = document.createElement("button");
         okBtn.className = "w-full bg-red-600 text-white py-3 rounded-xl btn-click";
         okBtn.innerText = "OK";
         okBtn.onclick = function(){
             closeConfirm();
-            hideAllDeleteButtons(); // Sembunyikan tombol hapus setelah OK
+            hideAllDeleteButtons();
         };
         btnContainer.appendChild(okBtn);
     } else {
-        // Tombol Batal dan OK untuk konfirmasi biasa
         btnContainer.innerHTML = `
             <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
             <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
@@ -586,7 +583,7 @@ function updateTransaksi(index,value){
     checkTransaksiChange();
 }
 function toggleTransaksi(index){
-    hideAllDeleteButtons(); // Sembunyikan tombol hapus saat klik centang
+    hideAllDeleteButtons();
     transaksiItems[index].checked = !transaksiItems[index].checked;
     checkTransaksiChange();
     renderTransaksi();
@@ -617,8 +614,13 @@ function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
 
-    // Klik di luar area item = tutup tombol hapus
-    list.addEventListener('click', hideAllDeleteButtons);
+    // Klik di luar item = tutup tombol hapus
+    list.addEventListener('click', function(e){
+        // Hanya tutup jika yang diklik bukan input text
+        if(!e.target.matches('input[type="text"]')){
+            hideAllDeleteButtons();
+        }
+    });
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
@@ -631,7 +633,7 @@ function renderTransaksi(){
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)" onclick="event.stopPropagation(); hideAllDeleteButtons();">
+                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index}, this.value)">
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
@@ -651,7 +653,7 @@ function renderTransaksi(){
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
-                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)" onclick="event.stopPropagation(); hideAllDeleteButtons();">
+                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index}, this.value)">
                     </div>
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
@@ -682,7 +684,6 @@ function hapusTransaksi(index){
     const item = transaksiItems[index];
 
     if(item.checked){
-        // Tampilkan pesan error tanpa tombol batal
         showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", null, true);
         return;
     }
@@ -705,7 +706,7 @@ function initDragDrop(){
         delay:500,
         delayOnTouchOnly:true,
         onStart: function() {
-            hideAllDeleteButtons(); // Sembunyikan saat mulai drag
+            hideAllDeleteButtons();
         },
         onEnd:function(evt){
             const moved = transaksiItems.splice(evt.oldIndex,1)[0];
