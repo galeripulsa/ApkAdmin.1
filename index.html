@@ -144,8 +144,8 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Apk Admin Global</h1>
-            <p class="text-lg opacity-90">agusbaba1987@gmail.com</p>
+            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
 
@@ -578,11 +578,14 @@ function fokusInputPertama(){
         if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
     },100);
 }
+
+// === PERBAIKAN DISINI ===
+// Hapus hideAllDeleteButtons dari sini, biar bisa ngetik
 function updateTransaksi(index,value){
-    hideAllDeleteButtons(); // Saat ngetik, tombol hapus hilang
     transaksiItems[index].nama = value;
     checkTransaksiChange();
 }
+
 function toggleTransaksi(index){
     hideAllDeleteButtons(); // Saat centang, tombol hapus hilang
     transaksiItems[index].checked = !transaksiItems[index].checked;
@@ -590,7 +593,6 @@ function toggleTransaksi(index){
     renderTransaksi();
 }
 
-// FUNGSI UTAMA: Sembunyikan semua tombol hapus
 function hideAllDeleteButtons(){
     transaksiItems.forEach(item => {
         item.swiped = false;
@@ -616,8 +618,12 @@ function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
 
-    // Klik di area kosong = tutup tombol hapus
-    list.addEventListener('click', hideAllDeleteButtons);
+    list.addEventListener('click', function(e){
+        // Jangan tutup kalau yang diklik itu input text
+        if(!e.target.matches('input[type="text"]')){
+            hideAllDeleteButtons();
+        }
+    });
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
@@ -703,7 +709,7 @@ function initDragDrop(){
         delay:500,
         delayOnTouchOnly:true,
         onStart: function() {
-            hideAllDeleteButtons(); // Saat mulai drag, hilangkan tombol hapus
+            hideAllDeleteButtons();
         },
         onEnd:function(evt){
             const moved = transaksiItems.splice(evt.oldIndex,1)[0];
