@@ -266,7 +266,7 @@ body{
         <p id="confirmMessage" class="text-gray-600 mb-6"></p>
         <div class="flex gap-3">
             <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
+            <button id="confirmOkBtn" onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
         </div>
     </div>
 </div>
@@ -410,6 +410,8 @@ function showConfirm(title,message,action){
 }
 function closeConfirm(){
     document.getElementById("confirmModal").classList.add("hidden");
+    // Kembalikan tombol OK ke warna normal
+    document.getElementById("confirmOkBtn").className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
 }
 function executeConfirm(){
     if(typeof confirmAction === "function") confirmAction();
@@ -437,7 +439,7 @@ function checkServerChange(){
 function openServer(){
     document.getElementById("serverModal").classList.add("show");
     loadServer();
-    checkServerChange(); // Cek kondisi awal
+    checkServerChange();
     setTimeout(() => { autoGrow(alamatKonter); }, 100);
 }
 function closeServer(){
@@ -446,7 +448,7 @@ function closeServer(){
 function saveServer(){
     localStorage.setItem("setupServer", JSON.stringify(getServerData()));
     toast("Data Server Disimpan");
-    checkServerChange(); // Nonaktifkan tombol setelah simpan
+    checkServerChange();
 }
 function confirmSaveServer(){
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Server?", saveServer);
@@ -565,10 +567,11 @@ function watchCenterChanges(){
 // LOGIC TRANSAKSI
 /* ============================================= */
 let transaksiItems = [];
-let originalTransaksi = []; // Simpan data asli untuk pembanding
+let originalTransaksi = [];
+let activeSwipeIndex = -1; // Untuk tracking tombol hapus yang terbuka
 
 function getCurrentTransaksi(){
-    return JSON.parse(JSON.stringify(transaksiItems)); // Copy data
+    return JSON.parse(JSON.stringify(transaksiItems));
 }
 function checkTransaksiChange(){
     if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
@@ -638,28 +641,51 @@ function toggleTransaksi(index){
     checkTransaksiChange();
     renderTransaksi();
 }
+
+// === FUNGSI BARU: SEMBUNYIKAN TOMBOL HAPUS ===
+function hideAllDeleteButtons(){
+    transaksiItems.forEach(item => {
+        item.swiped = false;
+    });
+    activeSwipeIndex = -1;
+    renderTransaksi();
+}
+
 function swipeLeft(index){
-    transaksiItems.forEach(function(item,i){ item.swiped = (i === index); });
+    // Sembunyikan yang lain, tampilkan yang ini saja
+    transaksiItems.forEach(function(item,i){
+        item.swiped = (i === index);
+    });
+    activeSwipeIndex = index;
     renderTransaksi();
 }
 function swipeRight(index){
     transaksiItems[index].swiped = false;
+    activeSwipeIndex = -1;
     renderTransaksi();
 }
+
 function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
+    list.removeEventListener('click', hideAllDeleteButtons); // Hapus listener lama dulu
+    list.addEventListener('click', hideAllDeleteButtons); // Klik luar kolom = tutup
+
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
+        div.addEventListener('click', function(e){
+            e.stopPropagation(); // Klik di dalam kolom tidak langsung tutup, tapi cek dulu
+        });
+
         if(item.type === "kategori"){
             div.innerHTML = `
             <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
                 <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)">
+                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)" onclick="event.stopPropagation(); hideAllDeleteButtons();">
                     <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
+                        ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
                     </div>
                 </div>
@@ -669,19 +695,20 @@ function renderTransaksi(){
             <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
                 <div class="flex items-center gap-3 h-10">
                     <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
-                    <div onclick="gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
+                    <div onclick="event.stopPropagation(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
-                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)">
+                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" oninput="updateTransaksi(${index},this.value)" onclick="event.stopPropagation(); hideAllDeleteButtons();">
                     </div>
                     <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
+                        ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
                     </div>
                 </div>
             </div>`;
         }
+
         let startX = 0;
         div.addEventListener("touchstart",(e)=> startX = e.touches[0].clientX );
         div.addEventListener("touchend",(e)=>{
@@ -690,19 +717,37 @@ function renderTransaksi(){
             if(diff > 80) swipeLeft(index);
             if(diff < -80) swipeRight(index);
         });
+
         list.appendChild(div);
     });
     lucide.createIcons();
     initDragDrop();
 }
+
+// === FUNGSI HAPUS DENGAN CEK AKTIF ===
 function hapusTransaksi(index){
-    const namaItem = transaksiItems[index].nama;
+    const item = transaksiItems[index];
+
+    // CEK APAKAH MENU SEDANG AKTIF (checked)
+    if(item.checked){
+        // Tampilkan pesan error
+        showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", ()=>{
+            // Hanya tutup pesan
+        });
+        // Ubah tombol OK jadi merah
+        document.getElementById("confirmOkBtn").className = "flex-1 bg-red-600 text-white py-3 rounded-xl btn-click";
+        return;
+    }
+
+    // Jika tidak aktif, lanjut hapus
+    const namaItem = item.nama;
     showConfirm("Konfirmasi Hapus", `Yakin ingin menghapus "${namaItem}" ?`, ()=>{
         transaksiItems.splice(index,1);
         checkTransaksiChange();
         renderTransaksi();
     });
 }
+
 function initDragDrop(){
     const list = document.getElementById("transaksiList");
     if(!list) return;
@@ -721,7 +766,7 @@ function initDragDrop(){
 }
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems)); // Update data asli
+    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
     toast("Menu Transaksi berhasil disimpan");
     checkTransaksiChange();
 }
@@ -736,7 +781,6 @@ function loadTransaksi(){
             {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
         ];
     }
-    // Salin sebagai data asli untuk pembanding
     originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
     renderTransaksi();
     updateTransaksiInfo();
