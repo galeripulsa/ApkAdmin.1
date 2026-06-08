@@ -230,7 +230,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Global Solution</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -362,19 +362,19 @@ body{
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL DAFTAR PILIH OPERATOR -->
+<!-- MODAL DAFTAR OPERATOR (TEMPLATE UMUM) -->
 <!-- ========================================== -->
-<div id="pulsaRegulerModal" class="submenu-modal">
+<div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
         <div class="flex items-center justify-between mb-6">
-            <button onclick="backToPrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
+            <button onclick="backToPrabayarFromList()" class="bg-gray-100 p-3 rounded-full btn-click">
                 <i data-lucide="arrow-left" class="w-7 h-7"></i>
             </button>
-            <h3 class="text-2xl font-bold text-slate-800">Pulsa Reguler</h3>
+            <h3 id="operatorListTitle" class="text-2xl font-bold text-slate-800">Judul Menu</h3>
             <div></div>
         </div>
         
-        <div id="operatorList">
+        <div id="operatorListContainer">
             <!-- Daftar Nama Operator akan muncul di sini -->
         </div>
     </div>
@@ -392,8 +392,7 @@ body{
             <h3 id="detailOperatorTitle" class="text-2xl font-bold text-slate-800">Nama Operator</h3>
             <div></div>
         </div>
-
-      <div> 
+        
         <div class="floating">
             <input id="inputCekHarga" type="text" placeholder=" ">
             <label>Cek Harga</label>
@@ -402,8 +401,6 @@ body{
             <input id="inputNamaProduk" type="text" placeholder=" ">
             <label>Nama Produk</label>
         </div>
-       </div>
-        <!-- Nanti bisa ditambahkan tombol simpan jika perlu -->
     </div>
 </div>
 
@@ -416,7 +413,8 @@ window.onerror = function(message, source, line, column){
 
 let confirmAction = null;
 let sortableInstance = null;
-let currentSelectedOperator = ""; // Variabel simpan nama operator yang diklik
+let currentSelectedOperator = "";
+let currentMenuParent = ""; // Untuk simpan asal menu (Pulsa Reguler/Transfer/dll)
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -442,9 +440,9 @@ const menus = [
 
 const subMenuPrabayar = [
     {nama: "Pulsa Reguler", icon: "phone", action: "pulsaReguler"},
-    {nama: "Pulsa Transfer", icon: "send"},
-    {nama: "Paket Internet", icon: "wifi"},
-    {nama: "Paket Telpon dan SMS", icon: "message-square"},
+    {nama: "Pulsa Transfer", icon: "send", action: "pulsaTransfer"},
+    {nama: "Paket Internet", icon: "wifi", action: "paketInternet"},
+    {nama: "Paket Telpon dan SMS", icon: "message-square", action: "paketTelpon"},
     {nama: "Voucher Games", icon: "gamepad-2"},
     {nama: "Voucher TV", icon: "tv"},
     {nama: "E-wallet", icon: "wallet"},
@@ -502,8 +500,11 @@ function openPrabayar(){
             <span class="font-medium text-lg">${item.nama}</span>
         `;
         
-        if(item.action === "pulsaReguler"){
-            div.onclick = openPulsaReguler;
+        // Semua menu utama sekarang pakai fungsi yang sama
+        if(item.action){
+            div.onclick = function(){
+                openOperatorList(item.nama, item.action);
+            };
         }
         
         listContainer.appendChild(div);
@@ -518,11 +519,18 @@ function closePrabayar(){
 }
 
 // >>> FUNGSI BUKA DAFTAR OPERATOR <<<
-function openPulsaReguler(){
+function openOperatorList(title, actionType){
+    currentMenuParent = actionType;
+    
+    // Tutup modal prabayar
     document.getElementById("prabayarModal").classList.remove("show");
     
-    const modal = document.getElementById("pulsaRegulerModal");
-    const container = document.getElementById("operatorList");
+    // Buka modal daftar operator
+    const modal = document.getElementById("operatorListModal");
+    const container = document.getElementById("operatorListContainer");
+    
+    // Ganti judul sesuai menu yang diklik
+    document.getElementById("operatorListTitle").innerText = title;
     
     container.innerHTML = "";
     
@@ -537,7 +545,6 @@ function openPulsaReguler(){
             <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
         `;
         
-        // Event klik untuk buka modal detail
         div.onclick = function(){
             openOperatorDetail(op);
         };
@@ -549,8 +556,8 @@ function openPulsaReguler(){
     lucide.createIcons();
 }
 
-function backToPrabayar(){
-    document.getElementById("pulsaRegulerModal").classList.remove("show");
+function backToPrabayarFromList(){
+    document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
 }
 
@@ -559,13 +566,13 @@ function openOperatorDetail(namaOperator){
     currentSelectedOperator = namaOperator;
     
     // Tutup daftar operator
-    document.getElementById("pulsaRegulerModal").classList.remove("show");
+    document.getElementById("operatorListModal").classList.remove("show");
     
     // Buka modal detail
     const modal = document.getElementById("operatorDetailModal");
     document.getElementById("detailOperatorTitle").innerText = namaOperator;
     
-    // Kosongkan input atau load data jika ada
+    // Kosongkan input
     document.getElementById("inputCekHarga").value = "";
     document.getElementById("inputNamaProduk").value = "";
     
@@ -575,7 +582,7 @@ function openOperatorDetail(namaOperator){
 
 function closeOperatorDetail(){
     document.getElementById("operatorDetailModal").classList.remove("show");
-    document.getElementById("pulsaRegulerModal").classList.add("show");
+    document.getElementById("operatorListModal").classList.add("show");
 }
 
 function toast(msg){
