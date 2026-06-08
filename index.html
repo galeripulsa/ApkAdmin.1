@@ -162,7 +162,7 @@ body{
     min-height: 100vh;
     border-radius: 0;
     padding: 20px;
-    padding-bottom: 100px;
+    padding-bottom: 100px; /* Ruang untuk tombol */
     transform: translateY(-100%);
     transition: transform 0.3s ease-out;
 }
@@ -252,17 +252,19 @@ body{
 
 /* ========================================== */
 /* STYLE FOOTER STICKY UNTUK TOMBOL SIMPAN */
+/* >>> PERBAIKAN: POSISI FIXED DI BAWAH <<< */
 /* ========================================== */
 .sticky-footer {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 100%;
     background: white;
     border-top: 1px solid #e2e8f0;
     padding: 15px 20px;
     z-index: 9999;
-    max-width: 100%;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
 }
 </style>
@@ -627,8 +629,10 @@ function openOperatorList(title, actionType){
     modal.classList.add("show");
     lucide.createIcons();
     
-    // Simpan data awal untuk pengecekan perubahan
+    // >>> PERBAIKAN: Update data asli setelah load <<<
     originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+    
+    // >>> PERBAIKAN: Pastikan tombol mati saat pertama buka <<<
     disableButton("savePrabayarBtn");
     
     // Pasang event listener untuk input
@@ -663,9 +667,12 @@ function checkPrabayarChange(){
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+    
+    // >>> PERBAIKAN: Update data asli setelah disimpan <<<
     originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+    
     toast("Data Prabayar Berhasil Disimpan");
-    disableButton("savePrabayarBtn");
+    disableButton("savePrabayarBtn"); // Tombol jadi abu-abu lagi
 }
 
 function confirmSavePrabayar(){
