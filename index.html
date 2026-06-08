@@ -144,8 +144,8 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri</h1>
-            <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
+            <h1 class="text-2xl font-bold">Apk Admin Global</h1>
+            <p class="text-lg opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
 
@@ -235,8 +235,8 @@ body{
             </div>
 
             <div class="flex gap-3 mt-4 mb-2">
-                <button id="btnMenu" onclick="addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
-                <button id="btnKategori" onclick="addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
+                <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
+                <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
             </div>
 
             <div class="bg-white rounded-md px-3">
@@ -579,16 +579,18 @@ function fokusInputPertama(){
     },100);
 }
 function updateTransaksi(index,value){
+    hideAllDeleteButtons(); // Saat ngetik, tombol hapus hilang
     transaksiItems[index].nama = value;
     checkTransaksiChange();
 }
 function toggleTransaksi(index){
-    hideAllDeleteButtons();
+    hideAllDeleteButtons(); // Saat centang, tombol hapus hilang
     transaksiItems[index].checked = !transaksiItems[index].checked;
     checkTransaksiChange();
     renderTransaksi();
 }
 
+// FUNGSI UTAMA: Sembunyikan semua tombol hapus
 function hideAllDeleteButtons(){
     transaksiItems.forEach(item => {
         item.swiped = false;
@@ -614,13 +616,8 @@ function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
 
-    // Klik di luar item = tutup tombol hapus
-    list.addEventListener('click', function(e){
-        // Hanya tutup jika yang diklik bukan input text
-        if(!e.target.matches('input[type="text"]')){
-            hideAllDeleteButtons();
-        }
-    });
+    // Klik di area kosong = tutup tombol hapus
+    list.addEventListener('click', hideAllDeleteButtons);
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
@@ -649,7 +646,7 @@ function renderTransaksi(){
                     <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
-                    <div onclick="event.stopPropagation(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
+                    <div onclick="event.stopPropagation(); hideAllDeleteButtons(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
@@ -706,7 +703,7 @@ function initDragDrop(){
         delay:500,
         delayOnTouchOnly:true,
         onStart: function() {
-            hideAllDeleteButtons();
+            hideAllDeleteButtons(); // Saat mulai drag, hilangkan tombol hapus
         },
         onEnd:function(evt){
             const moved = transaksiItems.splice(evt.oldIndex,1)[0];
