@@ -144,7 +144,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Global Solution</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -579,9 +579,17 @@ function fokusInputPertama(){
     },100);
 }
 
-function updateTransaksi(index,value){
+// FUNGSI UTAMA: Update data TANPA merender ulang seluruh layar
+function updateTransaksi(index, value){
     transaksiItems[index].nama = value;
     checkTransaksiChange();
+}
+
+// FUNGSI: Saat input diklik, sembunyikan tombol hapus
+function handleInputClick(){
+    if(activeSwipeIndex !== -1){
+        hideAllDeleteButtons();
+    }
 }
 
 function toggleTransaksi(index){
@@ -592,20 +600,30 @@ function toggleTransaksi(index){
 }
 
 function hideAllDeleteButtons(){
+    // Set data
     transaksiItems.forEach(item => {
         item.swiped = false;
     });
     activeSwipeIndex = -1;
-    renderTransaksi();
+    
+    // Hapus render ulang disini, cukup sembunyikan elemen yang terlihat
+    const allButtons = document.querySelectorAll('.btn-click');
+    allButtons.forEach(btn => {
+        if(btn.innerHTML.includes('trash-2')){ // Cek tombol hapus
+            btn.style.display = 'none';
+        }
+    });
 }
 
 function swipeLeft(index){
-    transaksiItems.forEach(function(item,i){
-        item.swiped = (i === index);
-    });
+    // Sembunyikan semua dulu
+    transaksiItems.forEach(item => item.swiped = false);
+    // Tampilkan yang ini saja
+    transaksiItems[index].swiped = true;
     activeSwipeIndex = index;
     renderTransaksi();
 }
+
 function swipeRight(index){
     transaksiItems[index].swiped = false;
     activeSwipeIndex = -1;
@@ -615,12 +633,6 @@ function swipeRight(index){
 function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
-
-    list.addEventListener('click', function(e){
-        if(!e.target.matches('input[type="text"]')){
-            hideAllDeleteButtons();
-        }
-    });
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
@@ -633,7 +645,7 @@ function renderTransaksi(){
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="hideAllDeleteButtons();" oninput="updateTransaksi(${index}, this.value)">
+                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
                         <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
@@ -653,7 +665,7 @@ function renderTransaksi(){
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <div class="flex-1">
-                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" onclick="hideAllDeleteButtons();" oninput="updateTransaksi(${index}, this.value)">
+                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
                     </div>
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
