@@ -138,7 +138,9 @@ body{
     display: none;
 }
 
-/* STYLE UNTUK SUB MENU */
+/* ========================================== */
+/* STYLE MODAL PRABAYAR - FULL SCREEN */
+/* ========================================== */
 .submenu-modal {
     position: fixed;
     top: 0;
@@ -148,7 +150,8 @@ body{
     background: rgba(0,0,0,0.5);
     z-index: 9998;
     display: none;
-    align-items: flex-end;
+    align-items: flex-start; /* Ubah jadi flex-start agar muncul dari atas */
+    padding-top: 0; /* Hilangkan jarak atas */
 }
 
 .submenu-modal.show {
@@ -158,10 +161,11 @@ body{
 .submenu-content {
     background: white;
     width: 100%;
-    border-radius: 20px 20px 0 0;
+    min-height: 100vh; /* Buat tinggi penuh layar */
+    border-radius: 0; /* Hilangkan radius agar full */
     padding: 20px;
-    padding-bottom: 30px;
-    transform: translateY(100%);
+    padding-bottom: 100px;
+    transform: translateY(-100%);
     transition: transform 0.3s ease-out;
 }
 
@@ -173,7 +177,7 @@ body{
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px;
+    padding: 18px;
     border-radius: 12px;
     margin-bottom: 8px;
     background: #f8fafc;
@@ -210,7 +214,6 @@ body{
 
 <div id="menuGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6"></div>
 
-<!-- MODAL SERVER -->
 <div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
         <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
@@ -233,7 +236,6 @@ body{
     </div>
 </div>
 
-<!-- MODAL CENTER -->
 <div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full px-2">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
@@ -265,7 +267,6 @@ body{
     </div>
 </div>
 
-<!-- MODAL KONFIRMASI -->
 <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
         <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
@@ -275,7 +276,6 @@ body{
     </div>
 </div>
 
-<!-- MODAL TRANSAKSI -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
@@ -298,7 +298,6 @@ body{
     </div>
 </div>
 
-<!-- MODAL PREVIEW -->
 <div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
@@ -315,14 +314,14 @@ body{
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL SUB MENU PRABAYAR (BARU) -->
+<!-- MODAL SUB MENU PRABAYAR - FULL SCREEN -->
 <!-- ========================================== -->
 <div id="prabayarModal" class="submenu-modal">
     <div class="submenu-content">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-slate-800">Menu Prabayar</h3>
-            <button onclick="closePrabayar()" class="bg-gray-100 p-2 rounded-full btn-click">
-                <i data-lucide="x" class="w-6 h-6"></i>
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-bold text-slate-800">Menu Prabayar</h3>
+            <button onclick="closePrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
+                <i data-lucide="x" class="w-7 h-7"></i>
             </button>
         </div>
         
@@ -351,12 +350,11 @@ function escapeHtml(text) {
     return text.replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
-// DATA MENU UTAMA
 const menus = [
     {label:"Setup Server", icon:"server", action:"server"},
     {label:"Setup Center", icon:"database", action:"center"},
     {label:"Menu Transaksi", icon:"layout-grid", action:"transaksi"},
-    {label:"Prabayar", icon:"smartphone", action:"prabayar"}, // <-- YANG BARU
+    {label:"Prabayar", icon:"smartphone", action:"prabayar"},
     {label:"Pascabayar", icon:"credit-card"},
     {label:"Format Request", icon:"file-text"},
     {label:"Logo", icon:"image"},
@@ -365,7 +363,6 @@ const menus = [
     {label:"Downline", icon:"users"}
 ];
 
-// DATA SUB MENU PRABAYAR
 const subMenuPrabayar = [
     {nama: "Pulsa Reguler", icon: "phone"},
     {nama: "Pulsa Transfer", icon: "send"},
@@ -396,28 +393,25 @@ function renderMenus(){
             if(menu.action==="server") openServer();
             if(menu.action==="center") openCenter();
             if(menu.action==="transaksi") openTransaksi();
-            if(menu.action==="prabayar") openPrabayar(); // <-- EVENT KLIK PRABAYAR
+            if(menu.action==="prabayar") openPrabayar();
         };
         grid.appendChild(card);
     });
     lucide.createIcons();
 }
 
-// >>> FUNGSI BUKA TUTUP SUB MENU PRABAYAR <<<
 function openPrabayar(){
     const modal = document.getElementById("prabayarModal");
     const listContainer = document.getElementById("prabayarList");
     
-    // Render list item
     listContainer.innerHTML = "";
     subMenuPrabayar.forEach(item => {
         const div = document.createElement("div");
         div.className = "submenu-item";
         div.innerHTML = `
-            <i data-lucide="${item.icon}" class="w-6 h-6"></i>
-            <span class="font-medium">${item.nama}</span>
+            <i data-lucide="${item.icon}" class="w-7 h-7"></i>
+            <span class="font-medium text-lg">${item.nama}</span>
         `;
-        // Bisa ditambahkan onclick untuk masing-masing menu nanti
         listContainer.appendChild(div);
     });
 
