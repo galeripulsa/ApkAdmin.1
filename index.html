@@ -249,6 +249,22 @@ body{
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
+
+/* ========================================== */
+/* STYLE FOOTER STICKY UNTUK TOMBOL SIMPAN */
+/* ========================================== */
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    padding: 15px 20px;
+    z-index: 9999;
+    max-width: 100%;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
 </style>
 </head>
 
@@ -413,6 +429,17 @@ body{
         <div id="operatorListContainer">
             <!-- Daftar Operator + Form akan muncul di sini -->
         </div>
+
+        <!-- ========================================== -->
+        <!-- TOMBOL SIMPAN YANG BARU DITAMBAHKAN -->
+        <!-- ========================================== -->
+        <div class="sticky-footer">
+            <div class="flex gap-3 max-w-screen-md mx-auto">
+                <button id="savePrabayarBtn" onclick="confirmSavePrabayar()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
+                <button onclick="backToPrabayarFromList()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -426,7 +453,7 @@ window.onerror = function(message, source, line, column){
 let confirmAction = null;
 let sortableInstance = null;
 
-// === PERBAIKAN: DEKLARASI ELEMENT AGAR TIDAK ERROR ===
+// === DEKLARASI ELEMENT ===
 const namaKonter = document.getElementById('namaKonter');
 const alamatKonter = document.getElementById('alamatKonter');
 const ipNama = document.getElementById('ipNama');
@@ -437,6 +464,11 @@ const jabberServer = document.getElementById('jabberServer');
 const jabberHost = document.getElementById('jabberHost');
 const waCenter = document.getElementById('waCenter');
 const smsCenter = document.getElementById('smsCenter');
+
+// === VARIABEL DATA PRABAYAR ===
+let prabayarData = {};
+let originalPrabayarData = {};
+let currentMenuType = "";
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -471,7 +503,6 @@ const subMenuPrabayar = [
     {nama: "Transfer Uang", icon: "dollar-sign"}
 ];
 
-// DATA OPERATOR (SUDAH DITAMBAHKAN BYU)
 const operators = [
     "Telkomsel",
     "Indosat",
@@ -541,19 +572,25 @@ function closePrabayar(){
 
 // >>> FUNGSI BUKA DAFTAR OPERATOR DENGAN FORM <<<
 function openOperatorList(title, actionType){
-    // Tutup modal prabayar
     document.getElementById("prabayarModal").classList.remove("show");
     
-    // Buka modal daftar operator
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
     
-    // Ganti judul sesuai menu yang diklik
     document.getElementById("operatorListTitle").innerText = title;
+    currentMenuType = actionType; // Simpan tipe menu saat ini
     
     container.innerHTML = "";
     
+    // Inisialisasi data jika belum ada
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
+    }
+    
     operators.forEach(op => {
+        // Ambil data lama jika ada
+        const saved = prabayarData[currentMenuType][op] || {cekHarga: "", namaProduk: ""};
+
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
         wrapper.innerHTML = `
@@ -566,11 +603,19 @@ function openOperatorList(title, actionType){
             </div>
             <div class="operator-body">
                 <div class="floating mt-4">
-                    <input type="text" placeholder=" ">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${op}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
                     <label>Cek Harga</label>
                 </div>
                 <div class="floating mt-4">
-                    <input type="text" placeholder=" ">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${op}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
                     <label>Nama Produk</label>
                 </div>
             </div>
@@ -581,6 +626,50 @@ function openOperatorList(title, actionType){
 
     modal.classList.add("show");
     lucide.createIcons();
+    
+    // Simpan data awal untuk pengecekan perubahan
+    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+    disableButton("savePrabayarBtn");
+    
+    // Pasang event listener untuk input
+    attachInputListeners();
+}
+
+function attachInputListeners(){
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
+    inputs.forEach(input => {
+        input.addEventListener("input", function(){
+            const op = this.dataset.operator;
+            const type = this.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
+            
+            if(!prabayarData[currentMenuType][op]){
+                prabayarData[currentMenuType][op] = {};
+            }
+            prabayarData[currentMenuType][op][type] = this.value;
+            
+            checkPrabayarChange();
+        });
+    });
+}
+
+function checkPrabayarChange(){
+    if(JSON.stringify(prabayarData) !== JSON.stringify(originalPrabayarData)){
+        enableButton("savePrabayarBtn");
+    } else {
+        disableButton("savePrabayarBtn");
+    }
+}
+
+// >>> FUNGSI SIMPAN PRABAYAR <<<
+function savePrabayar(){
+    localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+    toast("Data Prabayar Berhasil Disimpan");
+    disableButton("savePrabayarBtn");
+}
+
+function confirmSavePrabayar(){
+    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan data ini?", savePrabayar);
 }
 
 // >>> FUNGSI BUKA/TUTUP FORM <<<
@@ -589,6 +678,15 @@ function toggleOperator(wrapper){
 }
 
 function backToPrabayarFromList(){
+    // Cek apakah ada perubahan belum disimpan
+    if(!document.getElementById("savePrabayarBtn").disabled){
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            document.getElementById("operatorListModal").classList.remove("show");
+            document.getElementById("prabayarModal").classList.add("show");
+        });
+        return;
+    }
+    
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
 }
@@ -1085,10 +1183,19 @@ function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
 
+// Load data Prabayar saat halaman dibuka
+function loadPrabayarData(){
+    const saved = localStorage.getItem("prabayarData");
+    if(saved){
+        prabayarData = JSON.parse(saved);
+    }
+}
+
 window.onload = function(){
     renderMenus();
     watchServerChanges();
     watchCenterChanges();
+    loadPrabayarData(); // Tambahan load data prabayar
 };
 </script>
 </body>
