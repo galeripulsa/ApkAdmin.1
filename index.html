@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Panel Admin Lengkap</title>
+<title>Panel Admin Super Lengkap</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <style>
     body { background: #f1f5f9; transition: background 0.3s; }
-    body.dark { background: #0f172a; }
+    body.dark { background: #0f172a; color: white; }
     .card-menu { transition: all .25s; }
     .card-menu:hover { transform: translateY(-4px); }
     .modal { display: none; }
@@ -174,10 +174,6 @@ function handleSwipe(id, index) {
     renderList();
 }
 
-function handleInputClick() {
-    if(activeSwipe !== -1) hideAllDeleteButtons();
-}
-
 // --- RENDER ---
 function renderList() {
     const list = document.getElementById('itemList');
@@ -204,7 +200,7 @@ function renderList() {
 
                 <input type="text" value="${item.name}" 
                        class="flex-1 bg-transparent outline-none font-bold text-lg"
-                       onclick="handleInputClick();"
+                       onclick="if(activeSwipe !== -1) hideAllDeleteButtons();"
                        oninput="updateName(${item.id}, this.value)">
 
                 <div class="flex items-center gap-2">
@@ -226,7 +222,7 @@ function renderList() {
         let startX = 0;
         div.addEventListener('touchstart', e => startX = e.touches[0].clientX);
         div.addEventListener('touchend', e => {
-            const endX = e.changedTouches[0].clientX;
+            const endX = e.touches[0].clientX;
             const diff = startX - endX;
             if(Math.abs(diff) > 50) {
                 if(diff > 0) handleSwipe(item.id, idx); // swipe left show delete
@@ -259,17 +255,27 @@ function initSortable() {
 // --- ICON PICKER SIMULATION ---
 function openIconPicker(id) {
     hideAllDeleteButtons();
-    const list = ['home','settings','user','shop','credit-card','wifi','package','gift','star','heart','message','phone'];
-    let html = `<div class="grid grid-cols-6 gap-4 p-4">`;
-    list.forEach(ic => {
-        html += `
-        <button onclick="setIcon(${id}, '${ic}')" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900">
-            <i data-lucide="${ic}" class="w-6 h-6"></i>
-        </button>`;
-    });
-    html += `</div>`;
-    alert('Pilih Icon:\n(Klik tombol di bawah)\n' + list.join(', ')); // Simplified
-    // Bisa di-expand jadi modal popup icon browser
+    const iconList = ['home','settings','user','shop','credit-card','wifi','package','gift','star','heart','message','phone','shield','zap','book','users'];
+    let htmlList = iconList.join(', ');
+    
+    // Buat modal sederhana
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 w-11/12 max-w-md">
+        <h3 class="text-xl font-bold mb-4 text-center">Pilih Icon</h3>
+        <div class="grid grid-cols-6 gap-3 max-h-96 overflow-y-auto">
+            ${iconList.map(ic => `
+                <button onclick="setIcon(${id}, '${ic}')" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900">
+                    <i data-lucide="${ic}" class="w-6 h-6"></i>
+                </button>
+            `).join('')}
+        </div>
+        <button onclick="this.parentElement.parentElement.remove()" class="mt-4 w-full py-3 bg-slate-200 dark:bg-slate-700 rounded-xl font-bold">Tutup</button>
+    </div>
+    `;
+    document.body.appendChild(modal);
+    lucide.createIcons();
 }
 function setIcon(id, ic) {
     const it = items.find(i => i.id == id);
