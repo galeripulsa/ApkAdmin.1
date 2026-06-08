@@ -235,6 +235,20 @@ body{
 .chevron-icon {
     transition: transform 0.2s;
 }
+
+/* ========================================== */
+/* STYLE HEADER STICKY (TIDAK IKUT SCROLL) */
+/* ========================================== */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    padding-bottom: 10px;
+    margin: -20px -20px 20px -20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
 </style>
 </head>
 
@@ -246,7 +260,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Global Solution</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -364,11 +378,14 @@ body{
 <!-- ========================================== -->
 <div id="prabayarModal" class="submenu-modal">
     <div class="submenu-content">
-        <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-bold text-slate-800">Menu Prabayar</h3>
-            <button onclick="closePrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
-                <i data-lucide="x" class="w-7 h-7"></i>
-            </button>
+        <!-- HEADER STICKY -->
+        <div class="sticky-header">
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl font-bold text-slate-800">Menu Prabayar</h3>
+                <button onclick="closePrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
+                    <i data-lucide="x" class="w-7 h-7"></i>
+                </button>
+            </div>
         </div>
         
         <div id="prabayarList">
@@ -382,12 +399,15 @@ body{
 <!-- ========================================== -->
 <div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
-        <div class="flex items-center justify-between mb-6">
-            <button onclick="backToPrabayarFromList()" class="bg-gray-100 p-3 rounded-full btn-click">
-                <i data-lucide="arrow-left" class="w-7 h-7"></i>
-            </button>
-            <h3 id="operatorListTitle" class="text-2xl font-bold text-slate-800">Judul Menu</h3>
-            <div></div>
+        <!-- HEADER STICKY -->
+        <div class="sticky-header">
+            <div class="flex items-center justify-between mb-0">
+                <button onclick="backToPrabayarFromList()" class="bg-gray-100 p-3 rounded-full btn-click">
+                    <i data-lucide="arrow-left" class="w-7 h-7"></i>
+                </button>
+                <h3 id="operatorListTitle" class="text-2xl font-bold text-slate-800">Judul Menu</h3>
+                <div></div>
+            </div>
         </div>
         
         <div id="operatorListContainer">
@@ -1034,7 +1054,7 @@ function openPreview(){
             if(item.checked){
                 html += `
                 <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
+                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <span class="font-semibold text-gray-700">${escapeHtml(item.nama)}</span>
