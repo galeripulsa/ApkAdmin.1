@@ -3,822 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Admin Galeri Pulsa V2</title>
-
+<title>Panel Admin Lengkap</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-
 <style>
-body{
-    background:#f1f5f9;
-}
-
-.menu-active{
-    background:linear-gradient(135deg,#0891b2,#2563eb);
-    color:white !important;
-    transform:translateY(-3px);
-    box-shadow:0 10px 20px rgba(0,0,0,.15);
-}
-
-.menu-active svg,
-.menu-active .menu-label{
-    stroke: white !important;
-    color: white !important;
-    fill: none !important;
-}
-
-.card-menu{
-    transition:.25s;
-}
-
-.card-menu:hover{
-    transform:translateY(-4px);
-}
-
-.modal{
-    display:none;
-}
-
-.modal.show{
-    display:flex;
-}
-
-.floating{
-    position:relative;
-    margin-top:20px;
-}
-
-.floating input,
-.floating textarea{
-    width:100%;
-    border:1px solid #cbd5e1;
-    border-radius:12px;
-    padding:14px;
-    outline:none;
-    background:white;
-    resize:none;
-    overflow:hidden;
-}
-
-#alamatKonter {
-    min-height: 120px;
-}
-
-.floating label{
-    position:absolute;
-    left:12px;
-    top:14px;
-    background:white;
-    padding:0 6px;
-    color:#94a3b8;
-    transition:.2s;
-    pointer-events:none;
-}
-
-.floating input:focus + label,
-.floating input:not(:placeholder-shown) + label,
-.floating textarea:focus + label,
-.floating textarea:not(:placeholder-shown) + label{
-    top:-10px;
-    font-size:12px;
-    color:#0891b2;
-}
-
-.toast{
-    position:fixed;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#16a34a;
-    color:white;
-    padding:12px 20px;
-    border-radius:10px;
-    display:none;
-    z-index:9999;
-}
-
-.drag-handle{
-    cursor:grab;
-    touch-action:none;
-}
-
-.drag-handle:active{
-    cursor:grabbing;
-}
-
-#transaksiList > div{
-    margin-bottom:10px;
-}
-
-#transaksiList .sortable-ghost{
-    opacity:.4;
-}
-
-#transaksiList .sortable-chosen{
-    transform:scale(1.02);
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-.blink {
-    animation: blink 0.5s ease-in-out 1;
-}
-
-.btn-click:active {
-    transform: scale(0.95);
-    transition: transform 0.1s ease;
-}
+    body { background: #f1f5f9; transition: background 0.3s; }
+    body.dark { background: #0f172a; }
+    .card-menu { transition: all .25s; }
+    .card-menu:hover { transform: translateY(-4px); }
+    .modal { display: none; }
+    .modal.show { display: flex; }
+    .floating { position: relative; margin-top:20px; }
+    .floating input, .floating textarea {
+        width:100%; border:1px solid #cbd5e1; border-radius:12px;
+        padding:14px; outline:none; background:white; resize:none;
+    }
+    body.dark .floating input, body.dark .floating textarea {
+        background:#1e293b; border-color:#475569; color:white;
+    }
+    .floating label {
+        position:absolute; left:12px; top:14px; background:white;
+        padding:0 6px; color:#94a3b8; transition:.2s; pointer-events:none;
+    }
+    body.dark .floating label { background:#1e293b; }
+    .floating input:focus + label,
+    .floating input:not(:placeholder-shown) + label,
+    .floating textarea:focus + label,
+    .floating textarea:not(:placeholder-shown) + label {
+        top:-10px; font-size:12px; color:#06b6d4;
+    }
+    .toast {
+        position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+        background:#16a34a; color:white; padding:12px 20px; border-radius:10px;
+        display:none; z-index:9999;
+    }
+    .drag-handle { cursor: grab; touch-action: none; }
+    .drag-handle:active { cursor: grabbing; }
+    .sortable-ghost { opacity:.4; background:#93c5fd !important; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .blink { animation: blink .5s ease-in-out 1; }
+    .btn-click:active { transform: scale(0.95); transition: transform .1s; }
 </style>
 </head>
-
 <body class="max-w-screen-md mx-auto p-4">
 
-<div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
-    <div class="flex items-center gap-4">
-        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <i data-lucide="shield" class="text-cyan-600"></i>
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <i data-lucide="layout-grid" class="w-10 h-10"></i>
+            <div>
+                <h1 class="text-2xl font-bold">Panel Admin</h1>
+                <p class="text-sm opacity-90">Sistem Menu Lengkap</p>
+            </div>
         </div>
-        <div>
-            <h1 class="text-2xl font-bold">Admin Global Solution</h1>
-            <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
-        </div>
-    </div>
-
-    <div class="mt-4 flex justify-end">
-        <button onclick="openPreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold shadow transition btn-click">
-            <i data-lucide="eye" class="w-4 h-4 inline mr-1"></i> Lihat Tampilan User
+        <button id="themeToggle" onclick="toggleTheme()" class="bg-white/20 p-3 rounded-xl hover:bg-white/30 transition">
+            <i data-lucide="moon" class="w-6 h-6"></i>
         </button>
     </div>
-</div>
-
-<div id="menuGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6"></div>
-
-<div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
-    <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
-        <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
-            <h2 class="text-xl font-bold">Setup Server</h2>
-        </div>
-
-        <div class="p-6">
-            <div class="floating">
-                <input id="namaKonter" placeholder=" ">
-                <label>Nama Konter</label>
-            </div>
-
-            <div class="floating">
-                <textarea id="alamatKonter" placeholder=" "></textarea>
-                <label>Alamat Konter</label>
-            </div>
-
-            <div class="mt-5 flex gap-2">
-                <button id="saveServerBtn" onclick="confirmSaveServer()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
-                <button onclick="checkCloseServer()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
-            </div>
-        </div>
+    <div class="mt-4 flex gap-2">
+        <button onclick="hideAllDeleteButtons(); addItem('kategori')" class="flex-1 bg-white text-cyan-600 py-3 rounded-xl font-bold shadow transition">+ Kategori</button>
+        <button onclick="hideAllDeleteButtons(); addItem('menu')" class="flex-1 bg-white text-cyan-600 py-3 rounded-xl font-bold shadow transition">+ Menu</button>
     </div>
 </div>
 
-<div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
-    <div class="w-full px-2">
-        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
-            <h2 class="font-bold text-xl">Setup Center</h2>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-4 mt-4">
-            <div class="bg-white p-5 rounded-2xl shadow">
-                <h3 class="font-bold text-cyan-600 text-lg mb-2">IP Center</h3>
-                <div class="floating"><input id="ipNama" placeholder=" "><label>Nama Center</label></div>
-                <div class="floating"><input id="ipServer" placeholder=" "><label>Server Center</label></div>
-                <div class="floating"><input id="ipHost" placeholder=" "><label>Host</label></div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl shadow">
-                <h3 class="font-bold text-cyan-600 text-lg mb-2">Jabber Center</h3>
-                <div class="floating"><input id="jabberNama" placeholder=" "><label>Nama Center</label></div>
-                <div class="floating"><input id="jabberServer" placeholder=" "><label>Server Center</label></div>
-                <div class="floating"><input id="jabberHost" placeholder=" "><label>Host</label></div>
-            </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow mt-4">
-            <h3 class="font-bold text-cyan-600 text-lg mb-2">Nomor Center</h3>
-            <div class="floating"><input id="waCenter" placeholder=" "><label>WhatsApp Center</label></div>
-            <div class="floating"><input id="smsCenter" placeholder=" "><label>SMS Center</label></div>
-        </div>
-
-        <div class="sticky bottom-0 left-0 bg-white border-t p-3 mt-5 flex gap-3 z-50">
-            <button id="saveCenterBtn" onclick="confirmSaveCenter()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
-            <button onclick="checkCloseCenter()" class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-bold shadow-lg btn-click">Tutup</button>
-        </div>
-    </div>
+<!-- STATS -->
+<div class="bg-white dark:bg-slate-800 rounded-2xl p-4 mt-4 shadow">
+    <div id="infoText" class="text-center text-slate-600 dark:text-slate-300 font-medium">Memuat data...</div>
 </div>
 
-<div id="confirmModal" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
-    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
-        <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
-        <p id="confirmMessage" class="text-gray-600 mb-6"></p>
-        <div class="flex gap-3" id="confirmButtons">
-        </div>
-    </div>
-</div>
+<!-- LIST ITEMS -->
+<div id="itemList" class="mt-4 space-y-3"></div>
 
-<div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
-    <div class="w-full">
-        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
-            <div class="flex items-center justify-between">
-                <h2 class="font-bold text-2xl">Menu Transaksi</h2>
-            </div>
-
-            <div class="flex gap-3 mt-4 mb-2">
-                <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
-                <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
-            </div>
-
-            <div class="bg-white rounded-md px-3">
-                <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
-            </div>
-        </div>
-
-        <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
-
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex gap-3 z-50 max-w-screen-md mx-auto">
-            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
-            <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
-        </div>
-    </div>
-</div>
-
-<div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
-    <div class="w-full">
-        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
-            <div class="flex items-center justify-between">
-                <h2 class="font-bold text-xl">Tampilan User</h2>
-                <button onclick="closePreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold btn-click">
-                    Tutup
-                </button>
-            </div>
-        </div>
-
-        <div id="previewContent" class="p-4 pb-24">
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="toast"></div>
+<!-- TOAST -->
+<div id="toast" class="toast">Berhasil disimpan!</div>
 
 <script>
-window.onerror = function(message, source, line, column){
-    console.error("ERROR:", message, "Baris:", line);
-};
+let items = [];
+let sortable = null;
+let activeSwipe = -1;
 
-let confirmAction = null;
-let sortableInstance = null;
-
-function autoGrow(element) {
-    element.style.height = "auto";
-    element.style.height = (element.scrollHeight) + "px";
-}
-
-const menus = [
-    {label:"Setup Server", icon:"server", action:"server"},
-    {label:"Setup Center", icon:"database", action:"center"},
-    {label:"Menu Transaksi", icon:"layout-grid", action:"transaksi"},
-    {label:"Prabayar", icon:"smartphone"},
-    {label:"Pascabayar", icon:"credit-card"},
-    {label:"Format Request", icon:"file-text"},
-    {label:"Logo", icon:"image"},
-    {label:"OTP", icon:"key-round"},
-    {label:"Poin", icon:"star"},
-    {label:"Downline", icon:"users"}
-];
-
-function renderMenus(){
-    const grid = document.getElementById("menuGrid");
-    if(!grid) return;
-    grid.innerHTML = "";
-    menus.forEach((menu,index)=>{
-        const card = document.createElement("div");
-        card.className = "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
-        card.dataset.index = index;
-        card.innerHTML = `
-            <div class="flex justify-center mb-3"><i data-lucide="${menu.icon}" stroke-width="1.5"></i></div>
-            <div class="menu-label font-semibold text-gray-700">${menu.label}</div>
-        `;
-        card.onclick = ()=>{
-            document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
-            card.classList.add("menu-active");
-
-            if(menu.action==="server") openServer();
-            if(menu.action==="center") openCenter();
-            if(menu.action==="transaksi") openTransaksi();
-        };
-        grid.appendChild(card);
-    });
+// --- THEME MODE ---
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.querySelector('#themeToggle i').outerHTML = isDark 
+        ? '<i data-lucide="sun" class="w-6 h-6"></i>' 
+        : '<i data-lucide="moon" class="w-6 h-6"></i>';
     lucide.createIcons();
 }
 
-function toast(msg){
-    const t = document.getElementById("toast");
+// --- LOCAL STORAGE ---
+function saveData() {
+    localStorage.setItem('menuData', JSON.stringify(items));
+    updateInfo();
+    toast('Data tersimpan!');
+}
+function loadData() {
+    const saved = localStorage.getItem('menuData');
+    if(saved) items = JSON.parse(saved);
+    const theme = localStorage.getItem('theme');
+    if(theme === 'dark') document.body.classList.add('dark');
+    renderList();
+}
+
+function updateInfo() {
+    const kat = items.filter(i => i.type === 'kategori').length;
+    const menu = items.filter(i => i.type === 'menu').length;
+    infoText.innerText = `${kat} Kategori • ${menu} Menu`;
+}
+
+function toast(msg) {
+    const t = document.getElementById('toast');
     t.innerText = msg;
-    t.style.display = "block";
-    setTimeout(()=>t.style.display = "none", 2500);
+    t.style.display = 'block';
+    setTimeout(()=>t.style.display='none', 2000);
 }
 
-function enableButton(btnId){
-    const btn = document.getElementById(btnId);
-    btn.disabled = false;
-    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
-    btn.classList.add("bg-green-600");
-}
-function disableButton(btnId){
-    const btn = document.getElementById(btnId);
-    btn.disabled = true;
-    btn.classList.remove("bg-green-600");
-    btn.classList.add("bg-gray-400", "cursor-not-allowed");
-}
-
-function showConfirm(title,message,action,isError=false){
-    document.getElementById("confirmTitle").innerText = title;
-    document.getElementById("confirmMessage").innerText = message;
-    confirmAction = action;
-
-    const btnContainer = document.getElementById("confirmButtons");
-    btnContainer.innerHTML = "";
-
-    if(isError){
-        const okBtn = document.createElement("button");
-        okBtn.className = "w-full bg-red-600 text-white py-3 rounded-xl btn-click";
-        okBtn.innerText = "OK";
-        okBtn.onclick = function(){
-            closeConfirm();
-            hideAllDeleteButtons();
-        };
-        btnContainer.appendChild(okBtn);
-    } else {
-        btnContainer.innerHTML = `
-            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
-        `;
+// --- CRUD FUNCTIONS ---
+function addItem(type) {
+    const newItem = {
+        id: Date.now(),
+        type: type,
+        name: type === 'kategori' ? 'Kategori Baru' : 'Menu Baru',
+        icon: type === 'kategori' ? 'folder' : 'circle',
+        active: false,
+        swiped: false
     }
-
-    document.getElementById("confirmModal").classList.remove("hidden");
-}
-function closeConfirm(){
-    document.getElementById("confirmModal").classList.add("hidden");
-}
-function executeConfirm(){
-    if(typeof confirmAction === "function") confirmAction();
-    closeConfirm();
+    items.unshift(newItem);
+    saveData();
+    renderList();
 }
 
-function getServerData(){
-    return {
-        nama: namaKonter.value.trim(),
-        alamat: alamatKonter.value.trim()
-    };
-}
-function checkServerChange(){
-    const original = JSON.parse(localStorage.getItem("setupServer")) || {nama:"", alamat:""};
-    const current = getServerData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveServerBtn");
-    } else {
-        disableButton("saveServerBtn");
-    }
-}
-function openServer(){
-    document.getElementById("serverModal").classList.add("show");
-    loadServer();
-    checkServerChange();
-    setTimeout(() => { autoGrow(alamatKonter); }, 100);
-}
-function closeServer(){
-    document.getElementById("serverModal").classList.remove("show");
-}
-function saveServer(){
-    localStorage.setItem("setupServer", JSON.stringify(getServerData()));
-    toast("Data Server Disimpan");
-    checkServerChange();
-}
-function confirmSaveServer(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Server?", saveServer);
-}
-function checkCloseServer(){
-    if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer);
-        return;
-    }
-    closeServer();
-}
-function loadServer(){
-    const data = JSON.parse(localStorage.getItem("setupServer"));
-    if(data){
-        namaKonter.value = data.nama || "";
-        alamatKonter.value = data.alamat || "";
-    } else {
-        namaKonter.value = "";
-        alamatKonter.value = "";
+function deleteItem(id) {
+    const idx = items.findIndex(i => i.id == id);
+    if(items[idx].active) return toast('Aktif tidak bisa dihapus!');
+    if(confirm(`Hapus ${items[idx].name}?`)) {
+        items.splice(idx, 1);
+        saveData();
+        renderList();
     }
 }
 
-function getCenterData(){
-    return {
-        ip:{
-            nama: ipNama.value.trim(),
-            server: ipServer.value.trim(),
-            host: ipHost.value.trim()
-        },
-        jabber:{
-            nama: jabberNama.value.trim(),
-            server: jabberServer.value.trim(),
-            host: jabberHost.value.trim()
-        },
-        nomor:{
-            wa: waCenter.value.trim(),
-            sms: smsCenter.value.trim()
-        }
-    };
-}
-function checkCenterChange(){
-    const original = JSON.parse(localStorage.getItem("centerServer")) || {ip:{}, jabber:{}, nomor:{}};
-    const current = getCenterData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
-}
-function openCenter(){
-    document.getElementById("centerModal").classList.add("show");
-    loadCenter();
-    checkCenterChange();
-}
-function closeCenter(){
-    document.getElementById("centerModal").classList.remove("show");
-}
-function saveCenter(){
-    localStorage.setItem("centerServer", JSON.stringify(getCenterData()));
-    toast("Data Center Disimpan");
-    checkCenterChange();
-}
-function confirmSaveCenter(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Center?", saveCenter);
-}
-function checkCloseCenter(){
-    if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter);
-        return;
-    }
-    closeCenter();
-}
-function loadCenter(){
-    const data = JSON.parse(localStorage.getItem("centerServer"));
-    if(data){
-        ipNama.value = data.ip?.nama || "";
-        ipServer.value = data.ip?.server || "";
-        ipHost.value = data.ip?.host || "";
-        jabberNama.value = data.jabber?.nama || "";
-        jabberServer.value = data.jabber?.server || "";
-        jabberHost.value = data.jabber?.host || "";
-        waCenter.value = data.nomor?.wa || "";
-        smsCenter.value = data.nomor?.sms || "";
-    } else {
-        ipNama.value = ""; ipServer.value = ""; ipHost.value = "";
-        jabberNama.value = ""; jabberServer.value = ""; jabberHost.value = "";
-        waCenter.value = ""; smsCenter.value = "";
-    }
+function updateName(id, val) {
+    const it = items.find(i => i.id == id);
+    if(it) { it.name = val; saveData(); }
 }
 
-function watchServerChanges(){
-    [namaKonter, alamatKonter].forEach(field=>{
-        field.addEventListener("input", ()=>{
-            checkServerChange();
-            autoGrow(field);
-        });
-    });
-}
-function watchCenterChanges(){
-    [
-        ipNama, ipServer, ipHost,
-        jabberNama, jabberServer, jabberHost,
-        waCenter, smsCenter
-    ].forEach(field=>{
-        field.addEventListener("input", checkCenterChange);
-    });
-}
-
-let transaksiItems = [];
-let originalTransaksi = [];
-let activeSwipeIndex = -1;
-
-function getCurrentTransaksi(){
-    return JSON.parse(JSON.stringify(transaksiItems));
-}
-function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
-    updateTransaksiInfo();
-}
-
-function openTransaksi(){
-    document.getElementById("transaksiModal").classList.add("show");
-    loadTransaksi();
-    checkTransaksiChange();
-}
-function closeTransaksi(){
-    if(!document.getElementById("saveTransaksiBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar tanpa menyimpan perubahan?", ()=>{
-            document.getElementById("transaksiModal").classList.remove("show");
-        });
-        return;
-    }
-    document.getElementById("transaksiModal").classList.remove("show");
-}
-function updateTransaksiInfo(){
-    const totalMenu = transaksiItems.filter(item => item.type === "menu").length;
-    const totalKategori = transaksiItems.filter(item => item.type === "kategori").length;
-    document.getElementById("transaksiInfo").innerText = `${totalMenu} Menu • ${totalKategori} Kategori`;
-}
-
-function addMenu(){
-    document.getElementById('btnMenu').classList.add('blink');
-    setTimeout(() => { document.getElementById('btnMenu').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, swiped: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    fokusInputPertama();
-}
-
-function addKategori(){
-    document.getElementById('btnKategori').classList.add('blink');
-    setTimeout(() => { document.getElementById('btnKategori').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "kategori", nama: "Kategori Baru", checked: false, swiped: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    fokusInputPertama();
-}
-
-function fokusInputPertama(){
-    setTimeout(()=>{
-        const inputs = document.querySelectorAll("#transaksiList input[type='text']");
-        if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
-    },100);
-}
-
-// FUNGSI UTAMA: Update data TANPA merender ulang seluruh layar
-function updateTransaksi(index, value){
-    transaksiItems[index].nama = value;
-    checkTransaksiChange();
-}
-
-// FUNGSI: Saat input diklik, sembunyikan tombol hapus
-function handleInputClick(){
-    if(activeSwipeIndex !== -1){
-        hideAllDeleteButtons();
-    }
-}
-
-function toggleTransaksi(index){
+function toggleActive(id) {
     hideAllDeleteButtons();
-    transaksiItems[index].checked = !transaksiItems[index].checked;
-    checkTransaksiChange();
-    renderTransaksi();
+    items.forEach(i => i.active = false);
+    const it = items.find(i => i.id == id);
+    if(it) it.active = !it.active;
+    saveData();
+    renderList();
 }
 
-function hideAllDeleteButtons(){
-    // Set data
-    transaksiItems.forEach(item => {
-        item.swiped = false;
-    });
-    activeSwipeIndex = -1;
-    
-    // Hapus render ulang disini, cukup sembunyikan elemen yang terlihat
-    const allButtons = document.querySelectorAll('.btn-click');
-    allButtons.forEach(btn => {
-        if(btn.innerHTML.includes('trash-2')){ // Cek tombol hapus
-            btn.style.display = 'none';
-        }
-    });
+// --- SWIPE & HIDE LOGIC ---
+function hideAllDeleteButtons() {
+    items.forEach(i => i.swiped = false);
+    activeSwipe = -1;
+    renderList();
 }
 
-function swipeLeft(index){
-    // Sembunyikan semua dulu
-    transaksiItems.forEach(item => item.swiped = false);
-    // Tampilkan yang ini saja
-    transaksiItems[index].swiped = true;
-    activeSwipeIndex = index;
-    renderTransaksi();
+function handleSwipe(id, index) {
+    items.forEach((i, idx) => i.swiped = (idx === index));
+    activeSwipe = index;
+    renderList();
 }
 
-function swipeRight(index){
-    transaksiItems[index].swiped = false;
-    activeSwipeIndex = -1;
-    renderTransaksi();
+function handleInputClick() {
+    if(activeSwipe !== -1) hideAllDeleteButtons();
 }
 
-function renderTransaksi(){
-    const list = document.getElementById("transaksiList");
-    list.innerHTML = "";
+// --- RENDER ---
+function renderList() {
+    const list = document.getElementById('itemList');
+    list.innerHTML = '';
 
-    transaksiItems.forEach((item,index)=>{
-        const div = document.createElement("div");
+    items.forEach((item, idx) => {
+        const div = document.createElement('div');
+        const isCat = item.type === 'kategori';
+        const bg = isCat 
+            ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white' 
+            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700';
 
-        if(item.type === "kategori"){
-            div.innerHTML = `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
-                <div class="flex items-center gap-3 h-10">
-                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
-                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
-                    </div>
-                    <i data-lucide="folder-open"></i>
-                    <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
-                    <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
-                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
-                            <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
-                        </div>
+        div.innerHTML = `
+        <div class="${bg} rounded-2xl p-4 shadow-lg relative overflow-hidden">
+            <div class="flex items-center gap-3 h-12 relative z-10">
+                <div onclick="event.stopPropagation(); toggleActive(${item.id})" 
+                     class="w-8 h-8 border-2 rounded-lg flex items-center justify-center cursor-pointer ${item.active ? 'border-white bg-white/20' : 'border-current opacity-50'}">
+                    ${item.active ? '<i data-lucide="check" class="w-5 h-5"></i>' : ''}
+                </div>
+                
+                <div onclick="openIconPicker(${item.id})" class="cursor-pointer">
+                    ${item.icon ? `<i data-lucide="${item.icon}" class="w-7 h-7"></i>` : ''}
+                </div>
+
+                <input type="text" value="${item.name}" 
+                       class="flex-1 bg-transparent outline-none font-bold text-lg"
+                       onclick="handleInputClick();"
+                       oninput="updateName(${item.id}, this.value)">
+
+                <div class="flex items-center gap-2">
+                    ${item.swiped ? `
+                    <button onclick="deleteItem(${item.id})" 
+                            class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                    ` : ''}
+                    
+                    <div class="drag-handle opacity-50 hover:opacity-100">
+                        <i data-lucide="grip-vertical" class="w-6 h-6"></i>
                     </div>
                 </div>
-            </div>`;
-        }else{
-            div.innerHTML = `
-            <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
-                <div class="flex items-center gap-3 h-10">
-                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
-                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
-                    </div>
-                    <div onclick="event.stopPropagation(); hideAllDeleteButtons(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" value="${item.nama}" class="w-full outline-none bg-transparent font-semibold" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
-                    </div>
-                    <div class="ml-auto flex items-center gap-2">
-                        ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
-                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
-                            <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        }
+            </div>
+        </div>`;
 
+        // Swipe Event
         let startX = 0;
-        div.addEventListener("touchstart",(e)=> startX = e.touches[0].clientX );
-        div.addEventListener("touchend",(e)=>{
+        div.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        div.addEventListener('touchend', e => {
             const endX = e.changedTouches[0].clientX;
             const diff = startX - endX;
-            if(diff > 80) swipeLeft(index);
-            if(diff < -80) swipeRight(index);
+            if(Math.abs(diff) > 50) {
+                if(diff > 0) handleSwipe(item.id, idx); // swipe left show delete
+                else hideAllDeleteButtons(); // swipe right hide
+            }
         });
 
         list.appendChild(div);
     });
+
     lucide.createIcons();
-    initDragDrop();
+    initSortable();
 }
 
-function hapusTransaksi(index){
-    const item = transaksiItems[index];
-
-    if(item.checked){
-        showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", null, true);
-        return;
-    }
-
-    const namaItem = item.nama;
-    showConfirm("Konfirmasi Hapus", `Yakin ingin menghapus "${namaItem}" ?`, ()=>{
-        transaksiItems.splice(index,1);
-        checkTransaksiChange();
-        renderTransaksi();
-    });
-}
-
-function initDragDrop(){
-    const list = document.getElementById("transaksiList");
-    if(!list) return;
-    if(sortableInstance) sortableInstance.destroy();
-    sortableInstance = Sortable.create(list,{
-        animation:150,
-        handle:".drag-handle",
-        delay:500,
-        delayOnTouchOnly:true,
-        onStart: function() {
-            hideAllDeleteButtons();
-        },
-        onEnd:function(evt){
-            const moved = transaksiItems.splice(evt.oldIndex,1)[0];
-            transaksiItems.splice(evt.newIndex,0,moved);
-            checkTransaksiChange();
+// --- DRAG SORT ---
+function initSortable() {
+    if(sortable) sortable.destroy();
+    sortable = new Sortable(itemList, {
+        animation: 150,
+        handle: '.drag-handle',
+        onStart: () => hideAllDeleteButtons(),
+        onEnd: evt => {
+            const moved = items.splice(evt.oldIndex, 1)[0];
+            items.splice(evt.newIndex, 0, moved);
+            saveData();
         }
     });
 }
-function saveTransaksi(){
-    localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    toast("Menu Transaksi berhasil disimpan");
-    checkTransaksiChange();
-}
-function loadTransaksi(){
-    const data = localStorage.getItem("transaksiItems");
-    if(data){
-        transaksiItems = JSON.parse(data);
-    } else {
-        transaksiItems = [
-            {type:"kategori", nama:"PRODUK DIGITAL", checked:false, swiped:false},
-            {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, swiped:false},
-            {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
-        ];
-    }
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    renderTransaksi();
-    updateTransaksiInfo();
-}
-function gantiIcon(index){
-    const picker = document.createElement("input");
-    picker.type = "file";
-    picker.accept = "image/*";
-    picker.onchange = function(e){
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt){
-            transaksiItems[index].iconFile = evt.target.result;
-            checkTransaksiChange();
-            renderTransaksi();
-        };
-        reader.readAsDataURL(file);
-    };
-    picker.click();
-}
-function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan Menu Transaksi?", saveTransaksi);
-}
 
-function openPreview(){
-    const modal = document.getElementById("previewModal");
-    const content = document.getElementById("previewContent");
-
-    let html = "";
-    const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
-
-    html += `
-    <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
-        <div class="text-center">
-            <h2 class="text-2xl font-bold">${serverData.nama}</h2>
-            <p class="text-sm opacity-90 mt-1">${serverData.alamat}</p>
-        </div>
-    </div>
-    `;
-
-    transaksiItems.forEach(item=>{
-        if(item.type === "kategori"){
-            html += `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg mb-4">
-                <h3 class="font-bold text-lg">${item.nama}</h3>
-            </div>
-            `;
-        } else {
-            if(item.checked){
-                html += `
-                <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
-                    </div>
-                    <span class="font-semibold text-gray-700">${item.nama}</span>
-                </div>
-                `;
-            }
-        }
+// --- ICON PICKER SIMULATION ---
+function openIconPicker(id) {
+    hideAllDeleteButtons();
+    const list = ['home','settings','user','shop','credit-card','wifi','package','gift','star','heart','message','phone'];
+    let html = `<div class="grid grid-cols-6 gap-4 p-4">`;
+    list.forEach(ic => {
+        html += `
+        <button onclick="setIcon(${id}, '${ic}')" class="p-3 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-cyan-100 dark:hover:bg-cyan-900">
+            <i data-lucide="${ic}" class="w-6 h-6"></i>
+        </button>`;
     });
+    html += `</div>`;
+    alert('Pilih Icon:\n(Klik tombol di bawah)\n' + list.join(', ')); // Simplified
+    // Bisa di-expand jadi modal popup icon browser
+}
+function setIcon(id, ic) {
+    const it = items.find(i => i.id == id);
+    if(it) { it.icon = ic; saveData(); renderList(); }
+}
 
-    content.innerHTML = html;
-    modal.classList.add("show");
+// --- INIT ---
+window.onload = () => {
+    loadData();
     lucide.createIcons();
-}
-
-function closePreview(){
-    document.getElementById("previewModal").classList.remove("show");
-}
-
-window.onload = function(){
-    renderMenus();
-    watchServerChanges();
-    watchCenterChanges();
 };
 </script>
 </body>
