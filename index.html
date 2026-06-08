@@ -144,7 +144,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Global Apk</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -579,15 +579,18 @@ function fokusInputPertama(){
     },100);
 }
 
-// === PERBAIKAN DISINI ===
-// Hapus hideAllDeleteButtons dari sini, biar bisa ngetik
+// === PERBAIKAN: Saat mulai ngetik, tombol hapus hilang ===
 function updateTransaksi(index,value){
+    // Baris ini kuncinya bos
+    if(activeSwipeIndex !== -1){
+        hideAllDeleteButtons();
+    }
     transaksiItems[index].nama = value;
     checkTransaksiChange();
 }
 
 function toggleTransaksi(index){
-    hideAllDeleteButtons(); // Saat centang, tombol hapus hilang
+    hideAllDeleteButtons();
     transaksiItems[index].checked = !transaksiItems[index].checked;
     checkTransaksiChange();
     renderTransaksi();
@@ -619,7 +622,6 @@ function renderTransaksi(){
     list.innerHTML = "";
 
     list.addEventListener('click', function(e){
-        // Jangan tutup kalau yang diklik itu input text
         if(!e.target.matches('input[type="text"]')){
             hideAllDeleteButtons();
         }
