@@ -4,28 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Admin Galeri Pulsa V2</title>
+<title>Apk Admin Galeri Pulsa V2</title>
 
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-
-<!-- Lucide Icon -->
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-
-<!-- Sortable -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 <style>
-/* ===============================
-   GLOBAL STYLE
-================================ */
 body{
     background:#f1f5f9;
 }
 
-/* ===============================
-   MENU AKTIF
-================================ */
 .menu-active{
     background:linear-gradient(135deg,#0891b2,#2563eb);
     color:white !important;
@@ -40,9 +29,6 @@ body{
     fill: none !important;
 }
 
-/* ===============================
-   CARD MENU
-================================ */
 .card-menu{
     transition:.25s;
 }
@@ -51,9 +37,6 @@ body{
     transform:translateY(-4px);
 }
 
-/* ===============================
-   MODAL
-================================ */
 .modal{
     display:none;
 }
@@ -62,9 +45,6 @@ body{
     display:flex;
 }
 
-/* ===============================
-   FLOATING LABEL
-================================ */
 .floating{
     position:relative;
     margin-top:20px;
@@ -82,7 +62,6 @@ body{
     overflow:hidden;
 }
 
-/* Khusus Alamat Konter awalnya tinggi 5 baris */
 #alamatKonter {
     min-height: 120px;
 }
@@ -107,9 +86,6 @@ body{
     color:#0891b2;
 }
 
-/* ===============================
-   TOAST
-================================ */
 .toast{
     position:fixed;
     bottom:20px;
@@ -123,9 +99,6 @@ body{
     z-index:9999;
 }
 
-/* ===============================
-   DRAG HANDLE
-================================ */
 .drag-handle{
     cursor:grab;
     touch-action:none;
@@ -135,9 +108,6 @@ body{
     cursor:grabbing;
 }
 
-/* ===============================
-   SORTABLE EFFECT
-================================ */
 #transaksiList > div{
     margin-bottom:10px;
 }
@@ -150,9 +120,6 @@ body{
     transform:scale(1.02);
 }
 
-/* ===============================
-   ANIMASI BERKEDIP
-================================ */
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -162,9 +129,6 @@ body{
     animation: blink 0.5s ease-in-out 1;
 }
 
-/* ===============================
-   EFEK KLIK TOMBOL
-================================ */
 .btn-click:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;
@@ -174,7 +138,6 @@ body{
 
 <body class="max-w-screen-md mx-auto p-4">
 
-<!-- HEADER UTAMA -->
 <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg">
     <div class="flex items-center gap-4">
         <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
@@ -186,7 +149,6 @@ body{
         </div>
     </div>
 
-    <!-- TOMBOL PREVIEW -->
     <div class="mt-4 flex justify-end">
         <button onclick="openPreview()" class="bg-white text-cyan-600 px-4 py-2 rounded-xl font-bold shadow transition btn-click">
             <i data-lucide="eye" class="w-4 h-4 inline mr-1"></i> Lihat Tampilan User
@@ -194,10 +156,8 @@ body{
     </div>
 </div>
 
-<!-- MENU UTAMA -->
 <div id="menuGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6"></div>
 
-<!-- SETUP SERVER -->
 <div id="serverModal" class="modal fixed inset-0 bg-white z-50 items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden">
         <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 text-white">
@@ -223,7 +183,6 @@ body{
     </div>
 </div>
 
-<!-- SETUP CENTER -->
 <div id="centerModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full px-2">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50 flex items-center justify-between">
@@ -259,19 +218,16 @@ body{
     </div>
 </div>
 
-<!-- MODAL KONFIRMASI -->
 <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
         <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2"></h3>
         <p id="confirmMessage" class="text-gray-600 mb-6"></p>
-        <div class="flex gap-3">
-            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
-            <button id="confirmOkBtn" onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
+        <div class="flex gap-3" id="confirmButtons">
+            <!-- Tombol akan diatur lewat JS -->
         </div>
     </div>
 </div>
 
-<!-- MENU TRANSAKSI -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
@@ -298,9 +254,6 @@ body{
     </div>
 </div>
 
-<!-- ===================================================== -->
-<!-- MODAL PREVIEW TAMPILAN USER -->
-<!-- ===================================================== -->
 <div id="previewModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
         <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 z-50">
@@ -313,15 +266,10 @@ body{
         </div>
 
         <div id="previewContent" class="p-4 pb-24">
-            <!-- Konten preview akan diisi lewat JS -->
         </div>
     </div>
 </div>
-<!-- ===================================================== -->
-<!-- END MODAL PREVIEW -->
-<!-- ===================================================== -->
 
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
 <script>
@@ -332,15 +280,11 @@ window.onerror = function(message, source, line, column){
 let confirmAction = null;
 let sortableInstance = null;
 
-/* ============================================= */
-// FUNGSI AUTO GROW
-/* ============================================= */
 function autoGrow(element) {
     element.style.height = "auto";
     element.style.height = (element.scrollHeight) + "px";
 }
 
-/* MENU UTAMA */
 const menus = [
     {label:"Setup Server", icon:"server", action:"server"},
     {label:"Setup Center", icon:"database", action:"center"},
@@ -379,7 +323,6 @@ function renderMenus(){
     lucide.createIcons();
 }
 
-/* TOAST */
 function toast(msg){
     const t = document.getElementById("toast");
     t.innerText = msg;
@@ -387,7 +330,6 @@ function toast(msg){
     setTimeout(()=>t.style.display = "none", 2500);
 }
 
-/* BUTTON STATE */
 function enableButton(btnId){
     const btn = document.getElementById(btnId);
     btn.disabled = false;
@@ -401,26 +343,42 @@ function disableButton(btnId){
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
 }
 
-/* CONFIRM MODAL */
-function showConfirm(title,message,action){
+function showConfirm(title,message,action,isError=false){
     document.getElementById("confirmTitle").innerText = title;
     document.getElementById("confirmMessage").innerText = message;
     confirmAction = action;
+
+    const btnContainer = document.getElementById("confirmButtons");
+    btnContainer.innerHTML = "";
+
+    if(isError){
+        // Hanya tombol OK untuk pesan error
+        const okBtn = document.createElement("button");
+        okBtn.className = "w-full bg-red-600 text-white py-3 rounded-xl btn-click";
+        okBtn.innerText = "OK";
+        okBtn.onclick = function(){
+            closeConfirm();
+            hideAllDeleteButtons(); // Sembunyikan tombol hapus setelah OK
+        };
+        btnContainer.appendChild(okBtn);
+    } else {
+        // Tombol Batal dan OK untuk konfirmasi biasa
+        btnContainer.innerHTML = `
+            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
+            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
+        `;
+    }
+
     document.getElementById("confirmModal").classList.remove("hidden");
 }
 function closeConfirm(){
     document.getElementById("confirmModal").classList.add("hidden");
-    // Kembalikan tombol OK ke warna normal
-    document.getElementById("confirmOkBtn").className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
 }
 function executeConfirm(){
     if(typeof confirmAction === "function") confirmAction();
     closeConfirm();
 }
 
-/* ============================================= */
-// LOGIC SERVER
-/* ============================================= */
 function getServerData(){
     return {
         nama: namaKonter.value.trim(),
@@ -471,9 +429,6 @@ function loadServer(){
     }
 }
 
-/* ============================================= */
-// LOGIC CENTER
-/* ============================================= */
 function getCenterData(){
     return {
         ip:{
@@ -542,9 +497,6 @@ function loadCenter(){
     }
 }
 
-/* ============================================= */
-// WATCH INPUTS
-/* ============================================= */
 function watchServerChanges(){
     [namaKonter, alamatKonter].forEach(field=>{
         field.addEventListener("input", ()=>{
@@ -563,12 +515,9 @@ function watchCenterChanges(){
     });
 }
 
-/* ============================================= */
-// LOGIC TRANSAKSI
-/* ============================================= */
 let transaksiItems = [];
 let originalTransaksi = [];
-let activeSwipeIndex = -1; // Untuk tracking tombol hapus yang terbuka
+let activeSwipeIndex = -1;
 
 function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
@@ -637,12 +586,12 @@ function updateTransaksi(index,value){
     checkTransaksiChange();
 }
 function toggleTransaksi(index){
+    hideAllDeleteButtons(); // Sembunyikan tombol hapus saat klik centang
     transaksiItems[index].checked = !transaksiItems[index].checked;
     checkTransaksiChange();
     renderTransaksi();
 }
 
-// === FUNGSI BARU: SEMBUNYIKAN TOMBOL HAPUS ===
 function hideAllDeleteButtons(){
     transaksiItems.forEach(item => {
         item.swiped = false;
@@ -652,7 +601,6 @@ function hideAllDeleteButtons(){
 }
 
 function swipeLeft(index){
-    // Sembunyikan yang lain, tampilkan yang ini saja
     transaksiItems.forEach(function(item,i){
         item.swiped = (i === index);
     });
@@ -668,25 +616,27 @@ function swipeRight(index){
 function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
-    list.removeEventListener('click', hideAllDeleteButtons); // Hapus listener lama dulu
-    list.addEventListener('click', hideAllDeleteButtons); // Klik luar kolom = tutup
+
+    // Klik di luar area item = tutup tombol hapus
+    list.addEventListener('click', hideAllDeleteButtons);
 
     transaksiItems.forEach((item,index)=>{
         const div = document.createElement("div");
-        div.addEventListener('click', function(e){
-            e.stopPropagation(); // Klik di dalam kolom tidak langsung tutup, tapi cek dulu
-        });
 
         if(item.type === "kategori"){
             div.innerHTML = `
             <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
                 <div class="flex items-center gap-3 h-10">
-                    <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
+                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
+                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
+                    </div>
                     <i data-lucide="folder-open"></i>
                     <input type="text" value="${item.nama}" class="flex-1 bg-transparent outline-none font-bold text-lg" oninput="updateTransaksi(${index},this.value)" onclick="event.stopPropagation(); hideAllDeleteButtons();">
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
-                        <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
+                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
+                            <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -694,7 +644,9 @@ function renderTransaksi(){
             div.innerHTML = `
             <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
                 <div class="flex items-center gap-3 h-10">
-                    <input type="checkbox" ${item.checked ? "checked" : ""} onchange="toggleTransaksi(${index})" class="w-5 h-5">
+                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
+                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
+                    </div>
                     <div onclick="event.stopPropagation(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
@@ -703,7 +655,9 @@ function renderTransaksi(){
                     </div>
                     <div class="ml-auto flex items-center gap-2">
                         ${item.swiped ? `<button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click"><i data-lucide="trash-2"></i></button>` : ""}
-                        <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
+                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
+                            <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -724,22 +678,15 @@ function renderTransaksi(){
     initDragDrop();
 }
 
-// === FUNGSI HAPUS DENGAN CEK AKTIF ===
 function hapusTransaksi(index){
     const item = transaksiItems[index];
 
-    // CEK APAKAH MENU SEDANG AKTIF (checked)
     if(item.checked){
-        // Tampilkan pesan error
-        showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", ()=>{
-            // Hanya tutup pesan
-        });
-        // Ubah tombol OK jadi merah
-        document.getElementById("confirmOkBtn").className = "flex-1 bg-red-600 text-white py-3 rounded-xl btn-click";
+        // Tampilkan pesan error tanpa tombol batal
+        showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", null, true);
         return;
     }
 
-    // Jika tidak aktif, lanjut hapus
     const namaItem = item.nama;
     showConfirm("Konfirmasi Hapus", `Yakin ingin menghapus "${namaItem}" ?`, ()=>{
         transaksiItems.splice(index,1);
@@ -757,6 +704,9 @@ function initDragDrop(){
         handle:".drag-handle",
         delay:500,
         delayOnTouchOnly:true,
+        onStart: function() {
+            hideAllDeleteButtons(); // Sembunyikan saat mulai drag
+        },
         onEnd:function(evt){
             const moved = transaksiItems.splice(evt.oldIndex,1)[0];
             transaksiItems.splice(evt.newIndex,0,moved);
@@ -806,9 +756,6 @@ function confirmSaveTransaksi(){
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan Menu Transaksi?", saveTransaksi);
 }
 
-/* ============================================= */
-// PREVIEW
-/* ============================================= */
 function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
