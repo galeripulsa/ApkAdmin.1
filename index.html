@@ -426,6 +426,18 @@ window.onerror = function(message, source, line, column){
 let confirmAction = null;
 let sortableInstance = null;
 
+// === PERBAIKAN: DEKLARASI ELEMENT AGAR TIDAK ERROR ===
+const namaKonter = document.getElementById('namaKonter');
+const alamatKonter = document.getElementById('alamatKonter');
+const ipNama = document.getElementById('ipNama');
+const ipServer = document.getElementById('ipServer');
+const ipHost = document.getElementById('ipHost');
+const jabberNama = document.getElementById('jabberNama');
+const jabberServer = document.getElementById('jabberServer');
+const jabberHost = document.getElementById('jabberHost');
+const waCenter = document.getElementById('waCenter');
+const smsCenter = document.getElementById('smsCenter');
+
 function autoGrow(element) {
     element.style.height = "auto";
     element.style.height = (element.scrollHeight) + "px";
@@ -553,11 +565,11 @@ function openOperatorList(title, actionType){
                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron-icon"></i>
             </div>
             <div class="operator-body">
-                <div class="floating">
+                <div class="floating mt-4">
                     <input type="text" placeholder=" ">
                     <label>Cek Harga</label>
                 </div>
-                <div class="floating">
+                <div class="floating mt-4">
                     <input type="text" placeholder=" ">
                     <label>Nama Produk</label>
                 </div>
