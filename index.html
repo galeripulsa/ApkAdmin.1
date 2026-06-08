@@ -189,23 +189,22 @@ body{
 }
 
 /* ========================================== */
-/* STYLE DAFTAR OPERATOR */
+/* STYLE ITEM OPERATOR DENGAN FORM DI BAWAH */
 /* ========================================== */
-.operator-list-item {
+.operator-wrapper {
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.operator-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    background: #f8fafc;
+    padding: 15px 18px;
     cursor: pointer;
-    border: 1px solid #e2e8f0;
-}
-
-.operator-list-item:hover {
-    background: #e0f2fe;
-    border-color: #0891b2;
 }
 
 .operator-left {
@@ -219,6 +218,23 @@ body{
     font-weight: 600;
     color: #0f172a;
 }
+
+.operator-body {
+    padding: 0 18px 18px 18px;
+    display: none; /* Awalnya disembunyikan */
+}
+
+.operator-wrapper.open .operator-body {
+    display: block;
+}
+
+.operator-wrapper.open .chevron-icon {
+    transform: rotate(90deg);
+}
+
+.chevron-icon {
+    transition: transform 0.2s;
+}
 </style>
 </head>
 
@@ -230,7 +246,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Global Solution</h1>
+            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -362,7 +378,7 @@ body{
 </div>
 
 <!-- ========================================== -->
-<!-- MODAL DAFTAR OPERATOR (TEMPLATE UMUM) -->
+<!-- MODAL DAFTAR OPERATOR DENGAN FORM -->
 <!-- ========================================== -->
 <div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
@@ -375,31 +391,7 @@ body{
         </div>
         
         <div id="operatorListContainer">
-            <!-- Daftar Nama Operator akan muncul di sini -->
-        </div>
-    </div>
-</div>
-
-<!-- ========================================== -->
-<!-- MODAL DETAIL SETIAP OPERATOR -->
-<!-- ========================================== -->
-<div id="operatorDetailModal" class="submenu-modal">
-    <div class="submenu-content">
-        <div class="flex items-center justify-between mb-6">
-            <button onclick="closeOperatorDetail()" class="bg-gray-100 p-3 rounded-full btn-click">
-                <i data-lucide="arrow-left" class="w-7 h-7"></i>
-            </button>
-            <h3 id="detailOperatorTitle" class="text-2xl font-bold text-slate-800">Nama Operator</h3>
-            <div></div>
-        </div>
-        
-        <div class="floating">
-            <input id="inputCekHarga" type="text" placeholder=" ">
-            <label>Cek Harga</label>
-        </div>
-        <div class="floating">
-            <input id="inputNamaProduk" type="text" placeholder=" ">
-            <label>Nama Produk</label>
+            <!-- Daftar Operator + Form akan muncul di sini -->
         </div>
     </div>
 </div>
@@ -413,8 +405,6 @@ window.onerror = function(message, source, line, column){
 
 let confirmAction = null;
 let sortableInstance = null;
-let currentSelectedOperator = "";
-let currentMenuParent = ""; // Untuk simpan asal menu (Pulsa Reguler/Transfer/dll)
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -500,7 +490,6 @@ function openPrabayar(){
             <span class="font-medium text-lg">${item.nama}</span>
         `;
         
-        // Semua menu utama sekarang pakai fungsi yang sama
         if(item.action){
             div.onclick = function(){
                 openOperatorList(item.nama, item.action);
@@ -518,10 +507,8 @@ function closePrabayar(){
     document.getElementById("prabayarModal").classList.remove("show");
 }
 
-// >>> FUNGSI BUKA DAFTAR OPERATOR <<<
+// >>> FUNGSI BUKA DAFTAR OPERATOR DENGAN FORM <<<
 function openOperatorList(title, actionType){
-    currentMenuParent = actionType;
-    
     // Tutup modal prabayar
     document.getElementById("prabayarModal").classList.remove("show");
     
@@ -535,54 +522,43 @@ function openOperatorList(title, actionType){
     container.innerHTML = "";
     
     operators.forEach(op => {
-        const div = document.createElement("div");
-        div.className = "operator-list-item";
-        div.innerHTML = `
-            <div class="operator-left">
-                <i data-lucide="signal" class="w-6 h-6 text-cyan-600"></i>
-                <span class="operator-name-text">${op}</span>
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="signal" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${op}</span>
+                </div>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron-icon"></i>
             </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+            <div class="operator-body">
+                <div class="floating">
+                    <input type="text" placeholder=" ">
+                    <label>Cek Harga</label>
+                </div>
+                <div class="floating">
+                    <input type="text" placeholder=" ">
+                    <label>Nama Produk</label>
+                </div>
+            </div>
         `;
         
-        div.onclick = function(){
-            openOperatorDetail(op);
-        };
-        
-        container.appendChild(div);
+        container.appendChild(wrapper);
     });
 
     modal.classList.add("show");
     lucide.createIcons();
 }
 
+// >>> FUNGSI BUKA/TUTUP FORM <<<
+function toggleOperator(wrapper){
+    wrapper.classList.toggle("open");
+}
+
 function backToPrabayarFromList(){
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
-}
-
-// >>> FUNGSI BUKA MODAL DETAIL OPERATOR <<<
-function openOperatorDetail(namaOperator){
-    currentSelectedOperator = namaOperator;
-    
-    // Tutup daftar operator
-    document.getElementById("operatorListModal").classList.remove("show");
-    
-    // Buka modal detail
-    const modal = document.getElementById("operatorDetailModal");
-    document.getElementById("detailOperatorTitle").innerText = namaOperator;
-    
-    // Kosongkan input
-    document.getElementById("inputCekHarga").value = "";
-    document.getElementById("inputNamaProduk").value = "";
-    
-    modal.classList.add("show");
-    lucide.createIcons();
-}
-
-function closeOperatorDetail(){
-    document.getElementById("operatorDetailModal").classList.remove("show");
-    document.getElementById("operatorListModal").classList.add("show");
 }
 
 function toast(msg){
