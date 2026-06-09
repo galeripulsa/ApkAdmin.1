@@ -251,21 +251,20 @@ body{
 }
 
 /* ========================================== */
-/* STYLE FOOTER STICKY UNTUK TOMBOL SIMPAN */
-/* >>> PERBAIKAN: POSISI FIXED DI BAWAH <<< */
+/* >>> PERBAIKAN KUNCI: POSISI TOMBOL ABSOLUT */
 /* ========================================== */
-.sticky-footer {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 100%;
-    background: white;
-    border-top: 1px solid #e2e8f0;
-    padding: 15px 20px;
-    z-index: 9999;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+/* Kita hapus class sticky-footer dan buat style baru */
+.fixed-bottom-bar {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 15px 20px !important;
+    z-index: 99999 !important;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important;
 }
 </style>
 </head>
@@ -433,9 +432,9 @@ body{
         </div>
 
         <!-- ========================================== -->
-        <!-- TOMBOL SIMPAN YANG BARU DITAMBAHKAN -->
+        <!-- TOMBOL SIMPAN DENGAN STYLE BARU -->
         <!-- ========================================== -->
-        <div class="sticky-footer">
+        <div class="fixed-bottom-bar">
             <div class="flex gap-3 max-w-screen-md mx-auto">
                 <button id="savePrabayarBtn" onclick="confirmSavePrabayar()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
                 <button onclick="backToPrabayarFromList()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
@@ -629,11 +628,11 @@ function openOperatorList(title, actionType){
     modal.classList.add("show");
     lucide.createIcons();
     
-    // >>> PERBAIKAN: Update data asli setelah load <<<
-    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
-    
-    // >>> PERBAIKAN: Pastikan tombol mati saat pertama buka <<<
-    disableButton("savePrabayarBtn");
+    // >>> PASTIKAN DATA ASLI DIUPDATE SETELAH FORM MUNCUL <<<
+    setTimeout(() => {
+        originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+        disableButton("savePrabayarBtn");
+    }, 100);
     
     // Pasang event listener untuk input
     attachInputListeners();
@@ -657,6 +656,7 @@ function attachInputListeners(){
 }
 
 function checkPrabayarChange(){
+    // Kita bandingkan stringnya secara langsung
     if(JSON.stringify(prabayarData) !== JSON.stringify(originalPrabayarData)){
         enableButton("savePrabayarBtn");
     } else {
@@ -668,11 +668,11 @@ function checkPrabayarChange(){
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
     
-    // >>> PERBAIKAN: Update data asli setelah disimpan <<<
+    // >>> UPDATE DATA ASLI SETELAH SIMPAN <<<
     originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
     
     toast("Data Prabayar Berhasil Disimpan");
-    disableButton("savePrabayarBtn"); // Tombol jadi abu-abu lagi
+    disableButton("savePrabayarBtn"); // Tombol mati
 }
 
 function confirmSavePrabayar(){
