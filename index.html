@@ -357,7 +357,7 @@ body{
                 <h2 class="font-bold text-2xl">Menu Transaksi</h2>
             </div>
             <div class="flex gap-3 mt-4 mb-2">
-                <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-gray-300 btn-click">+ Menu</button>
+                <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-white text-cyan-600 py-3 rounded-2xl font-bold border-3 border-gray-300 btn-click">+ Menu</button>
                 <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-white text-cyan-600 py-3 rounded-2xl font-bold border-2 border-gray-300 btn-click">+ Kategori</button>
             </div>
             <div class="bg-white rounded-md px-3">
@@ -1017,7 +1017,7 @@ function renderTransaksi(){
 
         if(item.type === "kategori"){
             div.innerHTML = `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg w-14 h-14">
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
                 <div class="flex items-center gap-3 h-10">
                     <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
