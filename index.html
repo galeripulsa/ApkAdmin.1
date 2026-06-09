@@ -1017,13 +1017,13 @@ function renderTransaksi(){
 
         if(item.type === "kategori"){
             div.innerHTML = `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
+            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg h-12">
                 <div class="flex items-center gap-3 h-10">
                     <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${safeNama}" class="flex-1 bg-transparent outline-none font-bold text-lg h-10" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
+                    <input type="text" value="${safeNama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
                     <div class="ml-auto flex items-center gap-2">
                         <button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click btn-delete" style="display: ${item.swiped ? 'flex' : 'none'}">
                             <i data-lucide="trash-2"></i>
