@@ -496,32 +496,32 @@ const subMenuPrabayar = [
     {nama: "Paket Internet", icon: "wifi", action: "paketInternet"},
     {nama: "Paket Telpon dan SMS", icon: "message-square", action: "paketTelpon"},
     {nama: "Voucher Games", icon: "gamepad-2", action: "voucherGames"},
-    {nama: "Voucher TV", icon: "tv"},
-    {nama: "E-wallet", icon: "wallet"},
-    {nama: "Transfer Uang", icon: "dollar-sign"}
+    {nama: "Voucher TV", icon: "tv", action: "voucherTv"},
+    {nama: "E-wallet", icon: "wallet", action: "ewallet"},
+    {nama: "Transfer Uang", icon: "dollar-sign", action: "transferUang"}
 ];
 
-// >>> DAFTAR GAME UNTUK MENU VOUCHER GAMES <<<
-const gameList = [
-    "Mobile Legends",
-    "Free Fire",
-    "PUBG Mobile",
-    "Genshin Impact",
-    "Honor of Kings",
-    "Steam Wallet",
-    "Google Play",
-    "UniPin Credits",
-    "Razer Gold"
-];
-
+// >>> DAFTAR PRODUK <<<
 const operators = [
-    "Telkomsel",
-    "Indosat",
-    "XL",
-    "Axis",
-    "Tri",
-    "Smartfren",
-    "BYU"
+    "Telkomsel", "Indosat", "XL", "Axis", "Tri", "Smartfren", "BYU"
+];
+
+const gameList = [
+    "Mobile Legends", "Free Fire", "PUBG Mobile", "Genshin Impact",
+    "Honor of Kings", "Steam Wallet", "Google Play", "UniPin Credits", "Razer Gold"
+];
+
+const tvList = [
+    "Indovision", "Okevision", "Topas TV", "First Media",
+    "Biznet Home", "MNC Vision", "K-Vision", "Transvision", "Big TV"
+];
+
+const ewalletList = [
+    "Dana", "GoPay", "OVO", "ShopeePay", "LinkAja"
+];
+
+const bankList = [
+    "Bank BRI", "Bank BNI", "Bank Mandiri", "Bank BCA", "Bank BSI"
 ];
 
 function renderMenus(){
@@ -600,8 +600,23 @@ function openOperatorList(title, actionType){
         prabayarData[currentMenuType] = {};
     }
     
-    // Pilih array yang mau dipakai: kalau games pakai gameList, selain itu pakai operators
-    let listToShow = (actionType === "voucherGames") ? gameList : operators;
+    // PILIH ARRAY YANG SESUAI
+    let listToShow = operators; // default
+    let iconName = "signal"; // default icon
+
+    if(actionType === "voucherGames"){
+        listToShow = gameList;
+        iconName = "gamepad-2";
+    } else if(actionType === "voucherTv"){
+        listToShow = tvList;
+        iconName = "tv";
+    } else if(actionType === "ewallet"){
+        listToShow = ewalletList;
+        iconName = "wallet";
+    } else if(actionType === "transferUang"){
+        listToShow = bankList;
+        iconName = "building";
+    }
     
     listToShow.forEach(itemName => {
         // Ambil data lama jika ada
@@ -612,7 +627,7 @@ function openOperatorList(title, actionType){
         wrapper.innerHTML = `
             <div class="operator-header" onclick="toggleOperator(this.parentElement)">
                 <div class="operator-left">
-                    <i data-lucide="${actionType === 'voucherGames' ? 'gamepad-2' : 'signal'}" class="w-6 h-6 text-cyan-600"></i>
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
                     <span class="operator-name-text">${itemName}</span>
                 </div>
                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron-icon"></i>
@@ -1215,19 +1230,12 @@ function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
 
-// Load data Prabayar saat halaman dibuka
-function loadPrabayarData(){
-    const saved = localStorage.getItem("prabayarData");
-    if(saved){
-        prabayarData = JSON.parse(saved);
-    }
-}
-
+// === INISIALISASI AWAL ===
 window.onload = function(){
     renderMenus();
     watchServerChanges();
     watchCenterChanges();
-    loadPrabayarData(); // Load data prabayar
+    loadTransaksi();
 };
 </script>
 </body>
