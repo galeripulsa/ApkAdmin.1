@@ -274,7 +274,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Multi Server</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -358,10 +358,10 @@ body{
             </div>
             <div class="flex gap-3 mt-4 mb-2">
                 <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
-                <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
+                <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-white text-cyan-600 py-3 rounded-2xl font-bold border-2 border-black btn-click">+ Kategori</button>
             </div>
             <div class="bg-white rounded-md px-3">
-                <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
+                <div id="transaksiInfo" class="text-sm teks-center text-slate-600">0 Menu • 0 Kategori</div>
             </div>
         </div>
         <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
@@ -628,10 +628,17 @@ function openOperatorList(title, actionType){
     document.getElementById("fixedButtonWrapper").style.display = "block"; // MUNCULKAN TOMBOL
     lucide.createIcons();
     
-    // >>> PASTIKAN DATA ASLI DIUPDATE SETELAH FORM MUNCUL <<<
+    // >>> PERBAIKAN: AMBIL DATA ASLI DARI LOCALSTORAGE LANGSUNG <<<
     setTimeout(() => {
-        originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
-        disableButton("savePrabayarBtn");
+        const savedData = localStorage.getItem("prabayarData");
+        if(savedData){
+            // Kalau ada data tersimpan, jadikan patokan
+            originalPrabayarData = JSON.parse(savedData);
+        } else {
+            // Kalau belum ada, pakai data saat ini
+            originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+        }
+        checkPrabayarChange(); // Cek langsung, tombol pasti OFF
     }, 100);
     
     // Pasang event listener untuk input
@@ -656,7 +663,7 @@ function attachInputListeners(){
 }
 
 function checkPrabayarChange(){
-    // Kita bandingkan stringnya secara langsung
+    // Bandingkan data saat ini dengan data asli
     if(JSON.stringify(prabayarData) !== JSON.stringify(originalPrabayarData)){
         enableButton("savePrabayarBtn");
     } else {
@@ -1204,7 +1211,7 @@ window.onload = function(){
     renderMenus();
     watchServerChanges();
     watchCenterChanges();
-    loadPrabayarData(); // Tambahan load data prabayar
+    loadPrabayarData(); // Load data prabayar
 };
 </script>
 </body>
