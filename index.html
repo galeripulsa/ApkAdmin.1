@@ -263,6 +263,124 @@ body{
     z-index: 99999 !important;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important;
 }
+
+/* ========================================== */
+/* STYLE PENCARIAN DAN TOMBOL TAMBAH PRODUK */
+/* ========================================== */
+.search-box {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.btn-add-product {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    transition: 0.2s;
+}
+
+.btn-add-product:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* ========================================== */
+/* STYLE MODAL TAMBAH PRODUK */
+/* ========================================== */
+#addProductModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#addProductModal.show {
+    display: flex;
+}
+
+.modal-product-content {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-product-header {
+    background: linear-gradient(135deg, #0891b2, #2563eb);
+    color: white;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-product-body {
+    padding: 20px;
+}
+
+.modal-product-footer {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.modal-product-footer button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-save-product {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+}
+
+.btn-close-product {
+    background: #ef4444;
+    color: white;
+    border: none;
+}
 </style>
 </head>
 
@@ -424,10 +542,53 @@ body{
             </div>
         </div>
         
+        <!-- KOLOM PENCARIAN DAN TOMBOL TAMBAH PRODUK -->
+        <div class="search-box">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <input type="text" id="searchProduct" placeholder="Cari nama produk..." oninput="searchProducts()">
+        </div>
+        
+        <button class="btn-add-product" onclick="openAddProductModal()">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            Tambah Produk
+        </button>
+        
         <div id="operatorListContainer">
             <!-- Daftar Operator + Form akan muncul di sini -->
         </div>
 
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL TAMBAH PRODUK -->
+<!-- ========================================== -->
+<div id="addProductModal">
+    <div class="modal-product-content">
+        <div class="modal-product-header">
+            <span>Tambah Produk Baru</span>
+            <button onclick="closeAddProductModal()" class="bg-white/20 rounded-full p-2">
+                <i data-lucide="x" class="w-5 h-5 text-white"></i>
+            </button>
+        </div>
+        <div class="modal-product-body">
+            <div class="floating">
+                <input id="inputNamaProduk" placeholder=" ">
+                <label>Nama Produk</label>
+            </div>
+            <div class="floating">
+                <input id="inputCekHarga" placeholder=" ">
+                <label>Cek Harga</label>
+            </div>
+            <div class="floating">
+                <input id="inputNamaProdukFull" placeholder=" ">
+                <label>Nama Produk Lengkap</label>
+            </div>
+        </div>
+        <div class="modal-product-footer">
+            <button class="btn-save-product" onclick="saveNewProduct()">Simpan</button>
+            <button class="btn-close-product" onclick="closeAddProductModal()">Tutup</button>
+        </div>
     </div>
 </div>
 
@@ -467,6 +628,7 @@ const smsCenter = document.getElementById('smsCenter');
 let prabayarData = {};
 let originalPrabayarData = {};
 let currentMenuType = "";
+let allProducts = []; // Menyimpan semua produk untuk fitur pencarian
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -618,12 +780,16 @@ function openOperatorList(title, actionType){
         iconName = "building";
     }
     
+    // Simpan semua produk untuk fitur pencarian
+    allProducts = [...listToShow];
+    
     listToShow.forEach(itemName => {
         // Ambil data lama jika ada
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
 
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
         wrapper.innerHTML = `
             <div class="operator-header" onclick="toggleOperator(this.parentElement)">
                 <div class="operator-left">
@@ -674,6 +840,117 @@ function openOperatorList(title, actionType){
     
     // Pasang event listener untuk input
     attachInputListeners();
+}
+
+// >>> FUNGSI PENCARIAN PRODUK <<<
+function searchProducts() {
+    const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
+    const products = document.querySelectorAll('.operator-wrapper');
+    
+    products.forEach(product => {
+        const productName = product.dataset.productname;
+        if(productName.includes(searchTerm)) {
+            product.style.display = 'block';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+}
+
+// >>> FUNGSI BUKA MODAL TAMBAH PRODUK <<<
+function openAddProductModal() {
+    document.getElementById('addProductModal').classList.add('show');
+    // Kosongkan input
+    document.getElementById('inputNamaProduk').value = '';
+    document.getElementById('inputCekHarga').value = '';
+    document.getElementById('inputNamaProdukFull').value = '';
+    lucide.createIcons();
+}
+
+// >>> FUNGSI TUTUP MODAL TAMBAH PRODUK <<<
+function closeAddProductModal() {
+    document.getElementById('addProductModal').classList.remove('show');
+}
+
+// >>> FUNGSI SIMPAN PRODUK BARU <<<
+function saveNewProduct() {
+    const namaProduk = document.getElementById('inputNamaProduk').value.trim();
+    const cekHarga = document.getElementById('inputCekHarga').value.trim();
+    const namaProdukFull = document.getElementById('inputNamaProdukFull').value.trim();
+    
+    if(!namaProduk) {
+        toast('Nama produk tidak boleh kosong!');
+        return;
+    }
+    
+    // Tambahkan ke data
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
+    }
+    
+    prabayarData[currentMenuType][namaProduk] = {
+        cekHarga: cekHarga,
+        namaProduk: namaProdukFull
+    };
+    
+    // Tambahkan ke tampilan
+    const container = document.getElementById('operatorListContainer');
+    
+    // Tentukan icon berdasarkan menu saat ini
+    let iconName = "signal";
+    if(currentMenuType === "voucherGames") iconName = "gamepad-2";
+    else if(currentMenuType === "voucherTv") iconName = "tv";
+    else if(currentMenuType === "ewallet") iconName = "wallet";
+    else if(currentMenuType === "transferUang") iconName = "building";
+    
+    const wrapper = document.createElement("div");
+    wrapper.className = "operator-wrapper";
+    wrapper.dataset.productname = namaProduk.toLowerCase();
+    wrapper.innerHTML = `
+        <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+            <div class="operator-left">
+                <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                <span class="operator-name-text">${namaProduk}</span>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+        </div>
+        <div class="operator-body">
+            <div class="floating mt-4">
+                <input type="text" 
+                       class="input-cek-harga" 
+                       data-operator="${namaProduk}" 
+                       placeholder=" " 
+                       value="${cekHarga}">
+                <label>Cek Harga</label>
+            </div>
+            <div class="floating mt-4">
+                <input type="text" 
+                       class="input-nama-produk" 
+                       data-operator="${namaProduk}" 
+                       placeholder=" " 
+                       value="${namaProdukFull}">
+                <label>Nama Produk</label>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(wrapper);
+    lucide.createIcons();
+    
+    // Pasang event listener untuk input baru
+    attachInputListeners();
+    
+    // Update daftar produk untuk pencarian
+    allProducts.push(namaProduk);
+    
+    // Tutup modal
+    closeAddProductModal();
+    
+    // Tampilkan notifikasi
+    toast('Produk baru berhasil ditambahkan!');
+    
+    // Aktifkan tombol simpan
+    checkPrabayarChange();
 }
 
 function attachInputListeners(){
