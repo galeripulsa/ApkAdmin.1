@@ -708,8 +708,8 @@ function openOperatorList(title, actionType){
             // Kalau ada data tersimpan, jadikan patokan
             originalPrabayarData = JSON.parse(savedData);
         } else {
-            // Kalau belum ada, pakai data saat ini
-            originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+            // Kalau belum ada, buat object kosong sebagai pembanding
+            originalPrabayarData = {};
         }
         // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
         disableButton("savePrabayarBtn");
@@ -746,14 +746,18 @@ function attachInputListeners(){
             }
             prabayarData[currentMenuType][op][type] = this.value;
             
-            checkPrabayarChange();
+            checkPrabayarChange(); // Cek setiap ketikan
         });
     });
 }
 
+// >>> PERBAIKAN LOGIKA DISINI <<<
 function checkPrabayarChange(){
+    // Ambil data asli dari localStorage sebagai pembanding
+    const dataAsli = JSON.parse(localStorage.getItem("prabayarData") || "{}");
+    
     // Bandingkan data saat ini dengan data asli
-    if(JSON.stringify(prabayarData) !== JSON.stringify(originalPrabayarData)){
+    if(JSON.stringify(prabayarData) !== JSON.stringify(dataAsli)){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
@@ -763,9 +767,6 @@ function checkPrabayarChange(){
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
-    
-    // >>> UPDATE DATA ASLI SETELAH SIMPAN <<<
-    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
     
     toast("Data Prabayar Berhasil Disimpan");
     disableButton("savePrabayarBtn"); // Tombol mati
@@ -1243,8 +1244,7 @@ function confirmSaveTransaksi(){
 }
 
 function openPreview(){
-    const modal = document.getElementById("previewModal");
-   
+    const modal = document.getElementById
     const content = document.getElementById("previewContent");
 
     let html = "";
