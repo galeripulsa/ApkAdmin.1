@@ -270,25 +270,29 @@ body{
 .search-wrapper {
     position: relative;
     margin-bottom: 20px;
-}
-
-.search-wrapper input {
-    width: 100%;
-    padding: 14px 15px 14px 45px;
+    display: flex;
+    align-items: center;
+    background: white;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
-    outline: none;
-    font-size: 16px;
-    background: white;
+    overflow: hidden;
 }
 
 .search-wrapper i {
     position: absolute;
     left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
     color: #94a3b8;
     pointer-events: none;
+    z-index: 2;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
 }
 </style>
 </head>
@@ -707,7 +711,8 @@ function openOperatorList(title, actionType){
             // Kalau belum ada, pakai data saat ini
             originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
         }
-        checkPrabayarChange(); // Cek langsung, tombol pasti OFF
+        // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
+        disableButton("savePrabayarBtn");
     }, 100);
     
     // Pasang event listener untuk input
@@ -1239,15 +1244,14 @@ function confirmSaveTransaksi(){
 
 function openPreview(){
     const modal = document.getElementById("previewModal");
+   
     const content = document.getElementById("previewContent");
 
     let html = "";
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
 
     html += `
-    <div class="bg-gradient-to-r from-cyan-600
-    
-   <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
+    <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="text-center">
             <h2 class="text-2xl font-bold">${escapeHtml(serverData.nama)}</h2>
             <p class="text-sm opacity-90 mt-1">${escapeHtml(serverData.alamat)}</p>
