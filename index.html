@@ -250,7 +250,7 @@ body{
 }
 
 /* ========================================== */
-/* >>> PERBAIKAN MUTLAK: TOMBOL FIXED BENERAN */
+/* >>> PERBAIKAN MUTLAK: TOMBOL FIXED BENAR */
 /* ========================================== */
 .fixed-button-container {
     position: fixed !important;
@@ -305,7 +305,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Global Solutions</h1>
+            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -469,7 +469,7 @@ body{
 </div>
 
 <!-- ========================================== -->
-<!-- TOMBOL SIMPAN DITAROH DI LUAR biar FIXED -->
+<!-- TOMBOL SIMPAN DITAROH DI LUAR BIAR FIXED -->
 <!-- ========================================== -->
 <div class="fixed-button-container" id="fixedButtonWrapper" style="display: none;">
     <div class="flex gap-3 max-w-screen-md mx-auto">
@@ -504,7 +504,7 @@ const smsCenter = document.getElementById('smsCenter');
 let prabayarData = {};
 let originalPrabayarData = {};
 let currentMenuType = "";
-let allProducts = []; // Menyimpan semua produk untuk fitur pencarian
+let allProducts = []; // Simpan semua produk untuk fitur cari
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -512,7 +512,8 @@ function autoGrow(element) {
 }
 
 function escapeHtml(text) {
-    return text.replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    if(!text) return "";
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 const menus = [
@@ -566,7 +567,7 @@ function renderMenus(){
     const grid = document.getElementById("menuGrid");
     if(!grid) return;
     grid.innerHTML = "";
-    menus.forEach((menu,index)=>{
+    menus.forEach((menu, index)=>{
         const card = document.createElement("div");
         card.className = "card-menu bg-white rounded-2xl shadow p-4 text-center cursor-pointer";
         card.dataset.index = index;
@@ -662,7 +663,7 @@ function openOperatorList(title, actionType){
         iconName = "building";
     }
     
-    // Simpan semua produk untuk fitur pencarian
+    // Simpan semua produk untuk fitur cari
     allProducts = [...listToShow];
     
     listToShow.forEach(itemName => {
@@ -716,21 +717,21 @@ function openOperatorList(title, actionType){
     // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
     disableButton("savePrabayarBtn");
     
-    // Pasang event listener untuk input
+    // PASANG EVENT LISTENER UNTUK INPUT
     attachInputListeners();
 }
 
-// >>> FUNGSI PENCARIAN PRODUK <<<
+// >>> FUNGSI CARI PRODUK <<<
 function searchProducts() {
-    const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
-    const products = document.querySelectorAll('.operator-wrapper');
+    const searchTerm = document.getElementById("searchProduct").value.toLowerCase();
+    const products = document.querySelectorAll(".operator-wrapper");
     
     products.forEach(product => {
         const productName = product.dataset.productname;
         if(productName.includes(searchTerm)) {
-            product.style.display = 'block';
+            product.style.display = "block";
         } else {
-            product.style.display = 'none';
+            product.style.display = "none";
         }
     });
 }
@@ -747,26 +748,40 @@ function attachInputListeners(){
             }
             prabayarData[currentMenuType][op][type] = this.value;
             
-            checkPrabayarChange(); // Cek setiap ketikan
+            checkPrabayarChange(); // CEK SETIAP KETIKAN
         });
     });
 }
 
-// >>> LOGIKA UTAMA: BANDINGKAN DENGAN DATA AWAL <<<
+// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
 function checkPrabayarChange(){
-    // Ambil data saat ini
-    const current = prabayarData[currentMenuType] || {};
-    // Ambil data patokan awal
-    const initial = originalPrabayarData[currentMenuType] || {};
+    let adaPerubahan = false;
 
-    // Bandingkan isi nya
-    if(JSON.stringify(current) !== JSON.stringify(initial)){
+    // CEK SEMUA INPUT DI HALAMAN INI
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
+    
+    inputs.forEach(input => {
+        const op = input.dataset.operator;
+        const type = input.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
+        
+        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
+        const nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
+        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
+        const nilaiSekarang = (input.value || "").trim();
+
+        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
+        if(nilaiSekarang !== nilaiAsli){
+            adaPerubahan = true;
+        }
+    });
+
+    // PUTUSKAN TOMBOL NYALA ATAU MATI
+    if(adaPerubahan){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
     }
 }
-
 
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
@@ -776,7 +791,7 @@ function savePrabayar(){
     originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
     
     toast("Data Prabayar Berhasil Disimpan");
-    disableButton("savePrabayarBtn"); // Tombol mati
+    disableButton("savePrabayarBtn"); // TOMBOL MATI
 }
 
 function confirmSavePrabayar(){
@@ -789,7 +804,7 @@ function toggleOperator(wrapper){
 }
 
 function backToPrabayarFromList(){
-    // Cek apakah ada perubahan belum disimpan
+    // CEK APAKAH ADA PERUBAHAN BELUM DISIMPAN
     if(!document.getElementById("savePrabayarBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
             document.getElementById("operatorListModal").classList.remove("show");
@@ -813,18 +828,20 @@ function toast(msg){
 
 function enableButton(btnId){
     const btn = document.getElementById(btnId);
+    if(!btn) return;
     btn.disabled = false;
     btn.classList.remove("bg-gray-400", "cursor-not-allowed");
     btn.classList.add("bg-green-600");
 }
 function disableButton(btnId){
     const btn = document.getElementById(btnId);
+    if(!btn) return;
     btn.disabled = true;
     btn.classList.remove("bg-green-600");
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
 }
 
-function showConfirm(title,message,action,isError=false){
+function showConfirm(title, message, action, isError=false){
     document.getElementById("confirmTitle").innerText = title;
     document.getElementById("confirmMessage").innerText = message;
     confirmAction = action;
@@ -842,20 +859,27 @@ function showConfirm(title,message,action,isError=false){
         };
         btnContainer.appendChild(okBtn);
     } else {
-        btnContainer.innerHTML = `
-            <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl btn-click">Batal</button>
-            <button onclick="executeConfirm()" class="flex-1 bg-green-600 text-white py-3 rounded-xl btn-click">OK</button>
-        `;
+        const cancelBtn = document.createElement("button");
+        cancelBtn.className = "flex-1 bg-gray-200 py-3 rounded-xl btn-click";
+        cancelBtn.innerText = "Batal";
+        cancelBtn.onclick = closeConfirm;
+
+        const okBtn = document.createElement("button");
+        okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
+        okBtn.innerText = "Ya, Simpan";
+        okBtn.onclick = function(){
+            if(typeof confirmAction === "function") confirmAction();
+            closeConfirm();
+        };
+
+        btnContainer.appendChild(cancelBtn);
+        btnContainer.appendChild(okBtn);
     }
 
     document.getElementById("confirmModal").classList.remove("hidden");
 }
 function closeConfirm(){
     document.getElementById("confirmModal").classList.add("hidden");
-}
-function executeConfirm(){
-    if(typeof confirmAction === "function") confirmAction();
-    closeConfirm();
 }
 
 function getServerData(){
@@ -888,11 +912,11 @@ function saveServer(){
     checkServerChange();
 }
 function confirmSaveServer(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Server?", saveServer);
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan Server?", saveServer);
 }
 function checkCloseServer(){
     if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer);
+        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeServer);
         return;
     }
     closeServer();
@@ -927,7 +951,7 @@ function getCenterData(){
     };
 }
 function checkCenterChange(){
-    const original = JSON.parse(localStorage.getItem("centerServer")) || {ip:{}, jabber:{}, nomor:{}};
+    const original = JSON.parse(localStorage.getItem("centerServer")) || {};
     const current = getCenterData();
     if(JSON.stringify(current) !== JSON.stringify(original)){
         enableButton("saveCenterBtn");
@@ -949,11 +973,11 @@ function saveCenter(){
     checkCenterChange();
 }
 function confirmSaveCenter(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan perubahan Center?", saveCenter);
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter);
 }
 function checkCloseCenter(){
     if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter);
+        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeCenter);
         return;
     }
     closeCenter();
@@ -996,7 +1020,7 @@ function watchCenterChanges(){
 
 let transaksiItems = [];
 let originalTransaksi = [];
-let activeSwipeIndex = -1;
+let activeDeleteIndex = -1;
 
 function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
@@ -1017,7 +1041,7 @@ function openTransaksi(){
 }
 function closeTransaksi(){
     if(!document.getElementById("saveTransaksiBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar tanpa menyimpan perubahan?", ()=>{
+        showConfirm("Perubahan Belum Disimpan", "Yakin keluar tanpa simpan?", ()=>{
             document.getElementById("transaksiModal").classList.remove("show");
         });
         return;
@@ -1035,11 +1059,11 @@ function addMenu(){
     setTimeout(() => { document.getElementById('btnMenu').classList.remove('blink'); }, 500);
 
     transaksiItems.unshift({
-        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, swiped: false
+        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, showDelete: false
     });
     checkTransaksiChange();
     renderTransaksi();
-    fokusInputPertama();
+    focusFirstInput();
 }
 
 function addKategori(){
@@ -1047,14 +1071,14 @@ function addKategori(){
     setTimeout(() => { document.getElementById('btnKategori').classList.remove('blink'); }, 500);
 
     transaksiItems.unshift({
-        type: "kategori", nama: "Kategori Baru", checked: false, swiped: false
+        type: "kategori", nama: "Kategori Baru", checked: false, showDelete: false
     });
     checkTransaksiChange();
     renderTransaksi();
-    fokusInputPertama();
+    focusFirstInput();
 }
 
-function fokusInputPertama(){
+function focusFirstInput(){
     setTimeout(()=>{
         const inputs = document.querySelectorAll("#transaksiList input[type='text']");
         if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
@@ -1066,41 +1090,36 @@ function updateTransaksi(index, value){
     checkTransaksiChange();
 }
 
-function handleInputClick(){
-    if(activeSwipeIndex !== -1){
+function handleInputClick(e, index){
+    // CEGAH KLIK KE TOMBOL HAPUS
+    if(e.target.closest('.btn-delete')) return;
+    
+    if(activeDeleteIndex !== -1 && activeDeleteIndex !== index){
         hideAllDeleteButtons();
     }
 }
 
-function toggleTransaksi(index){
-    hideAllDeleteButtons();
-    transaksiItems[index].checked = !transaksiItems[index].checked;
-    checkTransaksiChange();
+function toggleDeleteButton(index){
+    if(transaksiItems[index].type === "kategori") return; // KATEGORI TIDAK BISA DIHAPUS
+    
+    if(activeDeleteIndex === index){
+        // KLIK LAGI UNTUK SEMBUNYIKAN
+        transaksiItems[index].showDelete = false;
+        activeDeleteIndex = -1;
+    } else {
+        // SEMBUNYIKAN YANG LAIN
+        hideAllDeleteButtons();
+        transaksiItems[index].showDelete = true;
+        activeDeleteIndex = index;
+    }
     renderTransaksi();
 }
 
 function hideAllDeleteButtons(){
     transaksiItems.forEach(item => {
-        item.swiped = false;
+        item.showDelete = false;
     });
-    activeSwipeIndex = -1;
-    
-    const allDeleteButtons = document.querySelectorAll('.btn-delete');
-    allDeleteButtons.forEach(btn => {
-        btn.style.display = 'none';
-    });
-}
-
-function swipeLeft(index){
-    hideAllDeleteButtons();
-    transaksiItems[index].swiped = true;
-    activeSwipeIndex = index;
-    renderTransaksi();
-}
-
-function swipeRight(index){
-    transaksiItems[index].swiped = false;
-    activeSwipeIndex = -1;
+    activeDeleteIndex = -1;
     renderTransaksi();
 }
 
@@ -1108,9 +1127,9 @@ function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
 
-    transaksiItems.forEach((item,index)=>{
+    transaksiItems.forEach((item, index)=>{
         const div = document.createElement("div");
-        const safeNama = escapeHtml(item.nama);
+        const safeName = escapeHtml(item.nama);
 
         if(item.type === "kategori"){
             div.innerHTML = `
@@ -1120,107 +1139,91 @@ function renderTransaksi(){
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
                     <i data-lucide="folder-open"></i>
-                    <input type="text" value="${safeNama}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
-                    <div class="ml-auto flex items-center gap-2">
-                        <button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click btn-delete" style="display: ${item.swiped ? 'flex' : 'none'}">
-                            <i data-lucide="trash-2"></i>
-                        </button>
-                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
-                            <i data-lucide="grip-vertical" class="drag-handle cursor-move"></i>
-                        </div>
-                    </div>
+                    <input type="text" value="${safeName}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick(event, ${index})" oninput="updateTransaksi(${index}, this.value)">
                 </div>
             </div>`;
-        }else{
+        } else {
             div.innerHTML = `
-            <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200">
+            <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200 relative">
                 <div class="flex items-center gap-3 h-10">
                     <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
                         <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
                     </div>
-                    <div onclick="event.stopPropagation(); hideAllDeleteButtons(); gantiIcon(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
+                    <div onclick="event.stopPropagation(); toggleDeleteButton(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
-                    <div class="flex-1">
-                        <input type="text" value="${safeNama}" class="w-full outline-none bg-transparent font-semibold" onclick="handleInputClick();" oninput="updateTransaksi(${index}, this.value)">
-                    </div>
-                    <div class="ml-auto flex items-center gap-2">
-                        <button onclick="event.stopPropagation(); hapusTransaksi(${index})" class="bg-red-500 text-white w-10 h-10 rounded-xl flex items-center justify-center btn-click btn-delete" style="display: ${item.swiped ? 'flex' : 'none'}">
-                            <i data-lucide="trash-2"></i>
-                        </button>
-                        <div onclick="event.stopPropagation(); hideAllDeleteButtons();">
-                            <i data-lucide="grip-vertical" class="drag-handle cursor-move text-slate-400"></i>
-                        </div>
-                    </div>
+                    <span class="font-semibold text-gray-700">${safeName}</span>
+                    
+                    <!-- TOMBOL HAPUS -->
+                    <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : ''}">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
                 </div>
             </div>`;
         }
 
-        let startX = 0;
-        div.addEventListener("touchstart",(e)=> startX = e.touches[0].clientX );
-        div.addEventListener("touchend",(e)=>{
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-            if(diff > 80) swipeLeft(index);
-            if(diff < -80) swipeRight(index);
-        });
-
         list.appendChild(div);
     });
     lucide.createIcons();
-    initDragDrop();
 }
 
-function hapusTransaksi(index){
-    const item = transaksiItems[index];
+function toggleTransaksi(index){
+    hideAllDeleteButtons();
+    transaksiItems[index].checked = !transaksiItems[index].checked;
+    checkTransaksiChange();
+    renderTransaksi();
+}
 
+function deleteTransaksi(index){
+    const item = transaksiItems[index];
+    
     if(item.checked){
-        showConfirm("Hapus Gagal", "Menu masih aktif, tidak bisa dihapus", null, true);
+        showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, true);
         return;
     }
 
     const namaItem = item.nama;
-    showConfirm("Konfirmasi Hapus", `Yakin ingin menghapus "${namaItem}" ?`, ()=>{
+    showConfirm("Konfirmasi Hapus", `Hapus "${namaItem}"?`, ()=>{
         transaksiItems.splice(index,1);
+        activeDeleteIndex = -1;
         checkTransaksiChange();
         renderTransaksi();
     });
 }
 
-function initDragDrop(){
+function initSortable(){
     const list = document.getElementById("transaksiList");
     if(!list) return;
     if(sortableInstance) sortableInstance.destroy();
-    sortableInstance = Sortable.create(list,{
+    sortableInstance = new Sortable(list, {
         animation:150,
         handle:".drag-handle",
-        delay:500,
-        delayOnTouchOnly:true,
         onStart: function() {
             hideAllDeleteButtons();
         },
         onEnd:function(evt){
-            const moved = transaksiItems.splice(evt.oldIndex,1)[0];
-            transaksiItems.splice(evt.newIndex,0,moved);
+            const movedItem = transaksiItems.splice(evt.oldIndex,1)[0];
+            transaksiItems.splice(evt.newIndex,0,movedItem);
             checkTransaksiChange();
         }
     });
 }
+
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
     originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    toast("Menu Transaksi berhasil disimpan");
+    toast("Menu Transaksi Disimpan");
     checkTransaksiChange();
 }
 function loadTransaksi(){
-    const data = localStorage.getItem("transaksiItems");
+    const data = JSON.parse(localStorage.getItem("transaksiItems"));
     if(data){
-        transaksiItems = JSON.parse(data);
+        transaksiItems = data;
     } else {
         transaksiItems = [
-            {type:"kategori", nama:"PRODUK DIGITAL", checked:false, swiped:false},
-            {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, swiped:false},
-            {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, swiped:false}
+            {type:"kategori", nama:"PRODUK DIGITAL", checked:false, showDelete:false},
+            {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, showDelete:false},
+            {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, showDelete:false}
         ];
     }
     originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
@@ -1228,31 +1231,24 @@ function loadTransaksi(){
     updateTransaksiInfo();
 }
 
-function gantiIcon(index){
-    const picker = document.createElement("input");
-    picker.type = "file";
-    picker.accept = "image/*";
-    picker.onchange = function(e){
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt){
-            transaksiItems[index].iconFile = evt.target.result;
-            checkTransaksiChange();
-            renderTransaksi();
-        };
-        reader.readAsDataURL(file);
-    };
-    picker.click();
+function changeIcon(index){
+    const icons = ["smartphone", "wifi", "droplet", "zap", "gamepad-2", "tv", "wallet", "credit-card", "dollar-sign", "gift"];
+    const current = transaksiItems[index].icon;
+    let idx = icons.indexOf(current);
+    idx = (idx + 1) % icons.length;
+    transaksiItems[index].icon = icons[idx];
+    checkTransaksiChange();
+    renderTransaksi();
 }
 
 function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan Menu Transaksi?", saveTransaksi);
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi);
 }
 
 function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
+
 
     let html = "";
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
