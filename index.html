@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -418,14 +418,14 @@ body{
 </div>
 
 <!-- ========================================= -->
-<!-- MODAL SUB MENU PRABAYAR -->
+<!-- MODAL SUB MENU PRABAYAR & PASCABAYAR -->
 <!-- ========================================= -->
 <div id="prabayarModal" class="submenu-modal">
     <div class="submenu-content">
         <!-- HEADER STICKY -->
         <div class="sticky-header">
             <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-bold text-slate-800">Menu Prabayar</h3>
+                <h3 id="subMenuTitle" class="text-2xl font-bold text-slate-800">Menu</h3>
                 <button onclick="closePrabayar()" class="bg-gray-100 p-3 rounded-full btn-click">
                     <i data-lucide="x" class="w-7 h-7"></i>
                 </button>
@@ -499,7 +499,7 @@ const jabberHost = document.getElementById('jabberHost');
 const waCenter = document.getElementById('waCenter');
 const smsCenter = document.getElementById('smsCenter');
 
-// === VARIABEL DATA PRABAYAR ===
+// === VARIABEL DATA PRABAYAR & PASCABAYAR ===
 let prabayarData = {};
 let originalPrabayarData = {};
 let currentMenuType = "";
@@ -520,7 +520,7 @@ const menus = [
     {label:"Setup Center", icon:"database", action:"center"},
     {label:"Menu Transaksi", icon:"layout-grid", action:"transaksi"},
     {label:"Prabayar", icon:"smartphone", action:"prabayar"},
-    {label:"Pascabayar", icon:"credit-card"},
+    {label:"Pascabayar", icon:"credit-card", action:"pascabayar"},
     {label:"Format Request", icon:"file-text"},
     {label:"Logo", icon:"image"},
     {label:"OTP", icon:"key-round"},
@@ -539,28 +539,42 @@ const subMenuPrabayar = [
     {nama: "Transfer Uang", icon: "dollar-sign", action: "transferUang"}
 ];
 
-// >>> DAFTAR PRODUK <<<
+// >>> DAFTAR MENU PASCA BAYAR <<<
+const subMenuPascabayar = [
+    {nama: "PLN Pascabayar", icon: "zap", action: "plnPascabayar"},
+    {nama: "PDAM", icon: "droplet", action: "pdam"},
+    {nama: "BPJS", icon: "heart", action: "bpjs"},
+    {nama: "PBB", icon: "home", action: "pbb"},
+    {nama: "TV Kabel", icon: "tv", action: "tvKabel"},
+    {nama: "Internet & Telpon", icon: "wifi", action: "internetTelpon"}
+];
+
+// >>> DAFTAR PRODUK PRABAYAR <<<
 const operators = [
     "Telkomsel", "Indosat", "XL", "Axis", "Tri", "Smartfren", "BYU"
 ];
-
 const gameList = [
     "Mobile Legends", "Free Fire", "PUBG Mobile", "Genshin Impact",
     "Honor of Kings", "Steam Wallet", "Google Play", "UniPin Credits", "Razer Gold"
 ];
-
 const tvList = [
     "Indovision", "Okevision", "Topas TV", "First Media",
     "Biznet Home", "MNC Vision", "K-Vision", "Transvision", "Big TV"
 ];
-
 const ewalletList = [
     "Dana", "GoPay", "OVO", "ShopeePay", "LinkAja"
 ];
-
 const bankList = [
     "Bank BRI", "Bank BNI", "Bank Mandiri", "Bank BCA", "Bank BSI"
 ];
+
+// >>> DAFTAR PRODUK PASCA BAYAR <<<
+const plnList = ["PLN Pascabayar"];
+const pdamList = ["PDAM Kota", "PDAM Kabupaten"];
+const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
+const pbbList = ["PBB P1", "PBB P2"];
+const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
+const internetList = ["Speedy/Indihome", "Biznet", "MyRepublic", "Telkom Corporate"];
 
 function renderMenus(){
     const grid = document.getElementById("menuGrid");
@@ -582,6 +596,7 @@ function renderMenus(){
             if(menu.action==="center") openCenter();
             if(menu.action==="transaksi") openTransaksi();
             if(menu.action==="prabayar") openPrabayar();
+            if(menu.action==="pascabayar") openPascabayar();
         };
         grid.appendChild(card);
     });
@@ -590,7 +605,8 @@ function renderMenus(){
 
 // >>> FUNGSI BUKA MENU PRABAYAR <<<
 function openPrabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none"; // Sembunyikan tombol
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("subMenuTitle").innerText = "Menu Prabayar";
     const modal = document.getElementById("prabayarModal");
     const listContainer = document.getElementById("prabayarList");
     
@@ -616,12 +632,41 @@ function openPrabayar(){
     setTimeout(() => { lucide.createIcons(); }, 50);
 }
 
+// >>> FUNGSI BUKA MENU PASCA BAYAR <<<
+function openPascabayar(){
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
+    const modal = document.getElementById("prabayarModal");
+    const listContainer = document.getElementById("prabayarList");
+    
+    listContainer.innerHTML = "";
+    subMenuPascabayar.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerHTML = `
+            <i data-lucide="${item.icon}" class="w-7 h-7"></i>
+            <span class="font-medium text-lg">${item.nama}</span>
+        `;
+        
+        if(item.action){
+            div.onclick = function(){
+                openOperatorListPascabayar(item.nama, item.action);
+            };
+        }
+        
+        listContainer.appendChild(div);
+    });
+
+    modal.classList.add("show");
+    setTimeout(() => { lucide.createIcons(); }, 50);
+}
+
 function closePrabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("prabayarModal").classList.remove("show");
 }
 
-// >>> FUNGSI BUKA DAFTAR OPERATOR DENGAN FORM <<<
+// >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
     
@@ -647,6 +692,8 @@ function openOperatorList(title, actionType){
     // PILIH ARRAY YANG SESUAI
     let listToShow = operators; // default
     let iconName = "signal"; // default icon
+    let labelHarga = "Cek Harga";
+    let labelNama = "Nama Produk";
 
     if(actionType === "voucherGames"){
         listToShow = gameList;
@@ -669,7 +716,7 @@ function openOperatorList(title, actionType){
         // Ambil data lama jika ada
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
 
-        // >>> SIMPAN DATA AWAL SEBAGAI PATOKAN <<<
+        // >>> SIMPAN DATA ASLI SEBAGAI PATOKAN <<<
         originalPrabayarData[currentMenuType][itemName] = {
             cekHarga: saved.cekHarga || "",
             namaProduk: saved.namaProduk || ""
@@ -693,7 +740,7 @@ function openOperatorList(title, actionType){
                            data-operator="${itemName}" 
                            placeholder=" " 
                            value="${saved.cekHarga || ""}">
-                    <label>Cek Harga</label>
+                    <label>${labelHarga}</label>
                 </div>
                 <div class="floating mt-4">
                     <input type="text" 
@@ -701,7 +748,7 @@ function openOperatorList(title, actionType){
                            data-operator="${itemName}" 
                            placeholder=" " 
                            value="${saved.namaProduk || ""}">
-                    <label>Nama Produk</label>
+                    <label>${labelNama}</label>
                 </div>
             </div>
         `;
@@ -717,6 +764,105 @@ function openOperatorList(title, actionType){
     disableButton("savePrabayarBtn");
     
     // PASANG EVENT LISTENER UNTUK INPUT
+    attachInputListeners();
+}
+
+// >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
+function openOperatorListPascabayar(title, actionType){
+    document.getElementById("prabayarModal").classList.remove("show");
+    
+    const modal = document.getElementById("operatorListModal");
+    const container = document.getElementById("operatorListContainer");
+    
+    document.getElementById("operatorListTitle").innerText = title;
+    currentMenuType = actionType;
+    
+    container.innerHTML = "";
+    
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
+    }
+    
+    originalPrabayarData = {};
+    if(!originalPrabayarData[currentMenuType]){
+        originalPrabayarData[currentMenuType] = {};
+    }
+    
+    // PILIH ARRAY YANG SESUAI
+    let listToShow = [];
+    let iconName = "file-text";
+    let labelInput1 = "Kode / Format";
+    let labelInput2 = "Nama Produk";
+
+    if(actionType === "plnPascabayar"){
+        listToShow = plnList;
+        iconName = "zap";
+    } else if(actionType === "pdam"){
+        listToShow = pdamList;
+        iconName = "droplet";
+    } else if(actionType === "bpjs"){
+        listToShow = bpjsList;
+        iconName = "heart";
+    } else if(actionType === "pbb"){
+        listToShow = pbbList;
+        iconName = "home";
+    } else if(actionType === "tvKabel"){
+        listToShow = tvKabelList;
+        iconName = "tv";
+    } else if(actionType === "internetTelpon"){
+        listToShow = internetList;
+        iconName = "wifi";
+    }
+    
+    allProducts = [...listToShow];
+    
+    listToShow.forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
+
+        originalPrabayarData[currentMenuType][itemName] = {
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || ""
+        };
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            <div class="operator-body">
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
+                    <label>${labelInput1}</label>
+                </div>
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
+                    <label>${labelInput2}</label>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(wrapper);
+    });
+
+    modal.classList.add("show");
+    document.getElementById("fixedButtonWrapper").style.display = "block";
+    setTimeout(() => { lucide.createIcons(); }, 50);
+    
+    disableButton("savePrabayarBtn");
     attachInputListeners();
 }
 
@@ -789,7 +935,7 @@ function savePrabayar(){
     // >>> UPDATE DATA ASLI SETELAH DISIMPAN <<<
     originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
     
-    toast("Data Prabayar Berhasil Disimpan");
+    toast("Data Berhasil Disimpan");
     disableButton("savePrabayarBtn"); // TOMBOL MATI
 }
 
@@ -1088,6 +1234,7 @@ function handleInputClick(e, index){
     }
 }
 
+
 function toggleDeleteButton(index){
     if(transaksiItems[index].type === "kategori") return; // KATEGORI TIDAK BISA DIHAPUS
     
@@ -1144,7 +1291,7 @@ function renderTransaksi(){
                     <span class="font-semibold text-gray-700">${safeName}</span>
                     
                     <!-- TOMBOL HAPUS -->
-                    <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : ''}">
+                    <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : 'hidden'}">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -1167,7 +1314,7 @@ function deleteTransaksi(index){
     const item = transaksiItems[index];
     
     if(item.checked){
-        showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, true);
+        showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, "Oke Mengerti");
         return;
     }
 
@@ -1177,7 +1324,7 @@ function deleteTransaksi(index){
         activeDeleteIndex = -1;
         checkTransaksiChange();
         renderTransaksi();
-    });
+    }, "Ya, Hapus");
 }
 
 function initSortable(){
@@ -1241,8 +1388,7 @@ function openPreview(){
     let html = "";
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
 
-    
-html += `
+    html += `
     <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="text-center">
             <h2 class="text-2xl font-bold">${escapeHtml(serverData.nama)}</h2>
