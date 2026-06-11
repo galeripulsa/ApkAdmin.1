@@ -305,7 +305,7 @@ body{
             <i data-lucide="shield" class="text-cyan-600"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold">Admin Galeri Pulsa</h1>
+            <h1 class="text-2xl font-bold">Admin Global Server</h1>
             <p class="text-sm opacity-90">agusbaba1987@gmail.com</p>
         </div>
     </div>
@@ -638,6 +638,12 @@ function openOperatorList(title, actionType){
         prabayarData[currentMenuType] = {};
     }
     
+    // >>> RESET DATA ASLI SETIAP KALI BUKA MENU <<<
+    originalPrabayarData = {};
+    if(!originalPrabayarData[currentMenuType]){
+        originalPrabayarData[currentMenuType] = {};
+    }
+    
     // PILIH ARRAY YANG SESUAI
     let listToShow = operators; // default
     let iconName = "signal"; // default icon
@@ -662,6 +668,12 @@ function openOperatorList(title, actionType){
     listToShow.forEach(itemName => {
         // Ambil data lama jika ada
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
+
+        // >>> SIMPAN DATA AWAL SEBAGAI PATOKAN <<<
+        originalPrabayarData[currentMenuType][itemName] = {
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || ""
+        };
 
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
@@ -701,19 +713,8 @@ function openOperatorList(title, actionType){
     document.getElementById("fixedButtonWrapper").style.display = "block"; // MUNCULKAN TOMBOL
     lucide.createIcons();
     
-    // >>> PERBAIKAN: AMBIL DATA ASLI DARI LOCALSTORAGE LANGSUNG <<<
-    setTimeout(() => {
-        const savedData = localStorage.getItem("prabayarData");
-        if(savedData){
-            // Kalau ada data tersimpan, jadikan patokan
-            originalPrabayarData = JSON.parse(savedData);
-        } else {
-            // Kalau belum ada, buat object kosong sebagai pembanding
-            originalPrabayarData = {};
-        }
-        // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
-        disableButton("savePrabayarBtn");
-    }, 100);
+    // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
+    disableButton("savePrabayarBtn");
     
     // Pasang event listener untuk input
     attachInputListeners();
@@ -751,13 +752,9 @@ function attachInputListeners(){
     });
 }
 
-// >>> PERBAIKAN LOGIKA DISINI <<<
+// >>> LOGIKA UTAMA: BANDINGKAN DENGAN DATA AWAL <<<
 function checkPrabayarChange(){
-    // Ambil data asli dari localStorage sebagai pembanding
-    const dataAsli = JSON.parse(localStorage.getItem("prabayarData") || "{}");
-    
-    // Bandingkan data saat ini dengan data asli
-    if(JSON.stringify(prabayarData) !== JSON.stringify(dataAsli)){
+    if(JSON.stringify(prabayarData[currentMenuType]) !== JSON.stringify(originalPrabayarData[currentMenuType])){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
@@ -767,6 +764,9 @@ function checkPrabayarChange(){
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+    
+    // >>> UPDATE DATA ASLI SETELAH DISIMPAN <<<
+    originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
     
     toast("Data Prabayar Berhasil Disimpan");
     disableButton("savePrabayarBtn"); // Tombol mati
@@ -1244,8 +1244,7 @@ function confirmSaveTransaksi(){
 }
 
 function openPreview(){
-    const modal = document.getElementById
-
+    const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
 
     let html = "";
