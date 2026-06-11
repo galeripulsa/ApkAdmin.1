@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -135,9 +135,9 @@ body{
     display: none;
 }
 
-/* ========================================== */
+/* ========================================= */
 /* STYLE MODAL PRABAYAR - FULL SCREEN SCROLL */
-/* ========================================== */
+/* ========================================= */
 .submenu-modal {
     position: fixed;
     top: 0;
@@ -162,7 +162,7 @@ body{
     border-radius: 0;
     padding: 20px;
     padding-bottom: 100px; /* Ruang aman */
-    transform: translateY(-100%);
+    transform: translateY(100%);
     transition: transform 0.3s ease-out;
 }
 
@@ -187,9 +187,9 @@ body{
     color: #0891b2;
 }
 
-/* ========================================== */
+/* ========================================= */
 /* STYLE ITEM OPERATOR DENGAN FORM DI BAWAH */
-/* ========================================== */
+/* ========================================= */
 .operator-wrapper {
     background: #f8fafc;
     border-radius: 12px;
@@ -235,9 +235,9 @@ body{
     transition: transform 0.2s;
 }
 
-/* ========================================== */
+/* ========================================= */
 /* STYLE HEADER STICKY (TIDAK IKUT SCROLL) */
-/* ========================================== */
+/* ========================================= */
 .sticky-header {
     position: sticky;
     top: 0;
@@ -249,9 +249,9 @@ body{
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* ========================================== */
+/* ========================================= */
 /* >>> PERBAIKAN MUTLAK: TOMBOL FIXED BENAR */
-/* ========================================== */
+/* ========================================= */
 .fixed-button-container {
     position: fixed !important;
     bottom: 0 !important;
@@ -264,9 +264,9 @@ body{
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important;
 }
 
-/* ========================================== */
+/* ========================================= */
 /* STYLE PENCARIAN DENGAN ICON DI DALAM */
-/* ========================================== */
+/* ========================================= */
 .search-wrapper {
     position: relative;
     margin-bottom: 20px;
@@ -283,7 +283,6 @@ body{
     left: 15px;
     color: #94a3b8;
     pointer-events: none;
-    z-index: 2;
 }
 
 .search-wrapper input {
@@ -418,9 +417,9 @@ body{
     </div>
 </div>
 
-<!-- ========================================== -->
+<!-- ========================================= -->
 <!-- MODAL SUB MENU PRABAYAR -->
-<!-- ========================================== -->
+<!-- ========================================= -->
 <div id="prabayarModal" class="submenu-modal">
     <div class="submenu-content">
         <!-- HEADER STICKY -->
@@ -439,9 +438,9 @@ body{
     </div>
 </div>
 
-<!-- ========================================== -->
+<!-- ========================================= -->
 <!-- MODAL DAFTAR OPERATOR DENGAN FORM -->
-<!-- ========================================== -->
+<!-- ========================================= -->
 <div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
         <!-- HEADER STICKY -->
@@ -468,9 +467,9 @@ body{
     </div>
 </div>
 
-<!-- ========================================== -->
+<!-- ========================================= -->
 <!-- TOMBOL SIMPAN DITAROH DI LUAR BIAR FIXED -->
-<!-- ========================================== -->
+<!-- ========================================= -->
 <div class="fixed-button-container" id="fixedButtonWrapper" style="display: none;">
     <div class="flex gap-3 max-w-screen-md mx-auto">
         <button id="savePrabayarBtn" onclick="confirmSavePrabayar()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
@@ -614,7 +613,7 @@ function openPrabayar(){
     });
 
     modal.classList.add("show");
-    lucide.createIcons();
+    setTimeout(() => { lucide.createIcons(); }, 50);
 }
 
 function closePrabayar(){
@@ -685,7 +684,7 @@ function openOperatorList(title, actionType){
                     <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
                     <span class="operator-name-text">${itemName}</span>
                 </div>
-                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
             </div>
             <div class="operator-body">
                 <div class="floating mt-4">
@@ -712,7 +711,7 @@ function openOperatorList(title, actionType){
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block"; // MUNCULKAN TOMBOL
-    lucide.createIcons();
+    setTimeout(() => { lucide.createIcons(); }, 50);
     
     // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
     disableButton("savePrabayarBtn");
@@ -795,7 +794,7 @@ function savePrabayar(){
 }
 
 function confirmSavePrabayar(){
-    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan data ini?", savePrabayar);
+    showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan data ini?", savePrabayar, "Ya, Simpan");
 }
 
 // >>> FUNGSI BUKA/TUTUP FORM <<<
@@ -807,10 +806,11 @@ function backToPrabayarFromList(){
     // CEK APAKAH ADA PERUBAHAN BELUM DISIMPAN
     if(!document.getElementById("savePrabayarBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            // >>> KELUAR TANPA MENYIMPAN <<<
             document.getElementById("operatorListModal").classList.remove("show");
             document.getElementById("fixedButtonWrapper").style.display = "none";
             document.getElementById("prabayarModal").classList.add("show");
-        });
+        }, "Ya, Keluar"); // Ubah tulisan tombol
         return;
     }
     
@@ -841,7 +841,7 @@ function disableButton(btnId){
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
 }
 
-function showConfirm(title, message, action, isError=false){
+function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
     document.getElementById("confirmTitle").innerText = title;
     document.getElementById("confirmMessage").innerText = message;
     confirmAction = action;
@@ -849,32 +849,21 @@ function showConfirm(title, message, action, isError=false){
     const btnContainer = document.getElementById("confirmButtons");
     btnContainer.innerHTML = "";
 
-    if(isError){
-        const okBtn = document.createElement("button");
-        okBtn.className = "w-full bg-red-600 text-white py-3 rounded-xl btn-click";
-        okBtn.innerText = "OK";
-        okBtn.onclick = function(){
-            closeConfirm();
-            hideAllDeleteButtons();
-        };
-        btnContainer.appendChild(okBtn);
-    } else {
-        const cancelBtn = document.createElement("button");
-        cancelBtn.className = "flex-1 bg-gray-200 py-3 rounded-xl btn-click";
-        cancelBtn.innerText = "Batal";
-        cancelBtn.onclick = closeConfirm;
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl btn-click";
+    cancelBtn.innerText = "Batal";
+    cancelBtn.onclick = closeConfirm;
 
-        const okBtn = document.createElement("button");
-        okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
-        okBtn.innerText = "Ya, Simpan";
-        okBtn.onclick = function(){
-            if(typeof confirmAction === "function") confirmAction();
-            closeConfirm();
-        };
+    const okBtn = document.createElement("button");
+    okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
+    okBtn.innerText = buttonText; // Pakai variabel yang dikirim
+    okBtn.onclick = function(){
+        if(typeof confirmAction === "function") confirmAction();
+        closeConfirm();
+    };
 
-        btnContainer.appendChild(cancelBtn);
-        btnContainer.appendChild(okBtn);
-    }
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(okBtn);
 
     document.getElementById("confirmModal").classList.remove("hidden");
 }
@@ -916,7 +905,7 @@ function confirmSaveServer(){
 }
 function checkCloseServer(){
     if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeServer);
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer, "Ya, Keluar");
         return;
     }
     closeServer();
@@ -977,7 +966,7 @@ function confirmSaveCenter(){
 }
 function checkCloseCenter(){
     if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeCenter);
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter, "Ya, Keluar");
         return;
     }
     closeCenter();
@@ -1041,9 +1030,9 @@ function openTransaksi(){
 }
 function closeTransaksi(){
     if(!document.getElementById("saveTransaksiBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar tanpa simpan?", ()=>{
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar tanpa simpan?", ()=>{
             document.getElementById("transaksiModal").classList.remove("show");
-        });
+        }, "Ya, Keluar");
         return;
     }
     document.getElementById("transaksiModal").classList.remove("show");
@@ -1249,11 +1238,11 @@ function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
 
-
     let html = "";
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
 
-    html += `
+    
+html += `
     <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="text-center">
             <h2 class="text-2xl font-bold">${escapeHtml(serverData.nama)}</h2>
