@@ -754,12 +754,19 @@ function attachInputListeners(){
 
 // >>> LOGIKA UTAMA: BANDINGKAN DENGAN DATA AWAL <<<
 function checkPrabayarChange(){
-    if(JSON.stringify(prabayarData[currentMenuType]) !== JSON.stringify(originalPrabayarData[currentMenuType])){
+    // Ambil data saat ini
+    const current = prabayarData[currentMenuType] || {};
+    // Ambil data patokan awal
+    const initial = originalPrabayarData[currentMenuType] || {};
+
+    // Bandingkan isi nya
+    if(JSON.stringify(current) !== JSON.stringify(initial)){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
     }
 }
+
 
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
