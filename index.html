@@ -293,6 +293,15 @@ body{
     font-size: 16px;
     background: transparent;
 }
+
+/* ========================================= */
+/* STYLE KHUSUS 2 KOLOM BERDAMPINGAN (PDAM) */
+/* ========================================= */
+.double-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
 </style>
 </head>
 
@@ -431,7 +440,7 @@ body{
                 </button>
             </div>
         </div>
-        
+
         <div id="prabayarList">
             <!-- List akan diisi lewat JS -->
         </div>
@@ -453,13 +462,13 @@ body{
                 <div></div>
             </div>
         </div>
-        
+
         <!-- KOLOM PENCARIAN DENGAN ICON DI DALAM -->
         <div class="search-wrapper">
             <i data-lucide="search" class="w-5 h-5"></i>
             <input type="text" id="searchProduct" placeholder="Cari nama produk..." oninput="searchProducts()">
         </div>
-        
+
         <div id="operatorListContainer">
             <!-- Daftar Operator + Form akan muncul di sini -->
         </div>
@@ -570,7 +579,7 @@ const bankList = [
 
 // >>> DAFTAR PRODUK PASCA BAYAR <<<
 const plnList = ["PLN Pascabayar"];
-const pdamList = ["PDAM Kota", "PDAM Kabupaten"];
+const pdamList = ["PDAM"]; // DIGABUNG JADI 1
 const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
 const pbbList = ["PBB P1", "PBB P2"];
 const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
@@ -609,7 +618,7 @@ function openPrabayar(){
     document.getElementById("subMenuTitle").innerText = "Menu Prabayar";
     const modal = document.getElementById("prabayarModal");
     const listContainer = document.getElementById("prabayarList");
-    
+
     listContainer.innerHTML = "";
     subMenuPrabayar.forEach(item => {
         const div = document.createElement("div");
@@ -618,13 +627,13 @@ function openPrabayar(){
             <i data-lucide="${item.icon}" class="w-7 h-7"></i>
             <span class="font-medium text-lg">${item.nama}</span>
         `;
-        
+
         if(item.action){
             div.onclick = function(){
                 openOperatorList(item.nama, item.action);
             };
         }
-        
+
         listContainer.appendChild(div);
     });
 
@@ -638,7 +647,7 @@ function openPascabayar(){
     document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
     const modal = document.getElementById("prabayarModal");
     const listContainer = document.getElementById("prabayarList");
-    
+
     listContainer.innerHTML = "";
     subMenuPascabayar.forEach(item => {
         const div = document.createElement("div");
@@ -647,13 +656,13 @@ function openPascabayar(){
             <i data-lucide="${item.icon}" class="w-7 h-7"></i>
             <span class="font-medium text-lg">${item.nama}</span>
         `;
-        
+
         if(item.action){
             div.onclick = function(){
                 openOperatorListPascabayar(item.nama, item.action);
             };
         }
-        
+
         listContainer.appendChild(div);
     });
 
@@ -669,26 +678,26 @@ function closePrabayar(){
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
-    
+
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
-    
+
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType; // Simpan tipe menu saat ini
-    
+
     container.innerHTML = "";
-    
+
     // Inisialisasi data jika belum ada
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
-    
+
     // >>> RESET DATA ASLI SETIAP KALI BUKA MENU <<<
     originalPrabayarData = {};
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
-    
+
     // PILIH ARRAY YANG SESUAI
     let listToShow = operators; // default
     let iconName = "signal"; // default icon
@@ -708,10 +717,10 @@ function openOperatorList(title, actionType){
         listToShow = bankList;
         iconName = "building";
     }
-    
+
     // Simpan semua produk untuk fitur cari
     allProducts = [...listToShow];
-    
+
     listToShow.forEach(itemName => {
         // Ambil data lama jika ada
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
@@ -752,17 +761,17 @@ function openOperatorList(title, actionType){
                 </div>
             </div>
         `;
-        
+
         container.appendChild(wrapper);
     });
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block"; // MUNCULKAN TOMBOL
     setTimeout(() => { lucide.createIcons(); }, 50);
-    
+
     // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
     disableButton("savePrabayarBtn");
-    
+
     // PASANG EVENT LISTENER UNTUK INPUT
     attachInputListeners();
 }
@@ -770,24 +779,24 @@ function openOperatorList(title, actionType){
 // >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
 function openOperatorListPascabayar(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
-    
+
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
-    
+
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
-    
+
     container.innerHTML = "";
-    
+
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
-    
+
     originalPrabayarData = {};
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
-    
+
     // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
@@ -800,6 +809,8 @@ function openOperatorListPascabayar(title, actionType){
     } else if(actionType === "pdam"){
         listToShow = pdamList;
         iconName = "droplet";
+        labelInput1 = "Kode Cek";
+        labelInput2 = "Kode Bayar";
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
@@ -813,20 +824,84 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = internetList;
         iconName = "wifi";
     }
-    
+
     allProducts = [...listToShow];
-    
+
     listToShow.forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: "", wilayah: ""};
 
         originalPrabayarData[currentMenuType][itemName] = {
             cekHarga: saved.cekHarga || "",
-            namaProduk: saved.namaProduk || ""
+            namaProduk: saved.namaProduk || "",
+            wilayah: saved.wilayah || ""
         };
 
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
         wrapper.dataset.productname = itemName.toLowerCase();
+        
+        let formContent = '';
+
+        if(actionType === "pdam"){
+            // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
+            formContent = `
+                <div class="operator-body">
+                    <div class="floating mt-4">
+                        <input type="text" 
+                               class="input-wilayah" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.wilayah || ""}">
+                        <label>Wilayah</label>
+                    </div>
+                    <div class="double-input">
+                        <div class="floating mt-4">
+                            <input type="text" 
+                                   class="input-cek-harga" 
+                                   data-operator="${itemName}" 
+                                   placeholder=" " 
+                                   value="${saved.cekHarga || ""}">
+                            <label>${labelInput1}</label>
+                        </div>
+                        <div class="floating mt-4">
+                            <input type="text" 
+                                   class="input-nama-produk" 
+                                   data-operator="${itemName}" 
+                                   placeholder=" " 
+                                   value="${saved.namaProduk || ""}">
+                            <label>${labelInput2}</label>
+                        </div>
+                    </div>
+                    <button onclick="addNewProduct('${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Tambah Produk
+                    </button>
+                </div>
+            `;
+        } else {
+            // >>> FORMAT STANDAR <<<
+            formContent = `
+                <div class="operator-body">
+                    <div class="floating mt-4">
+                        <input type="text" 
+                               class="input-cek-harga" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.cekHarga || ""}">
+                        <label>${labelInput1}</label>
+                    </div>
+                    <div class="floating mt-4">
+                        <input type="text" 
+                               class="input-nama-produk" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.namaProduk || ""}">
+                        <label>${labelInput2}</label>
+                    </div>
+                </div>
+            `;
+        }
+
         wrapper.innerHTML = `
             <div class="operator-header" onclick="toggleOperator(this.parentElement)">
                 <div class="operator-left">
@@ -835,42 +910,83 @@ function openOperatorListPascabayar(title, actionType){
                 </div>
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
             </div>
-            <div class="operator-body">
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-cek-harga" 
-                           data-operator="${itemName}" 
-                           placeholder=" " 
-                           value="${saved.cekHarga || ""}">
-                    <label>${labelInput1}</label>
-                </div>
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-nama-produk" 
-                           data-operator="${itemName}" 
-                           placeholder=" " 
-                           value="${saved.namaProduk || ""}">
-                    <label>${labelInput2}</label>
-                </div>
-            </div>
+            ${formContent}
         `;
-        
+
         container.appendChild(wrapper);
     });
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block";
     setTimeout(() => { lucide.createIcons(); }, 50);
-    
+
     disableButton("savePrabayarBtn");
     attachInputListeners();
+}
+
+// >>> FUNGSI TAMBAH PRODUK BARU <<<
+function addNewProduct(productName) {
+    const container = document.getElementById("operatorListContainer");
+    const newItemName = productName + " " + (allProducts.length + 1);
+    
+    allProducts.push(newItemName);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "operator-wrapper open";
+    wrapper.dataset.productname = newItemName.toLowerCase();
+    
+    wrapper.innerHTML = `
+        <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+            <div class="operator-left">
+                <i data-lucide="droplet" class="w-6 h-6 text-cyan-600"></i>
+                <span class="operator-name-text">${newItemName}</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+        </div>
+        <div class="operator-body">
+            <div class="floating mt-4">
+                <input type="text" 
+                       class="input-wilayah" 
+                       data-operator="${newItemName}" 
+                       placeholder=" ">
+                <label>Wilayah</label>
+            </div>
+            <div class="double-input">
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${newItemName}" 
+                           placeholder=" ">
+                    <label>Kode Cek</label>
+                </div>
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${newItemName}" 
+                           placeholder=" ">
+                    <label>Kode Bayar</label>
+                </div>
+            </div>
+            <button onclick="addNewProduct('${productName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                Tambah Produk
+            </button>
+        </div>
+    `;
+
+    container.appendChild(wrapper);
+    lucide.createIcons();
+    attachInputListeners();
+    
+    // Scroll ke bawah
+    wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // >>> FUNGSI CARI PRODUK <<<
 function searchProducts() {
     const searchTerm = document.getElementById("searchProduct").value.toLowerCase();
     const products = document.querySelectorAll(".operator-wrapper");
-    
+
     products.forEach(product => {
         const productName = product.dataset.productname;
         if(productName.includes(searchTerm)) {
@@ -882,17 +998,19 @@ function searchProducts() {
 }
 
 function attachInputListeners(){
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
     inputs.forEach(input => {
         input.addEventListener("input", function(){
             const op = this.dataset.operator;
-            const type = this.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
-            
+            let type = "cekHarga";
+            if(this.classList.contains("input-nama-produk")) type = "namaProduk";
+            if(this.classList.contains("input-wilayah")) type = "wilayah";
+
             if(!prabayarData[currentMenuType][op]){
                 prabayarData[currentMenuType][op] = {};
             }
             prabayarData[currentMenuType][op][type] = this.value;
-            
+
             checkPrabayarChange(); // CEK SETIAP KETIKAN
         });
     });
@@ -903,12 +1021,14 @@ function checkPrabayarChange(){
     let adaPerubahan = false;
 
     // CEK SEMUA INPUT DI HALAMAN INI
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
-    
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+
     inputs.forEach(input => {
         const op = input.dataset.operator;
-        const type = input.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
-        
+        let type = "cekHarga";
+        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
+        if(input.classList.contains("input-wilayah")) type = "wilayah";
+
         // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
         const nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
         // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
@@ -931,10 +1051,10 @@ function checkPrabayarChange(){
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
-    
+
     // >>> UPDATE DATA ASLI SETELAH DISIMPAN <<<
     originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
-    
+
     toast("Data Berhasil Disimpan");
     disableButton("savePrabayarBtn"); // TOMBOL MATI
 }
@@ -959,7 +1079,7 @@ function backToPrabayarFromList(){
         }, "Ya, Keluar"); // Ubah tulisan tombol
         return;
     }
-    
+
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("prabayarModal").classList.add("show");
@@ -1085,6 +1205,7 @@ function getCenterData(){
         }
     };
 }
+
 function checkCenterChange(){
     const original = JSON.parse(localStorage.getItem("centerServer")) || {};
     const current = getCenterData();
@@ -1226,24 +1347,20 @@ function updateTransaksi(index, value){
 }
 
 function handleInputClick(e, index){
-    // CEGAH KLIK KE TOMBOL HAPUS
     if(e.target.closest('.btn-delete')) return;
-    
+
     if(activeDeleteIndex !== -1 && activeDeleteIndex !== index){
         hideAllDeleteButtons();
     }
 }
 
-
 function toggleDeleteButton(index){
-    if(transaksiItems[index].type === "kategori") return; // KATEGORI TIDAK BISA DIHAPUS
-    
+    if(transaksiItems[index].type === "kategori") return;
+
     if(activeDeleteIndex === index){
-        // KLIK LAGI UNTUK SEMBUNYIKAN
         transaksiItems[index].showDelete = false;
         activeDeleteIndex = -1;
     } else {
-        // SEMBUNYIKAN YANG LAIN
         hideAllDeleteButtons();
         transaksiItems[index].showDelete = true;
         activeDeleteIndex = index;
@@ -1290,7 +1407,6 @@ function renderTransaksi(){
                     </div>
                     <span class="font-semibold text-gray-700">${safeName}</span>
                     
-                    <!-- TOMBOL HAPUS -->
                     <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : 'hidden'}">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
@@ -1312,7 +1428,7 @@ function toggleTransaksi(index){
 
 function deleteTransaksi(index){
     const item = transaksiItems[index];
-    
+
     if(item.checked){
         showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, "Oke Mengerti");
         return;
