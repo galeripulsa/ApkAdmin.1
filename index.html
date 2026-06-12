@@ -1,5 +1,3 @@
-saya maunya jika tambah produk di klik maka kolom wilayah, cek dan bayar bertambah tapi masih dalam 1 Class dan tombol tambah produknya terdorong kebawah dan ini code saya input langsung
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -303,6 +301,17 @@ body{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+}
+
+/* ========================================= */
+/* STYLE UNTUK ITEM YANG DITAMBAH DINAMIS */
+/* ========================================= */
+.product-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    background: white;
 }
 </style>
 </head>
@@ -848,33 +857,26 @@ function openOperatorListPascabayar(title, actionType){
             // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
             formContent = `
                 <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-wilayah" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.wilayah || ""}">
-                        <label>Wilayah</label>
-                    </div>
-                    <div class="double-input">
-                        <div class="floating mt-4">
-                            <input type="text" 
-                                   class="input-cek-harga" 
-                                   data-operator="${itemName}" 
-                                   placeholder=" " 
-                                   value="${saved.cekHarga || ""}">
-                            <label>${labelInput1}</label>
-                        </div>
-                        <div class="floating mt-4">
-                            <input type="text" 
-                                   class="input-nama-produk" 
-                                   data-operator="${itemName}" 
-                                   placeholder=" " 
-                                   value="${saved.namaProduk || ""}">
-                            <label>${labelInput2}</label>
+                    <div class="products-container">
+                        <!-- Item pertama akan ada di sini secara default -->
+                        <div class="product-item">
+                            <div class="floating mt-4">
+                                <input type="text" class="input-wilayah" data-operator="${itemName}" placeholder=" " value="${saved.wilayah || ""}">
+                                <label>Wilayah</label>
+                            </div>
+                            <div class="double-input">
+                                <div class="floating mt-4">
+                                    <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
+                                    <label>${labelInput1}</label>
+                                </div>
+                                <div class="floating mt-4">
+                                    <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
+                                    <label>${labelInput2}</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="addNewProduct('${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                    <button onclick="addNewProductInside(this, '${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i>
                         Tambah Produk
                     </button>
@@ -926,62 +928,40 @@ function openOperatorListPascabayar(title, actionType){
     attachInputListeners();
 }
 
-// >>> FUNGSI TAMBAH PRODUK BARU <<<
-function addNewProduct(productName) {
-    const container = document.getElementById("operatorListContainer");
-    const newItemName = productName + " " + (allProducts.length + 1);
+// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
+function addNewProductInside(buttonElement, productName) {
+    // Cari container tempat menaruh inputan baru
+    const bodyDiv = buttonElement.parentElement;
+    const container = bodyDiv.querySelector('.products-container');
 
-    allProducts.push(newItemName);
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "operator-wrapper open";
-    wrapper.dataset.productname = newItemName.toLowerCase();
-
-    wrapper.innerHTML = `
-        <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-            <div class="operator-left">
-                <i data-lucide="droplet" class="w-6 h-6 text-cyan-600"></i>
-                <span class="operator-name-text">${newItemName}</span>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+    // Buat elemen baru
+    const newItem = document.createElement("div");
+    newItem.className = "product-item";
+    newItem.innerHTML = `
+        <div class="floating mt-4">
+            <input type="text" class="input-wilayah" data-operator="${productName}" placeholder=" ">
+            <label>Wilayah</label>
         </div>
-        <div class="operator-body">
+        <div class="double-input">
             <div class="floating mt-4">
-                <input type="text" 
-                       class="input-wilayah" 
-                       data-operator="${newItemName}" 
-                       placeholder=" ">
-                <label>Wilayah</label>
+                <input type="text" class="input-cek-harga" data-operator="${productName}" placeholder=" ">
+                <label>Kode Cek</label>
             </div>
-            <div class="double-input">
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-cek-harga" 
-                           data-operator="${newItemName}" 
-                           placeholder=" ">
-                    <label>Kode Cek</label>
-                </div>
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-nama-produk" 
-                           data-operator="${newItemName}" 
-                           placeholder=" ">
-                    <label>Kode Bayar</label>
-                </div>
+            <div class="floating mt-4">
+                <input type="text" class="input-nama-produk" data-operator="${productName}" placeholder=" ">
+                <label>Kode Bayar</label>
             </div>
-            <button onclick="addNewProduct('${productName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Tambah Produk
-            </button>
         </div>
     `;
 
-    container.appendChild(wrapper);
-    lucide.createIcons();
+    // Masukkan ke dalam container
+    container.appendChild(newItem);
+
+    // Pasang event listener agar tombol simpan bisa nyala
     attachInputListeners();
 
     // Scroll ke bawah
-    wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // >>> FUNGSI CARI PRODUK <<<
@@ -1230,6 +1210,7 @@ function saveCenter(){
     toast("Data Center Disimpan");
     checkCenterChange();
 }
+
 function confirmSaveCenter(){
     showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter);
 }
@@ -1259,20 +1240,16 @@ function loadCenter(){
 }
 
 function watchServerChanges(){
-    [namaKonter, alamatKonter].forEach(field=>{
-        field.addEventListener("input", ()=>{
+    [namaKonter, alamatKonter].forEach(field => {
+        field.addEventListener("input", () => {
             checkServerChange();
             autoGrow(field);
         });
     });
 }
 function watchCenterChanges(){
-    [
-        ipNama, ipServer, ipHost,
-        jabberNama, jabberServer, jabberHost,
-        waCenter, smsCenter
-    ].forEach(field=>{
-        field.addEventListener("input", checkCenterChange);
+    [ipNama, ipServer, ipHost, jabberNama, jabberServer, jabberHost, waCenter, smsCenter].forEach(field => {
+        if(field) field.addEventListener("input", checkCenterChange);
     });
 }
 
@@ -1284,263 +1261,121 @@ function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
 }
 function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
+    const original = JSON.parse(localStorage.getItem("transaksiItems")) || [];
+    const current = getCurrentTransaksi();
+    if(JSON.stringify(current) !== JSON.stringify(original)){
         enableButton("saveTransaksiBtn");
     } else {
         disableButton("saveTransaksiBtn");
     }
-    updateTransaksiInfo();
 }
-
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
+    renderTransaksiList();
     checkTransaksiChange();
 }
 function closeTransaksi(){
-    if(!document.getElementById("saveTransaksiBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar tanpa simpan?", ()=>{
-            document.getElementById("transaksiModal").classList.remove("show");
-        }, "Ya, Keluar");
-        return;
-    }
     document.getElementById("transaksiModal").classList.remove("show");
 }
-function updateTransaksiInfo(){
-    const totalMenu = transaksiItems.filter(item => item.type === "menu").length;
-    const totalKategori = transaksiItems.filter(item => item.type === "kategori").length;
-    document.getElementById("transaksiInfo").innerText = `${totalMenu} Menu • ${totalKategori} Kategori`;
-}
-
-function addMenu(){
-    document.getElementById('btnMenu').classList.add('blink');
-    setTimeout(() => { document.getElementById('btnMenu').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, showDelete: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    focusFirstInput();
-}
-
-function addKategori(){
-    document.getElementById('btnKategori').classList.add('blink');
-    setTimeout(() => { document.getElementById('btnKategori').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "kategori", nama: "Kategori Baru", checked: false, showDelete: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    focusFirstInput();
-}
-
-function focusFirstInput(){
-    setTimeout(()=>{
-        const inputs = document.querySelectorAll("#transaksiList input[type='text']");
-        if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
-    },100);
-}
-
-function updateTransaksi(index, value){
-    transaksiItems[index].nama = value;
+function saveTransaksi(){
+    localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
+    toast("Menu Transaksi Disimpan");
     checkTransaksiChange();
 }
-
-function handleInputClick(e, index){
-    if(e.target.closest('.btn-delete')) return;
-
-    if(activeDeleteIndex !== -1 && activeDeleteIndex !== index){
-        hideAllDeleteButtons();
-    }
+function confirmSaveTransaksi(){
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi);
 }
-
-function toggleDeleteButton(index){
-    if(transaksiItems[index].type === "kategori") return;
-
-    if(activeDeleteIndex === index){
-        transaksiItems[index].showDelete = false;
-        activeDeleteIndex = -1;
+function loadTransaksi(){
+    const data = JSON.parse(localStorage.getItem("transaksiItems"));
+    if(data && data.length > 0){
+        transaksiItems = data;
     } else {
-        hideAllDeleteButtons();
-        transaksiItems[index].showDelete = true;
-        activeDeleteIndex = index;
+        transaksiItems = [
+            {type:"kategori", nama:"PRODUK DIGITAL", open:true},
+            {type:"menu", nama:"Pulsa Reguler", icon:"phone"},
+            {type:"menu", nama:"Paket Internet", icon:"wifi"}
+        ];
     }
-    renderTransaksi();
 }
-
-function hideAllDeleteButtons(){
-    transaksiItems.forEach(item => {
-        item.showDelete = false;
-    });
-    activeDeleteIndex = -1;
-    renderTransaksi();
-}
-
-function renderTransaksi(){
+function renderTransaksiList(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
-
-    transaksiItems.forEach((item, index)=>{
+    transaksiItems.forEach((item, index) => {
         const div = document.createElement("div");
-        const safeName = escapeHtml(item.nama);
-
+        div.className = "bg-white rounded-xl p-3 shadow flex items-center gap-3";
         if(item.type === "kategori"){
             div.innerHTML = `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
-                <div class="flex items-center gap-3 h-10">
-                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
-                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
-                    </div>
-                    <i data-lucide="folder-open"></i>
-                    <input type="text" value="${safeName}" class="flex-1 bg-transparent outline-none font-bold text-lg" onclick="handleInputClick(event, ${index})" oninput="updateTransaksi(${index}, this.value)">
-                </div>
-            </div>`;
+                <div class="drag-handle text-slate-400"><i data-lucide="menu" class="w-5 h-5"></i></div>
+                <div class="flex-1 font-bold text-cyan-600">${item.nama}</div>
+                <button onclick="editItemName(${index})" class="text-blue-500"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
+            `;
         } else {
             div.innerHTML = `
-            <div class="bg-white rounded-2xl p-3 shadow-lg border border-slate-200 relative">
-                <div class="flex items-center gap-3 h-10">
-                    <div onclick="event.stopPropagation(); toggleTransaksi(${index})">
-                        <input type="checkbox" ${item.checked ? "checked" : ""} class="w-5 h-5">
-                    </div>
-                    <div onclick="event.stopPropagation(); toggleDeleteButton(${index})" class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden cursor-pointer">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
-                    </div>
-                    <span class="font-semibold text-gray-700">${safeName}</span>
-                    
-                    <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : 'hidden'}">
-                        <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    </button>
+                <div class="drag-handle text-slate-400"><i data-lucide="menu" class="w-5 h-5"></i></div>
+                <div class="w-8 h-8 bg-cyan-50 rounded-lg flex items-center justify-center text-cyan-600">
+                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
                 </div>
-            </div>`;
+                <div class="flex-1">${item.nama}</div>
+                <button onclick="editItemName(${index})" class="text-blue-500"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
+            `;
         }
-
         list.appendChild(div);
     });
     lucide.createIcons();
+    initSortable();
 }
-
-function toggleTransaksi(index){
-    hideAllDeleteButtons();
-    transaksiItems[index].checked = !transaksiItems[index].checked;
-    checkTransaksiChange();
-    renderTransaksi();
-}
-
-function deleteTransaksi(index){
+function editItemName(index){
     const item = transaksiItems[index];
-
-    if(item.checked){
-        showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, "Oke Mengerti");
-        return;
-    }
-
-    const namaItem = item.nama;
-    showConfirm("Konfirmasi Hapus", `Hapus "${namaItem}"?`, ()=>{
-        transaksiItems.splice(index,1);
-        activeDeleteIndex = -1;
+    const newName = prompt("Ubah nama menjadi:", item.nama);
+    if(newName && newName.trim() !== ""){
+        item.nama = newName.trim();
+        renderTransaksiList();
         checkTransaksiChange();
-        renderTransaksi();
-    }, "Ya, Hapus");
+    }
 }
-
 function initSortable(){
     const list = document.getElementById("transaksiList");
-    if(!list) return;
     if(sortableInstance) sortableInstance.destroy();
     sortableInstance = new Sortable(list, {
-        animation:150,
-        handle:".drag-handle",
-        onStart: function() {
-            hideAllDeleteButtons();
-        },
-        onEnd:function(evt){
-            const movedItem = transaksiItems.splice(evt.oldIndex,1)[0];
-            transaksiItems.splice(evt.newIndex,0,movedItem);
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: function(evt){
+            const item = transaksiItems.splice(evt.oldIndex, 1)[0];
+            transaksiItems.splice(evt.newIndex, 0, item);
             checkTransaksiChange();
         }
     });
 }
 
-function saveTransaksi(){
-    localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    toast("Menu Transaksi Disimpan");
-    checkTransaksiChange();
-}
-function loadTransaksi(){
-    const data = JSON.parse(localStorage.getItem("transaksiItems"));
-    if(data){
-        transaksiItems = data;
-    } else {
-        transaksiItems = [
-            {type:"kategori", nama:"PRODUK DIGITAL", checked:false, showDelete:false},
-            {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, showDelete:false},
-            {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, showDelete:false}
-        ];
-    }
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    renderTransaksi();
-    updateTransaksiInfo();
-}
-
-function changeIcon(index){
-    const icons = ["smartphone", "wifi", "droplet", "zap", "gamepad-2", "tv", "wallet", "credit-card", "dollar-sign", "gift"];
-    const current = transaksiItems[index].icon;
-    let idx = icons.indexOf(current);
-    idx = (idx + 1) % icons.length;
-    transaksiItems[index].icon = icons[idx];
-    checkTransaksiChange();
-    renderTransaksi();
-}
-
-function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi);
-}
-
 function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
-
     let html = "";
-    const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
 
-    html += `
-    <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
-        <div class="text-center">
-            <h2 class="text-2xl font-bold">${escapeHtml(serverData.nama)}</h2>
-            <p class="text-sm opacity-90 mt-1">${escapeHtml(serverData.alamat)}</p>
-        </div>
-    </div>
-    `;
-
-    transaksiItems.forEach(item=>{
+    // Tampilkan data transaksi
+    let kategori = "";
+    transaksiItems.forEach(item => {
         if(item.type === "kategori"){
-            html += `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg mb-4">
-                <h3 class="font-bold text-lg">${escapeHtml(item.nama)}</h3>
-            </div>
-            `;
+            kategori = item.nama;
+            html += `<div class="text-lg font-bold text-slate-800 mt-6 mb-2">${kategori}</div>`;
         } else {
-            if(item.checked){
-                html += `
-                <div class="bg-white rounded-2xl p-3 shadow-lg mb-3 flex items-center gap-4 border border-slate-200">
-                    <div class="w-12 h-12 rounded-xl border border-slate-300 bg-transparent flex items-center justify-center overflow-hidden">
-                        ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
+            html += `
+                <div class="bg-white rounded-xl p-4 shadow mb-2 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center text-cyan-600">
+                        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-semibold text-gray-700">${escapeHtml(item.nama)}</span>
+                    <div class="flex-1 font-medium">${item.nama}</div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
                 </div>
-                `;
-            }
+            `;
         }
     });
 
     content.innerHTML = html;
     modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
+    setTimeout(() => lucide.createIcons(), 50);
 }
-
 function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
@@ -1550,7 +1385,6 @@ window.onload = function(){
     renderMenus();
     watchServerChanges();
     watchCenterChanges();
-    loadTransaksi();
 };
 </script>
 </body>
