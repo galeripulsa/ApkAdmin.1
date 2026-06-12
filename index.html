@@ -302,6 +302,17 @@ body{
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
+
+/* ========================================= */
+/* STYLE UNTUK ITEM PRODUK YANG BERTAMBAH */
+/* ========================================= */
+.product-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: white;
+}
 </style>
 </head>
 
@@ -513,6 +524,7 @@ let prabayarData = {};
 let originalPrabayarData = {};
 let currentMenuType = "";
 let allProducts = []; // Simpan semua produk untuk fitur cari
+let productCounter = 1; // Penghitung untuk produk baru
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -579,7 +591,7 @@ const bankList = [
 
 // >>> DAFTAR PRODUK PASCA BAYAR <<<
 const plnList = ["PLN Pascabayar"];
-const pdamList = ["PDAM"]; // DIGABUNG JADI 1
+const pdamList = ["PDAM"];
 const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
 const pbbList = ["PBB P1", "PBB P2"];
 const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
@@ -720,6 +732,7 @@ function openOperatorList(title, actionType){
 
     // Simpan semua produk untuk fitur cari
     allProducts = [...listToShow];
+    productCounter = listToShow.length + 1; // Inisialisasi counter
 
     listToShow.forEach(itemName => {
         // Ambil data lama jika ada
@@ -826,6 +839,7 @@ function openOperatorListPascabayar(title, actionType){
     }
 
     allProducts = [...listToShow];
+    productCounter = listToShow.length + 1;
 
     listToShow.forEach(itemName => {
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: "", wilayah: ""};
@@ -837,42 +851,47 @@ function openOperatorListPascabayar(title, actionType){
         };
 
         const wrapper = document.createElement("div");
-        wrapper.className = "operator-wrapper";
+        wrapper.className = "operator-wrapper open"; // Langsung terbuka
         wrapper.dataset.productname = itemName.toLowerCase();
-        
+
         let formContent = '';
 
         if(actionType === "pdam"){
-            // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
+            // >>> FORMAT KHUSUS PDAM DENGAN KONTAINER DINAMIS <<<
             formContent = `
                 <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-wilayah" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.wilayah || ""}">
-                        <label>Wilayah</label>
-                    </div>
-                    <div class="double-input">
-                        <div class="floating mt-4">
-                            <input type="text" 
-                                   class="input-cek-harga" 
-                                   data-operator="${itemName}" 
-                                   placeholder=" " 
-                                   value="${saved.cekHarga || ""}">
-                            <label>${labelInput1}</label>
+                    <div id="pdamProductContainer">
+                        <!-- Item pertama -->
+                        <div class="product-item">
+                            <div class="floating mt-0">
+                                <input type="text" 
+                                       class="input-wilayah" 
+                                       data-operator="${itemName}" 
+                                       placeholder=" " 
+                                       value="${saved.wilayah || ""}">
+                                <label>Wilayah</label>
+                            </div>
+                            <div class="double-input">
+                                <div class="floating mt-4">
+                                    <input type="text" 
+                                           class="input-cek-harga" 
+                                           data-operator="${itemName}" 
+                                           placeholder=" " 
+                                           value="${saved.cekHarga || ""}">
+                                    <label>${labelInput1}</label>
+                                </div>
+                                <div class="floating mt-4">
+                                    <input type="text" 
+                                           class="input-nama-produk" 
+                                           data-operator="${itemName}" 
+                                           placeholder=" " 
+                                           value="${saved.namaProduk || ""}">
+                                    <label>${labelInput2}</label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="floating mt-4">
-                            <input type="text" 
-                                   class="input-nama-produk" 
-                                   data-operator="${itemName}" 
-                                   placeholder=" " 
-                                   value="${saved.namaProduk || ""}">
-                            <label>${labelInput2}</label>
-                        </div>
                     </div>
-                    <button onclick="addNewProduct('${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                    <button onclick="addPDAMItem('${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i>
                         Tambah Produk
                     </button>
@@ -924,62 +943,45 @@ function openOperatorListPascabayar(title, actionType){
     attachInputListeners();
 }
 
-// >>> FUNGSI TAMBAH PRODUK BARU <<<
-function addNewProduct(productName) {
-    const container = document.getElementById("operatorListContainer");
-    const newItemName = productName + " " + (allProducts.length + 1);
-    
-    allProducts.push(newItemName);
+// >>> FUNGSI BARU: TAMBAH ITEM DI DALAM PDAM <<<
+function addPDAMItem(productName) {
+    const container = document.getElementById("pdamProductContainer");
+    const newItemNumber = productCounter++;
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "operator-wrapper open";
-    wrapper.dataset.productname = newItemName.toLowerCase();
-    
-    wrapper.innerHTML = `
-        <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-            <div class="operator-left">
-                <i data-lucide="droplet" class="w-6 h-6 text-cyan-600"></i>
-                <span class="operator-name-text">${newItemName}</span>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+    const newItem = document.createElement("div");
+    newItem.className = "product-item";
+    newItem.innerHTML = `
+        <div class="floating mt-0">
+            <input type="text" 
+                   class="input-wilayah" 
+                   data-operator="${productName}" 
+                   placeholder=" ">
+            <label>Wilayah ${newItemNumber}</label>
         </div>
-        <div class="operator-body">
+        <div class="double-input">
             <div class="floating mt-4">
                 <input type="text" 
-                       class="input-wilayah" 
-                       data-operator="${newItemName}" 
+                       class="input-cek-harga" 
+                       data-operator="${productName}" 
                        placeholder=" ">
-                <label>Wilayah</label>
+                <label>Kode Cek ${newItemNumber}</label>
             </div>
-            <div class="double-input">
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-cek-harga" 
-                           data-operator="${newItemName}" 
-                           placeholder=" ">
-                    <label>Kode Cek</label>
-                </div>
-                <div class="floating mt-4">
-                    <input type="text" 
-                           class="input-nama-produk" 
-                           data-operator="${newItemName}" 
-                           placeholder=" ">
-                    <label>Kode Bayar</label>
-                </div>
+            <div class="floating mt-4">
+                <input type="text" 
+                       class="input-nama-produk" 
+                       data-operator="${productName}" 
+                       placeholder=" ">
+                <label>Kode Bayar ${newItemNumber}</label>
             </div>
-            <button onclick="addNewProduct('${productName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                Tambah Produk
-            </button>
         </div>
     `;
 
-    container.appendChild(wrapper);
+    container.appendChild(newItem);
     lucide.createIcons();
     attachInputListeners();
-    
-    // Scroll ke bawah
-    wrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Scroll halus ke bawah
+    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // >>> FUNGSI CARI PRODUK <<<
@@ -1227,7 +1229,7 @@ function saveCenter(){
     localStorage.setItem("centerServer", JSON.stringify(getCenterData()));
     toast("Data Center Disimpan");
     checkCenterChange();
-}
+
 function confirmSaveCenter(){
     showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter);
 }
