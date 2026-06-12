@@ -164,7 +164,6 @@ let originalCenterData = {};
 // --- ELEMENTS ---
 const namaKonter = document.getElementById("namaKonter");
 const alamatKonter = document.getElementById("alamatKonter");
-
 const ipNama = document.getElementById("ipNama");
 const ipServer = document.getElementById("ipServer");
 const ipHost = document.getElementById("ipHost");
@@ -179,18 +178,15 @@ function escapeHtml(text) {
     const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
     return text.replace(/[&<>"]/g, m => map[m]);
 }
-
 function autoGrow(field) {
     field.style.height = 'inherit';
     field.style.height = (field.scrollHeight) + 'px';
 }
-
 function showConfirm(title, text, confirmCallback, btnText = "Ya") {
     document.getElementById("confirmTitle").innerText = title;
     document.getElementById("confirmText").innerText = text;
     document.getElementById("confirmYes").innerText = btnText;
     document.getElementById("confirmModal").classList.add("show");
-
     document.getElementById("confirmYes").onclick = function(){
         closeConfirm();
         if(confirmCallback) confirmCallback();
@@ -199,7 +195,6 @@ function showConfirm(title, text, confirmCallback, btnText = "Ya") {
 function closeConfirm(){
     document.getElementById("confirmModal").classList.remove("show");
 }
-
 function toast(msg){
     const t = document.createElement("div");
     t.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-xl z-50 opacity-0 transition-all duration-300";
@@ -209,7 +204,6 @@ function toast(msg){
     setTimeout(()=>{ t.style.opacity = 0; },2500);
     setTimeout(()=>{ t.remove(); },3000);
 }
-
 function disableButton(id){
     document.getElementById(id).disabled = true;
     document.getElementById(id).classList.add("opacity-50", "cursor-not-allowed");
@@ -221,20 +215,11 @@ function enableButton(id){
 
 // --- SERVER SETUP ---
 function getCurrentServerData(){
-    return {
-        nama: namaKonter.value.trim(),
-        alamat: alamatKonter.value.trim()
-    };
+    return { nama: namaKonter.value.trim(), alamat: alamatKonter.value.trim() };
 }
-
 function checkServerChange(){
-    if(JSON.stringify(getCurrentServerData()) !== JSON.stringify(originalServerData)){
-        enableButton("saveServerBtn");
-    } else {
-        disableButton("saveServerBtn");
-    }
+    JSON.stringify(getCurrentServerData()) !== JSON.stringify(originalServerData) ? enableButton("saveServerBtn") : disableButton("saveServerBtn");
 }
-
 function openServer(){
     document.getElementById("serverModal").classList.add("show");
     loadServer();
@@ -249,11 +234,9 @@ function closeServer(){
     }
     document.getElementById("serverModal").classList.remove("show");
 }
-
 function saveServer(){
-    const data = getCurrentServerData();
-    localStorage.setItem("setupServer", JSON.stringify(data));
-    originalServerData = JSON.parse(JSON.stringify(data));
+    localStorage.setItem("setupServer", JSON.stringify(getCurrentServerData()));
+    originalServerData = getCurrentServerData();
     toast("Data Server Disimpan");
     checkServerChange();
 }
@@ -262,19 +245,11 @@ function loadServer(){
     if(data){
         namaKonter.value = data.nama || "";
         alamatKonter.value = data.alamat || "";
-        originalServerData = JSON.parse(JSON.stringify(data));
-    } else {
-        namaKonter.value = "";
-        alamatKonter.value = "";
-        originalServerData = {};
-    }
-    autoGrow(namaKonter);
-    autoGrow(alamatKonter);
+        originalServerData = getCurrentServerData();
+    } else { namaKonter.value = ""; alamatKonter.value = ""; }
+    autoGrow(namaKonter); autoGrow(alamatKonter);
 }
-
-function confirmSaveServer(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Server?", saveServer);
-}
+function confirmSaveServer(){ showConfirm("Konfirmasi Simpan", "Simpan perubahan Server?", saveServer); }
 
 // --- CENTER SETUP ---
 function getCurrentCenterData(){
@@ -284,15 +259,9 @@ function getCurrentCenterData(){
         nomor: { wa: waCenter.value.trim(), sms: smsCenter.value.trim() }
     };
 }
-
 function checkCenterChange(){
-    if(JSON.stringify(getCurrentCenterData()) !== JSON.stringify(originalCenterData)){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
+    JSON.stringify(getCurrentCenterData()) !== JSON.stringify(originalCenterData) ? enableButton("saveCenterBtn") : disableButton("saveCenterBtn");
 }
-
 function openCenter(){
     document.getElementById("centerModal").classList.add("show");
     loadCenter();
@@ -307,54 +276,31 @@ function closeCenter(){
     }
     document.getElementById("centerModal").classList.remove("show");
 }
-
 function saveCenter(){
-    const data = getCurrentCenterData();
-    localStorage.setItem("centerServer", JSON.stringify(data));
-    originalCenterData = JSON.parse(JSON.stringify(data));
+    localStorage.setItem("centerServer", JSON.stringify(getCurrentCenterData()));
+    originalCenterData = getCurrentCenterData();
     toast("Data Center Disimpan");
     checkCenterChange();
 }
-
 function loadCenter(){
     const data = JSON.parse(localStorage.getItem("centerServer"));
     if(data){
-        ipNama.value = data.ip?.nama || "";
-        ipServer.value = data.ip?.server || "";
-        ipHost.value = data.ip?.host || "";
-        jabberNama.value = data.jabber?.nama || "";
-        jabberServer.value = data.jabber?.server || "";
-        jabberHost.value = data.jabber?.host || "";
-        waCenter.value = data.nomor?.wa || "";
-        smsCenter.value = data.nomor?.sms || "";
-        originalCenterData = JSON.parse(JSON.stringify(data));
-    } else {
-        ipNama.value = ""; ipServer.value = ""; ipHost.value = "";
-        jabberNama.value = ""; jabberServer.value = ""; jabberHost.value = "";
-        waCenter.value = ""; smsCenter.value = "";
-        originalCenterData = {};
-    }
+        ipNama.value = data.ip?.nama || ""; ipServer.value = data.ip?.server || ""; ipHost.value = data.ip?.host || "";
+        jabberNama.value = data.jabber?.nama || ""; jabberServer.value = data.jabber?.server || ""; jabberHost.value = data.jabber?.host || "";
+        waCenter.value = data.nomor?.wa || ""; smsCenter.value = data.nomor?.sms || "";
+        originalCenterData = getCurrentCenterData();
+    } else { ipNama.value="";ipServer.value="";ipHost.value="";jabberNama.value="";jabberServer.value="";jabberHost.value="";waCenter.value="";smsCenter.value=""; }
 }
-
-function confirmSaveCenter(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter);
-}
+function confirmSaveCenter(){ showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter); }
 
 // --- WATCHERS ---
 function watchServerChanges(){
     [namaKonter, alamatKonter].forEach(field=>{
-        field.addEventListener("input", ()=>{
-            checkServerChange();
-            autoGrow(field);
-        });
+        field.addEventListener("input", ()=>{ checkServerChange(); autoGrow(field); });
     });
 }
 function watchCenterChanges(){
-    [
-        ipNama, ipServer, ipHost,
-        jabberNama, jabberServer, jabberHost,
-        waCenter, smsCenter
-    ].forEach(field=>{
+    [ipNama, ipServer, ipHost, jabberNama, jabberServer, jabberHost, waCenter, smsCenter].forEach(field=>{
         field.addEventListener("input", checkCenterChange);
     });
 }
@@ -364,18 +310,11 @@ let transaksiItems = [];
 let originalTransaksi = [];
 let activeDeleteIndex = -1;
 
-function getCurrentTransaksi(){
-    return JSON.parse(JSON.stringify(transaksiItems));
-}
+function getCurrentTransaksi(){ return JSON.parse(JSON.stringify(transaksiItems)); }
 function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
+    JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi) ? enableButton("saveTransaksiBtn") : disableButton("saveTransaksiBtn");
     updateTransaksiInfo();
 }
-
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
@@ -395,81 +334,46 @@ function updateTransaksiInfo(){
     const totalKategori = transaksiItems.filter(item => item.type === "kategori").length;
     document.getElementById("transaksiInfo").innerText = `${totalMenu} Menu • ${totalKategori} Kategori`;
 }
-
 function addMenu(){
     document.getElementById('btnMenu').classList.add('blink');
     setTimeout(() => { document.getElementById('btnMenu').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, showDelete: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    focusFirstInput();
+    transaksiItems.unshift({ type: "menu", nama: "Menu Baru", icon: "circle", iconFile: "", checked: false, showDelete: false });
+    checkTransaksiChange(); renderTransaksi(); focusFirstInput();
 }
-
 function addKategori(){
     document.getElementById('btnKategori').classList.add('blink');
     setTimeout(() => { document.getElementById('btnKategori').classList.remove('blink'); }, 500);
-
-    transaksiItems.unshift({
-        type: "kategori", nama: "Kategori Baru", checked: false, showDelete: false
-    });
-    checkTransaksiChange();
-    renderTransaksi();
-    focusFirstInput();
+    transaksiItems.unshift({ type: "kategori", nama: "Kategori Baru", checked: false, showDelete: false });
+    checkTransaksiChange(); renderTransaksi(); focusFirstInput();
 }
-
 function focusFirstInput(){
     setTimeout(()=>{
         const inputs = document.querySelectorAll("#transaksiList input[type='text']");
         if(inputs.length){ inputs[0].focus(); inputs[0].select(); }
     },100);
 }
-
-function updateTransaksi(index, value){
-    transaksiItems[index].nama = value;
-    checkTransaksiChange();
-}
-
+function updateTransaksi(index, value){ transaksiItems[index].nama = value; checkTransaksiChange(); }
 function handleInputClick(e, index){
     if(e.target.closest('.btn-delete')) return;
-
-    if(activeDeleteIndex !== -1 && activeDeleteIndex !== index){
-        hideAllDeleteButtons();
-    }
+    if(activeDeleteIndex !== -1 && activeDeleteIndex !== index) hideAllDeleteButtons();
 }
-
 function toggleDeleteButton(index){
     if(transaksiItems[index].type === "kategori") return;
-
-    if(activeDeleteIndex === index){
-        transaksiItems[index].showDelete = false;
-        activeDeleteIndex = -1;
-    } else {
-        hideAllDeleteButtons();
-        transaksiItems[index].showDelete = true;
-        activeDeleteIndex = index;
-    }
+    if(activeDeleteIndex === index){ transaksiItems[index].showDelete = false; activeDeleteIndex = -1; }
+    else { hideAllDeleteButtons(); transaksiItems[index].showDelete = true; activeDeleteIndex = index; }
     renderTransaksi();
 }
-
 function hideAllDeleteButtons(){
-    transaksiItems.forEach(item => {
-        item.showDelete = false;
-    });
+    transaksiItems.forEach(item => { item.showDelete = false; });
     activeDeleteIndex = -1;
     renderTransaksi();
 }
-
 function renderTransaksi(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
-
     transaksiItems.forEach((item, index)=>{
         const div = document.createElement("div");
         const safeName = escapeHtml(item.nama);
-
         if(item.type === "kategori"){
             div.innerHTML = `
             <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg">
@@ -492,53 +396,35 @@ function renderTransaksi(){
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <span class="font-semibold text-gray-700">${safeName}</span>
-                    
                     <button onclick="event.stopPropagation(); deleteTransaksi(${index})" class="btn-delete absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white p-2 rounded-full ${item.showDelete ? 'flex' : 'hidden'}">
                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>`;
         }
-
         list.appendChild(div);
     });
     lucide.createIcons();
 }
-
 function toggleTransaksi(index){
     hideAllDeleteButtons();
     transaksiItems[index].checked = !transaksiItems[index].checked;
-    checkTransaksiChange();
-    renderTransaksi();
+    checkTransaksiChange(); renderTransaksi();
 }
-
 function deleteTransaksi(index){
     const item = transaksiItems[index];
-
-    if(item.checked){
-        showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, "Oke Mengerti");
-        return;
-    }
-
-    const namaItem = item.nama;
-    showConfirm("Konfirmasi Hapus", `Hapus "${namaItem}"?`, ()=>{
-        transaksiItems.splice(index,1);
-        activeDeleteIndex = -1;
-        checkTransaksiChange();
-        renderTransaksi();
+    if(item.checked){ showConfirm("Gagal Hapus", "Menu yang aktif tidak bisa dihapus!", null, "Oke Mengerti"); return; }
+    showConfirm("Konfirmasi Hapus", `Hapus "${item.nama}"?`, ()=>{
+        transaksiItems.splice(index,1); activeDeleteIndex = -1; checkTransaksiChange(); renderTransaksi();
     }, "Ya, Hapus");
 }
-
 function initSortable(){
     const list = document.getElementById("transaksiList");
     if(!list) return;
     if(sortableInstance) sortableInstance.destroy();
     sortableInstance = new Sortable(list, {
-        animation:150,
-        handle:".drag-handle",
-        onStart: function() {
-            hideAllDeleteButtons();
-        },
+        animation:150, handle:".drag-handle",
+        onStart: () => { hideAllDeleteButtons(); },
         onEnd:function(evt){
             const movedItem = transaksiItems.splice(evt.oldIndex,1)[0];
             transaksiItems.splice(evt.newIndex,0,movedItem);
@@ -546,57 +432,43 @@ function initSortable(){
         }
     });
 }
-
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
+    originalTransaksi = getCurrentTransaksi();
     toast("Menu Transaksi Disimpan");
     checkTransaksiChange();
 }
 function loadTransaksi(){
     const data = JSON.parse(localStorage.getItem("transaksiItems"));
-    if(data){
-        transaksiItems = data;
-    } else {
+    if(data){ transaksiItems = data; }
+    else {
         transaksiItems = [
             {type:"kategori", nama:"PRODUK DIGITAL", checked:false, showDelete:false},
             {type:"menu", nama:"Pulsa Reguler", icon:"smartphone", iconFile:"", checked:false, showDelete:false},
             {type:"menu", nama:"Paket Data", icon:"wifi", iconFile:"", checked:false, showDelete:false}
         ];
     }
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiItems));
-    renderTransaksi();
-    updateTransaksiInfo();
+    originalTransaksi = getCurrentTransaksi();
+    renderTransaksi(); updateTransaksiInfo();
 }
-
-function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi);
-}
+function confirmSaveTransaksi(){ showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi); }
 
 // --- PREVIEW ---
 function openPreview(){
     const modal = document.getElementById("previewModal");
     const content = document.getElementById("previewContent");
-
     let html = "";
     const serverData = JSON.parse(localStorage.getItem("setupServer")) || { nama:"Nama Konter", alamat:"Alamat Konter" };
-
     html += `
     <div class="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-3xl p-6 text-white shadow-lg mb-6">
         <div class="text-center">
             <h2 class="text-2xl font-bold">${escapeHtml(serverData.nama)}</h2>
             <p class="text-sm opacity-90 mt-1">${escapeHtml(serverData.alamat)}</p>
         </div>
-    </div>
-    `;
-
+    </div>`;
     transaksiItems.forEach(item=>{
         if(item.type === "kategori"){
-            html += `
-            <div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg mb-4">
-                <h3 class="font-bold text-lg">${escapeHtml(item.nama)}</h3>
-            </div>
-            `;
+            html += `<div class="bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl p-3 shadow-lg mb-4"><h3 class="font-bold text-lg">${escapeHtml(item.nama)}</h3></div>`;
         } else {
             if(item.checked){
                 html += `
@@ -605,20 +477,15 @@ function openPreview(){
                         ${item.iconFile ? `<img src="${item.iconFile}" class="w-full h-full object-cover">` : `<i data-lucide="${item.icon}" class="text-cyan-600"></i>`}
                     </div>
                     <span class="font-semibold text-gray-700">${escapeHtml(item.nama)}</span>
-                </div>
-                `;
+                </div>`;
             }
         }
     });
-
     content.innerHTML = html;
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
 }
-
-function closePreview(){
-    document.getElementById("previewModal").classList.remove("show");
-}
+function closePreview(){ document.getElementById("previewModal").classList.remove("show"); }
 
 // === INISIALISASI AWAL ===
 window.onload = function(){
