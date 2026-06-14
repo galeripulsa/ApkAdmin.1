@@ -1150,8 +1150,7 @@ function disableButton(btnId){
     if(!btn) return;
     btn.disabled = true;
     btn.classList.remove("bg-green-600");
-    btn.classList.add("bg-gray-400");
-
+    btn.classList.add("bg-gray-400", "cursor-not-allowed");
 
 function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
     document.getElementById("confirmTitle").innerText = title;
