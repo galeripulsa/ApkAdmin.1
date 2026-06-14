@@ -324,6 +324,43 @@ body{
     margin-bottom: 10px;
     border: 1px solid #e2e8f0;
 }
+
+.area-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.area-name-input {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0f172a;
+}
+
+.btn-add-area {
+    width: 100%;
+    background: #0891b2;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btn-add-area:hover {
+    background: #0e7490;
+}
 </style>
 
 </head>
@@ -849,10 +886,10 @@ function openOperatorListPascabayar(title, actionType){
     allProducts = [...listToShow];
 
     listToShow.forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {items: []};
+        const saved = prabayarData[currentMenuType][itemName] || {areas: []};
 
         originalPrabayarData[currentMenuType][itemName] = {
-            items: saved.items || []
+            areas: saved.areas || []
         };
 
         const wrapper = document.createElement("div");
@@ -862,19 +899,15 @@ function openOperatorListPascabayar(title, actionType){
         let formContent = '';
 
         if(actionType === "pdam"){
-            // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
+            // >>> FORMAT KHUSUS PDAM DENGAN AREA <<<
             formContent = `
                 <div class="operator-body">
-                    <!-- TOMBOL TAMBAH ITEM -->
-                    <button onclick="addNewProductInside(this, '${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
-                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                        Tambah Data
-                    </button>
-                    
-                    <!-- CONTAINER PRODUK -->
-                    <div class="products-container space-y-3">
-                        <!-- Item akan muncul di sini -->
+                    <div class="areas-container space-y-4">
+                        <!-- Area akan dimuat lewat JS -->
                     </div>
+                    <button onclick="addNewArea('${itemName}')" class="btn-add-area w-full">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Area
+                    </button>
                 </div>
             `;
         } else {
@@ -914,9 +947,9 @@ function openOperatorListPascabayar(title, actionType){
 
         container.appendChild(wrapper);
         
-        // Jika PDAM, langsung load item pertama
+        // Jika PDAM, langsung load area
         if(actionType === "pdam"){
-            loadProductData(itemName, saved.items);
+            loadAreaData(itemName, saved.areas);
         }
     });
 
@@ -928,25 +961,88 @@ function openOperatorListPascabayar(title, actionType){
     attachInputListeners();
 }
 
-// >>> FUNGSI LOAD DATA AWAL PDAM <<<
-function loadProductData(productName, items){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] .products-container`);
+// >>> FUNGSI LOAD DATA AREA PDAM <<<
+function loadAreaData(productName, areas){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] .areas-container`);
     
-    if(!items || items.length === 0){
-        // Tambahkan item pertama secara default
-        addNewProductInside(null, productName);
+    if(!areas || areas.length === 0){
+        // Tambahkan area pertama secara default
+        addNewArea(productName, null, true);
     } else {
-        items.forEach(item => {
-            addNewProductInside(null, productName, item);
+        areas.forEach(area => {
+            addNewArea(productName, area, true);
         });
     }
 }
 
-// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
-function addNewProductInside(buttonElement, productName, data = null){
+// >>> FUNGSI TAMBAH AREA BARU <<<
+function addNewArea(productName, data = null, isLoading = false){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] .areas-container`);
+    
+    const areaCount = container.children.length + 1;
+    
+    const newArea = document.createElement("div");
+    newArea.className = "area-item";
+    newArea.innerHTML = `
+        <div class="area-header">
+            <i data-lucide="map-pin" class="w-6 h-6 text-cyan-600"></i>
+            <input type="text" class="area-name-input" value="${data ? data.nama : `Area ${areaCount}`}" placeholder="Nama Area" oninput="checkPrabayarChange()">
+            <button onclick="deleteArea(this)" class="text-red-500 hover:text-red-700">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div class="products-container space-y-3">
+            <!-- Data akan muncul di sini -->
+        </div>
+        
+        <button onclick="addNewProductInside(this, '${productName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+            Tambah Data
+        </button>
+    `;
+
+    container.appendChild(newArea);
+    
+    // Jika ada data, load item di dalam area ini
+    if(data && data.items && data.items.length > 0){
+        data.items.forEach(item => {
+            addNewProductInside(null, productName, item, newArea.querySelector('.products-container'));
+        });
+    } else if(!isLoading){
+        // Tambahkan item pertama secara default
+        addNewProductInside(null, productName, null, newArea.querySelector('.products-container'));
+    }
+    
+    // Scroll ke bawah
+    newArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    // Update icon
+    lucide.createIcons();
+    
+    // Cek perubahan
+    if(!isLoading) checkPrabayarChange();
+}
+
+// >>> FUNGSI HAPUS AREA <<<
+function deleteArea(button){
+    const areaItem = button.closest('.area-item');
+    areaItem.remove();
+    checkPrabayarChange();
+}
+
+// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM AREA <<<
+function addNewProductInside(buttonElement, productName, data = null, specificContainer = null){
     // Cari container tempat menaruh inputan baru
-    const bodyDiv = buttonElement ? buttonElement.parentElement : document.querySelector(`[data-productname="${productName.toLowerCase()}"] .operator-body`);
-    const container = bodyDiv.querySelector('.products-container');
+    let container;
+    if(specificContainer){
+        container = specificContainer;
+    } else if(buttonElement){
+        container = buttonElement.previousElementSibling;
+    } else {
+        const areaItem = document.querySelector(`[data-productname="${productName.toLowerCase()}"] .area-item:last-child`);
+        container = areaItem.querySelector('.products-container');
+    }
 
     // Buat elemen baru
     const newItem = document.createElement("div");
@@ -1004,40 +1100,12 @@ function searchProducts() {
 }
 
 function attachInputListeners(){
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah, .area-name-input");
     inputs.forEach(input => {
         input.addEventListener("input", function(){
-            const op = this.dataset.operator;
-            let type = "cekHarga";
-            if(this.classList.contains("input-nama-produk")) type = "namaProduk";
-            if(this.classList.contains("input-wilayah")) type = "wilayah";
-
-            if(!prabayarData[currentMenuType][op]){
-                prabayarData[currentMenuType][op] = {};
-            }
-            
-            // Khusus PDAM, simpan sebagai array of objects
-            if(currentMenuType === "pdam"){
-                savePdamData(op);
-            } else {
-                prabayarData[currentMenuType][op][type] = this.value;
-            }
-
             checkPrabayarChange(); // CEK SETIAP KETIKAN
         });
     });
-}
-
-function savePdamData(op){
-    const items = [];
-    document.querySelectorAll(`.product-item`).forEach(el => {
-        items.push({
-            wilayah: el.querySelector('.input-wilayah').value,
-            cekHarga: el.querySelector('.input-cek-harga').value,
-            namaProduk: el.querySelector('.input-nama-produk').value
-        });
-    });
-    prabayarData[currentMenuType][op] = { items: items };
 }
 
 // >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
@@ -1045,20 +1113,28 @@ function checkPrabayarChange(){
     let adaPerubahan = false;
 
     // CEK SEMUA INPUT DI HALAMAN INI
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah, .area-name-input");
 
     inputs.forEach(input => {
         const op = input.dataset.operator;
         let type = "cekHarga";
         if(input.classList.contains("input-nama-produk")) type = "namaProduk";
         if(input.classList.contains("input-wilayah")) type = "wilayah";
+        if(input.classList.contains("area-name-input")) type = "namaArea";
 
         // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
         let nilaiAsli = "";
-        if(currentMenuType === "pdam"){
-            // Logika khusus PDAM karena beda struktur data
-            const idx = Array.from(input.closest('.products-container').children).indexOf(input.closest('.product-item'));
-            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
+        
+        // Untuk area name, kita cek struktur data berbeda
+        if(type === "namaArea"){
+            const areaIndex = Array.from(input.closest('.area-item').parentElement.children).indexOf(input.closest('.area-item'));
+            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.areas?.[areaIndex]?.nama || "").trim();
+        } else if(currentMenuType === "pdam"){
+            // Logika khusus PDAM dengan area dan item
+            const areaItem = input.closest('.area-item');
+            const areaIndex = Array.from(areaItem.parentElement.children).indexOf(areaItem);
+            const itemIndex = Array.from(input.closest('.product-item').parentElement.children).indexOf(input.closest('.product-item'));
+            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.areas?.[areaIndex]?.items?.[itemIndex]?.[type] || "").trim();
         } else {
             nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
         }
@@ -1082,13 +1158,50 @@ function checkPrabayarChange(){
 
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
-    localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+    // Simpan data struktur baru untuk PDAM
+    if(currentMenuType === "pdam"){
+        savePdamAreaData();
+    } else {
+        // Simpan data biasa
+        localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+    }
 
     // >>> UPDATE DATA ASLI SETELAH DISIMPAN <<<
     originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
 
     toast("Data Berhasil Disimpan");
     disableButton("savePrabayarBtn"); // TOMBOL MATI
+}
+
+// >>> FUNGSI SIMPAN DATA AREA PDAM <<<
+function savePdamAreaData(){
+    const areas = [];
+    document.querySelectorAll('.area-item').forEach(areaEl => {
+        const areaName = areaEl.querySelector('.area-name-input').value;
+        const items = [];
+        
+        areaEl.querySelectorAll('.product-item').forEach(itemEl => {
+            items.push({
+                wilayah: itemEl.querySelector('.input-wilayah').value,
+                cekHarga: itemEl.querySelector('.input-cek-harga').value,
+                namaProduk: itemEl.querySelector('.input-nama-produk').value
+            });
+        });
+        
+        areas.push({
+            nama: areaName,
+            items: items
+        });
+    });
+    
+    // Ambil nama produk utama (PDAM)
+    const productName = document.querySelector('.operator-wrapper').dataset.productname;
+    
+    // Simpan ke struktur data
+    prabayarData[currentMenuType][productName] = { areas: areas };
+    
+    // Simpan ke localStorage
+    localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
 }
 
 function confirmSavePrabayar(){
@@ -1104,402 +1217,383 @@ function backToPrabayarFromList(){
     // CEK APAKAH ADA PERUBAHAN BELUM DISIMPAN
     if(!document.getElementById("savePrabayarBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+ 
             // >>> KELUAR TANPA MENYIMPAN <<<
             document.getElementById("operatorListModal").classList.remove("show");
             document.getElementById("fixedButtonWrapper").style.display = "none";
+            setTimeout(() => {
+                document.getElementById("prabayarModal").classList.add("show");
+            }, 100);
+        }, "Ya, Keluar", "Batal");
+    } else {
+        document.getElementById("operatorListModal").classList.remove("show");
+        document.getElementById("fixedButtonWrapper").style.display = "none";
+        setTimeout(() => {
             document.getElementById("prabayarModal").classList.add("show");
-        }, "Ya, Keluar"); // Ubah tulisan tombol
-        return;
+        }, 100);
     }
-
-    document.getElementById("operatorListModal").classList.remove("show");
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    document.getElementById("prabayarModal").classList.add("show");
 }
 
-function toast(msg){
-    const t = document.getElementById("toast");
-    t.innerText = msg;
-    t.style.display = "block";
-    setTimeout(()=>t.style.display = "none", 2500);
-}
-
-function enableButton(btnId){
-    const btn = document.getElementById(btnId);
+// === FUNGSI TOMBOL AKTIF/MATI ===
+function enableButton(id){
+    const btn = document.getElementById(id);
     if(!btn) return;
     btn.disabled = false;
     btn.classList.remove("bg-gray-400", "cursor-not-allowed");
-    btn.classList.add("bg-green-600");
+    btn.classList.add("bg-cyan-600", "hover:bg-cyan-700");
 }
-function disableButton(btnId){
-    const btn = document.getElementById(btnId);
+
+function disableButton(id){
+    const btn = document.getElementById(id);
     if(!btn) return;
     btn.disabled = true;
-    btn.classList.remove("bg-green-600");
+    btn.classList.remove("bg-cyan-600", "hover:bg-cyan-700");
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
 }
 
-function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
+// === FUNGSI CONFIRM BOX ===
+function showConfirm(title, message, yesFunc, yesText="Ya", noText="Tidak"){
     document.getElementById("confirmTitle").innerText = title;
     document.getElementById("confirmMessage").innerText = message;
-    confirmAction = action;
-
-    const btnContainer = document.getElementById("confirmButtons");
-    btnContainer.innerHTML = "";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl btn-click";
-    cancelBtn.innerText = "Batal";
-    cancelBtn.onclick = closeConfirm;
-
-    const okBtn = document.createElement("button");
-    okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
-    okBtn.innerText = buttonText; // Pakai variabel yang dikirim
-    okBtn.onclick = function(){
-        if(typeof confirmAction === "function") confirmAction();
-        closeConfirm();
-    };
-
-    btnContainer.appendChild(cancelBtn);
-    btnContainer.appendChild(okBtn);
-
+    document.getElementById("confirmButtons").innerHTML = `
+        <button onclick="closeConfirm()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold btn-click">${noText}</button>
+        <button onclick="executeYes()" class="flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click">${yesText}</button>
+    `;
+    confirmAction = yesFunc;
     document.getElementById("confirmModal").classList.remove("hidden");
 }
+
 function closeConfirm(){
     document.getElementById("confirmModal").classList.add("hidden");
+    confirmAction = null;
 }
 
-function getServerData(){
-    return {
-        nama: namaKonter.value.trim(),
-        alamat: alamatKonter.value.trim()
-    };
+function executeYes(){
+    if(confirmAction) confirmAction();
+    closeConfirm();
 }
-function checkServerChange(){
-    const original = JSON.parse(localStorage.getItem("setupServer")) || {nama:"", alamat:""};
-    const current = getServerData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveServerBtn");
+
+// === FUNGSI TOAST ===
+function toast(text){
+    const el = document.getElementById("toast");
+    el.innerText = text;
+    el.style.display = "block";
+    setTimeout(()=> el.style.display = "none", 2500);
+}
+
+// === FUNGSI BUKA/TUTUP MODAL ===
+function openServer(){
+    loadServer();
+    document.getElementById("serverModal").classList.add("show");
+}
+
+function closeServer(){
+    document.getElementById("serverModal").classList.remove("remove");
+}
+
+function checkCloseServer(){
+    if(!document.getElementById("saveServerBtn").disabled){
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            document.getElementById("serverModal").classList.remove("show");
+        }, "Ya, Keluar");
     } else {
-        disableButton("saveServerBtn");
+        document.getElementById("serverModal").classList.remove("show");
     }
 }
-function openServer(){
-    document.getElementById("serverModal").classList.add("show");
-    loadServer();
-    checkServerChange();
-    setTimeout(() => { autoGrow(alamatKonter); }, 100);
+
+function openCenter(){
+    loadCenter();
+    document.getElementById("centerModal").classList.add("show");
 }
-function closeServer(){
-    document.getElementById("serverModal").classList.remove("show");
+
+function checkCloseCenter(){
+    if(!document.getElementById("saveCenterBtn").disabled){
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            document.getElementById("centerModal").classList.remove("show");
+        }, "Ya, Keluar");
+    } else {
+        document.getElementById("centerModal").classList.remove("show");
+    }
 }
+
+// === FUNGSI LOAD DATA ===
+function loadServer(){
+    const data = JSON.parse(localStorage.getItem("serverData") || "{}");
+    namaKonter.value = data.nama || "";
+    alamatKonter.value = data.alamat || "";
+    disableButton("saveServerBtn");
+}
+
 function saveServer(){
-    localStorage.setItem("setupServer", JSON.stringify(getServerData()));
+    const data = { nama:namaKonter.value, alamat:alamatKonter.value };
+    localStorage.setItem("serverData", JSON.stringify(data));
     toast("Data Server Disimpan");
-    checkServerChange();
+    disableButton("saveServerBtn");
 }
+
 function confirmSaveServer(){
     showConfirm("Konfirmasi Simpan", "Simpan data server?", saveServer);
 }
-function checkCloseServer(){
-    if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeServer, "Ya, Keluar");
-    } else {
-       
-       closeServer();
-    }
-}
-function loadServer(){
-    const data = JSON.parse(localStorage.getItem("setupServer"));
-    if(data){
-        namaKonter.value = data.nama || "";
-        alamatKonter.value = data.alamat || "";
-    } else {
-        namaKonter.value = "";
-        alamatKonter.value = "";
-    }
+
+function loadCenter(){
+    const data = JSON.parse(localStorage.getItem("centerData") || "{}");
+    ipNama.value = data.ipNama || "";
+    ipServer.value = data.ipServer || "";
+    ipHost.value = data.ipHost || "";
+    jabberNama.value = data.jabberNama || "";
+    jabberServer.value = data.jabberServer || "";
+    jabberHost.value = data.jabberHost || "";
+    waCenter.value = data.wa || "";
+    smsCenter.value = data.sms || "";
+    disableButton("saveCenterBtn");
 }
 
-function getCenterData(){
-    return {
-        ip:{
-            nama: ipNama.value.trim(),
-            server: ipServer.value.trim(),
-            host: ipHost.value.trim()
-        },
-        jabber:{
-            nama: jabberNama.value.trim(),
-            server: jabberServer.value.trim(),
-            host: jabberHost.value.trim()
-        },
-        nomor:{
-            wa: waCenter.value.trim(),
-            sms: smsCenter.value.trim()
-        }
-    };
-}
-
-function checkCenterChange(){
-    const original = JSON.parse(localStorage.getItem("setupCenter")) || {};
-    const current = getCenterData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
-}
-function openCenter(){
-    document.getElementById("centerModal").classList.add("show");
-    loadCenter();
-    checkCenterChange();
-}
-function closeCenter(){
-    document.getElementById("centerModal").classList.remove("show");
-}
 function saveCenter(){
-    localStorage.setItem("setupCenter", JSON.stringify(getCenterData()));
+    const data = {
+        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
+        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
+        wa: waCenter.value, sms: smsCenter.value
+    };
+    localStorage.setItem("centerData", JSON.stringify(data));
     toast("Data Center Disimpan");
-    checkCenterChange();
+    disableButton("saveCenterBtn");
 }
 
 function confirmSaveCenter(){
     showConfirm("Konfirmasi Simpan", "Simpan data center?", saveCenter);
 }
-function checkCloseCenter(){
-    if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeCenter, "Ya, Keluar");
-        return;
-    }
-    closeCenter();
-}
-function loadCenter(){
-    const data = JSON.parse(localStorage.getItem("setupCenter"));
-    if(data){
-        ipNama.value = data.ip?.nama || "";
-        ipServer.value = data.ip?.server || "";
-        ipHost.value = data.ip?.host || "";
-        jabberNama.value = data.jabber?.nama || "";
-        jabberServer.value = data.jabber?.server || "";
-        jabberHost.value = data.jabber?.host || "";
-        waCenter.value = data.nomor?.wa || "";
-        smsCenter.value = data.nomor?.sms || "";
-    } else {
-        ipNama.value = ""; ipServer.value = ""; ipHost.value = "";
-        jabberNama.value = ""; jabberServer.value = ""; jabberHost.value = "";
-        waCenter.value = ""; smsCenter.value = "";
-    }
-}
 
-function watchServerChanges(){
-    [namaKonter, alamatKonter].forEach(field => {
-        field.addEventListener("input", () => {
-            checkServerChange();
-            autoGrow(field);
-        });
-    });
-}
-function watchCenterChanges(){
-    [ipNama, ipServer, ipHost, jabberNama, jabberServer, jabberHost, waCenter, smsCenter].forEach(field => {
-        if(field) field.addEventListener("input", checkCenterChange);
-    });
-}
+// === MENU TRANSAKSI ===
+let transaksiData = { menus:[], kategoris:[] };
+let currentEdit = null;
+let isEditMode = false;
 
-let transaksiItems = [];
-let originalTransaksi = [];
-let activeDeleteIndex = -1;
-
-function getCurrentTransaksi(){
-    return JSON.parse(JSON.stringify(transaksiItems));
-}
-function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
-}
 function openTransaksi(){
-    document.getElementById("transaksiModal").classList.add("show");
     loadTransaksi();
+    document.getElementById("transaksiModal").classList.add("show");
     renderTransaksiList();
-    checkTransaksiChange();
 }
+
 function closeTransaksi(){
     document.getElementById("transaksiModal").classList.remove("show");
 }
-function saveTransaksi(){
-    localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = getCurrentTransaksi();
-    toast("Menu Transaksi Disimpan");
-    checkTransaksiChange();
-}
-function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan menu?", saveTransaksi);
-}
-function loadTransaksi(){
-    const data = JSON.parse(localStorage.getItem("transaksiItems"));
-    if(data && data.length > 0){
-        transaksiItems = data;
+
+function checkCloseTransaksi(){
+    if(!document.getElementById("saveTransaksiBtn").disabled){
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            document.getElementById("transaksiModal").classList.remove("show");
+        }, "Ya, Keluar");
     } else {
-        transaksiItems = [
-            {type:"kategori", nama:"PRODUK DIGITAL", open:true},
-            {type:"menu", nama:"Pulsa & Paket Data", icon:"smartphone"},
-            {type:"menu", nama:"Token Listrik", icon:"zap"},
-            {type:"menu", nama:"Voucher Game", icon:"gamepad-2"},
-            {type:"menu", nama:"E-Wallet", icon:"wallet"}
-        ];
+        document.getElementById("transaksiModal").classList.remove("show");
     }
-    originalTransaksi = getCurrentTransaksi();
+}
+
+function loadTransaksi(){
+    const d = JSON.parse(localStorage.getItem("transaksiData") || "{}");
+    transaksiData.menus = d.menus || [];
+    transaksiData.kategoris = d.kategoris || [];
+    updateTransaksiInfo();
+}
+
+function saveTransaksi(){
+    localStorage.setItem("transaksiData", JSON.stringify(transaksiData));
+    toast("Data Transaksi Disimpan");
+    disableButton("saveTransaksiBtn");
+}
+
+function confirmSaveTransaksi(){
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan menu & kategori?", saveTransaksi);
+}
+
+function updateTransaksiInfo(){
+    document.getElementById("transaksiInfo").innerText = 
+        `${transaksiData.menus.length} Menu • ${transaksiData.kategoris.length} Kategori`;
 }
 
 function renderTransaksiList(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
-    transaksiItems.forEach((item, index) => {
+
+    transaksiData.menus.forEach((m, i)=>{
         const div = document.createElement("div");
-        div.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 hover:shadow-md transition-shadow";
-        div.draggable = true;
-        
-        if(item.type === "kategori"){
-            div.innerHTML = `
-                <div class="drag-handle text-slate-400">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </div>
-                <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
-                    <i data-lucide="layers" class="w-5 h-5"></i>
-                </div>
-                <div class="flex-1 font-bold text-slate-700">${item.nama}</div>
-                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            `;
-        } else {
-            div.innerHTML = `
-                <div class="drag-handle text-slate-400">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </div>
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
-                    <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
-                </div>
-                <div class="flex-1 font-medium text-slate-700">${item.nama}</div>
-                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            `;
-        }
+        div.className = "bg-white p-4 rounded-2xl shadow flex items-center gap-3";
+        div.dataset.index = i;
+        div.dataset.type = "menu";
+        div.innerHTML = `
+            <i data-lucide="menu" class="drag-handle w-5 h-5 text-slate-400"></i>
+            <div class="flex-1">
+                <div class="font-bold">${m.nama}</div>
+                <div class="text-sm text-slate-500">Menu</div>
+            </div>
+            <button onclick="editItem(${i}, 'menu')" class="text-cyan-600 btn-delete p-2">
+                <i data-lucide="edit-3" class="w-5 h-5"></i>
+            </button>
+            <button onclick="hapusItem(${i}, 'menu')" class="text-red-500 btn-delete p-2">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+            </button>
+        `;
         list.appendChild(div);
     });
-    
-    initSortable();
+
+    transaksiData.kategoris.forEach((k, i)=>{
+        const div = document.createElement("div");
+        div.className = "bg-white p-4 rounded-2xl shadow flex items-center gap-3";
+        div.dataset.index = i;
+        div.dataset.type = "kategori";
+        div.innerHTML = `
+            <i data-lucide="menu" class="drag-handle w-5 h-5 text-slate-400"></i>
+            <div class="flex-1">
+                <div class="font-bold">${k.nama}</div>
+                <div class="text-sm text-slate-500">Kategori</div>
+            </div>
+            <button onclick="editItem(${i}, 'kategori')" class="text-cyan-600 btn-delete p-2">
+                <i data-lucide="edit-3" class="w-5 h-5"></i>
+            </button>
+            <button onclick="hapusItem(${i}, 'kategori')" class="text-red-500 btn-delete p-2">
+                <i data-lucide="trash-2" class="w-5 h-5"></i>
+            </button>
+        `;
+        list.appendChild(div);
+    });
+
     lucide.createIcons();
-    updateTransaksiInfo();
-}
 
-function updateTransaksiInfo(){
-    const menuCount = transaksiItems.filter(i => i.type === "menu").length;
-    const katCount = transaksiItems.filter(i => i.type === "kategori").length;
-    document.getElementById("transaksiInfo").innerText = `${menuCount} Menu • ${katCount} Kategori`;
-}
-
-function initSortable(){
-    if(sortableInstance){
-        sortableInstance.destroy();
-    }
-    const list = document.getElementById("transaksiList");
+    if(sortableInstance) sortableInstance.destroy();
     sortableInstance = new Sortable(list, {
         animation: 150,
         handle: '.drag-handle',
-        ghostClass: 'sortable-ghost',
-        chosenClass: 'sortable-chosen',
         onEnd: function(evt){
-            const movedItem = transaksiItems.splice(evt.oldIndex, 1)[0];
-            transaksiItems.splice(evt.newIndex, 0, movedItem);
-            checkTransaksiChange();
+            const type = evt.item.dataset.type;
+            const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
+            const item = arr.splice(evt.oldIndex,1)[0];
+            arr.splice(evt.newIndex,0,item);
+            markChangedTransaksi();
+            renderTransaksiList();
         }
     });
-}
-
-function addMenu(){
-    const nama = prompt("Masukkan nama menu:");
-    if(nama && nama.trim()){
-        transaksiItems.push({
-            type:"menu",
-            nama: nama.trim(),
-            icon:"circle"
-        });
-        renderTransaksiList();
-        checkTransaksiChange();
-    }
-}
-
-function addKategori(){
-    const nama = prompt("Masukkan nama kategori:");
-    if(nama && nama.trim()){
-        transaksiItems.push({
-            type:"kategori",
-            nama: nama.trim().toUpperCase(),
-            open:true
-        });
-        renderTransaksiList();
-        checkTransaksiChange();
-    }
-}
-
-function toggleDeleteButton(index){
-    activeDeleteIndex = index;
-    showConfirm("Hapus Item", `Yakin hapus "${transaksiItems[index].nama}"?`, deleteItem, "Ya, Hapus");
-}
-
-function deleteItem(){
-    if(activeDeleteIndex >= 0){
-        transaksiItems.splice(activeDeleteIndex, 1);
-        renderTransaksiList();
-        checkTransaksiChange();
-        activeDeleteIndex = -1;
-    }
 }
 
 function hideAllDeleteButtons(){
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.style.display = 'none';
+    document.querySelectorAll(".btn-delete").forEach(b=> b.style.display = "none");
+}
+
+function addMenu(){
+    showPrompt("Tambah Menu", "Nama Menu:", "", (val)=>{
+        if(!val) return;
+        transaksiData.menus.push({nama:val});
+        markChangedTransaksi();
+        renderTransaksiList();
     });
 }
 
+function addKategori(){
+    showPrompt("Tambah Kategori", "Nama Kategori:", "", (val)=>{
+        if(!val) return;
+        transaksiData.kategoris.push({nama:val});
+        markChangedTransaksi();
+        renderTransaksiList();
+    });
+}
+
+function editItem(index, type){
+    const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
+    showPrompt("Edit", "Nama:", arr[index].nama, (val)=>{
+        if(!val) return;
+        arr[index].nama = val;
+        markChangedTransaksi();
+        renderTransaksiList();
+    });
+}
+
+function hapusItem(index, type){
+    showConfirm("Hapus", "Yakin hapus ini?", ()=>{
+        const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
+        arr.splice(index,1);
+        markChangedTransaksi();
+        renderTransaksiList();
+    });
+}
+
+function markChangedTransaksi(){
+    enableButton("saveTransaksiBtn");
+    updateTransaksiInfo();
+}
+
+function showPrompt(title, label, defaultValue, callback){
+    const val = prompt(label, defaultValue);
+    if(val !== null && val.trim() !== "") callback(val.trim());
+}
+
+// === PREVIEW ===
 function openPreview(){
-    const modal = document.getElementById("previewModal");
-    const content = document.getElementById("previewContent");
-    let html = "";
+    const server = JSON.parse(localStorage.getItem("serverData") || "{}");
+    const center = JSON.parse(localStorage.getItem("centerData") || "{}");
+    const trans = JSON.parse(localStorage.getItem("transaksiData") || "{}");
 
-    transaksiItems.forEach(item => {
-        if(item.type === "kategori"){
-            html += `<div class="text-lg font-bold text-slate-800 mt-6 mb-2">${item.nama}</div>`;
-        } else {
-            html += `
-                <div class="bg-white rounded-xl p-4 shadow mb-2 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center text-cyan-600">
-                        <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex-1 font-medium">${item.nama}</div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
-                </div>
-            `;
-        }
-    });
+    let html = `
+        <div class="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-6 rounded-3xl shadow mb-6">
+            <h1 class="text-2xl font-bold">${escapeHtml(server.nama || "Nama Konter")}</h1>
+            <p class="opacity-90">${escapeHtml(server.alamat || "Alamat belum diisi")}</p>
+        </div>
+    `;
 
-    content.innerHTML = html;
-    modal.classList.add("show");
-    setTimeout(() => lucide.createIcons(), 50);
+    if(trans.menus && trans.menus.length){
+        html += `<div class="mb-6"><h3 class="font-bold text-slate-700 mb-3">MENU</h3><div class="grid grid-cols-2 gap-3">`;
+        trans.menus.forEach(m=>{
+            html += `<div class="bg-white p-4 rounded-2xl shadow text-center font-semibold">${escapeHtml(m.nama)}</div>`;
+        });
+        html += `</div></div>`;
+    }
+
+    if(trans.kategoris && trans.kategoris.length){
+        html += `<div class="mb-6"><h3 class="font-bold text-slate-700 mb-3">KATEGORI</h3><div class="grid grid-cols-2 gap-3">`;
+        trans.kategoris.forEach(k=>{
+            html += `<div class="bg-white p-4 rounded-2xl shadow text-center font-semibold">${escapeHtml(k.nama)}</div>`;
+        });
+        html += `</div></div>`;
+    }
+
+    html += `<div class="bg-white p-5 rounded-2xl shadow">
+        <h3 class="font-bold text-slate-700 mb-3">KONTAK CENTER</h3>
+        <p>📞 WA: ${escapeHtml(center.wa || "-")}</p>
+        <p>✉️ SMS: ${escapeHtml(center.sms || "-")}</p>
+    </div>`;
+
+    document.getElementById("previewContent").innerHTML = html;
+    document.getElementById("previewModal").classList.add("show");
 }
+
 function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
 
-// === INISIALISASI AWAL ===
-window.onload = function(){
-    renderMenus();
-    watchServerChanges();
-    watchCenterChanges();
-};
+// === INIT ===
+renderMenus();
+
+// === EVENT LISTENER INPUT SERVER & CENTER ===
+document.getElementById("namaKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
+document.getElementById("alamatKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
+
+document.getElementById("ipNama").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("ipServer").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("ipHost").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("jabberNama").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("jabberServer").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("jabberHost").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("waCenter").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+document.getElementById("smsCenter").addEventListener("input", ()=> enableButton("saveCenterBtn"));
+
+// === LOAD DATA PRABAYAR DARI LOCALSTORAGE ===
+window.addEventListener("load", ()=>{
+    const saved = localStorage.getItem("prabayarData");
+    if(saved){
+        try {
+            prabayarData = JSON.parse(saved);
+        } catch(e){
+            prabayarData = {};
+        }
+    }
+});
 </script>
 
 </body>
