@@ -313,6 +313,20 @@ body{
     margin-top: 10px;
     background: white;
 }
+
+/* ========================================= */
+/* STYLE KHUSUS AREA PDAM */
+/* ========================================= */
+.area-item {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 </style>
 </head>
 
@@ -857,29 +871,16 @@ function openOperatorListPascabayar(title, actionType){
             // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
             formContent = `
                 <div class="operator-body">
-                    <div class="products-container">
-                        <!-- Item pertama akan ada di sini secara default -->
-                        <div class="product-item">
-                            <div class="floating mt-4">
-                                <input type="text" class="input-wilayah" data-operator="${itemName}" placeholder=" " value="${saved.wilayah || ""}">
-                                <label>Wilayah</label>
-                            </div>
-                            <div class="double-input">
-                                <div class="floating mt-4">
-                                    <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
-                                    <label>${labelInput1}</label>
-                                </div>
-                                <div class="floating mt-4">
-                                    <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
-                                    <label>${labelInput2}</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="addNewProductInside(this, '${itemName}')" class="mt-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                    <!-- TOMBOL TAMBAH AREA -->
+                    <button onclick="addNewArea('${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                        Tambah Produk
+                        Tambah Area
                     </button>
+                    
+                    <!-- CONTAINER AREA -->
+                    <div id="areaContainer_${itemName}" class="space-y-3">
+                        <!-- Area akan muncul di sini -->
+                    </div>
                 </div>
             `;
         } else {
@@ -918,6 +919,11 @@ function openOperatorListPascabayar(title, actionType){
         `;
 
         container.appendChild(wrapper);
+        
+        // Jika PDAM, langsung load area pertama
+        if(actionType === "pdam"){
+            loadAreaData(itemName);
+        }
     });
 
     modal.classList.add("show");
@@ -926,6 +932,75 @@ function openOperatorListPascabayar(title, actionType){
 
     disableButton("savePrabayarBtn");
     attachInputListeners();
+}
+
+// >>> FUNGSI TAMBAH AREA BARU <<<
+function addNewArea(productName) {
+    const container = document.getElementById(`areaContainer_${productName}`);
+    const areaCount = container.children.length + 1;
+
+    const newArea = document.createElement("div");
+    newArea.className = "area-item";
+    newArea.innerHTML = `
+        <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <div class="text-xs text-slate-400">Nama Area</div>
+            <input type="text" 
+                   value="Area ${areaCount}" 
+                   class="w-full bg-transparent border-none outline-none text-slate-700 font-medium"
+                   oninput="updateAreaName('${productName}', this)">
+        </div>
+        <button onclick="deleteArea(this)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
+
+    container.appendChild(newArea);
+    lucide.createIcons();
+    checkPrabayarChange();
+}
+
+// >>> FUNGSI LOAD AREA AWAL <<<
+function loadAreaData(productName) {
+    const container = document.getElementById(`areaContainer_${productName}`);
+    // Tambahkan area pertama secara default
+    const firstArea = document.createElement("div");
+    firstArea.className = "area-item";
+    firstArea.innerHTML = `
+        <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <div class="text-xs text-slate-400">Nama Area</div>
+            <input type="text" 
+                   value="Area 1" 
+                   class="w-full bg-transparent border-none outline-none text-slate-700 font-medium"
+                   oninput="updateAreaName('${productName}', this)">
+        </div>
+        <button onclick="deleteArea(this)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
+    container.appendChild(firstArea);
+}
+
+// >>> FUNGSI UPDATE NAMA AREA <<<
+function updateAreaName(productName, inputElement) {
+    // Logika penyimpanan data bisa ditambahkan di sini jika diperlukan
+    checkPrabayarChange();
+}
+
+// >>> FUNGSI HAPUS AREA <<<
+function deleteArea(button) {
+    const container = button.parentElement.parentElement;
+    if(container.children.length <= 1){
+        toast("Minimal harus ada 1 Area");
+        return;
+    }
+    button.parentElement.remove();
+    checkPrabayarChange();
 }
 
 // >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
@@ -1149,14 +1224,14 @@ function saveServer(){
     checkServerChange();
 }
 function confirmSaveServer(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Server?", saveServer);
+    showConfirm("Konfirmasi Simpan", "Simpan data server?", saveServer);
 }
 function checkCloseServer(){
     if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer, "Ya, Keluar");
-        return;
+        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeServer, "Ya, Keluar");
+    } else {
+        closeServer();
     }
-    closeServer();
 }
 function loadServer(){
     const data = JSON.parse(localStorage.getItem("setupServer"));
@@ -1189,7 +1264,7 @@ function getCenterData(){
 }
 
 function checkCenterChange(){
-    const original = JSON.parse(localStorage.getItem("centerServer")) || {};
+    const original = JSON.parse(localStorage.getItem("setupCenter")) || {};
     const current = getCenterData();
     if(JSON.stringify(current) !== JSON.stringify(original)){
         enableButton("saveCenterBtn");
@@ -1206,23 +1281,23 @@ function closeCenter(){
     document.getElementById("centerModal").classList.remove("show");
 }
 function saveCenter(){
-    localStorage.setItem("centerServer", JSON.stringify(getCenterData()));
+    localStorage.setItem("setupCenter", JSON.stringify(getCenterData()));
     toast("Data Center Disimpan");
     checkCenterChange();
 }
 
 function confirmSaveCenter(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Center?", saveCenter);
+    showConfirm("Konfirmasi Simpan", "Simpan data center?", saveCenter);
 }
 function checkCloseCenter(){
     if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter, "Ya, Keluar");
+        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeCenter, "Ya, Keluar");
         return;
     }
     closeCenter();
 }
 function loadCenter(){
-    const data = JSON.parse(localStorage.getItem("centerServer"));
+    const data = JSON.parse(localStorage.getItem("setupCenter"));
     if(data){
         ipNama.value = data.ip?.nama || "";
         ipServer.value = data.ip?.server || "";
@@ -1261,9 +1336,7 @@ function getCurrentTransaksi(){
     return JSON.parse(JSON.stringify(transaksiItems));
 }
 function checkTransaksiChange(){
-    const original = JSON.parse(localStorage.getItem("transaksiItems")) || [];
-    const current = getCurrentTransaksi();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
+    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
         enableButton("saveTransaksiBtn");
     } else {
         disableButton("saveTransaksiBtn");
@@ -1280,11 +1353,12 @@ function closeTransaksi(){
 }
 function saveTransaksi(){
     localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
+    originalTransaksi = getCurrentTransaksi();
     toast("Menu Transaksi Disimpan");
     checkTransaksiChange();
 }
 function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan Menu Transaksi?", saveTransaksi);
+    showConfirm("Konfirmasi Simpan", "Simpan perubahan menu?", saveTransaksi);
 }
 function loadTransaksi(){
     const data = JSON.parse(localStorage.getItem("transaksiItems"));
@@ -1293,68 +1367,125 @@ function loadTransaksi(){
     } else {
         transaksiItems = [
             {type:"kategori", nama:"PRODUK DIGITAL", open:true},
-            {type:"menu", nama:"Pulsa Reguler", icon:"phone"},
-            {type:"menu", nama:"Paket Internet", icon:"wifi"}
+            {type:"menu", nama:"Pulsa & Paket Data", icon:"smartphone"},
+            {type:"menu", nama:"Token Listrik", icon:"zap"},
+            {type:"menu", nama:"Voucher Game", icon:"gamepad-2"},
+            {type:"menu", nama:"E-Wallet", icon:"wallet"}
         ];
     }
+    originalTransaksi = getCurrentTransaksi();
 }
+
 function renderTransaksiList(){
     const list = document.getElementById("transaksiList");
     list.innerHTML = "";
     transaksiItems.forEach((item, index) => {
         const div = document.createElement("div");
-        // Desain baru lebih rapi dan modern
         div.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 hover:shadow-md transition-shadow";
+        div.draggable = true;
         
         if(item.type === "kategori"){
             div.innerHTML = `
-                <div class="drag-handle text-slate-400 cursor-grab active:cursor-grabbing"><i data-lucide="menu" class="w-5 h-5"></i></div>
-                <div class="w-8 h-8 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
+                <div class="drag-handle text-slate-400">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </div>
+                <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
                     <i data-lucide="layers" class="w-5 h-5"></i>
                 </div>
-                <div class="flex-1 font-semibold text-slate-700 text-base">${item.nama}</div>
-                <button onclick="editItemName(${index})" class="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                <div class="flex-1 font-bold text-slate-700">${item.nama}</div>
+                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             `;
         } else {
             div.innerHTML = `
-                <div class="drag-handle text-slate-400 cursor-grab active:cursor-grabbing"><i data-lucide="menu" class="w-5 h-5"></i></div>
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center text-white shadow-sm">
-                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                <div class="drag-handle text-slate-400">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
+                    <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
                 </div>
                 <div class="flex-1 font-medium text-slate-700">${item.nama}</div>
-                <button onclick="editItemName(${index})" class="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             `;
         }
         list.appendChild(div);
     });
-    lucide.createIcons();
+    
     initSortable();
+    lucide.createIcons();
+    updateTransaksiInfo();
 }
 
-function editItemName(index){
-    const item = transaksiItems[index];
-    const newName = prompt("Ubah nama menjadi:", item.nama);
-    if(newName && newName.trim() !== ""){
-        item.nama = newName.trim();
+function updateTransaksiInfo(){
+    const menuCount = transaksiItems.filter(i => i.type === "menu").length;
+    const katCount = transaksiItems.filter(i => i.type === "kategori").length;
+    document.getElementById("transaksiInfo").innerText = `${menuCount} Menu • ${katCount} Kategori`;
+}
+
+function initSortable(){
+    if(sortableInstance){
+        sortableInstance.destroy();
+    }
+    const list = document.getElementById("transaksiList");
+    sortableInstance = new Sortable(list, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: function(evt){
+            const movedItem = transaksiItems.splice(evt.oldIndex, 1)[0];
+            transaksiItems.splice(evt.newIndex, 0, movedItem);
+            checkTransaksiChange();
+        }
+    });
+}
+
+function addMenu(){
+    const nama = prompt("Masukkan nama menu:");
+    if(nama && nama.trim()){
+        transaksiItems.push({
+            type:"menu",
+            nama: nama.trim(),
+            icon:"circle"
+        });
         renderTransaksiList();
         checkTransaksiChange();
     }
 }
-function initSortable(){
-    const list = document.getElementById("transaksiList");
-    if(sortableInstance) sortableInstance.destroy();
-    sortableInstance = new Sortable(list, {
-        animation: 150,
-        handle: '.drag-handle',
-        onEnd: function(evt){
-            const item = transaksiItems.splice(evt.oldIndex, 1)[0];
-            transaksiItems.splice(evt.newIndex, 0, item);
-            checkTransaksiChange();
-        }
+
+function addKategori(){
+    const nama = prompt("Masukkan nama kategori:");
+    if(nama && nama.trim()){
+        transaksiItems.push({
+            type:"kategori",
+            nama: nama.trim().toUpperCase(),
+            open:true
+        });
+        renderTransaksiList();
+        checkTransaksiChange();
+    }
+}
+
+function toggleDeleteButton(index){
+    activeDeleteIndex = index;
+    showConfirm("Hapus Item", `Yakin hapus "${transaksiItems[index].nama}"?`, deleteItem, "Ya, Hapus");
+}
+
+function deleteItem(){
+    if(activeDeleteIndex >= 0){
+        transaksiItems.splice(activeDeleteIndex, 1);
+        renderTransaksiList();
+        checkTransaksiChange();
+        activeDeleteIndex = -1;
+    }
+}
+
+function hideAllDeleteButtons(){
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.style.display = 'none';
     });
 }
 
@@ -1363,17 +1494,14 @@ function openPreview(){
     const content = document.getElementById("previewContent");
     let html = "";
 
-    // Tampilkan data transaksi
-    let kategori = "";
     transaksiItems.forEach(item => {
         if(item.type === "kategori"){
-            kategori = item.nama;
-            html += `<div class="text-lg font-bold text-slate-800 mt-6 mb-2">${kategori}</div>`;
+            html += `<div class="text-lg font-bold text-slate-800 mt-6 mb-2">${item.nama}</div>`;
         } else {
             html += `
                 <div class="bg-white rounded-xl p-4 shadow mb-2 flex items-center gap-3">
                     <div class="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center text-cyan-600">
-                        <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                        <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
                     </div>
                     <div class="flex-1 font-medium">${item.nama}</div>
                     <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
