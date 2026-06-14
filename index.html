@@ -295,7 +295,7 @@ body{
 }
 
 /* ========================================= */
-/* STYLE KHUSUS 2 KOLOM BERDAMPINGAN */
+/* STYLE KHUSUS 2 KOLOM BERDAMPINGAN (PDAM) */
 /* ========================================= */
 .double-input {
     display: grid;
@@ -315,7 +315,7 @@ body{
 }
 
 /* ========================================= */
-/* STYLE KHUSUS AREA PDAM (LEVEL 1) */
+/* STYLE KHUSUS AREA PDAM */
 /* ========================================= */
 .area-item {
     background: white;
@@ -326,21 +326,6 @@ body{
     display: flex;
     align-items: center;
     gap: 12px;
-    cursor: pointer;
-}
-.area-item:hover {
-    border-color: #0891b2;
-}
-
-/* ========================================= */
-/* STYLE KOTAK ISIAN DI DALAM AREA (LEVEL 2) */
-/* ========================================= */
-.detail-box {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 12px;
 }
 </style>
 </head>
@@ -552,7 +537,7 @@ const smsCenter = document.getElementById('smsCenter');
 let prabayarData = {};
 let originalPrabayarData = {};
 let currentMenuType = "";
-let allProducts = [];
+let allProducts = []; // Simpan semua produk untuk fitur cari
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -619,7 +604,7 @@ const bankList = [
 
 // >>> DAFTAR PRODUK PASCA BAYAR <<<
 const plnList = ["PLN Pascabayar"];
-const pdamList = ["PDAM"];
+const pdamList = ["PDAM"]; // DIGABUNG JADI 1
 const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
 const pbbList = ["PBB P1", "PBB P2"];
 const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
@@ -723,39 +708,53 @@ function openOperatorList(title, actionType){
     const container = document.getElementById("operatorListContainer");
 
     document.getElementById("operatorListTitle").innerText = title;
-    currentMenuType = actionType;
+    currentMenuType = actionType; // Simpan tipe menu saat ini
 
     container.innerHTML = "";
 
+    // Inisialisasi data jika belum ada
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
 
+    // >>> RESET DATA ASLI SETIAP KALI BUKA MENU <<<
     originalPrabayarData = {};
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
 
-    let listToShow = operators;
-    let iconName = "signal";
+    // PILIH ARRAY YANG SESUAI
+    let listToShow = operators; // default
+    let iconName = "signal"; // default icon
     let labelHarga = "Cek Harga";
     let labelNama = "Nama Produk";
 
     if(actionType === "voucherGames"){
-        listToShow = gameList; iconName = "gamepad-2";
+        listToShow = gameList;
+        iconName = "gamepad-2";
     } else if(actionType === "voucherTv"){
-        listToShow = tvList; iconName = "tv";
+        listToShow = tvList;
+        iconName = "tv";
     } else if(actionType === "ewallet"){
-        listToShow = ewalletList; iconName = "wallet";
+        listToShow = ewalletList;
+        iconName = "wallet";
     } else if(actionType === "transferUang"){
-        listToShow = bankList; iconName = "building";
+        listToShow = bankList;
+        iconName = "building";
     }
 
+    // Simpan semua produk untuk fitur cari
     allProducts = [...listToShow];
 
     listToShow.forEach(itemName => {
+        // Ambil data lama jika ada
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
-        originalPrabayarData[currentMenuType][itemName] = { cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || "" };
+
+        // >>> SIMPAN DATA ASLI SEBAGAI PATOKAN <<<
+        originalPrabayarData[currentMenuType][itemName] = {
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || ""
+        };
 
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
@@ -770,22 +769,35 @@ function openOperatorList(title, actionType){
             </div>
             <div class="operator-body">
                 <div class="floating mt-4">
-                    <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
                     <label>${labelHarga}</label>
                 </div>
                 <div class="floating mt-4">
-                    <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
                     <label>${labelNama}</label>
                 </div>
             </div>
         `;
+
         container.appendChild(wrapper);
     });
 
     modal.classList.add("show");
-    document.getElementById("fixedButtonWrapper").style.display = "block";
+    document.getElementById("fixedButtonWrapper").style.display = "block"; // MUNCULKAN TOMBOL
     setTimeout(() => { lucide.createIcons(); }, 50);
+
+    // PASTIKAN TOMBOL MATI SAAT AWAL BUKA
     disableButton("savePrabayarBtn");
+
+    // PASANG EVENT LISTENER UNTUK INPUT
     attachInputListeners();
 }
 
@@ -810,32 +822,43 @@ function openOperatorListPascabayar(title, actionType){
         originalPrabayarData[currentMenuType] = {};
     }
 
+    // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
     let labelInput1 = "Kode / Format";
     let labelInput2 = "Nama Produk";
 
     if(actionType === "plnPascabayar"){
-        listToShow = plnList; iconName = "zap";
+        listToShow = plnList;
+        iconName = "zap";
     } else if(actionType === "pdam"){
-        listToShow = pdamList; iconName = "droplet";
+        listToShow = pdamList;
+        iconName = "droplet";
+        labelInput1 = "Kode Cek";
+        labelInput2 = "Kode Bayar";
     } else if(actionType === "bpjs"){
-        listToShow = bpjsList; iconName = "heart";
+        listToShow = bpjsList;
+        iconName = "heart";
     } else if(actionType === "pbb"){
-        listToShow = pbbList; iconName = "home";
+        listToShow = pbbList;
+        iconName = "home";
     } else if(actionType === "tvKabel"){
-        listToShow = tvKabelList; iconName = "tv";
+        listToShow = tvKabelList;
+        iconName = "tv";
     } else if(actionType === "internetTelpon"){
-        listToShow = internetList; iconName = "wifi";
+        listToShow = internetList;
+        iconName = "wifi";
     }
 
     allProducts = [...listToShow];
 
     listToShow.forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || { areas: [] };
-        
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: "", wilayah: ""};
+
         originalPrabayarData[currentMenuType][itemName] = {
-            areas: JSON.parse(JSON.stringify(saved.areas || []))
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || "",
+            wilayah: saved.wilayah || ""
         };
 
         const wrapper = document.createElement("div");
@@ -845,17 +868,18 @@ function openOperatorListPascabayar(title, actionType){
         let formContent = '';
 
         if(actionType === "pdam"){
-            // >>> FORMAT KHUSUS PDAM: AREA >> KOTA <<<
+            // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
             formContent = `
                 <div class="operator-body">
                     <!-- TOMBOL TAMBAH AREA -->
-                    <button onclick="addAreaPDAM('${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 shadow">
-                        <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Area
+                    <button onclick="addNewArea('${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Tambah Area
                     </button>
                     
                     <!-- CONTAINER AREA -->
                     <div id="areaContainer_${itemName}" class="space-y-3">
-                        <!-- Area akan dimuat di sini -->
+                        <!-- Area akan muncul di sini -->
                     </div>
                 </div>
             `;
@@ -864,11 +888,19 @@ function openOperatorListPascabayar(title, actionType){
             formContent = `
                 <div class="operator-body">
                     <div class="floating mt-4">
-                        <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
+                        <input type="text" 
+                               class="input-cek-harga" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.cekHarga || ""}">
                         <label>${labelInput1}</label>
                     </div>
                     <div class="floating mt-4">
-                        <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
+                        <input type="text" 
+                               class="input-nama-produk" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.namaProduk || ""}">
                         <label>${labelInput2}</label>
                     </div>
                 </div>
@@ -888,190 +920,123 @@ function openOperatorListPascabayar(title, actionType){
 
         container.appendChild(wrapper);
         
-        // Jika PDAM, load data area
+        // Jika PDAM, langsung load area pertama
         if(actionType === "pdam"){
-            loadAreaDataPDAM(itemName, saved.areas || []);
+            loadAreaData(itemName);
         }
     });
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block";
     setTimeout(() => { lucide.createIcons(); }, 50);
+
     disableButton("savePrabayarBtn");
+    attachInputListeners();
 }
 
-// >>> FUNGSI LOAD DATA AREA PDAM <<<
-function loadAreaDataPDAM(productName, areas){
+// >>> FUNGSI TAMBAH AREA BARU <<<
+function addNewArea(productName) {
     const container = document.getElementById(`areaContainer_${productName}`);
-    container.innerHTML = "";
+    const areaCount = container.children.length + 1;
 
-    if(areas.length === 0){
-        areas = [{ nama: "Area 1", items: [] }];
-    }
+    const newArea = document.createElement("div");
+    newArea.className = "area-item";
+    newArea.innerHTML = `
+        <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <div class="text-xs text-slate-400">Nama Area</div>
+            <input type="text" 
+                   value="Area ${areaCount}" 
+                   class="w-full bg-transparent border-none outline-none text-slate-700 font-medium"
+                   oninput="updateAreaName('${productName}', this)">
+        </div>
+        <button onclick="deleteArea(this)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
 
-    areas.forEach((area, areaIndex) => {
-        const areaDiv = document.createElement("div");
-        areaDiv.className = "area-item";
-        areaDiv.innerHTML = `
-            <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600">
-                <i data-lucide="map-pin" class="w-5 h-5"></i>
-            </div>
-            <div class="flex-1">
-                <div class="text-xs text-slate-400">Nama Area</div>
-                <input type="text" 
-                       value="${area.nama}" 
-                       class="w-full bg-transparent border-none outline-none text-slate-700 font-medium"
-                       oninput="updateAreaNama('${productName}', ${areaIndex}, this.value)"
-                       placeholder="Nama Area">
-            </div>
-            <div class="flex gap-2">
-                <button onclick="openAreaDetail('${productName}', ${areaIndex})" class="p-2 text-cyan-600 hover:bg-cyan-50 rounded-lg">
-                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                </button>
-                <button onclick="deleteAreaPDAM('${productName}', ${areaIndex})" class="p-2 text-red-500 hover:bg-red-50 rounded-lg">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            </div>
-        `;
-        container.appendChild(areaDiv);
-    });
-    
+    container.appendChild(newArea);
     lucide.createIcons();
     checkPrabayarChange();
 }
 
-// >>> TAMBAH AREA BARU <<<
-function addAreaPDAM(productName){
-    if(!prabayarData[currentMenuType][productName]){
-        prabayarData[currentMenuType][productName] = { areas: [] };
-    }
-    prabayarData[currentMenuType][productName].areas.push({ 
-        nama: `Area ${prabayarData[currentMenuType][productName].areas.length + 1}`, 
-        items: [] 
-    });
-    loadAreaDataPDAM(productName, prabayarData[currentMenuType][productName].areas);
+// >>> FUNGSI LOAD AREA AWAL <<<
+function loadAreaData(productName) {
+    const container = document.getElementById(`areaContainer_${productName}`);
+    // Tambahkan area pertama secara default
+    const firstArea = document.createElement("div");
+    firstArea.className = "area-item";
+    firstArea.innerHTML = `
+        <div class="w-10 h-10 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600">
+            <i data-lucide="map-pin" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <div class="text-xs text-slate-400">Nama Area</div>
+            <input type="text" 
+                   value="Area 1" 
+                   class="w-full bg-transparent border-none outline-none text-slate-700 font-medium"
+                   oninput="updateAreaName('${productName}', this)">
+        </div>
+        <button onclick="deleteArea(this)" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
+    container.appendChild(firstArea);
 }
 
-// >>> HAPUS AREA <<<
-function deleteAreaPDAM(productName, index){
-    showConfirm("Hapus Area", "Yakin hapus area ini?", () => {
-        prabayarData[currentMenuType][productName].areas.splice(index, 1);
-        loadAreaDataPDAM(productName, prabayarData[currentMenuType][productName].areas);
-        checkPrabayarChange();
-    }, "Ya, Hapus");
-}
-
-// >>> UPDATE NAMA AREA <<<
-function updateAreaNama(productName, areaIndex, newName){
-    prabayarData[currentMenuType][productName].areas[areaIndex].nama = newName;
+// >>> FUNGSI UPDATE NAMA AREA <<<
+function updateAreaName(productName, inputElement) {
+    // Logika penyimpanan data bisa ditambahkan di sini jika diperlukan
     checkPrabayarChange();
 }
 
-// >>> BUKA DETAIL ISI AREA (WILAYAH, KODE CEK, KODE BAYAR) <<<
-function openAreaDetail(productName, areaIndex){
-    const area = prabayarData[currentMenuType][productName].areas[areaIndex];
-    
-    // Buat overlay baru
-    const overlay = document.createElement("div");
-    overlay.className = "fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4";
-    overlay.id = "areaDetailOverlay";
-    overlay.onclick = function(e){
-        if(e.target.id === "areaDetailOverlay") closeAreaDetail();
-    };
-
-    let html = `
-        <div class="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 relative">
-            <button onclick="closeAreaDetail()" class="absolute top-4 right-4 text-slate-400 btn-click">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-            
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">${area.nama}</h2>
-            
-            <div id="itemsContainer">
-    `;
-
-    // Render item yang sudah ada
-    if(!area.items || area.items.length === 0){
-        area.items = [{ wilayah: "", kodeCek: "", kodeBayar: "" }];
+// >>> FUNGSI HAPUS AREA <<<
+function deleteArea(button) {
+    const container = button.parentElement.parentElement;
+    if(container.children.length <= 1){
+        toast("Minimal harus ada 1 Area");
+        return;
     }
+    button.parentElement.remove();
+    checkPrabayarChange();
+}
 
-    area.items.forEach((item, idx) => {
-        html += `
-            <div class="detail-box">
-                <div class="floating mb-3">
-                    <input type="text" 
-                           value="${item.wilayah}" 
-                           oninput="updateItemData(${areaIndex}, ${idx}, 'wilayah', this.value)"
-                           placeholder=" "
-                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                    <label>Wilayah</label>
-                </div>
-                <div class="double-input">
-                    <div class="floating">
-                        <input type="text" 
-                               value="${item.kodeCek}" 
-                               oninput="updateItemData(${areaIndex}, ${idx}, 'kodeCek', this.value)"
-                               placeholder=" "
-                               class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                        <label>Kode Cek</label>
-                    </div>
-                    <div class="floating">
-                        <input type="text" 
-                               value="${item.kodeBayar}" 
-                               oninput="updateItemData(${areaIndex}, ${idx}, 'kodeBayar', this.value)"
-                               placeholder=" "
-                               class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                        <label>Kode Bayar</label>
-                    </div>
-                </div>
-                <button onclick="deleteItemData(${areaIndex}, ${idx})" class="mt-3 text-red-500 text-sm flex items-center gap-1">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus
-                </button>
-            </div>
-        `;
-    });
+// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
+function addNewProductInside(buttonElement, productName) {
+    // Cari container tempat menaruh inputan baru
+    const bodyDiv = buttonElement.parentElement;
+    const container = bodyDiv.querySelector('.products-container');
 
-    html += `
+    // Buat elemen baru
+    const newItem = document.createElement("div");
+    newItem.className = "product-item";
+    newItem.innerHTML = `
+        <div class="floating mt-4">
+            <input type="text" class="input-wilayah" data-operator="${productName}" placeholder=" ">
+            <label>Wilayah</label>
+        </div>
+        <div class="double-input">
+            <div class="floating mt-4">
+                <input type="text" class="input-cek-harga" data-operator="${productName}" placeholder=" ">
+                <label>Kode Cek</label>
             </div>
-            
-            <button onclick="addNewItem(${areaIndex})" class="w-full py-4 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-semibold mt-4 hover:border-cyan-500 hover:text-cyan-500 transition">
-                + Tambah Kotak Baru
-            </button>
+            <div class="floating mt-4">
+                <input type="text" class="input-nama-produk" data-operator="${productName}" placeholder=" ">
+                <label>Kode Bayar</label>
+            </div>
         </div>
     `;
 
-    overlay.innerHTML = html;
-    document.body.appendChild(overlay);
-    lucide.createIcons();
-}
+    // Masukkan ke dalam container
+    container.appendChild(newItem);
 
-function closeAreaDetail(){
-    document.getElementById('areaDetailOverlay').remove();
-    checkPrabayarChange();
-}
+    // Pasang event listener agar tombol simpan bisa nyala
+    attachInputListeners();
 
-// >>> UPDATE DATA ITEM <<<
-function updateItemData(areaIndex, itemIndex, field, value){
-    prabayarData[currentMenuType].PDAM.areas[areaIndex].items[itemIndex][field] = value;
-    checkPrabayarChange();
-}
-
-// >>> TAMBAH ITEM BARU <<<
-function addNewItem(areaIndex){
-    prabayarData[currentMenuType].PDAM.areas[areaIndex].items.push({
-        wilayah: "", kodeCek: "", kodeBayar: ""
-    });
-    openAreaDetail('PDAM', areaIndex); // Refresh
-}
-
-// >>> HAPUS ITEM <<<
-function deleteItemData(areaIndex, itemIndex){
-    prabayarData[currentMenuType].PDAM.areas[areaIndex].items.splice(itemIndex, 1);
-    // Jika kosong, tambah 1 kosong
-    if(prabayarData[currentMenuType].PDAM.areas[areaIndex].items.length === 0){
-        prabayarData[currentMenuType].PDAM.areas[areaIndex].items.push({ wilayah: "", kodeCek: "", kodeBayar: "" });
-    }
-    openAreaDetail('PDAM', areaIndex); // Refresh
+    // Scroll ke bawah
+    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // >>> FUNGSI CARI PRODUK <<<
@@ -1089,12 +1054,51 @@ function searchProducts() {
     });
 }
 
-// >>> LOGIKA CEK PERUBAHAN <<<
-function checkPrabayarChange(){
-    const current = JSON.stringify(prabayarData[currentMenuType]);
-    const original = JSON.stringify(originalPrabayarData[currentMenuType]);
+function attachInputListeners(){
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    inputs.forEach(input => {
+        input.addEventListener("input", function(){
+            const op = this.dataset.operator;
+            let type = "cekHarga";
+            if(this.classList.contains("input-nama-produk")) type = "namaProduk";
+            if(this.classList.contains("input-wilayah")) type = "wilayah";
 
-    if(current !== original){
+            if(!prabayarData[currentMenuType][op]){
+                prabayarData[currentMenuType][op] = {};
+            }
+            prabayarData[currentMenuType][op][type] = this.value;
+
+            checkPrabayarChange(); // CEK SETIAP KETIKAN
+        });
+    });
+}
+
+// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
+function checkPrabayarChange(){
+    let adaPerubahan = false;
+
+    // CEK SEMUA INPUT DI HALAMAN INI
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+
+    inputs.forEach(input => {
+        const op = input.dataset.operator;
+        let type = "cekHarga";
+        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
+        if(input.classList.contains("input-wilayah")) type = "wilayah";
+
+        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
+        const nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
+        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
+        const nilaiSekarang = (input.value || "").trim();
+
+        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
+        if(nilaiSekarang !== nilaiAsli){
+            adaPerubahan = true;
+        }
+    });
+
+    // PUTUSKAN TOMBOL NYALA ATAU MATI
+    if(adaPerubahan){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
@@ -1104,28 +1108,35 @@ function checkPrabayarChange(){
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
+
+    // >>> UPDATE DATA ASLI SETELAH DISIMPAN <<<
     originalPrabayarData[currentMenuType] = JSON.parse(JSON.stringify(prabayarData[currentMenuType]));
+
     toast("Data Berhasil Disimpan");
-    disableButton("savePrabayarBtn");
+    disableButton("savePrabayarBtn"); // TOMBOL MATI
 }
 
 function confirmSavePrabayar(){
     showConfirm("Konfirmasi Simpan", "Apakah Anda yakin ingin menyimpan data ini?", savePrabayar, "Ya, Simpan");
 }
 
+// >>> FUNGSI BUKA/TUTUP FORM <<<
 function toggleOperator(wrapper){
     wrapper.classList.toggle("open");
 }
 
 function backToPrabayarFromList(){
+    // CEK APAKAH ADA PERUBAHAN BELUM DISIMPAN
     if(!document.getElementById("savePrabayarBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
+            // >>> KELUAR TANPA MENYIMPAN <<<
             document.getElementById("operatorListModal").classList.remove("show");
             document.getElementById("fixedButtonWrapper").style.display = "none";
             document.getElementById("prabayarModal").classList.add("show");
-        }, "Ya, Keluar");
+        }, "Ya, Keluar"); // Ubah tulisan tombol
         return;
     }
+
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("prabayarModal").classList.add("show");
@@ -1151,6 +1162,7 @@ function disableButton(btnId){
     btn.disabled = true;
     btn.classList.remove("bg-green-600");
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
+}
 
 function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
     document.getElementById("confirmTitle").innerText = title;
@@ -1167,7 +1179,7 @@ function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
 
     const okBtn = document.createElement("button");
     okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
-    okBtn.innerText = buttonText;
+    okBtn.innerText = buttonText; // Pakai variabel yang dikirim
     okBtn.onclick = function(){
         if(typeof confirmAction === "function") confirmAction();
         closeConfirm();
