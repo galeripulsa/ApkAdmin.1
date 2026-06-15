@@ -586,7 +586,7 @@ let originalPrabayarData = {};
 let currentMenuType = "";
 let currentProductName = "";
 let currentAreaIndex = -1;
-let viewState = "list"; // "list" atau "detail" => Variabel baru untuk cek posisi tampilan
+let viewState = "list"; // "list" atau "detail"
 let allProducts = [];
 
 function autoGrow(element) {
@@ -1049,14 +1049,17 @@ function openAreaDetail(index){
     lucide.createIcons();
 }
 
-// >>> FUNGSI KHUSUS TOMBOL KEMBALI (PENTING!) <<<
+// ✅✅✅ PERBAIKAN UTAMA: LOGIKA TOMBOL KEMBALI ✅✅✅
 function handleBackButton(){
     if(viewState === "detail" && currentMenuType === "pdam"){
-        // Jika sedang di dalam Area PDAM, kembali ke List Area
+        // 1. Jika sedang di dalam AREA PDAM -> KEMBALI KE LIST AREA PDAM
         saveAreaDetailData(); // Simpan data dulu
         openOperatorListPascabayar("PDAM", "pdam");
+    } else if(viewState === "list" && currentMenuType === "pdam"){
+        // 2. Jika sudah di LIST AREA PDAM -> KEMBALI KE MENU PASCABAYAR
+        backToPrabayarFromList();
     } else {
-        // Jika sudah di List, kembali ke menu sebelumnya
+        // 3. Untuk menu lain
         backToPrabayarFromList();
     }
 }
@@ -1223,8 +1226,10 @@ function showConfirm(title, message, yesFunc, yesText="Ya", noText="Tidak"){
 
 function closeConfirm(){
     document.getElementById("confirmModal").classList.add("hidden");
-    confirmAction = null;
-}
+    confirmAction =
+
+
+
 
 function executeYes(){
     if(confirmAction) confirmAction();
@@ -1234,53 +1239,31 @@ function executeYes(){
 // === FUNGSI TOAST ===
 function toast(text){
     const el = document.getElementById("toast");
-    el.innerText = text;    
+    el.innerText = text;
     el.style.display = "block";
     setTimeout(() => {
         el.style.display = "none";
     }, 2500);
 }
 
-// === FUNGSI BUKA/TUTUP MODAL ===
+// === FUNGSI BUKA/TUTUP MODAL SERVER ===
 function openServer(){
     loadServer();
     document.getElementById("serverModal").classList.add("show");
 }
 
-function closeServer(){    
+function closeServer(){
     document.getElementById("serverModal").classList.remove("show");
 }
 
 function checkCloseServer(){
     if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
-            closeServer();
-        }, "Ya, Keluar", "Batal");
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeServer, "Ya, Keluar", "Batal");
     } else {
         closeServer();
     }
 }
 
-function openCenter(){
-    loadCenter();
-    document.getElementById("centerModal").classList.add("show");
-}
-
-function closeCenter(){
-    document.getElementById("centerModal").classList.remove("show");
-}
-
-function checkCloseCenter(){
-    if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
-            closeCenter();
-        }, "Ya, Keluar", "Batal");
-    } else {
-        closeCenter();
-    }
-}
-
-// === FUNGSI LOAD & SIMPAN DATA ===
 function loadServer(){
     const data = JSON.parse(localStorage.getItem("serverData")) || {};
     document.getElementById("namaKonter").value = data.nama || "";
@@ -1300,6 +1283,24 @@ function saveServer(){
 
 function confirmSaveServer(){
     showConfirm("Konfirmasi Simpan", "Simpan data server?", saveServer);
+}
+
+// === FUNGSI BUKA/TUTUP MODAL CENTER ===
+function openCenter(){
+    loadCenter();
+    document.getElementById("centerModal").classList.add("show");
+}
+
+function closeCenter(){
+    document.getElementById("centerModal").classList.remove("show");
+}
+
+function checkCloseCenter(){
+    if(!document.getElementById("saveCenterBtn").disabled){
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeCenter, "Ya, Keluar", "Batal");
+    } else {
+        closeCenter();
+    }
 }
 
 function loadCenter(){
@@ -1336,7 +1337,7 @@ function confirmSaveCenter(){
 }
 
 // === MENU TRANSAKSI ===
-let transaksiData = { menus:[], kategoris:[] };
+let transaksiData = { menus: [], kategoris: [] };
 
 function openTransaksi(){
     loadTransaksi();
@@ -1350,25 +1351,22 @@ function closeTransaksi(){
 
 function checkCloseTransaksi(){
     if(!document.getElementById("saveTransaksiBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
-            closeTransaksi();
-        }, "Ya, Keluar", "Batal");
+        showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", closeTransaksi, "Ya, Keluar", "Batal");
     } else {
         closeTransaksi();
     }
 }
 
 function loadTransaksi(){
-    const data = JSON.parse(localStorage.getItem("transaksiData")) || {};
-    transaksiData.menus = data.menus || [];
-    transaksiData.kategoris = data.kategoris || [];
+    const data = JSON.parse(localStorage.getItem("transaksiData")) || { menus: [], kategoris: [] };
+    transaksiData = data;
     updateTransaksiInfo();
     disableButton("saveTransaksiBtn");
 }
 
 function saveTransaksi(){
     localStorage.setItem("transaksiData", JSON.stringify(transaksiData));
-    toast("Data Transaksi Disimpan");
+    toast("Data Transaksi Berhasil Disimpan");
     disableButton("saveTransaksiBtn");
 }
 
@@ -1377,8 +1375,9 @@ function confirmSaveTransaksi(){
 }
 
 function updateTransaksiInfo(){
-    document.getElementById("transaksiInfo").innerText = 
-        `${transaksiData.menus.length} Menu • ${transaksiData.kategoris.length} Kategori`;
+    const jmlMenu = transaksiData.menus.length;
+    const jmlKategori = transaksiData.kategoris.length;
+    document.getElementById("transaksiInfo").innerText = `${jmlMenu} Menu • ${jmlKategori} Kategori`;
 }
 
 function renderTransaksiList(){
@@ -1391,8 +1390,8 @@ function renderTransaksiList(){
         div.innerHTML = `
             <i data-lucide="menu" class="w-5 h-5 text-slate-400 drag-handle"></i>
             <div class="flex-1 font-bold">${m}</div>
-            <button onclick="editItem(${i}, 'menu')" class="text-cyan-600">Edit</button>
-            <button onclick="hapusItem(${i}, 'menu')" class="text-red-500">Hapus</button>
+            <button onclick="editItem('menu', ${i})" class="text-cyan-600">Edit</button>
+            <button onclick="deleteItem('menu', ${i})" class="text-red-500">Hapus</button>
         `;
         list.appendChild(div);
     });
@@ -1401,15 +1400,20 @@ function renderTransaksiList(){
         const div = document.createElement("div");
         div.className = "bg-white p-4 rounded-2xl shadow flex items-center gap-3";
         div.innerHTML = `
-            <i data-lucide="menu" class="w-5 h-5 text-slate-400 drag-handle"></i>
+            <i data-lucide="layers" class="w-5 h-5 text-slate-400 drag-handle"></i>
             <div class="flex-1 font-bold">${k}</div>
-            <button onclick="editItem(${i}, 'kategori')" class="text-cyan-600">Edit</button>
-            <button onclick="hapusItem(${i}, 'kategori')" class="text-red-500">Hapus</button>
+            <button onclick="editItem('kategori', ${i})" class="text-cyan-600">Edit</button>
+            <button onclick="deleteItem('kategori', ${i})" class="text-red-500">Hapus</button>
         `;
         list.appendChild(div);
     });
 
     lucide.createIcons();
+    initSortable();
+}
+
+function hideAllDeleteButtons(){
+    // Placeholder jika butuh fitur sembunyi tombol hapus
 }
 
 function addMenu(){
@@ -1432,18 +1436,18 @@ function addKategori(){
     }
 }
 
-function editItem(index, type){
+function editItem(type, index){
     const arr = type === 'menu' ? transaksiData.menus : transaksiData.kategoris;
-    const baru = prompt("Ubah menjadi:", arr[index]);
-    if(baru !== null && baru.trim()){
-        arr[index] = baru.trim();
+    const namaBaru = prompt("Ubah menjadi:", arr[index]);
+    if(namaBaru && namaBaru.trim()){
+        arr[index] = namaBaru.trim();
         renderTransaksiList();
         updateTransaksiInfo();
         enableButton("saveTransaksiBtn");
     }
 }
 
-function hapusItem(index, type){
+function deleteItem(type, index){
     const arr = type === 'menu' ? transaksiData.menus : transaksiData.kategoris;
     if(confirm(`Hapus "${arr[index]}"?`)){
         arr.splice(index, 1);
@@ -1453,42 +1457,65 @@ function hapusItem(index, type){
     }
 }
 
+function initSortable(){
+    if(sortableInstance) sortableInstance.destroy();
+    const el = document.getElementById('transaksiList');
+    sortableInstance = new Sortable(el, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: function(){
+            // Simpan urutan baru
+            const items = el.querySelectorAll('.flex-1');
+            const newMenus = [], newKats = [];
+            items.forEach(it=>{
+                // Cek apakah menu atau kategori dari icon
+                const icon = it.parentElement.querySelector('i').getAttribute('data-lucide');
+                if(icon === 'menu') newMenus.push(it.innerText);
+                else newKats.push(it.innerText);
+            });
+            transaksiData.menus = newMenus;
+            transaksiData.kategoris = newKats;
+            updateTransaksiInfo();
+            enableButton("saveTransaksiBtn");
+        }
+    });
+}
+
 // === PREVIEW ===
 function openPreview(){
     const server = JSON.parse(localStorage.getItem("serverData")) || {};
     const center = JSON.parse(localStorage.getItem("centerData")) || {};
-    const trans = JSON.parse(localStorage.getItem("transaksiData")) || {};
+    const trans = JSON.parse(localStorage.getItem("transaksiData")) || { menus: [], kategoris: [] };
 
     let html = `
-        <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 rounded-3xl text-white shadow mb-6">
-            <h1 class="text-2xl font-bold">${server.nama || 'Nama Konter'}</h1>
-            <p class="opacity-90">${server.alamat || 'Alamat belum diisi'}</p>
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-cyan-600">${server.nama || 'Nama Konter'}</h1>
+            <p class="text-slate-500">${server.alamat || 'Alamat belum diisi'}</p>
         </div>
     `;
 
-    if(trans.menus && trans.menus.length){
-        html += `<h3 class="font-bold text-slate-800 mb-2">MENU TRANSAKSI</h3><div class="grid grid-cols-2 gap-2 mb-6">`;
-        trans.menus.forEach(m => {
-            html += `<div class="bg-white p-3 rounded-xl shadow text-center font-bold">${m}</div>`;
+    if(trans.menus.length){
+        html += `<h3 class="font-bold text-lg mb-2">Daftar Menu</h3><div class="grid grid-cols-2 gap-2 mb-6">`;
+        trans.menus.forEach(m=>{
+            html += `<div class="bg-cyan-50 p-3 rounded-xl text-center font-semibold">${m}</div>`;
         });
         html += `</div>`;
     }
 
-    if(trans.kategoris && trans.kategoris.length){
-        html += `<h3 class="font-bold text-slate-800 mb-2">KATEGORI</h3><div class="grid grid-cols-2 gap-2 mb-6">`;
-        trans.kategoris.forEach(k => {
-            html += `<div class="bg-white p-3 rounded-xl shadow text-center font-bold">${k}</div>`;
+    if(trans.kategoris.length){
+        html += `<h3 class="font-bold text-lg mb-2">Kategori</h3><div class="flex flex-wrap gap-2 mb-6">`;
+        trans.kategoris.forEach(k=>{
+            html += `<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">${k}</span>`;
         });
         html += `</div>`;
     }
 
-    html += `
-        <div class="bg-white p-5 rounded-2xl shadow">
-            <h3 class="font-bold text-slate-800 mb-3">KONTAK CENTER</h3>
-            <p>📞 WA: ${center.wa || '-'}</p>
-            <p>✉️ SMS: ${center.sms || '-'}</p>
-        </div>
-    `;
+    if(center.wa || center.sms){
+        html += `<div class="bg-green-50 p-4 rounded-xl mt-4"><h4 class="font-bold text-green-700 mb-2">Kontak Center</h4>`;
+        if(center.wa) html += `<p>📞 WA: ${center.wa}</p>`;
+        if(center.sms) html += `<p>✉️ SMS: ${center.sms}</p>`;
+        html += `</div>`;
+    }
 
     document.getElementById("previewContent").innerHTML = html;
     document.getElementById("previewModal").classList.add("show");
@@ -1505,14 +1532,11 @@ window.onload = function(){
     // Load data Prabayar
     const saved = localStorage.getItem("prabayarData");
     if(saved){
-        try {
-            prabayarData = JSON.parse(saved);
-        } catch(e) {
-            prabayarData = {};
-        }
+        try { prabayarData = JSON.parse(saved); } 
+        catch(e) { prabayarData = {}; }
     }
 
-    // Event listener auto enable button
+    // Event listener input server & center
     document.getElementById("namaKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
     document.getElementById("alamatKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
 
