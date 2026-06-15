@@ -527,7 +527,7 @@ body{
         <!-- HEADER STICKY -->
         <div class="sticky-header">
             <div class="flex items-center justify-between mb-0">
-                <button onclick="backToPrabayarFromList()" class="bg-gray-100 p-3 rounded-full btn-click">
+                <button onclick="handleBackButton()" class="bg-gray-100 p-3 rounded-full btn-click">
                     <i data-lucide="arrow-left" class="w-7 h-7"></i>
                 </button>
                 <h3 id="operatorListTitle" class="text-2xl font-bold text-slate-800">Judul Menu</h3>
@@ -586,6 +586,7 @@ let originalPrabayarData = {};
 let currentMenuType = "";
 let currentProductName = "";
 let currentAreaIndex = -1;
+let viewState = "list"; // "list" atau "detail" => Variabel baru untuk cek posisi tampilan
 let allProducts = [];
 
 function autoGrow(element) {
@@ -758,6 +759,7 @@ function openOperatorList(title, actionType){
 
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
+    viewState = "list"; // Reset state ke list
 
     container.innerHTML = "";
 
@@ -850,6 +852,7 @@ function openOperatorListPascabayar(title, actionType){
 
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
+    viewState = "list"; // Reset state ke list
 
     container.innerHTML = "";
 
@@ -1014,6 +1017,7 @@ function addNewAreaList(isLoading = false){
 
 // >>> FUNGSI BUKA DETAIL AREA <<<
 function openAreaDetail(index){
+    viewState = "detail"; // Ubah state jadi detail
     currentAreaIndex = index;
     const areaData = prabayarData[currentMenuType][currentProductName].areas[index];
 
@@ -1022,7 +1026,7 @@ function openAreaDetail(index){
         <!-- HEADER -->
         <div class="sticky-header" style="margin:-20px -20px 20px -20px;">
             <div class="flex items-center justify-between mb-0">
-                <button onclick="backFromAreaDetail()" class="bg-gray-100 p-3 rounded-full btn-click">
+                <button onclick="handleBackButton()" class="bg-gray-100 p-3 rounded-full btn-click">
                     <i data-lucide="arrow-left" class="w-7 h-7"></i>
                 </button>
                 <h3 class="text-2xl font-bold text-slate-800">${areaData.nama}</h3>
@@ -1045,13 +1049,16 @@ function openAreaDetail(index){
     lucide.createIcons();
 }
 
-// >>> FUNGSI KEMBALI DARI DETAIL AREA <<<
-function backFromAreaDetail(){
-    // Simpan data dulu
-    saveAreaDetailData();
-    
-    // Kembali ke tampilan list area
-    openOperatorListPascabayar("PDAM", "pdam");
+// >>> FUNGSI KHUSUS TOMBOL KEMBALI (PENTING!) <<<
+function handleBackButton(){
+    if(viewState === "detail" && currentMenuType === "pdam"){
+        // Jika sedang di dalam Area PDAM, kembali ke List Area
+        saveAreaDetailData(); // Simpan data dulu
+        openOperatorListPascabayar("PDAM", "pdam");
+    } else {
+        // Jika sudah di List, kembali ke menu sebelumnya
+        backToPrabayarFromList();
+    }
 }
 
 // >>> FUNGSI LOAD ITEM DI DALAM AREA <<<
@@ -1106,16 +1113,19 @@ function addNewItemToArea(isLoading = false, data = null){
 // >>> FUNGSI SIMPAN DATA DETAIL AREA <<<
 function saveAreaDetailData(){
     const items = [];
-    document.querySelectorAll('#areaItemsContainer .product-item').forEach(el => {
-        items.push({
-            wilayah: el.querySelector('.input-wilayah').value,
-            cekHarga: el.querySelector('.input-cek-harga').value,
-            namaProduk: el.querySelector('.input-nama-produk').value
+    const els = document.querySelectorAll('#areaItemsContainer .product-item');
+    if(els.length > 0){
+        els.forEach(el => {
+            items.push({
+                wilayah: el.querySelector('.input-wilayah').value,
+                cekHarga: el.querySelector('.input-cek-harga').value,
+                namaProduk: el.querySelector('.input-nama-produk').value
+            });
         });
-    });
 
-    // Update ke data utama
-    prabayarData[currentMenuType][currentProductName].areas[currentAreaIndex].items = items;
+        // Update ke data utama
+        prabayarData[currentMenuType][currentProductName].areas[currentAreaIndex].items = items;
+    }
 }
 
 // >>> FUNGSI CARI PRODUK <<<
@@ -1224,9 +1234,11 @@ function executeYes(){
 // === FUNGSI TOAST ===
 function toast(text){
     const el = document.getElementById("toast");
-    el.innerText = text;
+    el.innerText = text;    
     el.style.display = "block";
-    setTimeout(()=> el.style.display = "none", 2500);
+    setTimeout(() => {
+        el.style.display = "none";
+    }, 2500);
 }
 
 // === FUNGSI BUKA/TUTUP MODAL ===
@@ -1236,15 +1248,14 @@ function openServer(){
 }
 
 function closeServer(){    
-
-document.getElementById("serverModal").classList.remove("show");
+    document.getElementById("serverModal").classList.remove("show");
 }
 
 function checkCloseServer(){
     if(!document.getElementById("saveServerBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
             closeServer();
-        }, "Ya, Keluar");
+        }, "Ya, Keluar", "Batal");
     } else {
         closeServer();
     }
@@ -1263,7 +1274,7 @@ function checkCloseCenter(){
     if(!document.getElementById("saveCenterBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
             closeCenter();
-        }, "Ya, Keluar");
+        }, "Ya, Keluar", "Batal");
     } else {
         closeCenter();
     }
@@ -1271,7 +1282,7 @@ function checkCloseCenter(){
 
 // === FUNGSI LOAD & SIMPAN DATA ===
 function loadServer(){
-    const data = JSON.parse(localStorage.getItem("serverData") || "{}");
+    const data = JSON.parse(localStorage.getItem("serverData")) || {};
     document.getElementById("namaKonter").value = data.nama || "";
     document.getElementById("alamatKonter").value = data.alamat || "";
     disableButton("saveServerBtn");
@@ -1292,7 +1303,7 @@ function confirmSaveServer(){
 }
 
 function loadCenter(){
-    const data = JSON.parse(localStorage.getItem("centerData") || "{}");
+    const data = JSON.parse(localStorage.getItem("centerData")) || {};
     document.getElementById("ipNama").value = data.ipNama || "";
     document.getElementById("ipServer").value = data.ipServer || "";
     document.getElementById("ipHost").value = data.ipHost || "";
@@ -1341,17 +1352,18 @@ function checkCloseTransaksi(){
     if(!document.getElementById("saveTransaksiBtn").disabled){
         showConfirm("Perubahan Belum Disimpan", "Yakin ingin keluar?", ()=>{
             closeTransaksi();
-        }, "Ya, Keluar");
+        }, "Ya, Keluar", "Batal");
     } else {
         closeTransaksi();
     }
 }
 
 function loadTransaksi(){
-    const d = JSON.parse(localStorage.getItem("transaksiData") || "{}");
-    transaksiData.menus = d.menus || [];
-    transaksiData.kategoris = d.kategoris || [];
+    const data = JSON.parse(localStorage.getItem("transaksiData")) || {};
+    transaksiData.menus = data.menus || [];
+    transaksiData.kategoris = data.kategoris || [];
     updateTransaksiInfo();
+    disableButton("saveTransaksiBtn");
 }
 
 function saveTransaksi(){
@@ -1361,7 +1373,7 @@ function saveTransaksi(){
 }
 
 function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan menu?", saveTransaksi);
+    showConfirm("Konfirmasi Simpan", "Simpan menu & kategori?", saveTransaksi);
 }
 
 function updateTransaksiInfo(){
@@ -1376,20 +1388,11 @@ function renderTransaksiList(){
     transaksiData.menus.forEach((m, i)=>{
         const div = document.createElement("div");
         div.className = "bg-white p-4 rounded-2xl shadow flex items-center gap-3";
-        div.dataset.index = i;
-        div.dataset.type = "menu";
         div.innerHTML = `
             <i data-lucide="menu" class="w-5 h-5 text-slate-400 drag-handle"></i>
-            <div class="flex-1">
-                <div class="font-bold">${m.nama}</div>
-                <div class="text-sm text-slate-500">Menu</div>
-            </div>
-            <button onclick="editItem(${i}, 'menu')" class="text-cyan-600 p-2">
-                <i data-lucide="edit-3" class="w-5 h-5"></i>
-            </button>
-            <button onclick="hapusItem(${i}, 'menu')" class="text-red-500 p-2">
-                <i data-lucide="trash-2" class="w-5 h-5"></i>
-            </button>
+            <div class="flex-1 font-bold">${m}</div>
+            <button onclick="editItem(${i}, 'menu')" class="text-cyan-600">Edit</button>
+            <button onclick="hapusItem(${i}, 'menu')" class="text-red-500">Hapus</button>
         `;
         list.appendChild(div);
     });
@@ -1397,125 +1400,93 @@ function renderTransaksiList(){
     transaksiData.kategoris.forEach((k, i)=>{
         const div = document.createElement("div");
         div.className = "bg-white p-4 rounded-2xl shadow flex items-center gap-3";
-        div.dataset.index = i;
-        div.dataset.type = "kategori";
         div.innerHTML = `
             <i data-lucide="menu" class="w-5 h-5 text-slate-400 drag-handle"></i>
-            <div class="flex-1">
-                <div class="font-bold">${k.nama}</div>
-                <div class="text-sm text-slate-500">Kategori</div>
-            </div>
-            <button onclick="editItem(${i}, 'kategori')" class="text-cyan-600 p-2">
-                <i data-lucide="edit-3" class="w-5 h-5"></i>
-            </button>
-            <button onclick="hapusItem(${i}, 'kategori')" class="text-red-500 p-2">
-                <i data-lucide="trash-2" class="w-5 h-5"></i>
-            </button>
+            <div class="flex-1 font-bold">${k}</div>
+            <button onclick="editItem(${i}, 'kategori')" class="text-cyan-600">Edit</button>
+            <button onclick="hapusItem(${i}, 'kategori')" class="text-red-500">Hapus</button>
         `;
         list.appendChild(div);
     });
 
     lucide.createIcons();
-
-    if(sortableInstance) sortableInstance.destroy();
-    sortableInstance = new Sortable(list, {
-        animation: 150,
-        handle: '.drag-handle',
-        onEnd: function(evt){
-            const type = evt.item.dataset.type;
-            const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
-            const item = arr.splice(evt.oldIndex,1)[0];
-            arr.splice(evt.newIndex,0,item);
-            markChangedTransaksi();
-            renderTransaksiList();
-        }
-    });
-}
-
-function hideAllDeleteButtons(){
-    document.querySelectorAll(".btn-delete").forEach(b=> b.style.display = "none");
 }
 
 function addMenu(){
-    showPrompt("Tambah Menu", "Nama Menu:", "", (val)=>{
-        if(!val) return;
-        transaksiData.menus.push({nama:val});
-        markChangedTransaksi();
+    const nama = prompt("Nama Menu:");
+    if(nama && nama.trim()){
+        transaksiData.menus.push(nama.trim());
         renderTransaksiList();
-    });
+        updateTransaksiInfo();
+        enableButton("saveTransaksiBtn");
+    }
 }
 
 function addKategori(){
-    showPrompt("Tambah Kategori", "Nama Kategori:", "", (val)=>{
-        if(!val) return;
-        transaksiData.kategoris.push({nama:val});
-        markChangedTransaksi();
+    const nama = prompt("Nama Kategori:");
+    if(nama && nama.trim()){
+        transaksiData.kategoris.push(nama.trim());
         renderTransaksiList();
-    });
+        updateTransaksiInfo();
+        enableButton("saveTransaksiBtn");
+    }
 }
 
 function editItem(index, type){
-    const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
-    showPrompt("Edit", "Nama:", arr[index].nama, (val)=>{
-        if(!val) return;
-        arr[index].nama = val;
-        markChangedTransaksi();
+    const arr = type === 'menu' ? transaksiData.menus : transaksiData.kategoris;
+    const baru = prompt("Ubah menjadi:", arr[index]);
+    if(baru !== null && baru.trim()){
+        arr[index] = baru.trim();
         renderTransaksiList();
-    });
+        updateTransaksiInfo();
+        enableButton("saveTransaksiBtn");
+    }
 }
 
 function hapusItem(index, type){
-    showConfirm("Hapus", "Yakin hapus data ini?", ()=>{
-        const arr = type==='menu' ? transaksiData.menus : transaksiData.kategoris;
-        arr.splice(index,1);
-        markChangedTransaksi();
+    const arr = type === 'menu' ? transaksiData.menus : transaksiData.kategoris;
+    if(confirm(`Hapus "${arr[index]}"?`)){
+        arr.splice(index, 1);
         renderTransaksiList();
-    });
-}
-
-function markChangedTransaksi(){
-    enableButton("saveTransaksiBtn");
-}
-
-function showPrompt(title, label, defaultValue, callback){
-    const val = prompt(label, defaultValue);
-    if(val !== null && val.trim() !== "") callback(val.trim());
+        updateTransaksiInfo();
+        enableButton("saveTransaksiBtn");
+    }
 }
 
 // === PREVIEW ===
 function openPreview(){
-    const server = JSON.parse(localStorage.getItem("serverData") || "{}");
-    const center = JSON.parse(localStorage.getItem("centerData") || "{}");
-    const trans = JSON.parse(localStorage.getItem("transaksiData") || "{}");
+    const server = JSON.parse(localStorage.getItem("serverData")) || {};
+    const center = JSON.parse(localStorage.getItem("centerData")) || {};
+    const trans = JSON.parse(localStorage.getItem("transaksiData")) || {};
 
     let html = `
         <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 rounded-3xl text-white shadow mb-6">
-            <h1 class="text-2xl font-bold">${escapeHtml(server.nama || "Nama Konter")}</h1>
-            <p class="opacity-90">${escapeHtml(server.alamat || "Alamat belum diisi")}</p>
+            <h1 class="text-2xl font-bold">${server.nama || 'Nama Konter'}</h1>
+            <p class="opacity-90">${server.alamat || 'Alamat belum diisi'}</p>
         </div>
     `;
 
     if(trans.menus && trans.menus.length){
-        html += `<h3 class="font-bold text-slate-800 mb-3">MENU</h3><div class="grid grid-cols-2 gap-3 mb-6">`;
-        trans.menus.forEach(m=>{
-            html += `<div class="bg-white p-4 rounded-2xl shadow text-center font-semibold">${escapeHtml(m.nama)}</div>`;
+        html += `<h3 class="font-bold text-slate-800 mb-2">MENU TRANSAKSI</h3><div class="grid grid-cols-2 gap-2 mb-6">`;
+        trans.menus.forEach(m => {
+            html += `<div class="bg-white p-3 rounded-xl shadow text-center font-bold">${m}</div>`;
         });
         html += `</div>`;
     }
 
     if(trans.kategoris && trans.kategoris.length){
-        html += `<h3 class="font-bold text-slate-800 mb-3">KATEGORI</h3><div class="grid grid-cols-2 gap-3 mb-6">`;
-        trans.kategoris.forEach(k=>{
-            html += `<div class="bg-white p-4 rounded-2xl shadow text-center font-semibold">${escapeHtml(k.nama)}</div>`;
+        html += `<h3 class="font-bold text-slate-800 mb-2">KATEGORI</h3><div class="grid grid-cols-2 gap-2 mb-6">`;
+        trans.kategoris.forEach(k => {
+            html += `<div class="bg-white p-3 rounded-xl shadow text-center font-bold">${k}</div>`;
         });
         html += `</div>`;
     }
 
     html += `
         <div class="bg-white p-5 rounded-2xl shadow">
-            <h3 class="font-bold text-slate-800 mb-3">KONTAK</h3>
-            <p>📞 WA: ${escapeHtml(center.wa || "-")}</p>
-            <p>✉️ SMS: ${escapeHtml(center.sms || "-")}</p>
+            <h3 class="font-bold text-slate-800 mb-3">KONTAK CENTER</h3>
+            <p>📞 WA: ${center.wa || '-'}</p>
+            <p>✉️ SMS: ${center.sms || '-'}</p>
         </div>
     `;
 
@@ -1541,7 +1512,7 @@ window.onload = function(){
         }
     }
 
-    // Event listener input server & center
+    // Event listener auto enable button
     document.getElementById("namaKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
     document.getElementById("alamatKonter").addEventListener("input", ()=> enableButton("saveServerBtn"));
 
