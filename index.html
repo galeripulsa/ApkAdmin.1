@@ -1,3 +1,4 @@
+tes
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1528,27 +1529,7 @@ function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
 
-// >>> FUNGSI TAMBAH PDAM UTAMA <<<
-function addNewPdamMain(){
-    // Hitung jumlah PDAM yang sudah ada
-    const count = Object.keys(prabayarData[currentMenuType]).length + 1;
-    const newName = `PDAM ${count}`;
 
-    // Tambah ke data
-    prabayarData[currentMenuType][newName] = { items: [] };
-    originalPrabayarData[currentMenuType][newName] = { items: [] };
-
-    // Render ulang tampilan
-    openOperatorListPascabayar("PDAM", "pdam");
-    
-    // Buka otomatis yang baru dibuat
-    setTimeout(() => {
-        const newElement = document.querySelector(`[data-productname="${newName.toLowerCase()}"]`);
-        if(newElement) newElement.classList.add("open");
-    }, 100);
-
-    checkPrabayarChanges();
-}
 
 
 // === INISIALISASI AWAL ===
