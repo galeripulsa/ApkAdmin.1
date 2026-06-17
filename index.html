@@ -830,76 +830,13 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = plnList;
         iconName = "zap";
     } else if(actionType === "pdam"){
-        listToShow = pdamList;
+        listToShow = []; // Kosongkan, kita generate manual
         iconName = "droplet";
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
     } else if(actionType === "pbb"){
         listToShow = pbbList;
-        iconName = "home";
-    } else if(actionType === "tvKabel"){
-        listToShow = tvKabelList;
-        iconName = "tv";
-    } else if(actionType === "internetTelpon"){
-        listToShow = internetList;
-        iconName = "wifi";
-    }
-
-    allProducts = [...listToShow];
-
-    listToShow.forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-        originalPrabayarData[currentMenuType][itemName] = {
-            items: saved.items || []
-        };
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "operator-wrapper";
-        wrapper.dataset.productname = itemName.toLowerCase();
-
-        let formContent = '';
-
-        // >>> CEK JIKA PDAM <<<
-        if(actionType === "pdam"){
-            formContent = `
-                <div class="operator-body">
-                    <!-- TOMBOL TAMBAH DATA -->
-                    <button onclick="addNewProductInside(this, '${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
-                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                        + Tambah Data
-                    </button>
-                    
-                    <!-- CONTAINER DAFTAR WILAYAH -->
-                    <div id="pdamListContainer" class="space-y-3">
-                        <!-- Item Wilayah akan muncul di sini -->
-                    </div>
-                </div>
-            `;
-        } else {
-            // >>> FORMAT STANDAR <<<
-            formContent = `
-                <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-cek-harga" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.cekHarga || ""}">
-                        <label>${labelInput1}</label>
-                    </div>
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-nama-produk" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.namaProduk || ""}">
-                        <label>${labelInput2}</label>
-                    </div>
-                </div>
-            `;
-        }
 
         wrapper.innerHTML = `
             <div class="operator-header" onclick="toggleOperator(this.parentElement)">
@@ -914,11 +851,67 @@ function openOperatorListPascabayar(title, actionType){
 
         container.appendChild(wrapper);
         
-        // Jika PDAM, langsung load item pertama
-        if(actionType === "pdam"){
-            loadProductData(itemName, saved.items);
-        }
+        loadProductData(itemName, saved.items);
     });
+
+    // >>> TOMBOL TAMBAH PDAM BARU (DI PALING BAWAH) <<<
+    const addNewPdamBtn = document.createElement("div");
+    addNewPdamBtn.className = "mt-4";
+    addNewPdamBtn.innerHTML = `
+        <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+            <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+        </button>
+    `;
+    container.appendChild(addNewPdamBtn);
+
+} else {
+    // >>> KODE UNTUK YANG LAIN (PLN, BPJS, DLL) TETAP SAMA <<<
+    listToShow.forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {items: []};
+
+        originalPrabayarData[currentMenuType][itemName] = {
+            items: saved.items || []
+        };
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
+
+        let formContent = `
+            <div class="operator-body">
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
+                    <label>${labelInput1}</label>
+                </div>
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
+                    <label>${labelInput2}</label>
+                </div>
+            </div>
+        `;
+
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            ${formContent}
+        `;
+
+        container.appendChild(wrapper);
+    });
+}
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block";
@@ -1534,6 +1527,29 @@ function openPreview(){
 function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
 }
+
+// >>> FUNGSI TAMBAH PDAM UTAMA <<<
+function addNewPdamMain(){
+    // Hitung jumlah PDAM yang sudah ada
+    const count = Object.keys(prabayarData[currentMenuType]).length + 1;
+    const newName = `PDAM ${count}`;
+
+    // Tambah ke data
+    prabayarData[currentMenuType][newName] = { items: [] };
+    originalPrabayarData[currentMenuType][newName] = { items: [] };
+
+    // Render ulang tampilan
+    openOperatorListPascabayar("PDAM", "pdam");
+    
+    // Buka otomatis yang baru dibuat
+    setTimeout(() => {
+        const newElement = document.querySelector(`[data-productname="${newName.toLowerCase()}"]`);
+        if(newElement) newElement.classList.add("open");
+    }, 100);
+
+    checkPrabayarChanges();
+}
+
 
 // === INISIALISASI AWAL ===
 window.onload = function(){
