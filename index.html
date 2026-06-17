@@ -830,14 +830,25 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = plnList;
         iconName = "zap";
     } else if(actionType === "pdam"){
-        listToShow = []; // Kosongkan, kita generate manual
+        listToShow = []; 
         iconName = "droplet";
+        
+        // >>> JIKA KOSONG, BUAT DATA AWAL <<<
+        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
+            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
+        }
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
-    } else if(actionType === === "pbb"){
+    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
         listToShow = pbbList;
-        iconName = "home"; // tambah icon biar ga kosong
+        iconName = "home";
+    } else if(actionType === "tvKabel"){
+        listToShow = tvKabelList;
+        iconName = "tv";
+    } else if(actionType === "internetTelpon"){
+        listToShow = internetList;
+        iconName = "wifi";
     }
 
     if(actionType === "pdam"){
@@ -875,7 +886,7 @@ function openOperatorListPascabayar(title, actionType){
             loadProductData(itemName, saved.items);
         });
 
-        // >>> TOMBOL TAMBAH PDAM BARU (DI PALING BAWAH) <<<
+        // >>> TOMBOL TAMBAH PDAM BARU <<<
         const addNewPdamBtn = document.createElement("div");
         addNewPdamBtn.className = "mt-4";
         addNewPdamBtn.innerHTML = `
@@ -886,12 +897,13 @@ function openOperatorListPascabayar(title, actionType){
         container.appendChild(addNewPdamBtn);
 
     } else {
-        // >>> KODE UNTUK YANG LAIN (PLN, BPJS, PBB, DLL) TETAP SAMA <<<
+        // >>> KODE UNTUK YANG LAIN <<<
         listToShow.forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {items: []};
+            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
 
             originalPrabayarData[currentMenuType][itemName] = {
-                items: saved.items || []
+                cekHarga: saved.cekHarga || "",
+                namaProduk: saved.namaProduk || ""
             };
 
             const wrapper = document.createElement("div");
@@ -941,7 +953,6 @@ function openOperatorListPascabayar(title, actionType){
     disableButton("savePrabayarBtn");
     attachInputListeners();
 }
-
 
 
 // >>> FUNGSI LOAD DATA AWAL PDAM <<<
@@ -1107,45 +1118,161 @@ function savePdamData(op){
 }
 
 
-// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
-function checkPrabayarChange(){
-    let adaPerubahan = false;
+// >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
+function openOperatorListPascabayar(title, actionType){
+    document.getElementById("prabayarModal").classList.remove("show");
 
-    // CEK SEMUA INPUT DI HALAMAN INI
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    const modal = document.getElementById("operatorListModal");
+    const container = document.getElementById("operatorListContainer");
 
-    inputs.forEach(input => {
-        const op = input.dataset.operator;
-        let type = "cekHarga";
-        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
-        if(input.classList.contains("input-wilayah")) type = "wilayah";
+    document.getElementById("operatorListTitle").innerText = title;
+    currentMenuType = actionType;
 
-        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
-        let nilaiAsli = "";
-        if(currentMenuType === "pdam"){
-            // Logika khusus PDAM karena beda struktur data
-            const idx = Array.from(input.closest('.products-container').children).indexOf(input.closest('.product-item'));
-            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
-        } else {
-            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
-        }
-        
-        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
-        const nilaiSekarang = (input.value || "").trim();
+    container.innerHTML = "";
 
-        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
-        if(nilaiSekarang !== nilaiAsli){
-            adaPerubahan = true;
-        }
-    });
-
-    // PUTUSKAN TOMBOL NYALA ATAU MATI
-    if(adaPerubahan){
-        enableButton("savePrabayarBtn");
-    } else {
-        disableButton("savePrabayarBtn");
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
     }
+
+    originalPrabayarData = {};
+    if(!originalPrabayarData[currentMenuType]){
+        originalPrabayarData[currentMenuType] = {};
+    }
+
+    // PILIH ARRAY YANG SESUAI
+    let listToShow = [];
+    let iconName = "file-text";
+    let labelInput1 = "Kode / Format";
+    let labelInput2 = "Nama Produk";
+
+    if(actionType === "plnPascabayar"){
+        listToShow = plnList;
+        iconName = "zap";
+    } else if(actionType === "pdam"){
+        listToShow = []; 
+        iconName = "droplet";
+        
+        // >>> JIKA KOSONG, BUAT DATA AWAL <<<
+        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
+            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
+        }
+    } else if(actionType === "bpjs"){
+        listToShow = bpjsList;
+        iconName = "heart";
+    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
+        listToShow = pbbList;
+        iconName = "home";
+    } else if(actionType === "tvKabel"){
+        listToShow = tvKabelList;
+        iconName = "tv";
+    } else if(actionType === "internetTelpon"){
+        listToShow = internetList;
+        iconName = "wifi";
+    }
+
+    if(actionType === "pdam"){
+        // >>> KODE KHUSUS PDAM <<<
+        Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
+            const saved = prabayarData[currentMenuType][itemName] || {items: []};
+
+            originalPrabayarData[currentMenuType][itemName] = {
+                items: saved.items || []
+            };
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "operator-wrapper";
+            wrapper.dataset.productname = itemName.toLowerCase();
+
+            let formContent = `
+                <div class="operator-body">
+                    <div id="pdamListContainer" class="mb-3"></div>
+                </div>
+            `;
+
+            wrapper.innerHTML = `
+                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                    <div class="operator-left">
+                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                        <span class="operator-name-text">${itemName}</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                </div>
+                ${formContent}
+            `;
+
+            container.appendChild(wrapper);
+            
+            loadProductData(itemName, saved.items);
+        });
+
+        // >>> TOMBOL TAMBAH PDAM BARU <<<
+        const addNewPdamBtn = document.createElement("div");
+        addNewPdamBtn.className = "mt-4";
+        addNewPdamBtn.innerHTML = `
+            <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+                <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+            </button>
+        `;
+        container.appendChild(addNewPdamBtn);
+
+    } else {
+        // >>> KODE UNTUK YANG LAIN <<<
+        listToShow.forEach(itemName => {
+            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
+
+            originalPrabayarData[currentMenuType][itemName] = {
+                cekHarga: saved.cekHarga || "",
+                namaProduk: saved.namaProduk || ""
+            };
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "operator-wrapper";
+            wrapper.dataset.productname = itemName.toLowerCase();
+
+            let formContent = `
+                <div class="operator-body">
+                    <div class="floating mt-4">
+                        <input type="text" 
+                               class="input-cek-harga" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.cekHarga || ""}">
+                        <label>${labelInput1}</label>
+                    </div>
+                    <div class="floating mt-4">
+                        <input type="text" 
+                               class="input-nama-produk" 
+                               data-operator="${itemName}" 
+                               placeholder=" " 
+                               value="${saved.namaProduk || ""}">
+                        <label>${labelInput2}</label>
+                    </div>
+                </div>
+            `;
+
+            wrapper.innerHTML = `
+                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                    <div class="operator-left">
+                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                        <span class="operator-name-text">${itemName}</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                </div>
+                ${formContent}
+            `;
+
+            container.appendChild(wrapper);
+        });
+    }
+
+    modal.classList.add("show");
+    document.getElementById("fixedButtonWrapper").style.display = "block";
+    setTimeout(() => { lucide.createIcons(); }, 50);
+
+    disableButton("savePrabayarBtn");
+    attachInputListeners();
 }
+
 
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
