@@ -861,19 +861,19 @@ function openOperatorListPascabayar(title, actionType){
 
         let formContent = '';
 
+        // >>> CEK JIKA PDAM <<<
         if(actionType === "pdam"){
-            // >>> FORMAT KHUSUS PDAM: WILAYAH, KODE CEK & KODE BAYAR <<<
             formContent = `
                 <div class="operator-body">
-                    <!-- TOMBOL TAMBAH ITEM -->
+                    <!-- TOMBOL TAMBAH DATA -->
                     <button onclick="addNewProductInside(this, '${itemName}')" class="mb-4 w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 shadow">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                        Tambah Data
+                        + Tambah Data
                     </button>
                     
-                    <!-- CONTAINER PRODUK -->
-                    <div class="products-container space-y-3">
-                        <!-- Item akan muncul di sini -->
+                    <!-- CONTAINER DAFTAR WILAYAH -->
+                    <div id="pdamListContainer" class="space-y-3">
+                        <!-- Item Wilayah akan muncul di sini -->
                     </div>
                 </div>
             `;
@@ -928,65 +928,106 @@ function openOperatorListPascabayar(title, actionType){
     attachInputListeners();
 }
 
+
 // >>> FUNGSI LOAD DATA AWAL PDAM <<<
 function loadProductData(productName, items){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] .products-container`);
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
     
     if(!items || items.length === 0){
         // Tambahkan item pertama secara default
         addNewProductInside(null, productName);
     } else {
         items.forEach(item => {
-            addNewProductInside(null, productName, item);
+            renderPdamItem(productName, item);
         });
     }
 }
 
+
 // >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
 function addNewProductInside(buttonElement, productName, data = null){
-    // Cari container tempat menaruh inputan baru
     const bodyDiv = buttonElement ? buttonElement.parentElement : document.querySelector(`[data-productname="${productName.toLowerCase()}"] .operator-body`);
-    const container = bodyDiv.querySelector('.products-container');
+    const container = bodyDiv.querySelector('#pdamListContainer');
 
-    // Buat elemen baru
+    // Buat elemen baru dalam bentuk List Item
     const newItem = document.createElement("div");
-    newItem.className = "product-item";
+    newItem.className = "area-item"; // Pakai style yang sudah ada
     newItem.innerHTML = `
-        <div class="floating mt-4">
-            <input type="text" class="input-wilayah" data-operator="${productName}" placeholder=" ">
-            <label>Wilayah</label>
-        </div>
-        <div class="double-input">
-            <div class="floating mt-4">
-                <input type="text" class="input-cek-harga" data-operator="${productName}" placeholder=" ">
-                <label>Kode Cek</label>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
+                <span class="font-medium">${data ? data.wilayah : 'Wilayah Baru'}</span>
             </div>
-            <div class="floating mt-4">
-                <input type="text" class="input-nama-produk" data-operator="${productName}" placeholder=" ">
-                <label>Kode Bayar</label>
-            </div>
-        </div>
-        <div class="text-right mt-2">
-            <button onclick="this.parentElement.parentElement.remove(); checkPrabayarChange()" class="text-red-500 text-sm hover:text-red-700">Hapus</button>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
         </div>
     `;
 
-    // Masukkan data jika ada
-    if(data){
-        newItem.querySelector('.input-wilayah').value = data.wilayah || "";
-        newItem.querySelector('.input-cek-harga').value = data.cekHarga || "";
-        newItem.querySelector('.input-nama-produk').value = data.namaProduk || "";
-    }
+    // Saat diklik, buka form edit
+    newItem.onclick = function(){
+        openPdamForm(this, productName, data);
+    };
 
-    // Masukkan ke dalam container
     container.appendChild(newItem);
+    lucide.createIcons();
 
-    // Pasang event listener agar tombol simpan bisa nyala
-    attachInputListeners();
-
-    // Scroll ke bawah
-    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Simpan data awal jika baru
+    if(!data){
+        savePdamData(productName);
+    }
 }
+
+// >>> FUNGSI BUKA FORM EDIT / TAMBAH <<<
+function openPdamForm(element, productName, data = null){
+    // Buat modal atau form inline
+    const formDiv = document.createElement("div");
+    formDiv.className = "mt-3 p-4 bg-slate-50 rounded-xl border border-slate-200";
+    formDiv.innerHTML = `
+        <div class="floating mt-0">
+            <input type="text" class="input-wilayah" value="${data ? data.wilayah : ''}" placeholder=" ">
+            <label>Nama Wilayah</label>
+        </div>
+        <div class="double-input">
+            <div class="floating mt-4">
+                <input type="text" class="input-cek-harga" value="${data ? data.cekHarga : ''}" placeholder=" ">
+                <label>Kode Cek</label>
+            </div>
+            <div class="floating mt-4">
+                <input type="text" class="input-nama-produk" value="${data ? data.namaProduk : ''}" placeholder=" ">
+                <label>Kode Bayar</label>
+            </div>
+        </div>
+        <div class="text-right mt-3 flex gap-2 justify-end">
+            <button onclick="this.parentElement.parentElement.remove()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm">Batal</button>
+            <button onclick="savePdamItem(this, '${productName}')" class="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm">Simpan</button>
+        </div>
+    `;
+
+    // Hapus form lain jika ada
+    document.querySelectorAll('.area-item + .mt-3').forEach(el => el.remove());
+    
+    // Masukkan form setelah item
+    element.after(formDiv);
+    attachInputListeners();
+}
+
+// >>> FUNGSI SIMPAN ITEM PDAM <<<
+function savePdamItem(button, productName){
+    const form = button.parentElement.parentElement;
+    const wilayah = form.querySelector('.input-wilayah').value;
+    const cekHarga = form.querySelector('.input-cek-harga').value;
+    const namaProduk = form.querySelector('.input-nama-produk').value;
+
+    // Update tampilan nama wilayah
+    const itemDiv = form.previousElementSibling;
+    itemDiv.querySelector('span').innerText = wilayah || 'Tanpa Nama';
+
+    // Simpan ke data
+    savePdamData(productName);
+    
+    // Hapus form
+    form.remove();
+}
+
 
 // >>> FUNGSI CARI PRODUK <<<
 function searchProducts() {
