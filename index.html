@@ -830,7 +830,7 @@ function openOperatorListPascabayar(title, actionType){
     else if(actionType === "pdam"){
         listToShow = []; 
         iconName = "droplet";
-        
+
         // >>> JIKA KOSONG, BUAT DATA AWAL PDAM 1 <<<
         if (Object.keys(prabayarData[currentMenuType]).length === 0) {
             prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
@@ -865,7 +865,7 @@ function openOperatorListPascabayar(title, actionType){
             `;
 
             container.appendChild(wrapper);
-            
+
             loadProductData(itemName, saved.items);
         });
 
@@ -893,6 +893,7 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = internetList;
         iconName = "wifi";
     }
+} // <<< TAMBAHKAN KURUNG TUTUP INI UNTUK MENUTUP FUNGSI
 
 // >>> FUNGSI TAMBAH AREA BARU <<<
 function tambahAreaBaru(){
@@ -900,21 +901,22 @@ function tambahAreaBaru(){
     if(namaArea && namaArea.trim()){
         // Ambil PDAM yang pertama/aktif
         const namaPdam = Object.keys(prabayarData[currentMenuType])[0]; 
-        
+
         // Tambah item baru ke data
         const itemBaru = {
             wilayah: namaArea.trim(),
             cekHarga: "",
             kodeBayar: ""
         };
-        
+
         prabayarData[currentMenuType][namaPdam].items.push(itemBaru);
-        
+
         // Tampilkan di layar
         renderPdamItem(namaPdam, itemBaru);
         checkPrabayarChange();
     }
 }
+
 
     // >>> KODE UNTUK YANG LAIN <<<
     listToShow.forEach(itemName => {
