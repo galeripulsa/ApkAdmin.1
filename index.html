@@ -796,11 +796,19 @@ function openOperatorList(title, actionType){
 }
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
-function openOperatorListPascabayar(title, actionType){
-    document.getElementById("prabayarModal").classList.remove("show");
+function openOperatorListPascabayar(title, actionType) {
+    // 1. Sembunyikan modal sebelumnya
+    const prevModal = document.getElementById("prabayarModal");
+    if(prevModal) prevModal.classList.remove("show");
 
+    // 2. Ambil elemen modal yang akan ditampilkan
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
+
+    if(!modal || !container){
+        console.error("Elemen modal tidak ditemukan!");
+        return; // Hentikan jika elemen tidak ada biar tidak error
+    }
 
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
@@ -816,22 +824,19 @@ function openOperatorListPascabayar(title, actionType){
         originalPrabayarData[currentMenuType] = {};
     }
 
-    // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
     let labelInput1 = "Format Cek";
     let labelInput2 = "Format Bayar";
 
-    if(actionType === "plnPascabayar"){
+    if (actionType === "plnPascabayar") {
         listToShow = plnList;
         iconName = "zap";
     } 
-    // >>> BAGIAN PDAM SUDAH DIUPDATE <<<
-    else if(actionType === "pdam"){
+    else if (actionType === "pdam") {
         listToShow = []; 
         iconName = "droplet";
 
-        // >>> JIKA KOSONG, BUAT DATA AWAL PDAM 1 <<<
         if (Object.keys(prabayarData[currentMenuType]).length === 0) {
             prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
         }
@@ -865,7 +870,6 @@ function openOperatorListPascabayar(title, actionType){
             `;
 
             container.appendChild(wrapper);
-
             loadProductData(itemName, saved.items);
         });
 
@@ -878,48 +882,43 @@ function openOperatorListPascabayar(title, actionType){
             </button>
         `;
         container.appendChild(addNewBtn);
-        lucide.createIcons(); // Pastikan icon muncul
+        lucide.createIcons();
 
-    } else if(actionType === "bpjs"){
+    } else if (actionType === "bpjs") {
         listToShow = bpjsList;
         iconName = "heart";
-    } else if(actionType === "pbb"){
+    } else if (actionType === "pbb") {
         listToShow = pbbList;
         iconName = "home";
-    } else if(actionType === "tvKabel"){
+    } else if (actionType === "tvKabel") {
         listToShow = tvKabelList;
         iconName = "tv";
-    } else if(actionType === "internetTelpon"){
+    } else if (actionType === "internetTelpon") {
         listToShow = internetList;
         iconName = "wifi";
     }
 
-    // >>> PERBAIKAN: TAMPILKAN MODAL <<<
-    modal.classList.add("show"); // <<< TAMBAH INI
+    // >>> INI YANG PALING PENTING: TAMPILKAN MODAL <<<
+    modal.classList.add("show");
 }
 
 // >>> FUNGSI TAMBAH AREA BARU <<<
-function tambahAreaBaru(){
+function tambahAreaBaru() {
     const namaArea = prompt("Masukkan nama Area/Wilayah:");
     if(namaArea && namaArea.trim()){
-        // Ambil PDAM yang pertama/aktif
         const namaPdam = Object.keys(prabayarData[currentMenuType])[0]; 
-
-        // Tambah item baru ke data
+        
         const itemBaru = {
             wilayah: namaArea.trim(),
             cekHarga: "",
             kodeBayar: ""
         };
-
+        
         prabayarData[currentMenuType][namaPdam].items.push(itemBaru);
-
-        // Tampilkan di layar
         renderPdamItem(namaPdam, itemBaru);
         checkPrabayarChange();
     }
 }
-
 
 
     // >>> KODE UNTUK YANG LAIN <<<
