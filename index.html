@@ -825,51 +825,61 @@ function openOperatorListPascabayar(title, actionType){
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
         iconName = "zap";
-    } else if(actionType === "pdam"){
-     listToShow = []; 
-     iconName = "droplet";
-     Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-        originalPrabayarData[currentMenuType][itemName] = {
-            items: saved.items || []
-        };
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "operator-wrapper";
-        wrapper.dataset.productname = itemName.toLowerCase();
-
-        let formContent = `
-            <div class="operator-body">
-                <div id="pdamListContainer" class="mb-3"></div>
-            </div>
-        `;
-
-        wrapper.innerHTML = `
-            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                <div class="operator-left">
-                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                    <span class="operator-name-text">${itemName}</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-            </div>
-            ${formContent}
-        `;
-
-        container.appendChild(wrapper);
+    } 
+    // >>> BAGIAN PDAM SUDAH DIUPDATE <<<
+    else if(actionType === "pdam"){
+        listToShow = []; 
+        iconName = "droplet";
         
-        loadProductData(itemName, saved.items);
-    });
+        // >>> JIKA KOSONG, BUAT DATA AWAL PDAM 1 <<<
+        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
+            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
+        }
 
-    // >>> TOMBOL TAMBAH PDAM BARU <<<
-    const addNewPdamBtn = document.createElement("div");
-    addNewPdamBtn.className = "mt-4";
-    addNewPdamBtn.innerHTML = `
-        <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-            <i data-lucide="plus" class="w-5 h-5"></i> Tambah Area Baru
-        </button>
-    `;
-    container.appendChild(addNewPdamBtn);
+        Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
+            const saved = prabayarData[currentMenuType][itemName] || {items: []};
+
+            originalPrabayarData[currentMenuType][itemName] = {
+                items: saved.items || []
+            };
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "operator-wrapper";
+            wrapper.dataset.productname = itemName.toLowerCase();
+
+            let formContent = `
+                <div class="operator-body">
+                    <div id="pdamListContainer" class="mb-3"></div>
+                </div>
+            `;
+
+            wrapper.innerHTML = `
+                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                    <div class="operator-left">
+                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                        <span class="operator-name-text">${itemName}</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                </div>
+                ${formContent}
+            `;
+
+            container.appendChild(wrapper);
+            
+            loadProductData(itemName, saved.items);
+        });
+
+        // >>> TOMBOL TAMBAH AREA BARU <<<
+        const addNewBtn = document.createElement("div");
+        addNewBtn.className = "mt-4";
+        addNewBtn.innerHTML = `
+            <button onclick="tambahAreaBaru()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+                <i data-lucide="plus" class="w-5 h-5"></i> Tambah Area Baru
+            </button>
+        `;
+        container.appendChild(addNewBtn);
+        lucide.createIcons(); // Pastikan icon muncul
+
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
@@ -883,6 +893,28 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = internetList;
         iconName = "wifi";
     }
+
+// >>> FUNGSI TAMBAH AREA BARU <<<
+function tambahAreaBaru(){
+    const namaArea = prompt("Masukkan nama Area/Wilayah:");
+    if(namaArea && namaArea.trim()){
+        // Ambil PDAM yang pertama/aktif
+        const namaPdam = Object.keys(prabayarData[currentMenuType])[0]; 
+        
+        // Tambah item baru ke data
+        const itemBaru = {
+            wilayah: namaArea.trim(),
+            cekHarga: "",
+            kodeBayar: ""
+        };
+        
+        prabayarData[currentMenuType][namaPdam].items.push(itemBaru);
+        
+        // Tampilkan di layar
+        renderPdamItem(namaPdam, itemBaru);
+        checkPrabayarChange();
+    }
+}
 
     // >>> KODE UNTUK YANG LAIN <<<
     listToShow.forEach(itemName => {
