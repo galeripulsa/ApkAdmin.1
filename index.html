@@ -11,6 +11,18 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
 <style>
+
+/* ========================================= */
+/* STYLE KHUSUS AREA PDAM */
+/* ========================================= */
+.area-item {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+}
+
 body{
     background:#f1f5f9;
 }
@@ -554,11 +566,13 @@ const subMenuPrabayar = [
 // >>> DAFTAR MENU PASCA BAYAR <<<
 const subMenuPascabayar = [
     {nama: "PLN Pascabayar", icon: "zap", action: "plnPascabayar"},
+    {nama: "PDAM", icon: "droplet", action: "pdam"}, // <<< TAMBAH INI
     {nama: "BPJS", icon: "heart", action: "bpjs"},
     {nama: "PBB", icon: "home", action: "pbb"},
     {nama: "TV Kabel", icon: "tv", action: "tvKabel"},
     {nama: "Internet & Telpon", icon: "wifi", action: "internetTelpon"}
 ];
+
 
 // >>> DAFTAR PRODUK PRABAYAR <<<
 const operators = [
@@ -581,10 +595,14 @@ const bankList = [
 
 // >>> DAFTAR PRODUK PASCA BAYAR <<<
 const plnList = ["PLN Pascabayar"];
+const pdamList = ["PDAM"];
 const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
 const pbbList = ["PBB P1", "PBB P2"];
 const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
 const internetList = ["Speedy/Indihome", "Biznet", "MyRepublic", "Telkom Corporate"];
+
+
+
 
 function renderMenus(){
     const grid = document.getElementById("menuGrid");
@@ -807,6 +825,51 @@ function openOperatorListPascabayar(title, actionType){
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
         iconName = "zap";
+    } else if(actionType === "pdam"){
+     listToShow = []; 
+     iconName = "droplet";
+     Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {items: []};
+
+        originalPrabayarData[currentMenuType][itemName] = {
+            items: saved.items || []
+        };
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
+
+        let formContent = `
+            <div class="operator-body">
+                <div id="pdamListContainer" class="mb-3"></div>
+            </div>
+        `;
+
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            ${formContent}
+        `;
+
+        container.appendChild(wrapper);
+        
+        loadProductData(itemName, saved.items);
+    });
+
+    // >>> TOMBOL TAMBAH PDAM BARU <<<
+    const addNewPdamBtn = document.createElement("div");
+    addNewPdamBtn.className = "mt-4";
+    addNewPdamBtn.innerHTML = `
+        <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+            <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+        </button>
+    `;
+    container.appendChild(addNewPdamBtn);
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
