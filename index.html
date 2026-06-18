@@ -819,8 +819,8 @@ function openOperatorListPascabayar(title, actionType){
     // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
-    let labelInput1 = "Kode / Format";
-    let labelInput2 = "Nama Produk";
+    let labelInput1 = "Format Cek";
+    let labelInput2 = "Format Bayar","Nama";
 
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
@@ -866,7 +866,7 @@ function openOperatorListPascabayar(title, actionType){
     addNewPdamBtn.className = "mt-4";
     addNewPdamBtn.innerHTML = `
         <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-            <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+            <i data-lucide="plus" class="w-5 h-5"></i> Tambah Area Baru
         </button>
     `;
     container.appendChild(addNewPdamBtn);
@@ -1437,7 +1437,7 @@ function checkPrabayarChange(){
         // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
         let nilaiAsli = "";
         if(currentMenuType === "pdam"){
-            // Logika khusus PDAM (sudah dihapus)
+           
         } else {
             nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
         }
