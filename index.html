@@ -295,15 +295,6 @@ body{
 }
 
 /* ========================================= */
-/* STYLE KHUSUS 2 KOLOM BERDAMPINGAN (PDAM) */
-/* ========================================= */
-.double-input {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-/* ========================================= */
 /* STYLE UNTUK ITEM YANG DITAMBAH DINAMIS */
 /* ========================================= */
 .product-item {
@@ -312,17 +303,6 @@ body{
     padding: 10px;
     margin-top: 10px;
     background: white;
-}
-
-/* ========================================= */
-/* STYLE KHUSUS AREA PDAM */
-/* ========================================= */
-.area-item {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 10px;
-    border: 1px solid #e2e8f0;
 }
 </style>
 
@@ -574,7 +554,6 @@ const subMenuPrabayar = [
 // >>> DAFTAR MENU PASCA BAYAR <<<
 const subMenuPascabayar = [
     {nama: "PLN Pascabayar", icon: "zap", action: "plnPascabayar"},
-    {nama: "PDAM", icon: "droplet", action: "pdam"},
     {nama: "BPJS", icon: "heart", action: "bpjs"},
     {nama: "PBB", icon: "home", action: "pbb"},
     {nama: "TV Kabel", icon: "tv", action: "tvKabel"},
@@ -602,7 +581,6 @@ const bankList = [
 
 // >>> DAFTAR PRODUK PASCA BAYAR <<<
 const plnList = ["PLN Pascabayar"];
-const pdamList = ["PDAM"];
 const bpjsList = ["BPJS Kesehatan", "BPJS Ketenagakerjaan"];
 const pbbList = ["PBB P1", "PBB P2"];
 const tvKabelList = ["Indihome", "First Media", "Biznet", "MNC Play", "Icon+"];
@@ -829,18 +807,10 @@ function openOperatorListPascabayar(title, actionType){
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
         iconName = "zap";
-    } else if(actionType === "pdam"){
-        listToShow = []; 
-        iconName = "droplet";
-        
-        // >>> JIKA KOSONG, BUAT DATA AWAL <<<
-        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
-            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
-        }
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
-    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
+    } else if(actionType === "pbb"){
         listToShow = pbbList;
         iconName = "home";
     } else if(actionType === "tvKabel"){
@@ -851,100 +821,53 @@ function openOperatorListPascabayar(title, actionType){
         iconName = "wifi";
     }
 
-    if(actionType === "pdam"){
-        // >>> KODE KHUSUS PDAM <<<
-        Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {items: []};
+    // >>> KODE UNTUK YANG LAIN <<<
+    listToShow.forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
 
-            originalPrabayarData[currentMenuType][itemName] = {
-                items: saved.items || []
-            };
+        originalPrabayarData[currentMenuType][itemName] = {
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || ""
+        };
 
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
 
-            let formContent = `
-                <div class="operator-body">
-                    <div id="pdamListContainer" class="mb-3"></div>
+        let formContent = `
+            <div class="operator-body">
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
+                    <label>${labelInput1}</label>
                 </div>
-            `;
-
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
+                    <label>${labelInput2}</label>
                 </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-            
-            loadProductData(itemName, saved.items);
-        });
-
-        // >>> TOMBOL TAMBAH PDAM BARU <<<
-        const addNewPdamBtn = document.createElement("div");
-        addNewPdamBtn.className = "mt-4";
-        addNewPdamBtn.innerHTML = `
-            <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
-            </button>
+            </div>
         `;
-        container.appendChild(addNewPdamBtn);
 
-    } else {
-        // >>> KODE UNTUK YANG LAIN <<<
-        listToShow.forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                cekHarga: saved.cekHarga || "",
-                namaProduk: saved.namaProduk || ""
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-cek-harga" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.cekHarga || ""}">
-                        <label>${labelInput1}</label>
-                    </div>
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-nama-produk" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.namaProduk || ""}">
-                        <label>${labelInput2}</label>
-                    </div>
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
                 </div>
-            `;
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            ${formContent}
+        `;
 
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-        });
-    }
+        container.appendChild(wrapper);
+    });
 
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block";
@@ -953,107 +876,6 @@ function openOperatorListPascabayar(title, actionType){
     disableButton("savePrabayarBtn");
     attachInputListeners();
 }
-
-
-// >>> FUNGSI LOAD DATA AWAL PDAM <<<
-function loadProductData(productName, items){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
-    
-    if(!items || items.length === 0){
-        // Tambahkan item pertama secara default
-        addNewProductInside(null, productName);
-    } else {
-        items.forEach(item => {
-            renderPdamItem(productName, item);
-        });
-    }
-}
-
-
-// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
-function addNewProductInside(buttonElement, productName, data = null){
-    const bodyDiv = buttonElement ? buttonElement.parentElement : document.querySelector(`[data-productname="${productName.toLowerCase()}"] .operator-body`);
-    const container = bodyDiv.querySelector('#pdamListContainer');
-
-    // Buat elemen baru dalam bentuk List Item
-    const newItem = document.createElement("div");
-    newItem.className = "area-item"; // Pakai style yang sudah ada
-    newItem.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
-                <span class="font-medium">${data ? data.wilayah : 'Wilayah Baru'}</span>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
-        </div>
-    `;
-
-    // Saat diklik, buka form edit
-    newItem.onclick = function(){
-        openPdamForm(this, productName, data);
-    };
-
-    container.appendChild(newItem);
-    lucide.createIcons();
-
-    // Simpan data awal jika baru
-    if(!data){
-        savePdamData(productName);
-    }
-}
-
-// >>> FUNGSI BUKA FORM EDIT / TAMBAH <<<
-function openPdamForm(element, productName, data = null){
-    // Buat modal atau form inline
-    const formDiv = document.createElement("div");
-    formDiv.className = "mt-3 p-4 bg-slate-50 rounded-xl border border-slate-200";
-    formDiv.innerHTML = `
-        <div class="floating mt-0">
-            <input type="text" class="input-wilayah" value="${data ? data.wilayah : ''}" placeholder=" ">
-            <label>Nama Wilayah</label>
-        </div>
-        <div class="double-input">
-            <div class="floating mt-4">
-                <input type="text" class="input-cek-harga" value="${data ? data.cekHarga : ''}" placeholder=" ">
-                <label>Kode Cek</label>
-            </div>
-            <div class="floating mt-4">
-                <input type="text" class="input-nama-produk" value="${data ? data.namaProduk : ''}" placeholder=" ">
-                <label>Kode Bayar</label>
-            </div>
-        </div>
-        <div class="text-right mt-3 flex gap-2 justify-end">
-            <button onclick="this.parentElement.parentElement.remove()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm">Batal</button>
-            <button onclick="savePdamItem(this, '${productName}')" class="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm">Simpan</button>
-        </div>
-    `;
-
-    // Hapus form lain jika ada
-    document.querySelectorAll('.area-item + .mt-3').forEach(el => el.remove());
-    
-    // Masukkan form setelah item
-    element.after(formDiv);
-    attachInputListeners();
-}
-
-// >>> FUNGSI SIMPAN ITEM PDAM <<<
-function savePdamItem(button, productName){
-    const form = button.parentElement.parentElement;
-    const wilayah = form.querySelector('.input-wilayah').value;
-    const cekHarga = form.querySelector('.input-cek-harga').value;
-    const namaProduk = form.querySelector('.input-nama-produk').value;
-
-    // Update tampilan nama wilayah
-    const itemDiv = form.previousElementSibling;
-    itemDiv.querySelector('span').innerText = wilayah || 'Tanpa Nama';
-
-    // Simpan ke data
-    savePdamData(productName);
-    
-    // Hapus form
-    form.remove();
-}
-
 
 // >>> FUNGSI CARI PRODUK <<<
 function searchProducts() {
@@ -1071,208 +893,55 @@ function searchProducts() {
 }
 
 function attachInputListeners(){
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
     inputs.forEach(input => {
         input.addEventListener("input", function(){
             const op = this.dataset.operator;
             let type = "cekHarga";
             if(this.classList.contains("input-nama-produk")) type = "namaProduk";
-            if(this.classList.contains("input-wilayah")) type = "wilayah";
 
             if(!prabayarData[currentMenuType][op]){
                 prabayarData[currentMenuType][op] = {};
             }
             
-            // Khusus PDAM, simpan sebagai array of objects
-            if(currentMenuType === "pdam"){
-                savePdamData(op);
-            } else {
-                prabayarData[currentMenuType][op][type] = this.value;
-            }
+            prabayarData[currentMenuType][op][type] = this.value;
 
             checkPrabayarChange(); // CEK SETIAP KETIKAN
         });
     });
 }
 
-function savePdamData(op){
-    const items = [];
-    // Ganti selector dari .product-item jadi .area-item
-    document.querySelectorAll(`[data-productname="${op.toLowerCase()}"] .area-item`).forEach(el => {
-        const form = el.nextElementSibling;
-        if(form){
-            items.push({
-                wilayah: form.querySelector('.input-wilayah')?.value || '',
-                cekHarga: form.querySelector('.input-cek-harga')?.value || '',
-                namaProduk: form.querySelector('.input-nama-produk')?.value || ''
-            });
-        } else {
-            items.push({
-                wilayah: el.querySelector('span').innerText,
-                cekHarga: '',
-                namaProduk: ''
-            });
+// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
+function checkPrabayarChange(){
+    let adaPerubahan = false;
+
+    // CEK SEMUA INPUT DI HALAMAN INI
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
+
+    inputs.forEach(input => {
+        const op = input.dataset.operator;
+        let type = "cekHarga";
+        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
+
+        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
+        let nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
+        
+        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
+        const nilaiSekarang = (input.value || "").trim();
+
+        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
+        if(nilaiSekarang !== nilaiAsli){
+            adaPerubahan = true;
         }
     });
-    prabayarData[currentMenuType][op] = { items: items };
-}
 
-
-// >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
-function openOperatorListPascabayar(title, actionType){
-    document.getElementById("prabayarModal").classList.remove("show");
-
-    const modal = document.getElementById("operatorListModal");
-    const container = document.getElementById("operatorListContainer");
-
-    document.getElementById("operatorListTitle").innerText = title;
-    currentMenuType = actionType;
-
-    container.innerHTML = "";
-
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
-
-    originalPrabayarData = {};
-    if(!originalPrabayarData[currentMenuType]){
-        originalPrabayarData[currentMenuType] = {};
-    }
-
-    // PILIH ARRAY YANG SESUAI
-    let listToShow = [];
-    let iconName = "file-text";
-    let labelInput1 = "Kode / Format";
-    let labelInput2 = "Nama Produk";
-
-    if(actionType === "plnPascabayar"){
-        listToShow = plnList;
-        iconName = "zap";
-    } else if(actionType === "pdam"){
-        listToShow = []; 
-        iconName = "droplet";
-        
-        // >>> JIKA KOSONG, BUAT DATA AWAL <<<
-        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
-            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
-        }
-    } else if(actionType === "bpjs"){
-        listToShow = bpjsList;
-        iconName = "heart";
-    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
-        listToShow = pbbList;
-        iconName = "home";
-    } else if(actionType === "tvKabel"){
-        listToShow = tvKabelList;
-        iconName = "tv";
-    } else if(actionType === "internetTelpon"){
-        listToShow = internetList;
-        iconName = "wifi";
-    }
-
-    if(actionType === "pdam"){
-        // >>> KODE KHUSUS PDAM <<<
-        Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                items: saved.items || []
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div id="pdamListContainer" class="mb-3"></div>
-                </div>
-            `;
-
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-            
-            loadProductData(itemName, saved.items);
-        });
-
-        // >>> TOMBOL TAMBAH PDAM BARU <<<
-        const addNewPdamBtn = document.createElement("div");
-        addNewPdamBtn.className = "mt-4";
-        addNewPdamBtn.innerHTML = `
-            <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
-            </button>
-        `;
-        container.appendChild(addNewPdamBtn);
-
+    // PUTUSKAN TOMBOL NYALA ATAU MATI
+    if(adaPerubahan){
+        enableButton("savePrabayarBtn");
     } else {
-        // >>> KODE UNTUK YANG LAIN <<<
-        listToShow.forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                cekHarga: saved.cekHarga || "",
-                namaProduk: saved.namaProduk || ""
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-cek-harga" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.cekHarga || ""}">
-                        <label>${labelInput1}</label>
-                    </div>
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-nama-produk" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.namaProduk || ""}">
-                        <label>${labelInput2}</label>
-                    </div>
-                </div>
-            `;
-
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-        });
+        disableButton("savePrabayarBtn");
     }
-
-    modal.classList.add("show");
-    document.getElementById("fixedButtonWrapper").style.display = "block";
-    setTimeout(() => { lucide.createIcons(); }, 50);
-
-    disableButton("savePrabayarBtn");
-    attachInputListeners();
 }
-
 
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
@@ -1553,7 +1222,7 @@ function renderTransaksiList(){
         const div = document.createElement("div");
         div.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 hover:shadow-md transition-shadow";
         div.draggable = true;
-        
+
         if(item.type === "kategori"){
             div.innerHTML = `
                 <div class="drag-handle text-slate-400">
@@ -1583,7 +1252,7 @@ function renderTransaksiList(){
         }
         list.appendChild(div);
     });
-    
+
     initSortable();
     lucide.createIcons();
     updateTransaksiInfo();
@@ -1684,30 +1353,9 @@ function openPreview(){
     modal.classList.add("show");
     setTimeout(() => lucide.createIcons(), 50);
 }
+
 function closePreview(){
     document.getElementById("previewModal").classList.remove("show");
-}
-
-// >>> FUNGSI TAMBAH PDAM UTAMA <<<
-function addNewPdamMain(){
-    // Hitung jumlah PDAM yang sudah ada
-    const count = Object.keys(prabayarData[currentMenuType]).length + 1;
-    const newName = `PDAM ${count}`;
-
-    // Tambah ke data
-    prabayarData[currentMenuType][newName] = { items: [] };
-    originalPrabayarData[currentMenuType][newName] = { items: [] };
-
-    // Render ulang tampilan
-    openOperatorListPascabayar("PDAM", "pdam");
-    
-    // Buka otomatis yang baru dibuat
-    setTimeout(() => {
-        const newElement = document.querySelector(`[data-productname="${newName.toLowerCase()}"]`);
-        if(newElement) newElement.classList.add("open");
-    }, 100);
-
-    checkPrabayarChange(); // Perbaiki nama fungsi
 }
 
 // >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
@@ -1726,16 +1374,11 @@ function checkPrabayarChange(){
         // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
         let nilaiAsli = "";
         if(currentMenuType === "pdam"){
-            // Logika khusus PDAM
-            const itemDiv = input.closest('.area-item');
-            const idx = itemDiv ? Array.from(itemDiv.parentElement.children).indexOf(itemDiv) : -1;
-            if(idx >= 0){
-                nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
-            }
+            // Logika khusus PDAM (sudah dihapus)
         } else {
             nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
         }
-        
+
         // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
         const nilaiSekarang = (input.value || "").trim();
 
@@ -1752,31 +1395,6 @@ function checkPrabayarChange(){
         disableButton("savePrabayarBtn");
     }
 }
-
-// >>> FUNGSI RENDER ITEM PDAM DARI DATA <<<
-function renderPdamItem(productName, item){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
-    
-    const newItem = document.createElement("div");
-    newItem.className = "area-item";
-    newItem.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
-                <span class="font-medium">${item.wilayah || 'Wilayah'}</span>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
-        </div>
-    `;
-
-    newItem.onclick = function(){
-        openPdamForm(this, productName, item);
-    };
-
-    container.appendChild(newItem);
-    lucide.createIcons();
-}
-
 
 // === INISIALISASI AWAL ===
 window.onload = function(){
