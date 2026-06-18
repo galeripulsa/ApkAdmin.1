@@ -797,37 +797,33 @@ function openOperatorList(title, actionType){
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
 function openOperatorListPascabayar(title, actionType) {
-    // 1. Sembunyikan modal sebelumnya
+    // 1. Sembunyikan modal lama
     const prevModal = document.getElementById("prabayarModal");
-    if(prevModal) prevModal.classList.remove("show");
+    if(prevModal) prevModal.style.display = "none";
 
-    // 2. Ambil elemen modal yang akan ditampilkan
+    // 2. Ambil elemen modal baru
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
 
+    // 3. Cek apakah elemen ada? Kalau tidak ada, hentikan biar tidak error
     if(!modal || !container){
-        console.error("Elemen modal tidak ditemukan!");
-        return; // Hentikan jika elemen tidak ada biar tidak error
+        alert("Error: Modal atau Container tidak ditemukan!");
+        return;
     }
 
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
-
     container.innerHTML = "";
 
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
-
-    originalPrabayarData = {};
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
 
     let listToShow = [];
     let iconName = "file-text";
-    let labelInput1 = "Format Cek";
-    let labelInput2 = "Format Bayar";
 
     if (actionType === "plnPascabayar") {
         listToShow = plnList;
@@ -843,20 +839,11 @@ function openOperatorListPascabayar(title, actionType) {
 
         Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
             const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                items: saved.items || []
-            };
+            originalPrabayarData[currentMenuType][itemName] = { items: saved.items || [] };
 
             const wrapper = document.createElement("div");
             wrapper.className = "operator-wrapper";
             wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div id="pdamListContainer" class="mb-3"></div>
-                </div>
-            `;
 
             wrapper.innerHTML = `
                 <div class="operator-header" onclick="toggleOperator(this.parentElement)">
@@ -864,21 +851,23 @@ function openOperatorListPascabayar(title, actionType) {
                         <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
                         <span class="operator-name-text">${itemName}</span>
                     </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
                 </div>
-                ${formContent}
+                <div class="operator-body">
+                    <div id="pdamListContainer" class="mb-3"></div>
+                </div>
             `;
 
             container.appendChild(wrapper);
             loadProductData(itemName, saved.items);
         });
 
-        // >>> TOMBOL TAMBAH AREA BARU <<<
+        // TOMBOL TAMBAH
         const addNewBtn = document.createElement("div");
         addNewBtn.className = "mt-4";
         addNewBtn.innerHTML = `
-            <button onclick="tambahAreaBaru()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                <i data-lucide="plus" class="w-5 h-5"></i> Tambah Area Baru
+            <button onclick="tambahAreaBaru()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl">
+                + Tambah Area Baru
             </button>
         `;
         container.appendChild(addNewBtn);
@@ -898,27 +887,10 @@ function openOperatorListPascabayar(title, actionType) {
         iconName = "wifi";
     }
 
-    // >>> INI YANG PALING PENTING: TAMPILKAN MODAL <<<
-    modal.classList.add("show");
+    // >>> CARA BARU: PAKAI STYLE.DISPLAY BUKAN CLASSLIST <<<
+    modal.style.display = "block"; // Ini kuncinya
 }
 
-// >>> FUNGSI TAMBAH AREA BARU <<<
-function tambahAreaBaru() {
-    const namaArea = prompt("Masukkan nama Area/Wilayah:");
-    if(namaArea && namaArea.trim()){
-        const namaPdam = Object.keys(prabayarData[currentMenuType])[0]; 
-        
-        const itemBaru = {
-            wilayah: namaArea.trim(),
-            cekHarga: "",
-            kodeBayar: ""
-        };
-        
-        prabayarData[currentMenuType][namaPdam].items.push(itemBaru);
-        renderPdamItem(namaPdam, itemBaru);
-        checkPrabayarChange();
-    }
-}
 
 
     // >>> KODE UNTUK YANG LAIN <<<
