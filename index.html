@@ -1710,6 +1710,72 @@ function addNewPdamMain(){
     checkPrabayarChange(); // Perbaiki nama fungsi
 }
 
+// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
+function checkPrabayarChange(){
+    let adaPerubahan = false;
+
+    // CEK SEMUA INPUT DI HALAMAN INI
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+
+    inputs.forEach(input => {
+        const op = input.dataset.operator;
+        let type = "cekHarga";
+        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
+        if(input.classList.contains("input-wilayah")) type = "wilayah";
+
+        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
+        let nilaiAsli = "";
+        if(currentMenuType === "pdam"){
+            // Logika khusus PDAM
+            const itemDiv = input.closest('.area-item');
+            const idx = itemDiv ? Array.from(itemDiv.parentElement.children).indexOf(itemDiv) : -1;
+            if(idx >= 0){
+                nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
+            }
+        } else {
+            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
+        }
+        
+        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
+        const nilaiSekarang = (input.value || "").trim();
+
+        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
+        if(nilaiSekarang !== nilaiAsli){
+            adaPerubahan = true;
+        }
+    });
+
+    // PUTUSKAN TOMBOL NYALA ATAU MATI
+    if(adaPerubahan){
+        enableButton("savePrabayarBtn");
+    } else {
+        disableButton("savePrabayarBtn");
+    }
+}
+
+// >>> FUNGSI RENDER ITEM PDAM DARI DATA <<<
+function renderPdamItem(productName, item){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
+    
+    const newItem = document.createElement("div");
+    newItem.className = "area-item";
+    newItem.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
+                <span class="font-medium">${item.wilayah || 'Wilayah'}</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+        </div>
+    `;
+
+    newItem.onclick = function(){
+        openPdamForm(this, productName, item);
+    };
+
+    container.appendChild(newItem);
+    lucide.createIcons();
+}
 
 
 // === INISIALISASI AWAL ===
