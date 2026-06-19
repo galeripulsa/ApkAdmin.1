@@ -828,8 +828,8 @@ function openOperatorListPascabayar(title, actionType){
     // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
-    let labelInput1 = "Kode / Format";
-    let labelInput2 = "Nama Produk";
+    let labelInput1 = "Kode Cek";
+    let labelInput2 = "Kode Bayar";
 
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
@@ -840,7 +840,7 @@ function openOperatorListPascabayar(title, actionType){
         
         // >>> JIKA KOSONG, BUAT DATA AWAL <<<
         if (Object.keys(prabayarData[currentMenuType]).length === 0) {
-            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
+            prabayarData[currentMenuType]["Area 1"] = { items: [] };
         }
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
@@ -904,7 +904,7 @@ function openOperatorListPascabayar(title, actionType){
         addNewPdamBtn.className = "mt-4";
         addNewPdamBtn.innerHTML = `
             <button onclick="addNewPdamMain()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+                <i data-lucide="plus" class="w-5 h-5"></i> Tambah Area Baru
             </button>
         `;
         container.appendChild(addNewPdamBtn);
