@@ -823,20 +823,66 @@ function openOperatorListPascabayar(title, actionType){
     // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
-    let labelInput1 = "Kode / Format";
-    let labelInput2 = "Nama Produk";
+    let labelInput1 = "Kode Cek";
+    let labelInput2 = "Kode Bayar";
 
     if(actionType === "plnPascabayar"){
         listToShow = plnList;
         iconName = "zap";
     } else if(actionType === "pdam"){
-        listToShow = []; 
-        iconName = "droplet";
+        if(actionType === "pdam"){
+    // >>> KODE KHUSUS PDAM <<<
+    Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {items: []};
+
+        originalPrabayarData[currentMenuType][itemName] = {
+            items: saved.items || []
+        };
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
+
+        let formContent = `
+            <div class="operator-body">
+                <!-- TOMBOL TAMBAH AREA BARU -->
+                <div class="mb-4">
+                    <button onclick="addNewArea('${itemName}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+                        <i data-lucide="plus" class="w-5 h-5"></i> + Area Baru
+                    </button>
+                </div>
+
+                <!-- DAFTAR AREA -->
+                <div id="pdamListContainer" class="mb-3"></div>
+            </div>
+        `;
+
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
+                </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            ${formContent}
+        `;
+
+        container.appendChild(wrapper);
         
-        // >>> JIKA KOSONG, BUAT DATA AWAL <<<
-        if (Object.keys(prabayarData[currentMenuType]).length === 0) {
-            prabayarData[currentMenuType]["PDAM 1"] = { items: [] };
-        }
+        loadProductData(itemName, saved.items);
+    });
+
+    // >>> TOMBOL TAMBAH PDAM BARU <<<
+    const addNewPdamBtn = document.createElement("div");
+    addNewPdamBtn.className = "mt-4";
+    addNewPdamBtn.innerHTML = `
+        <button onclick="addNewPdamMain()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+            <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
+        </button>
+    `;
+    container.appendChild(addNewPdamBtn);
+
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
@@ -850,56 +896,6 @@ function openOperatorListPascabayar(title, actionType){
         listToShow = internetList;
         iconName = "wifi";
     }
-
-    if(actionType === "pdam"){
-        // >>> KODE KHUSUS PDAM <<<
-        Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                items: saved.items || []
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div id="pdamListContainer" class="mb-3"></div>
-                </div>
-            `;
-
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-            
-            loadProductData(itemName, saved.items);
-        });
-
-        // >>> TOMBOL TAMBAH PDAM BARU <<<
-        const addNewPdamBtn = document.createElement("div");
-        addNewPdamBtn.className = "mt-4";
-        addNewPdamBtn.innerHTML = `
-            <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
-            </button>
-        `;
-        container.appendChild(addNewPdamBtn);
-
-    } else {
-        // >>> KODE UNTUK YANG LAIN <<<
-        listToShow.forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
 
             originalPrabayarData[currentMenuType][itemName] = {
                 cekHarga: saved.cekHarga || "",
