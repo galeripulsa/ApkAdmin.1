@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -323,6 +323,11 @@ body{
     padding: 15px;
     margin-bottom: 10px;
     border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.area-item:hover {
+    background: #f0f9ff;
 }
 </style>
 
@@ -823,321 +828,6 @@ function openOperatorListPascabayar(title, actionType){
     // PILIH ARRAY YANG SESUAI
     let listToShow = [];
     let iconName = "file-text";
-    let labelInput1 = "Kode Cek";
-    let labelInput2 = "Kode Bayar";
-
-    if(actionType === "plnPascabayar"){
-        listToShow = plnList;
-        iconName = "zap";
-    } else if(actionType === "pdam"){
-        if(actionType === "pdam"){
-    // >>> KODE KHUSUS PDAM <<<
-    Object.keys(prabayarData[currentMenuType]).forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {items: []};
-
-        originalPrabayarData[currentMenuType][itemName] = {
-            items: saved.items || []
-        };
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "operator-wrapper";
-        wrapper.dataset.productname = itemName.toLowerCase();
-
-        let formContent = `
-            <div class="operator-body">
-                <!-- TOMBOL TAMBAH AREA BARU -->
-                <div class="mb-4">
-                    <button onclick="addNewArea('${itemName}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-                        <i data-lucide="plus" class="w-5 h-5"></i> + Area Baru
-                    </button>
-                </div>
-
-                <!-- DAFTAR AREA -->
-                <div id="pdamListContainer" class="mb-3"></div>
-            </div>
-        `;
-
-        wrapper.innerHTML = `
-            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                <div class="operator-left">
-                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                    <span class="operator-name-text">${itemName}</span>
-                </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-            </div>
-            ${formContent}
-        `;
-
-        container.appendChild(wrapper);
-        
-        loadProductData(itemName, saved.items);
-    });
-
-    // >>> TOMBOL TAMBAH PDAM BARU <<<
-    const addNewPdamBtn = document.createElement("div");
-    addNewPdamBtn.className = "mt-4";
-    addNewPdamBtn.innerHTML = `
-        <button onclick="addNewPdamMain()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
-            <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
-        </button>
-    `;
-    container.appendChild(addNewPdamBtn);
-
-    } else if(actionType === "bpjs"){
-        listToShow = bpjsList;
-        iconName = "heart";
-    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
-        listToShow = pbbList;
-        iconName = "home";
-    } else if(actionType === "tvKabel"){
-        listToShow = tvKabelList;
-        iconName = "tv";
-    } else if(actionType === "internetTelpon"){
-        listToShow = internetList;
-        iconName = "wifi";
-    }
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                cekHarga: saved.cekHarga || "",
-                namaProduk: saved.namaProduk || ""
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-cek-harga" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.cekHarga || ""}">
-                        <label>${labelInput1}</label>
-                    </div>
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-nama-produk" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.namaProduk || ""}">
-                        <label>${labelInput2}</label>
-                    </div>
-                </div>
-            `;
-
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
-
-            container.appendChild(wrapper);
-        });
-    }
-
-    modal.classList.add("show");
-    document.getElementById("fixedButtonWrapper").style.display = "block";
-    setTimeout(() => { lucide.createIcons(); }, 50);
-
-    disableButton("savePrabayarBtn");
-    attachInputListeners();
-}
-
-
-// >>> FUNGSI LOAD DATA AWAL PDAM <<<
-function loadProductData(productName, items){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
-    
-    if(!items || items.length === 0){
-        // Tambahkan item pertama secara default
-        addNewProductInside(null, productName);
-    } else {
-        items.forEach(item => {
-            renderPdamItem(productName, item);
-        });
-    }
-}
-
-
-// >>> FUNGSI TAMBAH PRODUK BARU KE DALAM KOTAK YANG SAMA <<<
-function addNewProductInside(buttonElement, productName, data = null){
-    const bodyDiv = buttonElement ? buttonElement.parentElement : document.querySelector(`[data-productname="${productName.toLowerCase()}"] .operator-body`);
-    const container = bodyDiv.querySelector('#pdamListContainer');
-
-    // Buat elemen baru dalam bentuk List Item
-    const newItem = document.createElement("div");
-    newItem.className = "area-item"; // Pakai style yang sudah ada
-    newItem.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
-                <span class="font-medium">${data ? data.wilayah : 'Wilayah Baru'}</span>
-            </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
-        </div>
-    `;
-
-    // Saat diklik, buka form edit
-    newItem.onclick = function(){
-        openPdamForm(this, productName, data);
-    };
-
-    container.appendChild(newItem);
-    lucide.createIcons();
-
-    // Simpan data awal jika baru
-    if(!data){
-        savePdamData(productName);
-    }
-}
-
-// >>> FUNGSI BUKA FORM EDIT / TAMBAH <<<
-function openPdamForm(element, productName, data = null){
-    // Buat modal atau form inline
-    const formDiv = document.createElement("div");
-    formDiv.className = "mt-3 p-4 bg-slate-50 rounded-xl border border-slate-200";
-    formDiv.innerHTML = `
-        <div class="floating mt-0">
-            <input type="text" class="input-wilayah" value="${data ? data.wilayah : ''}" placeholder=" ">
-            <label>Nama Wilayah</label>
-        </div>
-        <div class="double-input">
-            <div class="floating mt-4">
-                <input type="text" class="input-cek-harga" value="${data ? data.cekHarga : ''}" placeholder=" ">
-                <label>Kode Cek</label>
-            </div>
-            <div class="floating mt-4">
-                <input type="text" class="input-nama-produk" value="${data ? data.namaProduk : ''}" placeholder=" ">
-                <label>Kode Bayar</label>
-            </div>
-        </div>
-        <div class="text-right mt-3 flex gap-2 justify-end">
-            <button onclick="this.parentElement.parentElement.remove()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm">Batal</button>
-            <button onclick="savePdamItem(this, '${productName}')" class="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm">Simpan</button>
-        </div>
-    `;
-
-    // Hapus form lain jika ada
-    document.querySelectorAll('.area-item + .mt-3').forEach(el => el.remove());
-    
-    // Masukkan form setelah item
-    element.after(formDiv);
-    attachInputListeners();
-}
-
-// >>> FUNGSI SIMPAN ITEM PDAM <<<
-function savePdamItem(button, productName){
-    const form = button.parentElement.parentElement;
-    const wilayah = form.querySelector('.input-wilayah').value;
-    const cekHarga = form.querySelector('.input-cek-harga').value;
-    const namaProduk = form.querySelector('.input-nama-produk').value;
-
-    // Update tampilan nama wilayah
-    const itemDiv = form.previousElementSibling;
-    itemDiv.querySelector('span').innerText = wilayah || 'Tanpa Nama';
-
-    // Simpan ke data
-    savePdamData(productName);
-    
-    // Hapus form
-    form.remove();
-}
-
-
-// >>> FUNGSI CARI PRODUK <<<
-function searchProducts() {
-    const searchTerm = document.getElementById("searchProduct").value.toLowerCase();
-    const products = document.querySelectorAll(".operator-wrapper");
-
-    products.forEach(product => {
-        const productName = product.dataset.productname;
-        if(productName.includes(searchTerm)) {
-            product.style.display = "block";
-        } else {
-            product.style.display = "none";
-        }
-    });
-}
-
-function attachInputListeners(){
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
-    inputs.forEach(input => {
-        input.addEventListener("input", function(){
-            const op = this.dataset.operator;
-            let type = "cekHarga";
-            if(this.classList.contains("input-nama-produk")) type = "namaProduk";
-            if(this.classList.contains("input-wilayah")) type = "wilayah";
-
-            if(!prabayarData[currentMenuType][op]){
-                prabayarData[currentMenuType][op] = {};
-            }
-            
-            // Khusus PDAM, simpan sebagai array of objects
-            if(currentMenuType === "pdam"){
-                savePdamData(op);
-            } else {
-                prabayarData[currentMenuType][op][type] = this.value;
-            }
-
-            checkPrabayarChange(); // CEK SETIAP KETIKAN
-        });
-    });
-}
-
-function savePdamData(op){
-    const items = [];
-    // Ganti selector dari .product-item jadi .area-item
-    document.querySelectorAll(`[data-productname="${op.toLowerCase()}"] .area-item`).forEach(el => {
-        const form = el.nextElementSibling;
-        if(form){
-            items.push({
-                wilayah: form.querySelector('.input-wilayah')?.value || '',
-                cekHarga: form.querySelector('.input-cek-harga')?.value || '',
-                namaProduk: form.querySelector('.input-nama-produk')?.value || ''
-            });
-        } else {
-            items.push({
-                wilayah: el.querySelector('span').innerText,
-                cekHarga: '',
-                namaProduk: ''
-            });
-        }
-    });
-    prabayarData[currentMenuType][op] = { items: items };
-}
-
-
-// >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
-function openOperatorListPascabayar(title, actionType){
-    document.getElementById("prabayarModal").classList.remove("show");
-
-    const modal = document.getElementById("operatorListModal");
-    const container = document.getElementById("operatorListContainer");
-
-    document.getElementById("operatorListTitle").innerText = title;
-    currentMenuType = actionType;
-
-    container.innerHTML = "";
-
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
-
-    originalPrabayarData = {};
-    if(!originalPrabayarData[currentMenuType]){
-        originalPrabayarData[currentMenuType] = {};
-    }
-
-    // PILIH ARRAY YANG SESUAI
-    let listToShow = [];
-    let iconName = "file-text";
     let labelInput1 = "Kode / Format";
     let labelInput2 = "Nama Produk";
 
@@ -1155,7 +845,7 @@ function openOperatorListPascabayar(title, actionType){
     } else if(actionType === "bpjs"){
         listToShow = bpjsList;
         iconName = "heart";
-    } else if(actionType === "pbb"){ // <<< SUDAH DIPERBAIKI
+    } else if(actionType === "pbb"){
         listToShow = pbbList;
         iconName = "home";
     } else if(actionType === "tvKabel"){
@@ -1181,6 +871,14 @@ function openOperatorListPascabayar(title, actionType){
 
             let formContent = `
                 <div class="operator-body">
+                    <!-- TOMBOL TAMBAH AREA BARU -->
+                    <div class="mb-4">
+                        <button onclick="addNewArea('${itemName}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+                            <i data-lucide="plus" class="w-5 h-5"></i> + Area Baru
+                        </button>
+                    </div>
+
+                    <!-- DAFTAR AREA -->
                     <div id="pdamListContainer" class="mb-3"></div>
                 </div>
             `;
@@ -1205,7 +903,7 @@ function openOperatorListPascabayar(title, actionType){
         const addNewPdamBtn = document.createElement("div");
         addNewPdamBtn.className = "mt-4";
         addNewPdamBtn.innerHTML = `
-            <button onclick="addNewPdamMain()" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+            <button onclick="addNewPdamMain()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
                 <i data-lucide="plus" class="w-5 h-5"></i> Tambah PDAM Baru
             </button>
         `;
@@ -1270,6 +968,195 @@ function openOperatorListPascabayar(title, actionType){
 }
 
 
+// >>> FUNGSI TAMBAH AREA BARU <<<
+function addNewArea(productName){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
+
+    const newItem = document.createElement("div");
+    newItem.className = "area-item";
+    newItem.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
+                <span class="font-medium">Area Baru</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+        </div>
+    `;
+
+    newItem.onclick = function(){
+        openPdamForm(this, productName);
+    };
+
+    container.appendChild(newItem);
+    lucide.createIcons();
+
+    // Simpan data kosong
+    savePdamData(productName);
+}
+
+// >>> FUNGSI BUKA FORM EDIT AREA <<<
+function openPdamForm(element, productName, data = null){
+    // Tutup form lain jika ada
+    document.querySelectorAll('.area-item + .mt-3').forEach(el => el.remove());
+
+    const formDiv = document.createElement("div");
+    formDiv.className = "mt-3 p-4 bg-slate-50 rounded-xl border border-slate-200";
+    formDiv.innerHTML = `
+        <div class="floating mt-0">
+            <input type="text" class="input-wilayah" value="${data ? data.wilayah : 'Area Baru'}" placeholder=" ">
+            <label>Nama Area</label>
+        </div>
+        <div class="double-input">
+            <div class="floating mt-4">
+                <input type="text" class="input-cek-harga" value="${data ? data.cekHarga : ''}" placeholder=" ">
+                <label>Kode Cek</label>
+            </div>
+            <div class="floating mt-4">
+                <input type="text" class="input-nama-produk" value="${data ? data.namaProduk : ''}" placeholder=" ">
+                <label>Kode Bayar</label>
+            </div>
+        </div>
+        <div class="text-right mt-3 flex gap-2 justify-end">
+            <button onclick="hapusArea(this, '${productName}')" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm">Hapus</button>
+            <button onclick="simpanArea(this, '${productName}')" class="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm">Simpan</button>
+        </div>
+    `;
+
+    element.after(formDiv);
+    attachInputListeners();
+}
+
+// >>> FUNGSI SIMPAN AREA <<<
+function simpanArea(button, productName){
+    const form = button.parentElement.parentElement;
+    const wilayah = form.querySelector('.input-wilayah').value || "Area Baru";
+    const cekHarga = form.querySelector('.input-cek-harga').value;
+    const namaProduk = form.querySelector('.input-nama-produk').value;
+
+    // Update tampilan nama area
+    const itemDiv = form.previousElementSibling;
+    itemDiv.querySelector('span').innerText = wilayah;
+
+    // Simpan ke data
+    savePdamData(productName);
+    
+    // Tutup form
+    form.remove();
+}
+
+// >>> FUNGSI HAPUS AREA <<<
+function hapusArea(button, productName){
+    const form = button.parentElement.parentElement;
+    const itemDiv = form.previousElementSibling;
+    
+    itemDiv.remove();
+    form.remove();
+
+    savePdamData(productName);
+}
+
+
+// >>> FUNGSI LOAD DATA AWAL PDAM <<<
+function loadProductData(productName, items){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
+    
+    if(!items || items.length === 0){
+        // Tidak tambah otomatis, biar user klik tombol + Area Baru
+    } else {
+        items.forEach(item => {
+            renderPdamItem(productName, item);
+        });
+    }
+}
+
+// >>> FUNGSI RENDER ITEM PDAM DARI DATA <<<
+function renderPdamItem(productName, item){
+    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
+    
+    const newItem = document.createElement("div");
+    newItem.className = "area-item";
+    newItem.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
+                <span class="font-medium">${item.wilayah || 'Area'}</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+        </div>
+    `;
+
+    newItem.onclick = function(){
+        openPdamForm(this, productName, item);
+    };
+
+    container.appendChild(newItem);
+    lucide.createIcons();
+}
+
+
+// >>> FUNGSI CARI PRODUK <<<
+function searchProducts() {
+    const searchTerm = document.getElementById("searchProduct").value.toLowerCase();
+    const products = document.querySelectorAll(".operator-wrapper");
+
+    products.forEach(product => {
+        const productName = product.dataset.productname;
+        if(productName.includes(searchTerm)) {
+            product.style.display = "block";
+        } else {
+            product.style.display = "none";
+        }
+    });
+}
+
+function attachInputListeners(){
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+    inputs.forEach(input => {
+        input.addEventListener("input", function(){
+            const op = this.dataset.operator;
+            let type = "cekHarga";
+            if(this.classList.contains("input-nama-produk")) type = "namaProduk";
+            if(this.classList.contains("input-wilayah")) type = "wilayah";
+
+            if(!prabayarData[currentMenuType][op]){
+                prabayarData[currentMenuType][op] = {};
+            }
+            
+            // Khusus PDAM, simpan sebagai array of objects
+            if(currentMenuType === "pdam"){
+                savePdamData(op);
+            } else {
+                prabayarData[currentMenuType][op][type] = this.value;
+            }
+
+            checkPrabayarChange(); // CEK SETIAP KETIKAN
+        });
+    });
+}
+
+function savePdamData(op){
+    const items = [];
+    document.querySelectorAll(`[data-productname="${op.toLowerCase()}"] .area-item`).forEach(el => {
+        const form = el.nextElementSibling;
+        if(form){
+            items.push({
+                wilayah: form.querySelector('.input-wilayah')?.value || '',
+                cekHarga: form.querySelector('.input-cek-harga')?.value || '',
+                namaProduk: form.querySelector('.input-nama-produk')?.value || ''
+            });
+        } else {
+            items.push({
+                wilayah: el.querySelector('span').innerText,
+                cekHarga: '',
+                namaProduk: ''
+            });
+        }
+    });
+    prabayarData[currentMenuType][op] = { items: items };
+}
+
+
 // >>> FUNGSI SIMPAN PRABAYAR <<<
 function savePrabayar(){
     localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
@@ -1316,470 +1203,116 @@ function toast(msg){
 
 function enableButton(btnId){
     const btn = document.getElementById(btnId);
-    if(!btn) return;
+   btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+    btn.classList.add("bg-cyan-600", "hover:bg-cyan-700");
     btn.disabled = false;
-    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
-    btn.classList.add("bg-green-600");
 }
+
 function disableButton(btnId){
     const btn = document.getElementById(btnId);
-    if(!btn) return;
-    btn.disabled = true;
-    btn.classList.remove("bg-green-600");
     btn.classList.add("bg-gray-400", "cursor-not-allowed");
+    btn.classList.remove("bg-cyan-600", "hover:bg-cyan-700");
+    btn.disabled = true;
 }
 
-function showConfirm(title, message, action, buttonText = "Ya, Simpan"){
-    document.getElementById("confirmTitle").innerText = title;
-    document.getElementById("confirmMessage").innerText = message;
-    confirmAction = action;
-
-    const btnContainer = document.getElementById("confirmButtons");
-    btnContainer.innerHTML = "";
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl btn-click";
-    cancelBtn.innerText = "Batal";
-    cancelBtn.onclick = closeConfirm;
-
-    const okBtn = document.createElement("button");
-    okBtn.className = "flex-1 bg-green-600 text-white py-3 rounded-xl btn-click";
-    okBtn.innerText = buttonText; // Pakai variabel yang dikirim
-    okBtn.onclick = function(){
-        if(typeof confirmAction === "function") confirmAction();
-        closeConfirm();
-    };
-
-    btnContainer.appendChild(cancelBtn);
-    btnContainer.appendChild(okBtn);
-
-    document.getElementById("confirmModal").classList.remove("hidden");
-}
-function closeConfirm(){
-    document.getElementById("confirmModal").classList.add("hidden");
-}
-
-function getServerData(){
-    return {
-        nama: namaKonter.value.trim(),
-        alamat: alamatKonter.value.trim()
-    };
-}
-function checkServerChange(){
-    const original = JSON.parse(localStorage.getItem("setupServer")) || {nama:"", alamat:""};
-    const current = getServerData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveServerBtn");
-    } else {
-        disableButton("saveServerBtn");
-    }
-}
-function openServer(){
-    document.getElementById("serverModal").classList.add("show");
-    loadServer();
-    checkServerChange();
-    setTimeout(() => { autoGrow(alamatKonter); }, 100);
-}
-function closeServer(){
-    document.getElementById("serverModal").classList.remove("show");
-}
-function saveServer(){
-    localStorage.setItem("setupServer", JSON.stringify(getServerData()));
-    toast("Data Server Disimpan");
-    checkServerChange();
-}
-function confirmSaveServer(){
-    showConfirm("Konfirmasi Simpan", "Simpan data server?", saveServer);
-}
-function checkCloseServer(){
-    if(!document.getElementById("saveServerBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeServer, "Ya, Keluar");
-    } else {
-       
-       closeServer();
-    }
-}
-function loadServer(){
-    const data = JSON.parse(localStorage.getItem("setupServer"));
-    if(data){
-        namaKonter.value = data.nama || "";
-        alamatKonter.value = data.alamat || "";
-    } else {
-        namaKonter.value = "";
-        alamatKonter.value = "";
-    }
-}
-
-function getCenterData(){
-    return {
-        ip:{
-            nama: ipNama.value.trim(),
-            server: ipServer.value.trim(),
-            host: ipHost.value.trim()
-        },
-        jabber:{
-            nama: jabberNama.value.trim(),
-            server: jabberServer.value.trim(),
-            host: jabberHost.value.trim()
-        },
-        nomor:{
-            wa: waCenter.value.trim(),
-            sms: smsCenter.value.trim()
-        }
-    };
-}
-
-function checkCenterChange(){
-    const original = JSON.parse(localStorage.getItem("setupCenter")) || {};
-    const current = getCenterData();
-    if(JSON.stringify(current) !== JSON.stringify(original)){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
-}
-function openCenter(){
-    document.getElementById("centerModal").classList.add("show");
-    loadCenter();
-    checkCenterChange();
-}
-function closeCenter(){
-    document.getElementById("centerModal").classList.remove("show");
-}
-function saveCenter(){
-    localStorage.setItem("setupCenter", JSON.stringify(getCenterData()));
-    toast("Data Center Disimpan");
-    checkCenterChange();
-}
-
-function confirmSaveCenter(){
-    showConfirm("Konfirmasi Simpan", "Simpan data center?", saveCenter);
-}
-function checkCloseCenter(){
-    if(!document.getElementById("saveCenterBtn").disabled){
-        showConfirm("Perubahan Belum Disimpan", "Yakin keluar?", closeCenter, "Ya, Keluar");
-        return;
-    }
-    closeCenter();
-}
-function loadCenter(){
-    const data = JSON.parse(localStorage.getItem("setupCenter"));
-    if(data){
-        ipNama.value = data.ip?.nama || "";
-        ipServer.value = data.ip?.server || "";
-        ipHost.value = data.ip?.host || "";
-        jabberNama.value = data.jabber?.nama || "";
-        jabberServer.value = data.jabber?.server || "";
-        jabberHost.value = data.jabber?.host || "";
-        waCenter.value = data.nomor?.wa || "";
-        smsCenter.value = data.nomor?.sms || "";
-    } else {
-        ipNama.value = ""; ipServer.value = ""; ipHost.value = "";
-        jabberNama.value = ""; jabberServer.value = ""; jabberHost.value = "";
-        waCenter.value = ""; smsCenter.value = "";
-    }
-}
-
-function watchServerChanges(){
-    [namaKonter, alamatKonter].forEach(field => {
-        field.addEventListener("input", () => {
-            checkServerChange();
-            autoGrow(field);
-        });
-    });
-}
-function watchCenterChanges(){
-    [ipNama, ipServer, ipHost, jabberNama, jabberServer, jabberHost, waCenter, smsCenter].forEach(field => {
-        if(field) field.addEventListener("input", checkCenterChange);
-    });
-}
-
-let transaksiItems = [];
-let originalTransaksi = [];
-let activeDeleteIndex = -1;
-
-function getCurrentTransaksi(){
-    return JSON.parse(JSON.stringify(transaksiItems));
-}
-function checkTransaksiChange(){
-    if(JSON.stringify(getCurrentTransaksi()) !== JSON.stringify(originalTransaksi)){
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
-}
-function openTransaksi(){
-    document.getElementById("transaksiModal").classList.add("show");
-    loadTransaksi();
-    renderTransaksiList();
-    checkTransaksiChange();
-}
-function closeTransaksi(){
-    document.getElementById("transaksiModal").classList.remove("show");
-}
-function saveTransaksi(){
-    localStorage.setItem("transaksiItems", JSON.stringify(transaksiItems));
-    originalTransaksi = getCurrentTransaksi();
-    toast("Menu Transaksi Disimpan");
-    checkTransaksiChange();
-}
-function confirmSaveTransaksi(){
-    showConfirm("Konfirmasi Simpan", "Simpan perubahan menu?", saveTransaksi);
-}
-function loadTransaksi(){
-    const data = JSON.parse(localStorage.getItem("transaksiItems"));
-    if(data && data.length > 0){
-        transaksiItems = data;
-    } else {
-        transaksiItems = [
-            {type:"kategori", nama:"PRODUK DIGITAL", open:true},
-            {type:"menu", nama:"Pulsa & Paket Data", icon:"smartphone"},
-            {type:"menu", nama:"Token Listrik", icon:"zap"},
-            {type:"menu", nama:"Voucher Game", icon:"gamepad-2"},
-            {type:"menu", nama:"E-Wallet", icon:"wallet"}
-        ];
-    }
-    originalTransaksi = getCurrentTransaksi();
-}
-
-function renderTransaksiList(){
-    const list = document.getElementById("transaksiList");
-    list.innerHTML = "";
-    transaksiItems.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.className = "bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center gap-3 hover:shadow-md transition-shadow";
-        div.draggable = true;
-        
-        if(item.type === "kategori"){
-            div.innerHTML = `
-                <div class="drag-handle text-slate-400">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </div>
-                <div class="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
-                    <i data-lucide="layers" class="w-5 h-5"></i>
-                </div>
-                <div class="flex-1 font-bold text-slate-700">${item.nama}</div>
-                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            `;
-        } else {
-            div.innerHTML = `
-                <div class="drag-handle text-slate-400">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </div>
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
-                    <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
-                </div>
-                <div class="flex-1 font-medium text-slate-700">${item.nama}</div>
-                <button onclick="toggleDeleteButton(${index})" class="p-2 text-slate-400 hover:text-red-500">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            `;
-        }
-        list.appendChild(div);
-    });
-    
-    initSortable();
-    lucide.createIcons();
-    updateTransaksiInfo();
-}
-
-function updateTransaksiInfo(){
-    const menuCount = transaksiItems.filter(i => i.type === "menu").length;
-    const katCount = transaksiItems.filter(i => i.type === "kategori").length;
-    document.getElementById("transaksiInfo").innerText = `${menuCount} Menu • ${katCount} Kategori`;
-}
-
-function initSortable(){
-    if(sortableInstance){
-        sortableInstance.destroy();
-    }
-    const list = document.getElementById("transaksiList");
-    sortableInstance = new Sortable(list, {
-        animation: 150,
-        handle: '.drag-handle',
-        ghostClass: 'sortable-ghost',
-        chosenClass: 'sortable-chosen',
-        onEnd: function(evt){
-            const movedItem = transaksiItems.splice(evt.oldIndex, 1)[0];
-            transaksiItems.splice(evt.newIndex, 0, movedItem);
-            checkTransaksiChange();
-        }
-    });
-}
-
-function addMenu(){
-    const nama = prompt("Masukkan nama menu:");
-    if(nama && nama.trim()){
-        transaksiItems.push({
-            type:"menu",
-            nama: nama.trim(),
-            icon:"circle"
-        });
-        renderTransaksiList();
-        checkTransaksiChange();
-    }
-}
-
-function addKategori(){
-    const nama = prompt("Masukkan nama kategori:");
-    if(nama && nama.trim()){
-        transaksiItems.push({
-            type:"kategori",
-            nama: nama.trim().toUpperCase(),
-            open:true
-        });
-        renderTransaksiList();
-        checkTransaksiChange();
-    }
-}
-
-function toggleDeleteButton(index){
-    activeDeleteIndex = index;
-    showConfirm("Hapus Item", `Yakin hapus "${transaksiItems[index].nama}"?`, deleteItem, "Ya, Hapus");
-}
-
-function deleteItem(){
-    if(activeDeleteIndex >= 0){
-        transaksiItems.splice(activeDeleteIndex, 1);
-        renderTransaksiList();
-        checkTransaksiChange();
-        activeDeleteIndex = -1;
-    }
-}
-
-function hideAllDeleteButtons(){
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.style.display = 'none';
-    });
-}
-
-function openPreview(){
-    const modal = document.getElementById("previewModal");
-    const content = document.getElementById("previewContent");
-    let html = "";
-
-    transaksiItems.forEach(item => {
-        if(item.type === "kategori"){
-            html += `<div class="text-lg font-bold text-slate-800 mt-6 mb-2">${item.nama}</div>`;
-        } else {
-            html += `
-                <div class="bg-white rounded-xl p-4 shadow mb-2 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center text-cyan-600">
-                        <i data-lucide="${item.icon || 'circle'}" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex-1 font-medium">${item.nama}</div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
-                </div>
-            `;
-        }
-    });
-
-    content.innerHTML = html;
-    modal.classList.add("show");
-    setTimeout(() => lucide.createIcons(), 50);
-}
-function closePreview(){
-    document.getElementById("previewModal").classList.remove("show");
-}
-
-// >>> FUNGSI TAMBAH PDAM UTAMA <<<
-function addNewPdamMain(){
-    // Hitung jumlah PDAM yang sudah ada
-    const count = Object.keys(prabayarData[currentMenuType]).length + 1;
-    const newName = `PDAM ${count}`;
-
-    // Tambah ke data
-    prabayarData[currentMenuType][newName] = { items: [] };
-    originalPrabayarData[currentMenuType][newName] = { items: [] };
-
-    // Render ulang tampilan
-    openOperatorListPascabayar("PDAM", "pdam");
-    
-    // Buka otomatis yang baru dibuat
-    setTimeout(() => {
-        const newElement = document.querySelector(`[data-productname="${newName.toLowerCase()}"]`);
-        if(newElement) newElement.classList.add("open");
-    }, 100);
-
-    checkPrabayarChange(); // Perbaiki nama fungsi
-}
-
-// >>> LOGIKA PALING AKURAT: CEK LANGSUNG NILAI DI LAYAR <<<
 function checkPrabayarChange(){
-    let adaPerubahan = false;
-
-    // CEK SEMUA INPUT DI HALAMAN INI
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
-
-    inputs.forEach(input => {
-        const op = input.dataset.operator;
-        let type = "cekHarga";
-        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
-        if(input.classList.contains("input-wilayah")) type = "wilayah";
-
-        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
-        let nilaiAsli = "";
-        if(currentMenuType === "pdam"){
-            // Logika khusus PDAM
-            const itemDiv = input.closest('.area-item');
-            const idx = itemDiv ? Array.from(itemDiv.parentElement.children).indexOf(itemDiv) : -1;
-            if(idx >= 0){
-                nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
-            }
-        } else {
-            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
-        }
+    let changed = false;
+    
+    // Cek untuk data biasa
+    for(let key in prabayarData[currentMenuType]){
+        const original = originalPrabayarData[currentMenuType][key];
+        const current = prabayarData[currentMenuType][key];
         
-        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
-        const nilaiSekarang = (input.value || "").trim();
-
-        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
-        if(nilaiSekarang !== nilaiAsli){
-            adaPerubahan = true;
+        if(JSON.stringify(original) !== JSON.stringify(current)){
+            changed = true;
+            break;
         }
-    });
+    }
 
-    // PUTUSKAN TOMBOL NYALA ATAU MATI
-    if(adaPerubahan){
+    if(changed){
         enableButton("savePrabayarBtn");
     } else {
         disableButton("savePrabayarBtn");
     }
 }
 
-// >>> FUNGSI RENDER ITEM PDAM DARI DATA <<<
-function renderPdamItem(productName, item){
-    const container = document.querySelector(`[data-productname="${productName.toLowerCase()}"] #pdamListContainer`);
+// === FUNGSI TAMBAH PDAM BARU ===
+function addNewPdamMain(){
+    let count = Object.keys(prabayarData[currentMenuType]).length + 1;
+    let newName = "PDAM " + count;
+
+    // Buat data baru
+    prabayarData[currentMenuType][newName] = { items: [] };
     
-    const newItem = document.createElement("div");
-    newItem.className = "area-item";
-    newItem.innerHTML = `
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <i data-lucide="map-pin" class="w-5 h-5 text-cyan-600"></i>
-                <span class="font-medium">${item.wilayah || 'Wilayah'}</span>
+    // Render ke layar
+    const container = document.getElementById("operatorListContainer");
+    const wrapper = document.createElement("div");
+    wrapper.className = "operator-wrapper";
+    wrapper.dataset.productname = newName.toLowerCase();
+
+    let formContent = `
+        <div class="operator-body">
+            <div class="mb-4">
+                <button onclick="addNewArea('${newName}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow">
+                    <i data-lucide="plus" class="w-5 h-5"></i> + Area Baru
+                </button>
             </div>
-            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+            <div id="pdamListContainer" class="mb-3"></div>
         </div>
     `;
 
-    newItem.onclick = function(){
-        openPdamForm(this, productName, item);
-    };
+    wrapper.innerHTML = `
+        <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+            <div class="operator-left">
+                <i data-lucide="droplet" class="w-6 h-6 text-cyan-600"></i>
+                <span class="operator-name-text">${newName}</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+        </div>
+        ${formContent}
+    `;
 
-    container.appendChild(newItem);
+    container.appendChild(wrapper);
     lucide.createIcons();
+    
+    // Buka otomatis
+    wrapper.classList.add("open");
+    
+    checkPrabayarChange();
 }
 
+// === FUNGSI KONFIRMASI ===
+function showConfirm(title, msg, yesFunc, yesText="Ya"){
+    document.getElementById("confirmTitle").innerText = title;
+    document.getElementById("confirmMessage").innerText = msg;
+    document.getElementById("confirmButtons").innerHTML = `
+        <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl font-bold">Batal</button>
+        <button onclick="doConfirm()" class="flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold">${yesText}</button>
+    `;
+    confirmAction = yesFunc;
+    document.getElementById("confirmModal").classList.remove("hidden");
+}
 
-// === INISIALISASI AWAL ===
-window.onload = function(){
+function closeConfirm(){
+    document.getElementById("confirmModal").classList.add("hidden");
+}
+
+function doConfirm(){
+    if(confirmAction) confirmAction();
+    closeConfirm();
+}
+
+// === INISIALISASI & LOAD DATA ===
+function init(){
     renderMenus();
-    watchServerChanges();
-    watchCenterChanges();
-};
+    // Load data lama jika ada
+    const saved = localStorage.getItem("prabayarData");
+    if(saved){
+        prabayarData = JSON.parse(saved);
+    }
+}
+
+window.onload = init;
 </script>
 
 </body>
