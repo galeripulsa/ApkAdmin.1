@@ -1206,20 +1206,7 @@ function deleteArea(index){
     });
 }
 
-// >>> CARI AREA <<<
-function searchArea(){
-    const input = document.getElementById('searchAreaInput').value.toLowerCase();
-    const items = document.querySelectorAll('#containerAreaList .area-item');
-    
-    items.forEach(item => {
-        const text = item.querySelector('span').innerText.toLowerCase();
-        if(text.includes(input)){
-            item.style.display = "flex";
-        } else {
-            item.style.display = "none";
-        }
-    });
-}
+
 
 // >>> RENDER DAFTAR AREA DI MODAL UTAMA <<<
 function renderAreaListMain(){
