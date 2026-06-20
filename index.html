@@ -1311,26 +1311,26 @@ function openModalWilayah(namaArea, indexArea){
             </div>
             
             <!-- BAGIAN ATAS (FIXED TIDAK BERGESER) -->
-            <div style="flex-shrink: 0;">
-                <!-- TOMBOL TAMBAH WILAYAH -->
-                <div class="flex justify-between items-center mb-2">
-                    <h4 class="font-bold text-slate-700">Daftar Wilayah</h4>
+            <div style="flex-shrink: 0; padding: 0 0.5rem;">
+                <!-- TOMBOL TAMBAH WILAYAH - DIBERI JARAK KIRI KANAN -->
+                <div class="flex justify-between items-center mb-3" style="padding: 0 0.25rem;">
+                    <h4 class="font-bold text-slate-700" style="font-size: 1rem;">Daftar Wilayah</h4>
                     <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="display: inline-flex; align-items: center; width: auto; white-space: nowrap; padding: 0.4rem 1rem;">
                         <i data-lucide="plus" class="w-4 h-4 mr-1" style="color: white; display: inline-block;"></i> Wilayah
                     </button>
                 </div>
 
-                <!-- KOLOM CARI WILAYAH - UKURAN DIKECILKAN KERAS -->
-                <div class="search-wrapper" style="margin-bottom: 0.5rem;">
-                    <div class="search-inner" style="padding: 0.25rem 0.6rem; height: 36px; min-height: 36px; display: flex; align-items: center;">
+                <!-- KOLOM CARI WILAYAH - UKURAN PAS DAN JARAK RAPI -->
+                <div class="search-wrapper" style="margin-bottom: 1rem; padding: 0 0.25rem;">
+                    <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
                         <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
-                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent;">
+                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
                     </div>
                 </div>
             </div>
 
             <!-- BAGIAN BODY (BISA DI SCROLL) -->
-            <div class="modal-body" style="flex-grow: 1; overflow-y: auto;">
+            <div class="modal-body" style="flex-grow: 1; overflow-y: auto; padding: 0 0.5rem;">
                 <!-- FORM INPUT WILAYAH -->
                 <div id="formWilayahContainer" class="form-wrapper hidden" style="margin-bottom: 1rem;">
                     <div class="floating mt-0">
@@ -1683,5 +1683,4 @@ window.onload = function(){
 </script>
 
 </body>
-
 </html>
