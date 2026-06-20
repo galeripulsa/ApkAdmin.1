@@ -1262,22 +1262,8 @@ function renderAreaListMain(){
         };
 
         // Event long press untuk munculkan tombol
-                    pressTimer = setTimeout(() => {
-                div.querySelector('.action-buttons').style.display = 'flex';
-            }, 500); // 0.5 detik
-        });
-
-        div.addEventListener('touchend', () => {
-            clearTimeout(pressTimer);
-        });
-
-        container.appendChild(div);
-    });
-
-    lucide.createIcons();
-}
-
-
+        let pressTimer;
+        div.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
                 div.querySelector('.action-buttons').style.display = 'flex';
             }, 500); // 0.5 detik
