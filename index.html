@@ -1286,7 +1286,7 @@ function renderAreaListMain(){
                 // Tampilkan hapus dan sembunyikan edit di item ini
                 div.querySelector('.btn-delete-area').style.display = 'inline-block';
                 div.querySelector('.btn-edit-area').style.display = 'none';
-            }, 500); // 0.5 detik
+            }, 1500); // 1.5 detik
         });
 
         div.addEventListener('touchend', () => {
@@ -1505,7 +1505,7 @@ function renderWilayahList(indexArea){
                 // Tampilkan hapus dan sembunyikan edit di item ini
                 div.querySelector('.btn-delete-wilayah').style.display = 'inline-block';
                 div.querySelector('.btn-edit-wilayah').style.display = 'none';
-            }, 500);
+            }, 1500);
         });
 
         div.addEventListener('touchend', () => {
@@ -1534,7 +1534,7 @@ function backToPrabayarFromList(){
     // Langsung tampilkan menu sebelumnya tanpa delay yang bikin flash
     setTimeout(() => { 
         document.getElementById("prabayarModal").classList.add("show"); 
-    }, 50); // Delay sangat kecil agar animasi smooth tapi tidak berkedip
+    }, ); // Delay sangat kecil agar animasi smooth tapi tidak berkedip
 }
 
 // =========================================
