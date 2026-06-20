@@ -1242,13 +1242,16 @@ function renderAreaListMain(){
     data.areas.forEach((area, index) => {
         const div = document.createElement("div");
         div.className = "area-item";
+        div.dataset.index = index;
         div.innerHTML = `
             <span class="font-medium text-slate-700">${area.nama}</span>
-            <div class="action-buttons" style="display: none;">
-                <button onclick="editArea(${index})" class="btn btn-gray p-2" title="Edit">
+            <div class="action-buttons">
+                <!-- ICON EDIT SELALU MUNCUL -->
+                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2" title="Edit">
                     <i data-lucide="edit-2" class="w-4 h-4"></i>
                 </button>
-                <button onclick="deleteArea(${index})" class="btn btn-red p-2" title="Hapus">
+                <!-- ICON HAPUS AWALNYA SEMBUNYI -->
+                <button onclick="event.stopPropagation(); deleteArea(${index})" class="btn btn-red p-2 btn-delete-area" title="Hapus" style="display: none;">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -1257,15 +1260,20 @@ function renderAreaListMain(){
         // Event klik biasa untuk buka wilayah
         div.onclick = (e) => {
             if(!e.target.closest('button')){
+                // Sembunyikan semua tombol hapus saat klik item
+                document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
                 openModalWilayah(area.nama, index);
             }
         };
 
-        // Event long press untuk munculkan tombol
+        // Event long press untuk munculkan tombol hapus
         let pressTimer;
         div.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
-                div.querySelector('.action-buttons').style.display = 'flex';
+                // Sembunyikan tombol hapus di item lain dulu
+                document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
+                // Tampilkan tombol hapus di item ini
+                div.querySelector('.btn-delete-area').style.display = 'inline-block';
             }, 500); // 0.5 detik
         });
 
@@ -1402,6 +1410,10 @@ function saveWilayah(indexArea){
 
 // >>> HAPUS WILAYAH <<<
 function deleteWilayah(indexArea, idxWilayah){
+    // Pastikan modal confirm muncul di atas modal wilayah
+    const existingConfirm = document.getElementById('confirmModal');
+    if(existingConfirm) existingConfirm.remove();
+    
     showConfirm("Hapus Wilayah", "Yakin hapus wilayah ini?", () => {
         const pdamKeys = Object.keys(prabayarData[currentMenuType]);
         const firstPdam = pdamKeys[0];
@@ -1452,21 +1464,42 @@ function renderWilayahList(indexArea){
                     <div class="code">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
                 </div>
                 <div class="action-buttons">
-                    <button onclick="editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm">
+                    <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm">
                         <i data-lucide="edit-2" class="w-3 h-3"></i>
                     </button>
-                    <button onclick="deleteWilayah(${indexArea}, ${idx})" class="btn btn-red p-2 text-sm">
+                    <button onclick="event.stopPropagation(); deleteWilayah(${indexArea}, ${idx})" class="btn btn-red p-2 text-sm btn-delete-wilayah" style="display: none;">
                         <i data-lucide="trash-2" class="w-3 h-3"></i>
                     </button>
                 </div>
             </div>
         `;
+
+        // Event long press untuk tombol hapus wilayah
+        let pressTimer;
+        div.addEventListener('touchstart', () => {
+            pressTimer = setTimeout(() => {
+                // Sembunyikan semua tombol hapus wilayah
+                document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
+                // Tampilkan yang ini
+                div.querySelector('.btn-delete-wilayah').style.display = 'inline-block';
+            }, 500);
+        });
+
+        div.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+        });
+
+        // Klik item lain akan menutup tombol hapus
+        div.addEventListener('click', () => {
+            document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
+        });
+
         container.appendChild(div);
     });
 }
 
 // =========================================
-// === FUNGSI LAINNYA (TETAP SAMA) ===
+// === FUNGSI LAINNYA ===
 // =========================================
 
 function toggleOperator(el){
@@ -1567,18 +1600,32 @@ function disableButton(id){
 }
 
 function showConfirm(title, msg, yesCallback, yesText="Ya"){
-    document.getElementById("confirmTitle").innerText = title;
-    document.getElementById("confirmMessage").innerText = msg;
-    document.getElementById("confirmButtons").innerHTML = `
-        <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl font-bold">Batal</button>
-        <button onclick="doConfirm()" class="flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold">${yesText}</button>
+    // Hapus confirm lama jika ada
+    const oldConfirm = document.getElementById("confirmModal");
+    if(oldConfirm) oldConfirm.remove();
+
+    const modal = document.createElement("div");
+    modal.id = "confirmModal";
+    modal.className = "hidden fixed inset-0 bg-black/50 z-[99999] flex items-center justify-center p-5";
+    modal.innerHTML = `
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2">${title}</h3>
+            <p id="confirmMessage" class="text-gray-600 mb-6">${msg}</p>
+            <div class="flex gap-3" id="confirmButtons">
+                <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl font-bold">Batal</button>
+                <button onclick="doConfirm()" class="flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold">${yesText}</button>
+            </div>
+        </div>
     `;
+    document.body.appendChild(modal);
+    
     confirmAction = yesCallback;
-    document.getElementById("confirmModal").classList.remove("hidden");
+    modal.classList.remove("hidden");
 }
 
 function closeConfirm(){
-    document.getElementById("confirmModal").classList.add("hidden");
+    const el = document.getElementById("confirmModal");
+    if(el) el.remove();
     confirmAction = null;
 }
 
