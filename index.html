@@ -1306,7 +1306,7 @@ function openModalWilayah(namaArea, indexArea){
                 <button onclick="closeModalWilayah()" class="btn btn-gray p-2">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
-            </div>
+            
             <div class="modal-body">
                 <!-- TOMBOL TAMBAH WILAYAH - UKURAN PAS, ICON SEJAJAR -->
                 <div class="flex justify-between items-center mb-3">
@@ -1314,15 +1314,13 @@ function openModalWilayah(namaArea, indexArea){
                     <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="display: inline-flex; align-items: center; width: auto; white-space: nowrap;">
                         <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Wilayah
                     </button>
-                </div>
 
-                <!-- KOLOM CARI WILAYAH -->
-                <div class="search-wrapper">
-                    <div class="search-inner">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()">
-                    </div>
+   <i data-lucide="search" class="w-5 h-5"></i>
+<input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()">
                 </div>
+         </div>
+                <!-- KOLOM CARI WILAYAH -->
+                
 
                 <!-- FORM INPUT WILAYAH -->
                 <div id="formWilayahContainer" class="form-wrapper hidden">
@@ -1468,7 +1466,7 @@ function renderWilayahList(indexArea){
             <div class="flex justify-between items-start">
                 <div>
                     <div class="font-medium text-slate-700 nama-wilayah">${wil.nama}</div>
-                    <div class="code">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
+                    <div class="code">Kode Cek: ${wil.cek}      |      Kode Bayar: ${wil.bayar}</div>
                 </div>
                 <div class="action-buttons">
                     <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm btn-edit-wilayah" title="Edit">
