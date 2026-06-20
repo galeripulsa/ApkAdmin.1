@@ -1246,8 +1246,8 @@ function renderAreaListMain(){
         div.innerHTML = `
             <span class="font-medium text-slate-700">${area.nama}</span>
             <div class="action-buttons">
-                <!-- ICON EDIT SELALU MUNCUL -->
-                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2" title="Edit">
+                <!-- ICON EDIT SELALU MUNCUL KECUALI SAAT HAPUS MUNCUL -->
+                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 btn-edit-area" title="Edit">
                     <i data-lucide="edit-2" class="w-4 h-4"></i>
                 </button>
                 <!-- ICON HAPUS AWALNYA SEMBUNYI -->
@@ -1260,20 +1260,32 @@ function renderAreaListMain(){
         // Event klik biasa untuk buka wilayah
         div.onclick = (e) => {
             if(!e.target.closest('button')){
-                // Sembunyikan semua tombol hapus saat klik item
+                // Sembunyikan semua tombol hapus dan tampilkan edit kembali
                 document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
+                document.querySelectorAll('.btn-edit-area').forEach(btn => btn.style.display = 'inline-block');
                 openModalWilayah(area.nama, index);
             }
         };
+
+        // Event klik di luar item
+        document.addEventListener('click', function(e) {
+            if (!div.contains(e.target)) {
+                div.querySelector('.btn-delete-area').style.display = 'none';
+                div.querySelector('.btn-edit-area').style.display = 'inline-block';
+            }
+        });
 
         // Event long press untuk munculkan tombol hapus
         let pressTimer;
         div.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
-                // Sembunyikan tombol hapus di item lain dulu
+                // Sembunyikan semua dulu
                 document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
-                // Tampilkan tombol hapus di item ini
+                document.querySelectorAll('.btn-edit-area').forEach(btn => btn.style.display = 'inline-block');
+                
+                // Tampilkan hapus dan sembunyikan edit di item ini
                 div.querySelector('.btn-delete-area').style.display = 'inline-block';
+                div.querySelector('.btn-edit-area').style.display = 'none';
             }, 500); // 0.5 detik
         });
 
@@ -1301,10 +1313,10 @@ function openModalWilayah(namaArea, indexArea){
                 </button>
             </div>
             <div class="modal-body">
-                <!-- TOMBOL TAMBAH WILAYAH -->
+                <!-- TOMBOL TAMBAH WILAYAH - UKURAN TIDAK MELEBAR -->
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-slate-700">Daftar Wilayah</h4>
-                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm">
+                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="width: auto; padding-left: 1rem; padding-right: 1rem;">
                         <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Wilayah
                     </button>
                 </div>
@@ -1464,24 +1476,35 @@ function renderWilayahList(indexArea){
                     <div class="code">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
                 </div>
                 <div class="action-buttons">
-                    <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm">
+                    <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm btn-edit-wilayah" title="Edit">
                         <i data-lucide="edit-2" class="w-3 h-3"></i>
                     </button>
-                    <button onclick="event.stopPropagation(); deleteWilayah(${indexArea}, ${idx})" class="btn btn-red p-2 text-sm btn-delete-wilayah" style="display: none;">
+                    <button onclick="event.stopPropagation(); deleteWilayah(${indexArea}, ${idx})" class="btn btn-red p-2 text-sm btn-delete-wilayah" title="Hapus" style="display: none;">
                         <i data-lucide="trash-2" class="w-3 h-3"></i>
                     </button>
                 </div>
             </div>
         `;
 
+        // Event klik di luar item
+        document.addEventListener('click', function(e) {
+            if (!div.contains(e.target)) {
+                div.querySelector('.btn-delete-wilayah').style.display = 'none';
+                div.querySelector('.btn-edit-wilayah').style.display = 'inline-block';
+            }
+        });
+
         // Event long press untuk tombol hapus wilayah
         let pressTimer;
         div.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
-                // Sembunyikan semua tombol hapus wilayah
+                // Sembunyikan semua dulu
                 document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
-                // Tampilkan yang ini
+                document.querySelectorAll('.btn-edit-wilayah').forEach(btn => btn.style.display = 'inline-block');
+                
+                // Tampilkan hapus dan sembunyikan edit di item ini
                 div.querySelector('.btn-delete-wilayah').style.display = 'inline-block';
+                div.querySelector('.btn-edit-wilayah').style.display = 'none';
             }, 500);
         });
 
@@ -1492,10 +1515,26 @@ function renderWilayahList(indexArea){
         // Klik item lain akan menutup tombol hapus
         div.addEventListener('click', () => {
             document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
+            document.querySelectorAll('.btn-edit-wilayah').forEach(btn => btn.style.display = 'inline-block');
         });
 
         container.appendChild(div);
     });
+}
+
+// =========================================
+// === PERBAIKAN FUNGSI TUTUP / KEMBALI ===
+// =========================================
+
+function backToPrabayarFromList(){
+    // Perbaikan: Tutup modal dengan benar tanpa flash ke menu utama
+    document.getElementById("operatorListModal").classList.remove("show");
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    
+    // Langsung tampilkan menu sebelumnya tanpa delay yang bikin flash
+    setTimeout(() => { 
+        document.getElementById("prabayarModal").classList.add("show"); 
+    }, 50); // Delay sangat kecil agar animasi smooth tapi tidak berkedip
 }
 
 // =========================================
@@ -1504,14 +1543,6 @@ function renderWilayahList(indexArea){
 
 function toggleOperator(el){
     el.classList.toggle("open");
-}
-
-function backToPrabayarFromList(){
-    document.getElementById("operatorListModal").classList.remove("show");
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    setTimeout(() => { 
-        document.getElementById("prabayarModal").classList.add("show"); 
-    }, 300);
 }
 
 function searchProducts(){
