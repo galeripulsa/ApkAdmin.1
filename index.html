@@ -1005,34 +1005,55 @@ function openOperatorListPascabayar(title, actionType){
 
     if(actionType === "pdam"){
         // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
-        
+
+        // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
+        const mainWrapper = document.createElement("div");
+        mainWrapper.style.display = "flex";
+        mainWrapper.style.flexDirection = "column";
+        mainWrapper.style.height = "100%";
+        container.appendChild(mainWrapper);
+
+        // === BAGIAN ATAS (FIXED TIDAK BERGESER) ===
+        const topSection = document.createElement("div");
+        topSection.style.flexShrink = "0";
+        topSection.style.padding = "0 0.25rem";
+        mainWrapper.appendChild(topSection);
+
         // HEADER MODAL PDAM
         const headerDiv = document.createElement("div");
-        headerDiv.className = "flex items-center justify-between mb-4";
+        headerDiv.className = "flex items-center justify-between mb-3";
         headerDiv.innerHTML = `
             <h3 class="text-xl font-bold">Daftar Area</h3>
             <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2">
-                <i data-lucide="plus" class="w-4 h-4"></i> Area
+                <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area
             </button>
         `;
-        container.appendChild(headerDiv);
+        topSection.appendChild(headerDiv);
 
-        // KOLOM CARI AREA (HANYA INI YANG DIPAKAI)
+        // KOLOM CARI AREA (UKURAN SAMA PERSIS DENGAN WILAYAH)
         const searchDiv = document.createElement("div");
         searchDiv.className = "search-wrapper";
+        searchDiv.style.marginBottom = "1rem";
         searchDiv.innerHTML = `
-            <div class="search-inner">
-                <i data-lucide="search" class="w-5 h-5"></i>
-                <input type="text" id="searchAreaInput" placeholder="Cari nama area..." oninput="searchArea()">
+            <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
+                <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
+                <input type="text" id="searchAreaInput" placeholder="Cari nama area..." oninput="searchArea()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
             </div>
         `;
-        container.appendChild(searchDiv);
+        topSection.appendChild(searchDiv);
+
+        // === BAGIAN BAWAH (BISA DI SCROLL) ===
+        const scrollableSection = document.createElement("div");
+        scrollableSection.style.flexGrow = "1";
+        scrollableSection.style.overflowY = "auto";
+        scrollableSection.style.padding = "0 0.25rem";
+        mainWrapper.appendChild(scrollableSection);
 
         // DAFTAR AREA
         const areaListDiv = document.createElement("div");
         areaListDiv.id = "containerAreaList";
         areaListDiv.className = "space-y-3";
-        container.appendChild(areaListDiv);
+        scrollableSection.appendChild(areaListDiv);
 
         renderAreaListMain();
 
@@ -1112,7 +1133,7 @@ function openModalAddArea(){
             <div class="modal-header">
                 <h3>Tambah Area Baru</h3>
                 <button onclick="closeModalArea()" class="btn btn-gray p-2">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <i data-lucide="x" class="w-5 h-5" style="color: #333;"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -1146,7 +1167,7 @@ function editArea(index){
             <div class="modal-header">
                 <h3>Edit Area</h3>
                 <button onclick="closeModalArea()" class="btn btn-gray p-2">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+                    <i data-lucide="x" class="w-5 h-5" style="color: #333;"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -1180,6 +1201,16 @@ function saveAreaBaru(){
         prabayarData[currentMenuType][firstPdam].areas = [];
     }
 
+    // === CEK NAMA DUPLIKAT ===
+    const isDuplicate = prabayarData[currentMenuType][firstPdam].areas.some((area, idx) => 
+        area.nama.toLowerCase() === nama.toLowerCase() && idx !== editModeAreaIndex
+    );
+
+    if(isDuplicate){
+        toast("Nama Area sudah ada!");
+        return;
+    }
+
     if(editModeAreaIndex === -1){
         // MODE TAMBAH
         prabayarData[currentMenuType][firstPdam].areas.push({
@@ -1198,9 +1229,11 @@ function saveAreaBaru(){
 
 // >>> FUNGSI HAPUS AREA <<<
 function deleteArea(index){
-    showConfirm("Hapus Area", "Yakin ingin menghapus area ini?", () => {
-        const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-        const firstPdam = pdamKeys[0];
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    const namaArea = prabayarData[currentMenuType][firstPdam].areas[index].nama;
+    
+    showConfirm("Hapus Area", `Yakin hapus area "${namaArea}"?`, () => {
         prabayarData[currentMenuType][firstPdam].areas.splice(index, 1);
         renderAreaListMain();
         checkPrabayarChange();
@@ -1221,6 +1254,7 @@ function searchArea(){
         }
     });
 }
+
 
 // >>> RENDER DAFTAR AREA DI MODAL UTAMA <<<
 function renderAreaListMain(){
