@@ -1003,7 +1003,7 @@ function openOperatorListPascabayar(title, actionType){
         iconName = "wifi";
     }
 
-    if(actionType === "pdam"){
+   if(actionType === "pdam"){
         // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
 
         // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
@@ -1124,6 +1124,59 @@ function openOperatorListPascabayar(title, actionType){
 
 // >>> VARIABEL UNTUK EDIT MODE <<<
 let editModeAreaIndex = -1; // -1 = mode tambah
+
+// >>> FUNGSI RENDER DAFTAR AREA (PENTING INI YANG HILANG) <<<
+function renderAreaListMain(){
+    const container = document.getElementById("containerAreaList");
+    if(!container) return;
+    
+    container.innerHTML = "";
+
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    
+    if(!prabayarData[currentMenuType][firstPdam].areas){
+        prabayarData[currentMenuType][firstPdam].areas = [];
+    }
+
+    const areas = prabayarData[currentMenuType][firstPdam].areas;
+
+    if(areas.length === 0){
+        container.innerHTML = `<p class="text-center text-slate-400 py-5">Belum ada area</p>`;
+        return;
+    }
+
+    areas.forEach((area, index) => {
+        const div = document.createElement("div");
+        div.className = "area-item";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.padding = "0.75rem 1rem";
+        div.style.backgroundColor = "#f8fafc";
+        div.style.borderRadius = "12px";
+        div.style.cursor = "pointer";
+        
+        // >>> PERBAIKAN: TAMBAH event.stopPropagation() AGAR TIDAK BALIK MENU <<<
+        div.innerHTML = `
+            <span onclick="event.stopPropagation(); openModalWilayah('${area.nama}', ${index})" style="font-weight: 500; color: #1e293b; width: 100%;">${area.nama}</span>
+            <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 text-sm" title="Edit">
+                <i data-lucide="edit-2" class="w-4 h-4" style="color: #333;"></i>
+            </button>
+        `;
+
+        // Klik area buka wilayah
+        div.addEventListener('click', (e) => {
+            // Cegah event naik ke atas (biar tidak balik menu)
+            e.stopPropagation();
+            openModalWilayah(area.nama, index);
+        });
+
+        container.appendChild(div);
+    });
+
+    lucide.createIcons();
+}
 
 // >>> 1. MODAL TAMBAH/EDIT AREA (UKURAN KECIL) <<<
 function openModalAddArea(){
@@ -1264,6 +1317,9 @@ function searchArea(){
 
 // >>> 2. MODAL WILAYAH (FULL SCREEN) <<<
 function openModalWilayah(namaArea, indexArea){
+    // >>> PERBAIKAN: CEGAH EVENT BUBBLING <<<
+    event.stopPropagation();
+    
     const modal = document.createElement("div");
     modal.className = "modal-layer";
     modal.id = "modalWilayah";
@@ -1331,7 +1387,7 @@ function openModalWilayah(namaArea, indexArea){
         </div>
     `;
     document.body.appendChild(modal);
-    
+
     renderWilayahList(indexArea);
     lucide.createIcons();
 }
@@ -1360,7 +1416,7 @@ function openFormWilayah(indexArea){
 // >>> EDIT WILAYAH <<<
 function editWilayah(indexArea, idxWilayah){
     editModeWilayahIndex = idxWilayah;
-    
+
     const pdamKeys = Object.keys(prabayarData[currentMenuType]);
     const firstPdam = pdamKeys[0];
     const wilayahData = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah[idxWilayah];
@@ -1369,7 +1425,7 @@ function editWilayah(indexArea, idxWilayah){
     document.getElementById("inputNamaWilayah").value = wilayahData.nama;
     document.getElementById("inputKodeCek").value = wilayahData.cek || "";
     document.getElementById("inputKodeBayar").value = wilayahData.bayar || "";
-    
+
     document.getElementById("formWilayahContainer").scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -1411,11 +1467,11 @@ function deleteWilayah(indexArea, idxWilayah){
     // Pastikan modal confirm muncul di atas modal wilayah
     const existingConfirm = document.getElementById('confirmModal');
     if(existingConfirm) existingConfirm.remove();
-    
+
     const pdamKeys = Object.keys(prabayarData[currentMenuType]);
     const firstPdam = pdamKeys[0];
     const namaWilayah = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah[idxWilayah].nama;
-    
+
     showConfirm("Hapus Wilayah", `Yakin hapus wilayah "${namaWilayah}"?`, () => {
         prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah.splice(idxWilayah, 1);
         renderWilayahList(indexArea);
@@ -1427,7 +1483,7 @@ function deleteWilayah(indexArea, idxWilayah){
 function searchWilayah(){
     const input = document.getElementById('searchWilayahInput').value.toLowerCase();
     const items = document.querySelectorAll('#listWilayah .wilayah-item');
-    
+
     items.forEach(item => {
         const text = item.querySelector('.nama-wilayah').innerText.toLowerCase();
         if(text.includes(input)){
@@ -1442,7 +1498,7 @@ function searchWilayah(){
 function renderWilayahList(indexArea){
     const container = document.getElementById("listWilayah");
     if(!container) return;
-    
+
     container.innerHTML = "";
 
     const pdamKeys = Object.keys(prabayarData[currentMenuType]);
@@ -1489,12 +1545,12 @@ function renderWilayahList(indexArea){
         // >>> PERUBAHAN: LONG PRESS HANYA PADA ICON EDIT <<<
         const editBtn = div.querySelector('.btn-edit-wilayah');
         let pressTimer;
-        
+
         editBtn.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
                 document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
                 document.querySelectorAll('.btn-edit-wilayah').forEach(btn => btn.style.display = 'inline-block');
-                
+
                 div.querySelector('.btn-delete-wilayah').style.display = 'inline-block';
                 div.querySelector('.btn-edit-wilayah').style.display = 'none';
             }, 1000); // 1 DETIK
@@ -1511,7 +1567,7 @@ function renderWilayahList(indexArea){
 
         container.appendChild(div);
     });
-    
+
     lucide.createIcons();
 }
 
@@ -1531,7 +1587,7 @@ function checkPrabayarChange(){
     inputs.forEach(input => {
         const op = input.dataset.operator;
         const type = input.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
-        
+
         if(input.value !== (originalPrabayarData[currentMenuType][op]?.[type] || "")){
             changed = true;
         }
@@ -1558,7 +1614,7 @@ function confirmSavePrabayar(){
     showConfirm("Konfirmasi", "Simpan perubahan data?", ()=>{
         // Simpan ke localStorage
         localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
-        
+
         // Update data asli
         const pdamKeys = Object.keys(prabayarData[currentMenuType]);
         pdamKeys.forEach(key => {
@@ -1605,7 +1661,7 @@ function showConfirm(title, msg, yesCallback, yesText="Ya"){
         </div>
     `;
     document.body.appendChild(modal);
-    
+
     confirmAction = yesCallback;
     modal.classList.remove("hidden");
 }
