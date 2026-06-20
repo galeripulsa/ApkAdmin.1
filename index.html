@@ -1347,7 +1347,9 @@ function openModalWilayah(namaArea, indexArea){
                             <label>Kode Bayar</label>
                         </div>
                     </div>
-                    <div class="text-right mt-2">
+                    <!-- TOMBOL TUTUP DITAMBAHKAN -->
+                    <div class="flex justify-between mt-2">
+                        <button onclick="closeFormWilayah()" class="btn btn-gray text-sm">Tutup</button>
                         <button onclick="saveWilayah(${indexArea})" class="btn btn-cyan text-sm">Simpan</button>
                     </div>
                 </div>
@@ -1370,6 +1372,11 @@ function openModalWilayah(namaArea, indexArea){
 
 function closeModalWilayah(){
     document.getElementById("modalWilayah").remove();
+}
+
+// >>> FUNGSI TUTUP FORM WILAYAH <<<
+function closeFormWilayah(){
+    document.getElementById("formWilayahContainer").classList.add("hidden");
 }
 
 // >>> VARIABEL EDIT WILAYAH <<<
@@ -1410,6 +1417,16 @@ function saveWilayah(indexArea){
     const firstPdam = pdamKeys[0];
     const area = prabayarData[currentMenuType][firstPdam].areas[indexArea];
 
+    // CEK NAMA DUPLIKAT (KECUALI JIKA SEDANG EDIT DATA ITU SENDIRI)
+    const isDuplicate = area.wilayah.some((wil, idx) => 
+        wil.nama.toLowerCase() === nama.toLowerCase() && idx !== editModeWilayahIndex
+    );
+
+    if(isDuplicate){
+        toast("Nama Wilayah sudah ada!");
+        return;
+    }
+
     if(editModeWilayahIndex === -1){
         // Tambah baru
         area.wilayah.push({ nama, cek, bayar });
@@ -1429,9 +1446,11 @@ function deleteWilayah(indexArea, idxWilayah){
     const existingConfirm = document.getElementById('confirmModal');
     if(existingConfirm) existingConfirm.remove();
     
-    showConfirm("Hapus Wilayah", "Yakin hapus wilayah ini?", () => {
-        const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-        const firstPdam = pdamKeys[0];
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    const namaWilayah = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah[idxWilayah].nama;
+    
+    showConfirm("Hapus Wilayah", `Yakin hapus wilayah "${namaWilayah}"?`, () => {
         prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah.splice(idxWilayah, 1);
         renderWilayahList(indexArea);
         checkPrabayarChange();
@@ -1524,6 +1543,46 @@ function renderWilayahList(indexArea){
     });
     
     lucide.createIcons();
+}
+
+// =========================================
+// === PERBAIKAN FUNGSI TAMBAH & HAPUS AREA ===
+// =========================================
+
+// >>> SIMPAN AREA BARU <<<
+function saveArea(){
+    const nama = document.getElementById("inputNamaArea").value.trim() || "Area Baru";
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    const areas = prabayarData[currentMenuType][firstPdam].areas;
+
+    // CEK NAMA DUPLIKAT
+    const isDuplicate = areas.some(area => area.nama.toLowerCase() === nama.toLowerCase());
+
+    if(isDuplicate){
+        toast("Nama Area sudah ada!");
+        return;
+    }
+
+    // Tambah area baru
+    areas.push({ nama, wilayah: [] });
+
+    renderAreaListMain();
+    document.getElementById("formAreaContainer").classList.add("hidden");
+    checkPrabayarChange();
+}
+
+// >>> HAPUS AREA <<<
+function deleteArea(index){
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    const namaArea = prabayarData[currentMenuType][firstPdam].areas[index].nama;
+    
+    showConfirm("Hapus Area", `Yakin hapus area "${namaArea}"?`, () => {
+        prabayarData[currentMenuType][firstPdam].areas.splice(index, 1);
+        renderAreaListMain();
+        checkPrabayarChange();
+    });
 }
 
 // =========================================
