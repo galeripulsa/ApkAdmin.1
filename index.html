@@ -1300,13 +1300,13 @@ function openModalWilayah(namaArea, indexArea){
     modal.className = "modal-layer";
     modal.id = "modalWilayah";
     modal.innerHTML = `
-        <div class="modal-box" style="max-height: 90vh; overflow-y: auto; padding-bottom: 80px;">
+   
             <div class="modal-header">
                 <h3>${namaArea}</h3>
                 <button onclick="closeModalWilayah()" class="btn btn-gray p-2">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
-              </div>
+              
             
                 <!-- TOMBOL TAMBAH WILAYAH - UKURAN PAS, ICON SEJAJAR -->
                 <div class="flex justify-between items-center mb-3">
@@ -1318,9 +1318,12 @@ function openModalWilayah(namaArea, indexArea){
    <i data-lucide="search" class="w-5 h-5"></i>
 <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()">
                 </div>
+           </div>
    <div class="modal-body">
+     <div class="modal-box" style="max-height: 90vh; overflow-y: auto; padding-bottom: 80px;">
          </div>
-                <!-- KOLOM CARI WILAYAH -->
+       </div>
+  <!-- ✅✅✅✅KOLOM CARI WILAYAH✅✅✅✅ -->
                 
 
                 <!-- FORM INPUT WILAYAH -->
