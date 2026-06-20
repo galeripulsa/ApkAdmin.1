@@ -1272,9 +1272,11 @@ function renderAreaListMain(){
             }
         });
 
-        // Event long press - 1 DETIK
+        // >>> PERUBAHAN: LONG PRESS HANYA PADA ICON EDIT <<<
+        const editBtn = div.querySelector('.btn-edit-area');
         let pressTimer;
-        div.addEventListener('touchstart', () => {
+        
+        editBtn.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
                 document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
                 document.querySelectorAll('.btn-edit-area').forEach(btn => btn.style.display = 'inline-block');
@@ -1284,7 +1286,7 @@ function renderAreaListMain(){
             }, 1000); // 1 DETIK
         });
 
-        div.addEventListener('touchend', () => {
+        editBtn.addEventListener('touchend', () => {
             clearTimeout(pressTimer);
         });
 
@@ -1308,22 +1310,21 @@ function openModalWilayah(namaArea, indexArea){
                 </button>
             </div>
             <div class="modal-body">
-                <!-- TOMBOL TAMBAH WILAYAH - UKURAN PAS, ICON SEJAJAR -->
+                <!-- TOMBOL TAMBAH WILAYAH -->
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-slate-700">Daftar Wilayah</h4>
-                <!-- KOLOM CARI WILAYAH -->
-                <div class="search-wrapper">
-                    <div class="search-inner">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()">
-                    </div>
-                </div>
                     <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="display: inline-flex; align-items: center; width: auto; white-space: nowrap;">
                         <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Wilayah
                     </button>
                 </div>
 
-
+                <!-- KOLOM CARI WILAYAH - DIKECILKAN -->
+                <div class="search-wrapper" style="margin-bottom: 1rem;">
+                    <div class="search-inner" style="padding: 0.4rem 0.8rem; height: auto;">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()" style="font-size: 0.9rem;">
+                    </div>
+                </div>
 
                 <!-- FORM INPUT WILAYAH -->
                 <div id="formWilayahContainer" class="form-wrapper hidden">
@@ -1469,7 +1470,8 @@ function renderWilayahList(indexArea){
             <div class="flex justify-between items-start">
                 <div>
                     <div class="font-medium text-slate-700 nama-wilayah">${wil.nama}</div>
-                    <div class="code">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
+                    <!-- PERUBAHAN TEKS DAN JARAK -->
+                    <div class="code">Kode Cek: ${wil.cek} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Kode Bayar: ${wil.bayar}</div>
                 </div>
                 <div class="action-buttons">
                     <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm btn-edit-wilayah" title="Edit">
@@ -1490,9 +1492,11 @@ function renderWilayahList(indexArea){
             }
         });
 
-        // Event long press - 1 DETIK
+        // >>> PERUBAHAN: LONG PRESS HANYA PADA ICON EDIT <<<
+        const editBtn = div.querySelector('.btn-edit-wilayah');
         let pressTimer;
-        div.addEventListener('touchstart', () => {
+        
+        editBtn.addEventListener('touchstart', () => {
             pressTimer = setTimeout(() => {
                 document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
                 document.querySelectorAll('.btn-edit-wilayah').forEach(btn => btn.style.display = 'inline-block');
@@ -1502,7 +1506,7 @@ function renderWilayahList(indexArea){
             }, 1000); // 1 DETIK
         });
 
-        div.addEventListener('touchend', () => {
+        editBtn.addEventListener('touchend', () => {
             clearTimeout(pressTimer);
         });
 
@@ -1520,11 +1524,8 @@ function renderWilayahList(indexArea){
 // =========================================
 
 function backToPrabayarFromList(){
-    // Perbaikan: Tutup modal dengan benar tanpa flash ke menu utama
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("fixedButtonWrapper").style.display = "none";
-    
-    // Langsung tampilkan tanpa jeda
     document.getElementById("prabayarModal").classList.add("show"); 
 }
 
