@@ -1006,56 +1006,56 @@ function openOperatorListPascabayar(title, actionType){
    if(actionType === "pdam"){
         // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
 
-        // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
+        // BUNGKUS UTAMA
         const mainWrapper = document.createElement("div");
         mainWrapper.style.display = "flex";
         mainWrapper.style.flexDirection = "column";
         mainWrapper.style.height = "100%";
         container.appendChild(mainWrapper);
 
-        // === BAGIAN ATAS (FIXED TIDAK BERGESER) ===
-        const topSection = document.createElement("div");
-        topSection.style.flexShrink = "0";
-        topSection.style.padding = "0 0.5rem";
-        mainWrapper.appendChild(topSection);
+        // === BAGIAN ATAS (DIAM TIDAK BERGERAK) ===
+        const fixedHeader = document.createElement("div");
+        fixedHeader.style.position = "sticky";
+        fixedHeader.style.top = "0";
+        fixedHeader.style.zIndex = "10";
+        fixedHeader.style.background = "white";
+        fixedHeader.style.paddingBottom = "0.5rem";
+        mainWrapper.appendChild(fixedHeader);
 
-        // HEADER MODAL PDAM
+        // HEADER JUDUL DAN TOMBOL
         const headerDiv = document.createElement("div");
         headerDiv.className = "flex items-center justify-between mb-3";
-        headerDiv.style.padding = "0 0.25rem";
         headerDiv.innerHTML = `
             <h3 class="text-xl font-bold">Daftar Area</h3>
             <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2">
                 <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area
             </button>
         `;
-        topSection.appendChild(headerDiv);
+        fixedHeader.appendChild(headerDiv);
 
-        // KOLOM CARI AREA (UKURAN SAMA PERSIS DENGAN WILAYAH)
+        // KOLOM CARI AREA
         const searchDiv = document.createElement("div");
         searchDiv.className = "search-wrapper";
-        searchDiv.style.marginBottom = "1rem";
-        searchDiv.style.padding = "0 0.25rem";
         searchDiv.innerHTML = `
             <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
                 <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
                 <input type="text" id="searchAreaInput" placeholder="Cari nama area..." oninput="searchArea()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
             </div>
         `;
-        topSection.appendChild(searchDiv);
+        fixedHeader.appendChild(searchDiv);
 
-        // === BAGIAN BAWAH (HANYA INI YANG BISA SCROLL) ===
-        const scrollableSection = document.createElement("div");
-        scrollableSection.style.flexGrow = "1";
-        scrollableSection.style.overflowY = "auto";
-        scrollableSection.style.padding = "0 0.5rem";
-        mainWrapper.appendChild(scrollableSection);
+        // === BAGIAN BAWAH (HANYA INI YANG BISA DI SCROLL) ===
+        const scrollableContent = document.createElement("div");
+        scrollableContent.style.flexGrow = "1";
+        scrollableContent.style.overflowY = "auto";
+        scrollableContent.style.paddingTop = "0.5rem";
+        mainWrapper.appendChild(scrollableContent);
 
         // DAFTAR AREA
         const areaListDiv = document.createElement("div");
         areaListDiv.id = "containerAreaList";
         areaListDiv.className = "space-y-3";
-        scrollableSection.appendChild(areaListDiv);
+        scrollableContent.appendChild(areaListDiv);
 
         renderAreaListMain();
 
@@ -1109,7 +1109,6 @@ function openOperatorListPascabayar(title, actionType){
         });
     }
 
-    // >>> PENTING: PASTIKAN MODAL TETAP MUNCUL <<<
     modal.classList.add("show");
     document.getElementById("fixedButtonWrapper").style.display = "block";
     setTimeout(() => { lucide.createIcons(); }, 50);
