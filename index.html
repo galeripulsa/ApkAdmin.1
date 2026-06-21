@@ -1290,14 +1290,21 @@ function renderAreaListMain(){
     areas.forEach((area, index) => {
         const div = document.createElement("div");
         div.className = "area-item";
+        // PERBAIKAN: KLIK AREA LANGSUNG BUKA WILAYAH
+        div.style.cursor = "pointer";
+        div.onclick = function(e) {
+            // Jangan jalan kalau yang diklik adalah tombol
+            if(!e.target.closest('button')) {
+                openModalWilayah(${index});
+            }
+        };
         div.innerHTML = `
             <div class="flex-1">
                 <div class="font-semibold text-lg">${area.nama}</div>
                 <div class="text-sm text-slate-500">${area.wilayah.length} Wilayah</div>
             </div>
             <div class="flex gap-2 action-buttons">
-                <button onclick="editArea(${index})" 
-                        class="btn btn-gray p-2 btn-edit-area" 
+                <button class="btn btn-gray p-2 btn-edit-area" 
                         data-index="${index}">
                     <i data-lucide="edit-3" class="w-4 h-4"></i>
                 </button>
@@ -1351,6 +1358,11 @@ function setupLongPressEvents(){
         btn.addEventListener('mouseup', cancelPress);
         btn.addEventListener('touchend', cancelPress);
         btn.addEventListener('mouseleave', cancelPress);
+        
+        // Tambah fungsi edit saat klik biasa
+        btn.onclick = function() {
+            editArea(this.dataset.index);
+        }
     });
 
     // Klik di luar untuk sembunyikan
