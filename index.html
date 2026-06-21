@@ -1004,118 +1004,118 @@ function openOperatorListPascabayar(title, actionType){
     }
 
    if(actionType === "pdam"){
-        // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
+    // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
 
-        // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
-        const mainWrapper = document.createElement("div");
-        mainWrapper.style.display = "flex";
-        mainWrapper.style.flexDirection = "column";
-        mainWrapper.style.height = "100%";
-        container.appendChild(mainWrapper);
+    // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
+    const mainWrapper = document.createElement("div");
+    mainWrapper.style.display = "flex";
+    mainWrapper.style.flexDirection = "column";
+    mainWrapper.style.height = "100%";
+    container.appendChild(mainWrapper);
 
-        // === BAGIAN ATAS (FIXED TIDAK BERGESER) ===
-        const topSection = document.createElement("div");
-        topSection.style.flexShrink = "0";
-        topSection.style.padding = "0 0.5rem";
-        mainWrapper.appendChild(topSection);
+    // === BAGIAN ATAS (FIXED TIDAK BERGESER) ===
+    const topSection = document.createElement("div");
+    topSection.style.flexShrink = "0";
+    topSection.style.padding = "0 0.5rem";
+    mainWrapper.appendChild(topSection);
 
-        // HEADER MODAL PDAM
-        const headerDiv = document.createElement("div");
-        headerDiv.className = "flex items-center justify-between mb-3";
-        headerDiv.style.padding = "0 0.25rem";
-        headerDiv.innerHTML = `
-            <h3 class="text-xl font-bold">Daftar Area</h3>
-            <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2">
-                <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area
-            </button>
-        `;
-        topSection.appendChild(headerDiv);
+    // HEADER MODAL PDAM
+    const headerDiv = document.createElement("div");
+    headerDiv.className = "flex items-center justify-between mb-3";
+    headerDiv.style.padding = "0 0.25rem";
+    headerDiv.innerHTML = `
+        <h3 class="text-xl font-bold">Daftar Area</h3>
+        <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area
+        </button>
+    `;
+    topSection.appendChild(headerDiv);
 
-        // KOLOM CARI AREA (UKURAN SAMA PERSIS DENGAN WILAYAH)
-        const searchDiv = document.createElement("div");
-        searchDiv.className = "search-wrapper";
-        searchDiv.style.marginBottom = "1rem";
-        searchDiv.style.padding = "0 0.25rem";
-        searchDiv.innerHTML = `
-            <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
-                <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
-                <input type="text" id="searchAreaInput" placeholder="Cari nama area..." oninput="searchArea()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
+    // KOLOM CARI AREA (UKURAN SAMA PERSIS DENGAN WILAYAH)
+    const searchDiv = document.createElement("div");
+    searchDiv.className = "search-wrapper";
+    searchDiv.style.marginBottom = "1rem";
+    searchDiv.style.padding = "0 0.25rem";
+    searchDiv.innerHTML = `
+        <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
+            <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
+            <input type="text" id="searchAreaInput" placeholder="Cari nama area..." oninput="searchArea()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
+        </div>
+    `;
+    topSection.appendChild(searchDiv);
+
+    // === BAGIAN BAWAH (HANYA INI YANG BISA SCROLL) ===
+    const scrollableSection = document.createElement("div");
+    scrollableSection.style.flexGrow = "1";
+    scrollableSection.style.overflowY = "auto";
+    scrollableSection.style.padding = "0 0.5rem";
+    mainWrapper.appendChild(scrollableSection);
+
+    // DAFTAR AREA
+    const areaListDiv = document.createElement("div");
+    areaListDiv.id = "containerAreaList";
+    areaListDiv.className = "space-y-3";
+    scrollableSection.appendChild(areaListDiv);
+
+    renderAreaListMain();
+
+} else {
+    // >>> KODE UNTUK YANG LAIN (TIDAK DIUBAH) <<<
+    listToShow.forEach(itemName => {
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
+
+        originalPrabayarData[currentMenuType][itemName] = {
+            cekHarga: saved.cekHarga || "",
+            namaProduk: saved.namaProduk || ""
+        };
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "operator-wrapper";
+        wrapper.dataset.productname = itemName.toLowerCase();
+
+        let formContent = `
+            <div class="operator-body">
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-cek-harga" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.cekHarga || ""}">
+                    <label>${labelInput1}</label>
+                </div>
+                <div class="floating mt-4">
+                    <input type="text" 
+                           class="input-nama-produk" 
+                           data-operator="${itemName}" 
+                           placeholder=" " 
+                           value="${saved.namaProduk || ""}">
+                    <label>${labelInput2}</label>
+                </div>
             </div>
         `;
-        topSection.appendChild(searchDiv);
 
-        // === BAGIAN BAWAH (HANYA INI YANG BISA SCROLL) ===
-        const scrollableSection = document.createElement("div");
-        scrollableSection.style.flexGrow = "1";
-        scrollableSection.style.overflowY = "auto";
-        scrollableSection.style.padding = "0 0.5rem";
-        mainWrapper.appendChild(scrollableSection);
-
-        // DAFTAR AREA
-        const areaListDiv = document.createElement("div");
-        areaListDiv.id = "containerAreaList";
-        areaListDiv.className = "space-y-3";
-        scrollableSection.appendChild(areaListDiv);
-
-        renderAreaListMain();
-
-    } else {
-        // >>> KODE UNTUK YANG LAIN (TIDAK DIUBAH) <<<
-        listToShow.forEach(itemName => {
-            const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
-
-            originalPrabayarData[currentMenuType][itemName] = {
-                cekHarga: saved.cekHarga || "",
-                namaProduk: saved.namaProduk || ""
-            };
-
-            const wrapper = document.createElement("div");
-            wrapper.className = "operator-wrapper";
-            wrapper.dataset.productname = itemName.toLowerCase();
-
-            let formContent = `
-                <div class="operator-body">
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-cek-harga" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.cekHarga || ""}">
-                        <label>${labelInput1}</label>
-                    </div>
-                    <div class="floating mt-4">
-                        <input type="text" 
-                               class="input-nama-produk" 
-                               data-operator="${itemName}" 
-                               placeholder=" " 
-                               value="${saved.namaProduk || ""}">
-                        <label>${labelInput2}</label>
-                    </div>
+        wrapper.innerHTML = `
+            <div class="operator-header" onclick="toggleOperator(this.parentElement)">
+                <div class="operator-left">
+                    <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
+                    <span class="operator-name-text">${itemName}</span>
                 </div>
-            `;
+                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
+            </div>
+            ${formContent}
+        `;
 
-            wrapper.innerHTML = `
-                <div class="operator-header" onclick="toggleOperator(this.parentElement)">
-                    <div class="operator-left">
-                        <i data-lucide="${iconName}" class="w-6 h-6 text-cyan-600"></i>
-                        <span class="operator-name-text">${itemName}</span>
-                    </div>
-                    <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
-                </div>
-                ${formContent}
-            `;
+        container.appendChild(wrapper);
+    });
+}
 
-            container.appendChild(wrapper);
-        });
-    }
+// >>> PENTING: PASTIKAN MODAL TETAP MUNCUL <<<
+modal.classList.add("show");
+document.getElementById("fixedButtonWrapper").style.display = "block";
+setTimeout(() => { lucide.createIcons(); }, 50);
 
-    // >>> PENTING: PASTIKAN MODAL TETAP MUNCUL <<<
-    modal.classList.add("show");
-    document.getElementById("fixedButtonWrapper").style.display = "block";
-    setTimeout(() => { lucide.createIcons(); }, 50);
-
-    disableButton("savePrabayarBtn");
-    attachInputListeners();
+disableButton("savePrabayarBtn");
+attachInputListeners();
 }
 
 // =========================================
@@ -1160,9 +1160,14 @@ function renderAreaListMain(){
         // >>> PERBAIKAN: TAMBAH event.stopPropagation() AGAR TIDAK BALIK MENU <<<
         div.innerHTML = `
             <span onclick="event.stopPropagation(); openModalWilayah('${area.nama}', ${index})" style="font-weight: 500; color: #1e293b; width: 100%;">${area.nama}</span>
-            <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 text-sm" title="Edit">
-                <i data-lucide="edit-2" class="w-4 h-4" style="color: #333;"></i>
-            </button>
+            <div style="display: flex; gap: 0.5rem;">
+                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 text-sm btn-edit-area" title="Edit">
+                    <i data-lucide="edit-2" class="w-4 h-4" style="color: #333;"></i>
+                </button>
+                <button onclick="event.stopPropagation(); deleteArea(${index})" class="btn btn-red p-2 text-sm btn-delete-area" title="Hapus" style="display: none;">
+                    <i data-lucide="trash-2" class="w-4 h-4" style="color: white;"></i>
+                </button>
+            </div>
         `;
 
         // Klik area buka wilayah
@@ -1170,6 +1175,29 @@ function renderAreaListMain(){
             // Cegah event naik ke atas (biar tidak balik menu)
             e.stopPropagation();
             openModalWilayah(area.nama, index);
+        });
+
+        // >>> PERUBAHAN: LONG PRESS HANYA PADA ICON EDIT <<<
+        const editBtn = div.querySelector('.btn-edit-area');
+        let pressTimer;
+
+        editBtn.addEventListener('touchstart', () => {
+            pressTimer = setTimeout(() => {
+                document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
+                document.querySelectorAll('.btn-edit-area').forEach(btn => btn.style.display = 'inline-block');
+
+                div.querySelector('.btn-delete-area').style.display = 'inline-block';
+                div.querySelector('.btn-edit-area').style.display = 'none';
+            }, 1000); // 1 DETIK
+        });
+
+        editBtn.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+        });
+
+        div.addEventListener('click', () => {
+            div.querySelector('.btn-delete-area').style.display = 'none';
+            div.querySelector('.btn-edit-area').style.display = 'inline-block';
         });
 
         container.appendChild(div);
@@ -1194,18 +1222,33 @@ function openModalAddArea(){
             </div>
             <div class="modal-body">
                 <div class="floating">
-                    <input type="text" id="inputNamaAreaBaru" placeholder=" " value="">
+                    <input type="text" id="inputNamaAreaBaru" placeholder=" " value="" oninput="checkAreaInput()">
                     <label>Nama Area</label>
                 </div>
             </div>
             <div class="modal-footer">
                 <button onclick="closeModalArea()" class="btn btn-gray">Tutup</button>
-                <button onclick="saveAreaBaru()" class="btn btn-cyan">Simpan</button>
+                <button id="btnSaveArea" onclick="saveAreaBaru()" class="btn btn-cyan" disabled>Simpan</button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
     lucide.createIcons();
+}
+
+// >>> FUNGSI CEK INPUT AREA <<<
+function checkAreaInput(){
+    const input = document.getElementById("inputNamaAreaBaru").value.trim();
+    const btn = document.getElementById("btnSaveArea");
+    if(input === ""){
+        btn.disabled = true;
+        btn.classList.add("bg-gray-400", "cursor-not-allowed");
+        btn.classList.remove("bg-cyan-600");
+    } else {
+        btn.disabled = false;
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        btn.classList.add("bg-cyan-600");
+    }
 }
 
 // >>> FUNGSI EDIT AREA <<<
@@ -1228,18 +1271,19 @@ function editArea(index){
             </div>
             <div class="modal-body">
                 <div class="floating">
-                    <input type="text" id="inputNamaAreaBaru" placeholder=" " value="${areaData.nama}">
+                    <input type="text" id="inputNamaAreaBaru" placeholder=" " value="${areaData.nama}" oninput="checkAreaInput()">
                     <label>Nama Area</label>
                 </div>
             </div>
             <div class="modal-footer">
                 <button onclick="closeModalArea()" class="btn btn-gray">Batal</button>
-                <button onclick="saveAreaBaru()" class="btn btn-cyan">Update</button>
+                <button id="btnSaveArea" onclick="saveAreaBaru()" class="btn btn-cyan">Update</button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
     lucide.createIcons();
+    checkAreaInput(); // Cek status tombol saat modal dibuka
 }
 
 function closeModalArea(){
@@ -1263,10 +1307,16 @@ function saveAreaBaru(){
     );
 
     if(isDuplicate){
-        toast("Nama Area sudah ada!");
+        showConfirm("Peringatan", "Nama Area sudah ada! Apakah Anda ingin tetap menyimpan?", () => {
+            saveAreaData(nama, firstPdam);
+        }, "Ya");
         return;
     }
 
+    saveAreaData(nama, firstPdam);
+}
+
+function saveAreaData(nama, firstPdam){
     if(editModeAreaIndex === -1){
         // MODE TAMBAH
         prabayarData[currentMenuType][firstPdam].areas.push({
@@ -1356,23 +1406,23 @@ function openModalWilayah(namaArea, indexArea){
                 <!-- FORM INPUT WILAYAH -->
                 <div id="formWilayahContainer" class="form-wrapper hidden" style="margin-bottom: 1rem;">
                     <div class="floating mt-0">
-                        <input type="text" id="inputNamaWilayah" placeholder=" " value="">
+                        <input type="text" id="inputNamaWilayah" placeholder=" " value="" oninput="checkWilayahInput()">
                         <label>Nama Wilayah</label>
                     </div>
                     <div class="double-input">
                         <div class="floating">
-                            <input type="text" id="inputKodeCek" placeholder=" " value="">
+                            <input type="text" id="inputKodeCek" placeholder=" " value="" oninput="checkWilayahInput()">
                             <label>Kode Cek</label>
                         </div>
                         <div class="floating">
-                            <input type="text" id="inputKodeBayar" placeholder=" " value="">
+                            <input type="text" id="inputKodeBayar" placeholder=" " value="" oninput="checkWilayahInput()">
                             <label>Kode Bayar</label>
                         </div>
                     </div>
                     <!-- TOMBOL TUTUP DITAMBAHKAN -->
                     <div class="flex justify-between mt-2">
                         <button onclick="closeFormWilayah()" class="btn btn-gray text-sm">Tutup</button>
-                        <button onclick="saveWilayah(${indexArea})" class="btn btn-cyan text-sm">Simpan</button>
+                        <button id="btnSaveWilayah" onclick="saveWilayah(${indexArea})" class="btn btn-cyan text-sm" disabled>Simpan</button>
                     </div>
                 </div>
 
@@ -1411,6 +1461,7 @@ function openFormWilayah(indexArea){
     document.getElementById("inputKodeCek").value = "";
     document.getElementById("inputKodeBayar").value = "";
     document.getElementById("formWilayahContainer").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    checkWilayahInput(); // Cek status tombol saat form dibuka
 }
 
 // >>> EDIT WILAYAH <<<
@@ -1427,6 +1478,25 @@ function editWilayah(indexArea, idxWilayah){
     document.getElementById("inputKodeBayar").value = wilayahData.bayar || "";
 
     document.getElementById("formWilayahContainer").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    checkWilayahInput(); // Cek status tombol saat form dibuka
+}
+
+// >>> FUNGSI CEK INPUT WILAYAH <<<
+function checkWilayahInput(){
+    const nama = document.getElementById("inputNamaWilayah").value.trim();
+    const cek = document.getElementById("inputKodeCek").value.trim();
+    const bayar = document.getElementById("inputKodeBayar").value.trim();
+    const btn = document.getElementById("btnSaveWilayah");
+
+    if(nama === "" || cek === "" || bayar === ""){
+        btn.disabled = true;
+        btn.classList.add("bg-gray-400", "cursor-not-allowed");
+        btn.classList.remove("bg-cyan-600");
+    } else {
+        btn.disabled = false;
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        btn.classList.add("bg-cyan-600");
+    }
 }
 
 // >>> SIMPAN WILAYAH <<<
@@ -1445,10 +1515,16 @@ function saveWilayah(indexArea){
     );
 
     if(isDuplicate){
-        toast("Nama Wilayah sudah ada!");
+        showConfirm("Peringatan", "Nama Wilayah sudah ada! Apakah Anda ingin tetap menyimpan?", () => {
+            saveWilayahData(indexArea, nama, cek, bayar, area);
+        }, "Ya");
         return;
     }
 
+    saveWilayahData(indexArea, nama, cek, bayar, area);
+}
+
+function saveWilayahData(indexArea, nama, cek, bayar, area){
     if(editModeWilayahIndex === -1){
         // Tambah baru
         area.wilayah.push({ nama, cek, bayar });
@@ -1570,6 +1646,10 @@ function renderWilayahList(indexArea){
 
     lucide.createIcons();
 }
+
+
+
+
 
 // =========================================
 // === FUNGSI LAINNYA ===
