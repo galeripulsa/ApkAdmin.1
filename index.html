@@ -1003,16 +1003,16 @@ function openOperatorListPascabayar(title, actionType){
         iconName = "wifi";
     }
 
-   if(actionType === "pdam"){
-    // >>> PERBAIKAN TOTAL: HEADER TIDAK IKUT SCROLL & TAMPILAN SESUAI GAMBAR <<<
+    if(actionType === "pdam"){
+    // >>> STRUKTUR SAMA DENGAN DAFTAR WILAYAH YANG SUDAH BAGUS <<<
 
     container.innerHTML = "";
     container.style.height = "100%";
     container.style.display = "flex";
     container.style.flexDirection = "column";
-    container.style.overflow = "hidden"; // PENTING: Container utama tidak scroll
+    container.style.overflow = "hidden";
 
-    // === BAGIAN ATAS (FIXED / DIAM DI TEMPAT) ===
+    // === BAGIAN ATAS (FIXED) ===
     const topSection = document.createElement("div");
     topSection.style.flexShrink = 0;
     topSection.style.padding = "0 0.5rem";
@@ -1023,7 +1023,7 @@ function openOperatorListPascabayar(title, actionType){
     const headerDiv = document.createElement("div");
     headerDiv.className = "flex items-center justify-between mb-3";
     headerDiv.style.padding = "0 0.25rem";
-    headerDiv.innerHTML = `<h3 class="text-xl font-bold">Daftar Area</h3> <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2"> <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area </button>`;
+    headerDiv.innerHTML = `<h3 class="text-xl font-bold">Daftar Area</h3> <button onclick="openModalAddArea()" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2" style="width: auto !important; padding: 0.5rem 1rem !important; max-width: none !important;"> <i data-lucide="plus" class="w-4 h-4" style="color: white; display: inline-block;"></i> Area </button>`;
     topSection.appendChild(headerDiv);
 
     // KOLOM CARI AREA
@@ -1036,7 +1036,7 @@ function openOperatorListPascabayar(title, actionType){
 
     container.appendChild(topSection);
 
-    // === BAGIAN BAWAH (HANYA INI YANG BISA SCROLL) ===
+    // === BAGIAN BAWAH (SCROLLABLE) ===
     const scrollableSection = document.createElement("div");
     scrollableSection.style.flexGrow = 1;
     scrollableSection.style.overflowY = "auto";
