@@ -1158,14 +1158,34 @@ function renderAreaListMain(){
         div.innerHTML = `
             <span onclick="event.stopPropagation(); openModalWilayah('${area.nama}', ${index})" style="font-weight: 500; color: #1e293b; width: 100%;">${area.nama}</span>
             <div style="display: flex; gap: 0.5rem;">
-                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 text-sm" title="Edit">
+                <button onclick="event.stopPropagation(); editArea(${index})" class="btn btn-gray p-2 text-sm btn-edit-area" title="Edit">
                     <i data-lucide="edit-2" class="w-4 h-4" style="color: #333;"></i>
                 </button>
-                <button onclick="event.stopPropagation(); deleteArea(${index})" class="btn btn-red p-2 text-sm" title="Hapus">
+                <button onclick="event.stopPropagation(); deleteArea(${index})" class="btn btn-red p-2 text-sm btn-delete-area" title="Hapus" style="display: none;">
                     <i data-lucide="trash-2" class="w-4 h-4" style="color: white;"></i>
                 </button>
             </div>
         `;
+
+        // >>> LONG PRESS EDIT MUNCULKAN HAPUS <<<
+        const editBtn = div.querySelector('.btn-edit-area');
+        let pressTimer;
+
+        editBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            pressTimer = setTimeout(() => {
+                // Sembunyikan semua tombol hapus lain
+                document.querySelectorAll('.btn-delete-area').forEach(btn => btn.style.display = 'none');
+                document.querySelectorAll('.btn-edit-area').forEach(btn => btn.style.display = 'inline-block');
+                
+                // Tampilkan tombol hapus yang ini
+                div.querySelector('.btn-delete-area').style.display = 'inline-block';
+                div.querySelector('.btn-edit-area').style.display = 'none';
+            }, 500);
+        });
+
+        editBtn.addEventListener('touchend', () => clearTimeout(pressTimer));
+        editBtn.addEventListener('touchcancel', () => clearTimeout(pressTimer));
 
         container.appendChild(div);
     });
@@ -1179,7 +1199,6 @@ function openModalAddArea(){
     const modal = document.createElement("div");
     modal.id = "modalArea";
     modal.className = "modal-layer";
-    // >>> PERBAIKAN: TAMBAH onclick TUTUP MODAL <<<
     modal.setAttribute('onclick', 'closeModalArea()');
     
     modal.innerHTML = `
@@ -1327,8 +1346,9 @@ function openModalWilayah(namaArea, indexArea){
             <div style="flex-shrink: 0; padding: 0 0.5rem;">
                 <div class="flex justify-between items-center mb-3" style="padding: 0 0.25rem;">
                     <h4 class="font-bold text-slate-700" style="font-size: 1rem;">Daftar Wilayah</h4>
-                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm">
-                        <i data-lucide="plus" class="w-4 h-4 mr-1" style="color: white;"></i> Wilayah
+                    <!-- PERBAIKAN: UKURAN TOMBOL DIKEMBALIKAN NORMAL -->
+                    <button onclick="openFormWilayah(${indexArea})" class="bg-cyan-600 text-white px-4 py-2 rounded-xl flex items-center gap-2" style="width: auto; white-space: nowrap;">
+                        <i data-lucide="plus" class="w-4 h-4" style="color: white;"></i> Wilayah
                     </button>
                 </div>
 
