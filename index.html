@@ -1004,20 +1004,23 @@ function openOperatorListPascabayar(title, actionType){
     }
 
    if(actionType === "pdam"){
-    // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
+    // >>> PERBAIKAN TOTAL: AGAR HEADER TIDAK IKUT SCROLL <<<
 
-    // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
-    const mainWrapper = document.createElement("div");
-    mainWrapper.style.display = "flex";
-    mainWrapper.style.flexDirection = "column";
-    mainWrapper.style.height = "100%";
-    container.appendChild(mainWrapper);
+    // Hapus semua isi container dulu
+    container.innerHTML = "";
+    container.style.position = "relative";
+    container.style.height = "100%";
+    container.style.overflow = "hidden"; // PENTING: Container induk tidak boleh scroll
 
-    // === BAGIAN ATAS (FIXED TIDAK BERGESER) ===
+    // === BAGIAN ATAS (FIXED / DIAM DI TEMPAT) ===
     const topSection = document.createElement("div");
-    topSection.style.flexShrink = 0;
+    topSection.style.position = "absolute";
+    topSection.style.top = "0";
+    topSection.style.left = "0";
+    topSection.style.right = "0";
+    topSection.style.background = "white";
+    topSection.style.zIndex = "10"; // Pastikan di atas
     topSection.style.padding = "0 0.5rem";
-    mainWrapper.appendChild(topSection);
 
     // HEADER MODAL PDAM
     const headerDiv = document.createElement("div");
@@ -1044,18 +1047,26 @@ function openOperatorListPascabayar(title, actionType){
     `;
     topSection.appendChild(searchDiv);
 
+    container.appendChild(topSection);
+
     // === BAGIAN BAWAH (HANYA INI YANG BISA SCROLL) ===
     const scrollableSection = document.createElement("div");
-    scrollableSection.style.flexGrow = 1;
-    scrollableSection.style.overflowY = "auto";
+    scrollableSection.style.position = "absolute";
+    scrollableSection.style.top = "140px"; // Jarak dari atas (sesuaikan tinggi header)
+    scrollableSection.style.bottom = "0";
+    scrollableSection.style.left = "0";
+    scrollableSection.style.right = "0";
+    scrollableSection.style.overflowY = "auto"; // Hanya bagian ini yang scroll
     scrollableSection.style.padding = "0 0.5rem";
-    mainWrapper.appendChild(scrollableSection);
 
     // DAFTAR AREA
     const areaListDiv = document.createElement("div");
     areaListDiv.id = "containerAreaList";
     areaListDiv.className = "space-y-3";
+    areaListDiv.style.paddingBottom = "2rem";
     scrollableSection.appendChild(areaListDiv);
+
+    container.appendChild(scrollableSection);
 
     renderAreaListMain();
 
@@ -1117,6 +1128,7 @@ setTimeout(() => { lucide.createIcons(); }, 50);
 disableButton("savePrabayarBtn");
 attachInputListeners();
 }
+
 
 // =========================================
 // >>> FUNGSI UNTUK STRUKTUR BARU PDAM <<<
