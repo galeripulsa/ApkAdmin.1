@@ -998,24 +998,8 @@ function openOperatorListPascabayar(title, actionType){
         if (Object.keys(prabayarData[currentMenuType]).length === 0) {
             prabayarData[currentMenuType]["PDAM UTAMA"] = { areas: [] };
         }
-    } else if(actionType === "bpjs"){
-        listToShow = bpjsList;
-        iconName = "heart";
-    } else if(actionType === "pbb"){
-        listToShow = pbbList;
-        iconName = "home";
-    } else if(actionType === "tvKabel"){
-        listToShow = tvKabelList;
-        iconName = "tv";
-    } else if(actionType === "internetTelpon"){
-        listToShow = internetList;
-        iconName = "wifi";
-    }
 
-
-    if(actionType === "pdam"){
         // >>> KODE KHUSUS PDAM - STRUKTUR BARU DENGAN MODAL BERTINGKAT <<<
-
         // UBAH STRUKTUR JADI FLEXBOX AGAR HEADER TIDAK IKUT SCROLL
         const mainWrapper = document.createElement("div");
         mainWrapper.style.display = "flex";
@@ -1027,6 +1011,10 @@ function openOperatorListPascabayar(title, actionType){
         const topSection = document.createElement("div");
         topSection.style.flexShrink = "0";
         topSection.style.padding = "0 0.5rem";
+        topSection.style.position = "sticky";
+        topSection.style.top = "0";
+        topSection.style.background = "white";
+        topSection.style.zIndex = "10";
         mainWrapper.appendChild(topSection);
 
         // HEADER MODAL PDAM
@@ -1041,7 +1029,7 @@ function openOperatorListPascabayar(title, actionType){
         `;
         topSection.appendChild(headerDiv);
 
-        // KOLOM CARI AREA (UKURAN SAMA PERSIS DENGAN WILAYAH)
+        // KOLOM CARI AREA
         const searchDiv = document.createElement("div");
         searchDiv.className = "search-wrapper";
         searchDiv.style.marginBottom = "1rem";
@@ -1069,7 +1057,22 @@ function openOperatorListPascabayar(title, actionType){
 
         renderAreaListMain();
 
-    } else {
+    } else if(actionType === "bpjs"){
+        listToShow = bpjsList;
+        iconName = "heart";
+    } else if(actionType === "pbb"){
+        listToShow = pbbList;
+        iconName = "home";
+    } else if(actionType === "tvKabel"){
+        listToShow = tvKabelList;
+        iconName = "tv";
+    } else if(actionType === "internetTelpon"){
+        listToShow = internetList;
+        iconName = "wifi";
+    }
+
+
+    if(actionType !== "pdam"){
         // >>> KODE UNTUK YANG LAIN (TIDAK DIUBAH) <<<
         listToShow.forEach(itemName => {
             const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
@@ -1219,7 +1222,11 @@ function saveAreaBaru(){
     );
 
     if(isDuplicate){
-        toast("Nama Area sudah ada!");
+        showConfirmDialog(
+            "Nama Sudah Ada",
+            `Area dengan nama "${nama}" sudah terdaftar.`,
+            [{ text: "Mengerti", class: "btn-cyan", action: null }]
+        );
         return;
     }
 
@@ -1240,6 +1247,17 @@ function saveAreaBaru(){
 }
 
 // >>> FUNGSI HAPUS AREA <<<
+function confirmDeleteArea(index, nama){
+    showConfirmDialog(
+        "Hapus Area",
+        `Apakah Anda yakin ingin menghapus Area "${nama}"?`,
+        [
+            { text: "Batal", class: "btn-gray", action: null },
+            { text: "Hapus", class: "btn-red", action: () => deleteArea(index) }
+        ]
+    );
+}
+
 function deleteArea(index){
     const pdamKeys = Object.keys(prabayarData[currentMenuType]);
     const firstPdam = pdamKeys[0];
@@ -1247,6 +1265,7 @@ function deleteArea(index){
     prabayarData[currentMenuType][firstPdam].areas.splice(index, 1);
     renderAreaListMain();
     checkPrabayarChange();
+    toast("Area berhasil dihapus");
 }
 
 // >>> 2. RENDER DAFTAR AREA DI LAYAR UTAMA <<<
@@ -1276,14 +1295,18 @@ function renderAreaListMain(){
                 <div class="font-semibold text-lg">${area.nama}</div>
                 <div class="text-sm text-slate-500">${area.wilayah.length} Wilayah</div>
             </div>
-            <div class="flex gap-2">
-                <button onclick="editArea(${index})" class="btn btn-gray p-2">
+            <div class="flex gap-2 action-buttons">
+                <button onclick="editArea(${index})" 
+                        class="btn btn-gray p-2 btn-edit-area" 
+                        data-index="${index}">
                     <i data-lucide="edit-3" class="w-4 h-4"></i>
                 </button>
                 <button onclick="openModalWilayah(${index})" class="btn btn-cyan">
                     <i data-lucide="list" class="w-4 h-4"></i>
                 </button>
-                <button onclick="deleteArea(${index})" class="btn btn-red p-2">
+                <button onclick="confirmDeleteArea(${index}, '${area.nama.replace(/'/g, "&#039;")}')" 
+                        class="btn btn-red p-2 btn-delete-area" 
+                        style="display: none;">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -1292,6 +1315,53 @@ function renderAreaListMain(){
     });
 
     lucide.createIcons();
+    setupLongPressEvents();
+}
+
+// >>> FUNGSI LONG PRESS UNTUK MUNCULKAN HAPUS <<<
+function setupLongPressEvents(){
+    let pressTimer;
+
+    document.querySelectorAll('.btn-edit-area').forEach(btn => {
+        // Hapus event lama agar tidak dobel
+        btn.removeEventListener('mousedown', startPress);
+        btn.removeEventListener('touchstart', startPress);
+        btn.removeEventListener('mouseup', cancelPress);
+        btn.removeEventListener('touchend', cancelPress);
+        btn.removeEventListener('mouseleave', cancelPress);
+
+        function startPress(e) {
+            e.preventDefault();
+            const index = this.dataset.index;
+            pressTimer = setTimeout(() => {
+                // Sembunyikan semua tombol hapus lain
+                document.querySelectorAll('.btn-delete-area').forEach(b => b.style.display = 'none');
+                // Tampilkan tombol hapus yang bersangkutan
+                const deleteBtn = this.parentElement.querySelector('.btn-delete-area');
+                if(deleteBtn) deleteBtn.style.display = 'inline-flex';
+            }, 500); // 500ms = klik lama
+        }
+
+        function cancelPress() {
+            clearTimeout(pressTimer);
+        }
+
+        btn.addEventListener('mousedown', startPress);
+        btn.addEventListener('touchstart', startPress);
+        btn.addEventListener('mouseup', cancelPress);
+        btn.addEventListener('touchend', cancelPress);
+        btn.addEventListener('mouseleave', cancelPress);
+    });
+
+    // Klik di luar untuk sembunyikan
+    document.removeEventListener('click', hideAllDeleteButtons);
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.action-buttons')) {
+            document.querySelectorAll('.btn-delete-area').forEach(btn => {
+                btn.style.display = 'none';
+            });
+        }
+    });
 }
 
 // >>> 3. MODAL DAFTAR WILAYAH (FULL SCREEN) <<<
@@ -1356,6 +1426,20 @@ function saveWilayah(areaIndex){
 
     const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
     
+    // === CEK DUPLIKAT WILAYAH ===
+    const isDuplicate = areaData.wilayah.some(wil => 
+        wil.nama.toLowerCase() === nama.toLowerCase() || wil.kode === kode
+    );
+
+    if(isDuplicate){
+        showConfirmDialog(
+            "Data Sudah Ada",
+            `Wilayah atau Kode "${nama} / ${kode}" sudah terdaftar.`,
+            [{ text: "Mengerti", class: "btn-cyan", action: null }]
+        );
+        return;
+    }
+    
     areaData.wilayah.push({ kode: kode, nama: nama });
 
     document.getElementById("inputKodeWilayah").value = "";
@@ -1388,7 +1472,7 @@ function renderWilayahList(areaIndex){
                     <button onclick="editWilayah(${areaIndex}, ${idx})" class="btn btn-gray p-1">
                         <i data-lucide="edit" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="deleteWilayah(${areaIndex}, ${idx})" class="btn btn-red p-1">
+                    <button onclick="confirmDeleteWilayah(${areaIndex}, ${idx}, '${wil.nama.replace(/'/g, "&#039;")}')" class="btn btn-red p-1">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -1411,11 +1495,24 @@ function editWilayah(areaIndex, wilIndex){
     areaData.wilayah.splice(wilIndex, 1);
 }
 
+// >>> KONFIRMASI HAPUS WILAYAH <<<
+function confirmDeleteWilayah(areaIndex, wilIndex, nama){
+    showConfirmDialog(
+        "Hapus Wilayah",
+        `Apakah Anda yakin ingin menghapus Wilayah "${nama}"?`,
+        [
+            { text: "Batal", class: "btn-gray", action: null },
+            { text: "Hapus", class: "btn-red", action: () => deleteWilayah(areaIndex, wilIndex) }
+        ]
+    );
+}
+
 function deleteWilayah(areaIndex, wilIndex){
     const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
     areaData.wilayah.splice(wilIndex, 1);
     renderWilayahList(areaIndex);
     checkPrabayarChange();
+    toast("Wilayah berhasil dihapus");
 }
 
 // >>> FUNGSI CARI AREA <<<
@@ -1511,6 +1608,31 @@ function confirmSavePrabayar(){
     
     toast("Data berhasil disimpan!");
     disableButton("savePrabayarBtn");
+}
+
+// >>> FUNGSI DIALOG KONFIRMASI GLOBAL <<<
+function showConfirmDialog(title, message, buttons){
+    const modal = document.createElement("div");
+    modal.className = "modal-layer";
+    modal.innerHTML = `
+        <div class="modal-box small">
+            <div class="modal-header">
+                <h3>${title}</h3>
+            </div>
+            <div class="modal-body">
+                <p>${message}</p>
+            </div>
+            <div class="modal-footer">
+                ${buttons.map(btn => `
+                    <button onclick="this.closest('.modal-layer').remove(); ${btn.action ? btn.action.toString() : ''}" class="btn ${btn.class}">
+                        ${btn.text}
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    lucide.createIcons();
 }
 
 function toast(text){
