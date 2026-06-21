@@ -1267,6 +1267,10 @@ function searchArea(){
 function openModalWilayah(namaArea, indexArea){
     event.stopPropagation();
 
+    // Hapus modal lama jika ada
+    const oldModal = document.getElementById("modalWilayah");
+    if(oldModal) oldModal.remove();
+
     const modal = document.createElement("div");
     modal.className = "modal-layer";
     modal.id = "modalWilayah";
@@ -1282,7 +1286,7 @@ function openModalWilayah(namaArea, indexArea){
             <div style="flex-shrink: 0; padding: 0 0.5rem; background: white; z-index: 5;">
                 <div class="flex justify-between items-center mb-3" style="padding: 0 0.25rem;">
                     <h4 class="font-bold text-slate-700" style="font-size: 1rem;">Daftar Wilayah</h4>
-                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="width: auto !important; padding: 0.5rem 1rem !important;">
+                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="width: auto !important; padding: 0.5rem 1rem !important; max-width: none !important;">
                         <i data-lucide="plus" class="w-4 h-4 mr-1" style="color: white;"></i> Wilayah
                     </button>
                 </div>
@@ -1321,7 +1325,7 @@ function openModalWilayah(namaArea, indexArea){
                 <div id="listWilayah" class="space-y-2"></div>
             </div>
             
-            <div class="modal-footer" style="position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 1rem; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+            <div class="modal-footer" style="flex-shrink: 0; background: white; padding: 1rem; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
                 <button onclick="closeModalWilayah()" class="btn btn-gray w-full">Tutup</button>
             </div>
         </div>`;
@@ -1628,4 +1632,3 @@ window.onload = function(){
 
 </body>
 </html>
-
