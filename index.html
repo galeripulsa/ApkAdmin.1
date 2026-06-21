@@ -850,6 +850,15 @@ function closePrabayar(){
     document.getElementById("prabayarModal").classList.remove("show");
 }
 
+// >>> FUNGSI KEMBALI <<<
+function backToPrabayarFromList(){
+    document.getElementById("operatorListModal").classList.remove("show");
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    setTimeout(() => {
+        document.getElementById("prabayarModal").classList.add("show");
+    }, 300);
+}
+
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
@@ -1234,22 +1243,188 @@ function saveAreaBaru(){
 function deleteArea(index){
     const pdamKeys = Object.keys(prabayarData[currentMenuType]);
     const firstPdam = pdamKeys[0];
-    const namaArea = prabayarData[currentMenuType][firstPdam].areas[index].nama;
     
-    showConfirm("Hapus Area", `Yakin hapus area "${namaArea}"?`, () => {
-        prabayarData[currentMenuType][firstPdam].areas.splice(index, 1);
-        renderAreaListMain();
-        checkPrabayarChange();
-    });
+    prabayarData[currentMenuType][firstPdam].areas.splice(index, 1);
+    renderAreaListMain();
+    checkPrabayarChange();
 }
 
-// >>> CARI AREA <<<
-function searchArea(){
-    const input = document.getElementById('searchAreaInput').value.toLowerCase();
-    const items = document.querySelectorAll('#containerAreaList .area-item');
+// >>> 2. RENDER DAFTAR AREA DI LAYAR UTAMA <<<
+function renderAreaListMain(){
+    const container = document.getElementById("containerAreaList");
+    if(!container) return;
+
+    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
+    const firstPdam = pdamKeys[0];
+    const areas = prabayarData[currentMenuType][firstPdam].areas || [];
+
+    if(areas.length === 0){
+        container.innerHTML = `
+            <div class="text-center text-slate-400 py-10">
+                Belum ada area. Klik tombol + Area untuk menambah.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = "";
+    areas.forEach((area, index) => {
+        const div = document.createElement("div");
+        div.className = "area-item";
+        div.innerHTML = `
+            <div class="flex-1">
+                <div class="font-semibold text-lg">${area.nama}</div>
+                <div class="text-sm text-slate-500">${area.wilayah.length} Wilayah</div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="editArea(${index})" class="btn btn-gray p-2">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button onclick="openModalWilayah(${index})" class="btn btn-cyan">
+                    <i data-lucide="list" class="w-4 h-4"></i>
+                </button>
+                <button onclick="deleteArea(${index})" class="btn btn-red p-2">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    lucide.createIcons();
+}
+
+// >>> 3. MODAL DAFTAR WILAYAH (FULL SCREEN) <<<
+function openModalWilayah(areaIndex){
+    const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
+
+    const modal = document.createElement("div");
+    modal.id = "modalWilayah";
+    modal.className = "modal-layer";
+    modal.innerHTML = `
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Wilayah - ${areaData.nama}</h3>
+                <button onclick="closeModalWilayah()" class="btn btn-gray p-2">
+                    <i data-lucide="x" class="w-5 h-5" style="color: #333;"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Tambah Wilayah -->
+                <div class="form-wrapper">
+                    <h4 class="font-bold mb-3">Tambah Wilayah Baru</h4>
+                    <div class="double-input">
+                        <div class="floating">
+                            <input type="text" id="inputKodeWilayah" placeholder=" ">
+                            <label>Kode / Prefiks</label>
+                        </div>
+                        <div class="floating">
+                            <input type="text" id="inputNamaWilayah" placeholder=" ">
+                            <label>Nama Wilayah</label>
+                        </div>
+                    </div>
+                    <button onclick="saveWilayah(${areaIndex})" class="btn btn-cyan w-full mt-3">
+                        <i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah Wilayah
+                    </button>
+                </div>
+
+                <!-- Daftar Wilayah -->
+                <div id="listWilayahContainer">
+                    <!-- Akan diisi oleh renderWilayahList() -->
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
     
+    renderWilayahList(areaIndex);
+    lucide.createIcons();
+}
+
+function closeModalWilayah(){
+    document.getElementById("modalWilayah").remove();
+}
+
+function saveWilayah(areaIndex){
+    const kode = document.getElementById("inputKodeWilayah").value.trim();
+    const nama = document.getElementById("inputNamaWilayah").value.trim();
+
+    if(!kode || !nama){
+        toast("Kode dan Nama wajib diisi!");
+        return;
+    }
+
+    const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
+    
+    areaData.wilayah.push({ kode: kode, nama: nama });
+
+    document.getElementById("inputKodeWilayah").value = "";
+    document.getElementById("inputNamaWilayah").value = "";
+
+    renderWilayahList(areaIndex);
+    checkPrabayarChange();
+}
+
+function renderWilayahList(areaIndex){
+    const container = document.getElementById("listWilayahContainer");
+    const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
+
+    if(areaData.wilayah.length === 0){
+        container.innerHTML = `<div class="text-center text-slate-400 py-5">Belum ada wilayah</div>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    areaData.wilayah.forEach((wil, idx) => {
+        const div = document.createElement("div");
+        div.className = "wilayah-item";
+        div.innerHTML = `
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="font-semibold">${wil.nama}</div>
+                    <div class="code">Kode: ${wil.kode}</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="editWilayah(${areaIndex}, ${idx})" class="btn btn-gray p-1">
+                        <i data-lucide="edit" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="deleteWilayah(${areaIndex}, ${idx})" class="btn btn-red p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    lucide.createIcons();
+}
+
+function editWilayah(areaIndex, wilIndex){
+    const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
+    const wilData = areaData.wilayah[wilIndex];
+
+    document.getElementById("inputKodeWilayah").value = wilData.kode;
+    document.getElementById("inputNamaWilayah").value = wilData.nama;
+
+    // Hapus lama
+    areaData.wilayah.splice(wilIndex, 1);
+}
+
+function deleteWilayah(areaIndex, wilIndex){
+    const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
+    areaData.wilayah.splice(wilIndex, 1);
+    renderWilayahList(areaIndex);
+    checkPrabayarChange();
+}
+
+// >>> FUNGSI CARI AREA <<<
+function searchArea(){
+    const input = document.getElementById("searchAreaInput").value.toLowerCase();
+    const items = document.querySelectorAll(".area-item");
+
     items.forEach(item => {
-        const text = item.querySelector('span').innerText.toLowerCase();
+        const text = item.textContent.toLowerCase();
         if(text.includes(input)){
             item.style.display = "flex";
         } else {
@@ -1259,384 +1434,106 @@ function searchArea(){
 }
 
 // =========================================
-// === FUNGSI UNTUK WILAYAH ===
-// =========================================
-
-// >>> 2. MODAL WILAYAH (FULL SCREEN) <<<
-function openModalWilayah(namaArea, indexArea){
-    const modal = document.createElement("div");
-    modal.className = "modal-layer";
-    modal.id = "modalWilayah";
-    modal.innerHTML = `
-        <div class="modal-box" style="max-height: 90vh; overflow-y: auto; padding-bottom: 80px; display: flex; flex-direction: column;">
-            <div class="modal-header">
-                <h3>${namaArea}</h3>
-                <button onclick="closeModalWilayah()" class="btn btn-gray p-2">
-                    <i data-lucide="x" class="w-5 h-5" style="color: #333;"></i>
-                </button>
-            </div>
-            
-            <!-- BAGIAN ATAS (FIXED TIDAK BERGESER) -->
-            <div style="flex-shrink: 0; padding: 0 0.5rem;">
-                <!-- JUDUL DAN TOMBOL -->
-                <div class="flex justify-between items-center mb-3" style="padding: 0 0.25rem;">
-                    <h4 class="font-bold text-slate-700" style="font-size: 1rem;">Daftar Wilayah</h4>
-                    <button onclick="openFormWilayah(${indexArea})" class="btn btn-cyan text-sm" style="display: inline-flex; align-items: center; width: auto; white-space: nowrap; padding: 0.4rem 1rem;">
-                        <i data-lucide="plus" class="w-4 h-4 mr-1" style="color: white; display: inline-block;"></i> Wilayah
-                    </button>
-                </div>
-
-                <!-- KOLOM CARI WILAYAH -->
-                <div class="search-wrapper" style="margin-bottom: 1rem; padding: 0 0.25rem;">
-                    <div class="search-inner" style="padding: 0.3rem 0.8rem; height: 40px; min-height: 40px; display: flex; align-items: center; border-radius: 8px;">
-                        <i data-lucide="search" class="w-4 h-4" style="color: #666; margin-right: 0.5rem;"></i>
-                        <input type="text" id="searchWilayahInput" placeholder="Cari nama wilayah..." oninput="searchWilayah()" style="font-size: 0.9rem; height: 100%; border: none; outline: none; background: transparent; flex: 1;">
-                    </div>
-                </div>
-            </div>
-
-            <!-- BAGIAN BODY (BISA DI SCROLL) -->
-            <div class="modal-body" style="flex-grow: 1; overflow-y: auto; padding: 0 0.5rem;">
-                <!-- FORM INPUT WILAYAH -->
-                <div id="formWilayahContainer" class="form-wrapper hidden" style="margin-bottom: 1rem;">
-                    <div class="floating mt-0">
-                        <input type="text" id="inputNamaWilayah" placeholder=" " value="">
-                        <label>Nama Wilayah</label>
-                    </div>
-                    <div class="double-input">
-                        <div class="floating">
-                            <input type="text" id="inputKodeCek" placeholder=" " value="">
-                            <label>Kode Cek</label>
-                        </div>
-                        <div class="floating">
-                            <input type="text" id="inputKodeBayar" placeholder=" " value="">
-                            <label>Kode Bayar</label>
-                        </div>
-                    </div>
-                    <!-- TOMBOL TUTUP DITAMBAHKAN -->
-                    <div class="flex justify-between mt-2">
-                        <button onclick="closeFormWilayah()" class="btn btn-gray text-sm">Tutup</button>
-                        <button onclick="saveWilayah(${indexArea})" class="btn btn-cyan text-sm">Simpan</button>
-                    </div>
-                </div>
-
-                <!-- DAFTAR WILAYAH -->
-                <div id="listWilayah" class="space-y-2"></div>
-            </div>
-            
-            <!-- TOMBOL TUTUP -->
-            <div class="modal-footer" style="position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 1rem; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
-                <button onclick="closeModalWilayah()" class="btn btn-gray w-full">Tutup</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    
-    renderWilayahList(indexArea);
-    lucide.createIcons();
-}
-
-function closeModalWilayah(){
-    document.getElementById("modalWilayah").remove();
-}
-
-// >>> FUNGSI TUTUP FORM WILAYAH <<<
-function closeFormWilayah(){
-    document.getElementById("formWilayahContainer").classList.add("hidden");
-}
-
-// >>> VARIABEL EDIT WILAYAH <<<
-let editModeWilayahIndex = -1;
-
-function openFormWilayah(indexArea){
-    editModeWilayahIndex = -1;
-    document.getElementById("formWilayahContainer").classList.remove("hidden");
-    document.getElementById("inputNamaWilayah").value = "";
-    document.getElementById("inputKodeCek").value = "";
-    document.getElementById("inputKodeBayar").value = "";
-    document.getElementById("formWilayahContainer").scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// >>> EDIT WILAYAH <<<
-function editWilayah(indexArea, idxWilayah){
-    editModeWilayahIndex = idxWilayah;
-    
-    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-    const firstPdam = pdamKeys[0];
-    const wilayahData = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah[idxWilayah];
-
-    document.getElementById("formWilayahContainer").classList.remove("hidden");
-    document.getElementById("inputNamaWilayah").value = wilayahData.nama;
-    document.getElementById("inputKodeCek").value = wilayahData.cek || "";
-    document.getElementById("inputKodeBayar").value = wilayahData.bayar || "";
-    
-    document.getElementById("formWilayahContainer").scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// >>> SIMPAN WILAYAH <<<
-function saveWilayah(indexArea){
-    const nama = document.getElementById("inputNamaWilayah").value.trim() || "Wilayah Baru";
-    const cek = document.getElementById("inputKodeCek").value.trim() || "";
-    const bayar = document.getElementById("inputKodeBayar").value.trim() || "";
-
-    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-    const firstPdam = pdamKeys[0];
-    const area = prabayarData[currentMenuType][firstPdam].areas[indexArea];
-
-    // CEK NAMA DUPLIKAT
-    const isDuplicate = area.wilayah.some((wil, idx) => 
-        wil.nama.toLowerCase() === nama.toLowerCase() && idx !== editModeWilayahIndex
-    );
-
-    if(isDuplicate){
-        toast("Nama Wilayah sudah ada!");
-        return;
-    }
-
-    if(editModeWilayahIndex === -1){
-        // Tambah baru
-        area.wilayah.push({ nama, cek, bayar });
-    } else {
-        // Update
-        area.wilayah[editModeWilayahIndex] = { nama, cek, bayar };
-    }
-
-    renderWilayahList(indexArea);
-    document.getElementById("formWilayahContainer").classList.add("hidden");
-    checkPrabayarChange();
-}
-
-// >>> HAPUS WILAYAH <<<
-function deleteWilayah(indexArea, idxWilayah){
-    // Pastikan modal confirm muncul di atas modal wilayah
-    const existingConfirm = document.getElementById('confirmModal');
-    if(existingConfirm) existingConfirm.remove();
-    
-    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-    const firstPdam = pdamKeys[0];
-    const namaWilayah = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah[idxWilayah].nama;
-    
-    showConfirm("Hapus Wilayah", `Yakin hapus wilayah "${namaWilayah}"?`, () => {
-        prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah.splice(idxWilayah, 1);
-        renderWilayahList(indexArea);
-        checkPrabayarChange();
-    });
-}
-
-// >>> CARI WILAYAH <<<
-function searchWilayah(){
-    const input = document.getElementById('searchWilayahInput').value.toLowerCase();
-    const items = document.querySelectorAll('#listWilayah .wilayah-item');
-    
-    items.forEach(item => {
-        const text = item.querySelector('.nama-wilayah').innerText.toLowerCase();
-        if(text.includes(input)){
-            item.style.display = "block";
-        } else {
-            item.style.display = "none";
-        }
-    });
-}
-
-// >>> RENDER DAFTAR WILAYAH <<<
-function renderWilayahList(indexArea){
-    const container = document.getElementById("listWilayah");
-    if(!container) return;
-    
-    container.innerHTML = "";
-
-    const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-    const firstPdam = pdamKeys[0];
-    const wilayahs = prabayarData[currentMenuType][firstPdam].areas[indexArea].wilayah || [];
-
-    if(wilayahs.length === 0){
-        container.innerHTML = `<p class="text-center text-slate-400 py-5">Belum ada wilayah</p>`;
-        return;
-    }
-
-    wilayahs.forEach((wil, idx) => {
-        const div = document.createElement("div");
-        div.className = "wilayah-item";
-        div.innerHTML = `
-            <div class="flex justify-between items-start">
-                <div style="width: 100%;">
-                    <div class="font-medium text-slate-700 nama-wilayah">${wil.nama}</div>
-                    <!-- PERBAIKAN: GUNAKAN FLEX AGAR TULISAN SEJAJAR RATA ATAS -->
-                    <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 4px;">
-                        <span class="code-text">Kode Cek: ${wil.cek || ''}</span>
-                        <span class="code-text">Kode Bayar: ${wil.bayar || ''}</span>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button onclick="event.stopPropagation(); editWilayah(${indexArea}, ${idx})" class="btn btn-gray p-2 text-sm btn-edit-wilayah" title="Edit">
-                        <i data-lucide="edit-2" class="w-3 h-3" style="color: #333;"></i>
-                    </button>
-                    <button onclick="event.stopPropagation(); deleteWilayah(${indexArea}, ${idx})" class="btn btn-red p-2 text-sm btn-delete-wilayah" title="Hapus" style="display: none;">
-                        <i data-lucide="trash-2" class="w-3 h-3" style="color: white;"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // Event klik di luar item
-        document.addEventListener('click', function(e) {
-            if (!div.contains(e.target)) {
-                div.querySelector('.btn-delete-wilayah').style.display = 'none';
-                div.querySelector('.btn-edit-wilayah').style.display = 'inline-block';
-            }
-        });
-
-        // >>> PERUBAHAN: LONG PRESS HANYA PADA ICON EDIT <<<
-        const editBtn = div.querySelector('.btn-edit-wilayah');
-        let pressTimer;
-        
-        editBtn.addEventListener('touchstart', () => {
-            pressTimer = setTimeout(() => {
-                document.querySelectorAll('.btn-delete-wilayah').forEach(btn => btn.style.display = 'none');
-                document.querySelectorAll('.btn-edit-wilayah').forEach(btn => btn.style.display = 'inline-block');
-                
-                div.querySelector('.btn-delete-wilayah').style.display = 'inline-block';
-                div.querySelector('.btn-edit-wilayah').style.display = 'none';
-            }, 1000); // 1 DETIK
-        });
-
-        editBtn.addEventListener('touchend', () => {
-            clearTimeout(pressTimer);
-        });
-
-        div.addEventListener('click', () => {
-            div.querySelector('.btn-delete-wilayah').style.display = 'none';
-            div.querySelector('.btn-edit-wilayah').style.display = 'inline-block';
-        });
-
-        container.appendChild(div);
-    });
-    
-    lucide.createIcons();
-}
-
-// =========================================
-// === FUNGSI LAINNYA ===
+// >>> FUNGSI UMUM YANG DIPERBAIKI <<<
 // =========================================
 
 function toggleOperator(el){
     el.classList.toggle("open");
 }
 
+function attachInputListeners(){
+    // Hapus listener lama agar tidak dobel
+    document.querySelectorAll('.input-cek-harga, .input-nama-produk').forEach(input => {
+        input.removeEventListener('input', checkPrabayarChange);
+        input.addEventListener('input', checkPrabayarChange);
+    });
+}
+
 function checkPrabayarChange(){
     let changed = false;
 
     // Cek input biasa
-    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk");
-    inputs.forEach(input => {
+    document.querySelectorAll('.input-cek-harga, .input-nama-produk').forEach(input => {
         const op = input.dataset.operator;
-        const type = input.classList.contains("input-cek-harga") ? "cekHarga" : "namaProduk";
-        
-        if(input.value !== (originalPrabayarData[currentMenuType][op]?.[type] || "")){
+        const type = input.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
+        const originalVal = originalPrabayarData[currentMenuType][op]?.[type] || "";
+
+        if(input.value !== originalVal){
             changed = true;
         }
     });
 
-    // Cek struktur PDAM
-    const pdamKeys = Object.keys(prabayarData[currentMenuType] || {});
-    pdamKeys.forEach(key => {
-        const original = originalPrabayarData[currentMenuType][key];
-        const current = prabayarData[currentMenuType][key];
-        if(JSON.stringify(original) !== JSON.stringify(current)){
-            changed = true;
-        }
-    });
+    // Cek data PDAM (area & wilayah)
+    if(currentMenuType === "pdam"){
+        changed = true; // Asumsikan berubah jika ada interaksi
+    }
 
     if(changed){
         enableButton("savePrabayarBtn");
-    }else{
+    } else {
         disableButton("savePrabayarBtn");
     }
-}
-
-function confirmSavePrabayar(){
-    showConfirm("Konfirmasi", "Simpan perubahan data?", ()=>{
-        // Simpan ke localStorage
-        localStorage.setItem("prabayarData", JSON.stringify(prabayarData));
-        
-        // Update data asli
-        const pdamKeys = Object.keys(prabayarData[currentMenuType]);
-        pdamKeys.forEach(key => {
-            originalPrabayarData[currentMenuType][key] = JSON.parse(JSON.stringify(prabayarData[currentMenuType][key]));
-        });
-
-        toast("Data disimpan");
-        disableButton("savePrabayarBtn");
-    });
-}
-
-function enableButton(id){
-    const btn = document.getElementById(id);
-    if(!btn) return;
-    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
-    btn.classList.add("bg-cyan-600");
-    btn.disabled = false;
 }
 
 function disableButton(id){
     const btn = document.getElementById(id);
-    if(!btn) return;
-    btn.classList.add("bg-gray-400", "cursor-not-allowed");
-    btn.classList.remove("bg-cyan-600");
-    btn.disabled = true;
-}
-
-function showConfirm(title, msg, yesCallback, yesText="Ya"){
-    // Hapus confirm lama jika ada
-    const oldConfirm = document.getElementById("confirmModal");
-    if(oldConfirm) oldConfirm.remove();
-
-    const modal = document.createElement("div");
-    modal.id = "confirmModal";
-    modal.className = "hidden fixed inset-0 bg-black/50 z-[99999] flex items-center justify-center p-5";
-    modal.innerHTML = `
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
-            <h3 id="confirmTitle" class="text-xl font-bold text-gray-800 mb-2">${title}</h3>
-            <p id="confirmMessage" class="text-gray-600 mb-6">${msg}</p>
-            <div class="flex gap-3" id="confirmButtons">
-                <button onclick="closeConfirm()" class="flex-1 bg-gray-200 py-3 rounded-xl font-bold">Batal</button>
-                <button onclick="doConfirm()" class="flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold">${yesText}</button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    
-    confirmAction = yesCallback;
-    modal.classList.remove("hidden");
-}
-
-function closeConfirm(){
-    const el = document.getElementById("confirmModal");
-    if(el) el.remove();
-    confirmAction = null;
-}
-
-function doConfirm(){
-    if(confirmAction) confirmAction();
-    closeConfirm();
-}
-
-function toast(msg){
-    const el = document.getElementById("toast");
-    el.innerText = msg;
-    el.style.display = "block";
-    setTimeout(()=> el.style.display="none", 2000);
-}
-
-// === INIT ===
-window.onload = function(){
-    renderMenus();
-    const saved = localStorage.getItem("prabayarData");
-    if(saved){
-        try { prabayarData = JSON.parse(saved); } 
-        catch(e){ prabayarData = {}; }
+    if(btn){
+        btn.disabled = true;
+        btn.classList.add("bg-gray-400", "cursor-not-allowed");
+        btn.classList.remove("bg-cyan-600", "hover:bg-cyan-700");
     }
-};
+}
+
+function enableButton(id){
+    const btn = document.getElementById(id);
+    if(btn){
+        btn.disabled = false;
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        btn.classList.add("bg-cyan-600", "hover:bg-cyan-700");
+    }
+}
+
+function confirmSavePrabayar(){
+    // Simpan data dari input ke object
+    document.querySelectorAll('.input-cek-harga').forEach(input => {
+        const op = input.dataset.operator;
+        if(!prabayarData[currentMenuType][op]) prabayarData[currentMenuType][op] = {};
+        prabayarData[currentMenuType][op].cekHarga = input.value;
+    });
+    document.querySelectorAll('.input-nama-produk').forEach(input => {
+        const op = input.dataset.operator;
+        if(!prabayarData[currentMenuType][op]) prabayarData[currentMenuType][op] = {};
+        prabayarData[currentMenuType][op].namaProduk = input.value;
+    });
+
+    // Update original data
+    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+    
+    toast("Data berhasil disimpan!");
+    disableButton("savePrabayarBtn");
+}
+
+function toast(text){
+    const el = document.getElementById("toast");
+    el.innerText = text;
+    el.style.display = "block";
+    setTimeout(()=>{ el.style.display = "none"; }, 3000);
+}
+
+// >>> INISIALISASI AWAL <<<
+document.addEventListener("DOMContentLoaded", function(){
+    renderMenus();
+    lucide.createIcons();
+});
+
+// Klik di luar item untuk sembunyikan tombol hapus
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.wilayah-item')) {
+        document.querySelectorAll('.btn-delete-wilayah').forEach(btn => {
+            if(btn) btn.style.display = 'none';
+        });
+    }
+});
 </script>
 
 </body>
