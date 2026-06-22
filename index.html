@@ -999,7 +999,7 @@ function simpanWilayah(){
     // Cek duplikat
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     if(listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
-        showConfirm("Duplikat", "❌ Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
+        showConfirm("Duplikat", "❌","Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
         return;
@@ -1029,63 +1029,65 @@ function setupInteractions(){
     // Sembunyikan semua icon hapus dulu
     hideAllDeleteIcons();
 
-    // 1. KLIK ICON EDIT = GANTI NAMA
-    // 2. HOLD ICON EDIT 1 DETIK = MUNCULIN ICON HAPUS
+    // 1. SETTING ICON EDIT
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let pressTimer;
+        let isHoldAction = false;
 
-        // Event Mouse Down = mulai hitung waktu
+        // Ketika mouse ditekan
         icon.onmousedown = (e) => {
-            e.stopPropagation();
+            e.stopPropagation(); // Hentikan event supaya tidak nge-trigger klik item
+            isHoldAction = false;
+            
+            // Timer untuk hold 1 detik
             pressTimer = setTimeout(()=>{ 
-                // Tahan lebih dari 1 detik = tampilkan icon hapus
-                hideAllDeleteIcons(); // Sembunyikan yang lain dulu
-                icon.nextElementSibling.style.display = "inline"; 
+                isHoldAction = true; // Tandai ini aksi hold
+                hideAllDeleteIcons();
+                icon.nextElementSibling.style.display = "inline"; // Munculkan hapus
             }, 1000);
         };
 
-        // Event Mouse Up = jika kurang dari 1 detik berarti klik biasa
+        // Ketika mouse dilepas
         icon.onmouseup = (e) => {
             e.stopPropagation();
             clearTimeout(pressTimer);
+            
+            // Jika kurang dari 1 detik = klik biasa (EDIT)
+            if (!isHoldAction) {
+                const name = icon.dataset.name;
+                const idx = icon.dataset.index;
+                
+                if(name){ // Edit Area
+                    showPrompt("Edit Area", "Nama Area", name, (newName)=>{
+                        if(!newName || newName === name) return;
+                        if(prabayarData[currentMenuType][newName]){ 
+                            showConfirm("Duplikat", "Nama Area sudah ada.", ()=>{}, "Oke"); 
+                            return; 
+                        }
+                        prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][name];
+                        delete prabayarData[currentMenuType][name];
+                        openAreaModal();
+                        checkPrabayarChange();
+                    });
+                } else { // Edit Wilayah
+                    const old = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+                    showPrompt("Edit Wilayah", "Nama Wilayah", old.nama, (newName)=>{
+                        if(!newName || newName === old.nama) return;
+                        old.nama = newName;
+                        openWilayahModal(currentAreaName);
+                        checkPrabayarChange();
+                    });
+                }
+            }
         };
 
-        // Event Mouse Leave = batal jika kursor keluar
+        // Jika kursor keluar dari icon
         icon.onmouseleave = () => {
             clearTimeout(pressTimer);
         };
-
-        // Event Click biasa = edit nama
-        icon.onclick = function(e){
-            e.stopPropagation();
-            const name = this.dataset.name;
-            const idx = this.dataset.index;
-            
-            if(name){ // Edit Area
-                showPrompt("Edit Area", "Nama Area", name, (newName)=>{
-                    if(!newName || newName === name) return;
-                    if(prabayarData[currentMenuType][newName]){ 
-                        showConfirm("Duplikat", "Nama Area sudah ada.", ()=>{}, "Oke"); 
-                        return; 
-                    }
-                    prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][name];
-                    delete prabayarData[currentMenuType][name];
-                    openAreaModal();
-                    checkPrabayarChange();
-                });
-            } else { // Edit Wilayah
-                const old = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-                showPrompt("Edit Wilayah", "Nama Wilayah", old.nama, (newName)=>{
-                    if(!newName || newName === old.nama) return;
-                    old.nama = newName;
-                    openWilayahModal(currentAreaName);
-                    checkPrabayarChange();
-                });
-            }
-        };
     });
 
-    // 3. KLIK ICON HAPUS
+    // 2. KLIK ICON HAPUS
     document.querySelectorAll(".icon-delete").forEach(btn => {
         btn.onclick = function(e){
             e.stopPropagation();
@@ -1107,7 +1109,7 @@ function setupInteractions(){
         };
     });
 
-    // 4. KLIK DI LUAR = SEMBUNYIKAN ICON HAPUS
+    // 3. KLIK LUAR ATAU ITEM LAIN = SEMBUNYIKAN ICON HAPUS
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
@@ -1120,6 +1122,7 @@ function hideAllDeleteIcons(){
         el.style.display = "none";
     });
 }
+
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
