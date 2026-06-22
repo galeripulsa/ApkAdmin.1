@@ -769,6 +769,7 @@ function openPrabayar(){
 }
 
 // >>> FUNGSI BUKA MENU PASCA BAYAR <<<
+
 function openPascabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
@@ -809,6 +810,7 @@ function closePrabayar(){
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR AREA PDAM <<<
 // ==============================================
+
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
     
@@ -829,8 +831,8 @@ function openAreaModal(){
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
             <div class="actions">
-                <i class="icon-edit" data-name="${areaName}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
-                <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
+                <i class="icon-edit" data-name="${areaName}" data-lucide="edit-3" class="text-slate-500"></i>
+                <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="text-red-500 ml-2" style="display: none;"></i>
             </div>
         `;
 
@@ -844,8 +846,8 @@ function openAreaModal(){
         container.appendChild(div);
     });
 
-    // Event Hold to Delete
-    setupHoldToDelete();
+    // Pasang event edit & hold delete
+    setupInteractions();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -901,6 +903,7 @@ function simpanArea(){
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR WILAYAH <<<
 // ==============================================
+
 function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
@@ -922,14 +925,15 @@ function openWilayahModal(areaName){
                 <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
             </div>
             <div class="actions">
-                <i class="icon-edit" data-index="${idx}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
-                <i class="icon-delete" data-index="${idx}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
+                <i class="icon-edit" data-index="${idx}" data-lucide="edit-3" class="text-slate-500"></i>
+                <i class="icon-delete" data-index="${idx}" data-lucide="trash-2" class="text-red-500 ml-2" style="display: none;"></i>
             </div>
         `;
         container.appendChild(div);
     });
 
-    setupHoldToDelete();
+    // Pasang event edit & hold delete
+    setupInteractions();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -974,7 +978,7 @@ function simpanWilayah(){
     // Cek duplikat
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     if(listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
-        showConfirm("Duplikat", "❌","Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
+        showConfirm("Duplikat", "❌ Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
         return;
@@ -997,11 +1001,12 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 // ==============================================
-// >>> FUNGSI HOLD CLICK 1 DETIK UNTUK HAPUS <<<
+// >>> FUNGSI EDIT & HOLD CLICK 1 DETIK <<<
 // ==============================================
+
 function setupInteractions(){
-    // 1. KLIK EDIT = GANTI NAMA
-    document.querySelectorAll(".icon-edit").forEach(icon=>{
+    // 1. KLIK ICON EDIT = GANTI NAMA
+    document.querySelectorAll(".icon-edit").forEach(icon => {
         icon.onclick = function(e){
             e.stopPropagation();
             const name = this.dataset.name;
@@ -1009,22 +1014,23 @@ function setupInteractions(){
             
             if(name){ // Edit Area
                 showPrompt("Edit Area", "Nama Area", name, (newName)=>{
-                    if(!newName || newName===name) return;
+                    if(!newName || newName === name) return;
                     if(prabayarData[currentMenuType][newName]){ 
-                        showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{}, "Oke"); 
+                        showConfirm("Duplikat", "Nama Area sudah ada.", ()=>{}, "Oke"); 
                         return; 
                     }
                     prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][name];
                     delete prabayarData[currentMenuType][name];
                     openAreaModal();
+                    checkPrabayarChange();
                 });
             } else { // Edit Wilayah
                 const old = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
                 showPrompt("Edit Wilayah", "Nama Wilayah", old.nama, (newName)=>{
-                    if(!newName || newName===old.nama) return;
-                    // Bisa tambah edit kode juga kalau mau
+                    if(!newName || newName === old.nama) return;
                     old.nama = newName;
                     openWilayahModal(currentAreaName);
+                    checkPrabayarChange();
                 });
             }
         };
@@ -1041,49 +1047,39 @@ function setupInteractions(){
     });
 
     // 3. KLIK ICON HAPUS
-    document.querySelectorAll(".icon-delete").forEach(btn=>{
+    document.querySelectorAll(".icon-delete").forEach(btn => {
         btn.onclick = function(e){
             e.stopPropagation();
             const name = this.dataset.name;
             const idx = this.dataset.index;
-            showConfirm("Hapus", `Yakin hapus ${name ? 'Area "'+name+'"' : 'wilayah ini'}?`, ()=>{
+            const text = name ? `Area "${name}"` : `Wilayah ini`;
+            
+            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
                 if(name){
                     delete prabayarData[currentMenuType][name];
                     openAreaModal();
                 } else {
-                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(idx,1);
+                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
+                checkPrabayarChange();
             }, "Ya, Hapus");
         };
     });
 
-    // 4. KLIK LUAR ITEM = SEMBUNYIKAN ICON HAPUS
+    // 4. KLIK LUAR = SEMBUNYIKAN ICON HAPUS
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
         }
     });
-
-    // 5. FUNGSI SEARCH
-    document.getElementById("searchArea")?.addEventListener("input", function(){
-        const val = this.value.toLowerCase();
-        document.querySelectorAll(".area-item").forEach(item=>{
-            item.style.display = item.querySelector('span').innerText.toLowerCase().includes(val) ? "flex" : "none";
-        });
-    });
-
-    document.getElementById("searchWilayah")?.addEventListener("input", function(){
-        const val = this.value.toLowerCase();
-        document.querySelectorAll(".wilayah-item").forEach(item=>{
-            item.style.display = item.querySelector('div').innerText.toLowerCase().includes(val) ? "flex" : "none";
-        });
-    });
 }
 
-function hideAllDeleteIcons(){ 
-    document.querySelectorAll(".icon-delete").forEach(el=> el.style.display = "none"); 
+function hideAllDeleteIcons(){
+    document.querySelectorAll(".icon-delete").forEach(el => {
+        el.style.display = "none";
+    });
 }
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
@@ -1352,10 +1348,10 @@ function saveData(){
 
 function checkInputs(){
     let ok = true;
-    if(namaKonter.value.trim()==="" || alamatKonter.value.trim()==="") ok=false;
-    if(ipNama.value.trim()==="" || ipServer.value.trim()==="" || ipHost.value.trim()==="") ok=false;
-    if(jabberNama.value.trim()==="" || jabberServer.value.trim()==="" || jabberHost.value.trim()==="") ok=false;
-    if(waCenter.value.trim()==="" || smsCenter.value.trim()==="") ok=false;
+    if(namaKonter.value.trim()=="" || alamatKonter.value.trim()=="") ok=false;
+    if(ipNama.value.trim()=="" || ipServer.value.trim()=="" || ipHost.value.trim()=="") ok=false;
+    if(jabberNama.value.trim()=="" || jabberServer.value.trim()=="" || jabberHost.value.trim()=="") ok=false;
+    if(waCenter.value.trim()=="" || smsCenter.value.trim()=="") ok=false;
 
     if(ok) enableButton("saveServerBtn"); else disableButton("saveServerBtn");
     if(ok) enableButton("saveCenterBtn"); else disableButton("saveCenterBtn");
@@ -1435,7 +1431,7 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         btnNo.innerText = "Tidak";
         btnNo.onclick = ()=>{
             document.getElementById("confirmModal").classList.add("hidden");
-            noFunc();
+            if(noFunc) noFunc();
         };
         wrap.appendChild(btnNo);
     }
@@ -1451,6 +1447,7 @@ function toast(msg){
 
 // ===🆔🆔🆔🆔🆔 MENU TRANSAKSI ===
 let transaksiData = { menus: [] };
+
 let originalTransaksi = [];
 
 function renderTransaksiList(){
@@ -1604,6 +1601,7 @@ function showFormInput(title, contentHtml, okFunc){
 }
 
 // === PREVIEW ===
+
 function generatePreview(){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     const cont = document.getElementById("previewContent");
@@ -1620,6 +1618,7 @@ function generatePreview(){
 }
 
 // === INIT ===
+
 document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
@@ -1629,7 +1628,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 </script>
 
-<!-- MODAL DAFTAR OPERATOR/PRODUK -->
+<!--MODAL DAFTAR OPERATOR/PRODUK -->
 <div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
         <div class="sticky-header">
@@ -1642,7 +1641,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
         <div id="operatorListContainer" class="px-2">
-            <!-- Isi dari JS -->
+            <!--Isi dari JS -->
         </div>
     </div>
 </div>
