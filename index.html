@@ -780,7 +780,8 @@ function openPascabayar(){
 }
 
 function closePrabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none";
+    // >>> PERBAIKAN: Saat tutup modal, tombol menu utama MUNCUL LAGI <<<
+    document.getElementById("fixedButtonWrapper").style.display = "block";
     document.getElementById("prabayarModal").classList.remove("show");
 }
 
