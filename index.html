@@ -788,7 +788,7 @@ function closePrabayar(){
 // ==============================================
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
-    
+
     currentMenuType = "pdam";
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
@@ -857,7 +857,7 @@ function hideFormArea(){
 
 function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
-    
+
     // Cek duplikat
     if(prabayarData[currentMenuType][nama]){
         showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{
@@ -868,7 +868,7 @@ function simpanArea(){
 
     // Simpan data
     prabayarData[currentMenuType][nama] = { wilayah: [] };
-    
+
     hideFormArea();
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
@@ -959,7 +959,7 @@ function simpanWilayah(){
 
     // Simpan
     prabayarData[currentMenuType][currentAreaName].wilayah.push({nama, cek, bayar});
-    
+
     hideFormWilayah();
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
@@ -976,6 +976,9 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 // >>> FUNGSI HOLD CLICK 1 DETIK UNTUK HAPUS <<<
 // ==============================================
+let pressTimer;
+let isLongPress = false; // >>> VARIABEL BARU PENTING <<<
+
 function setupHoldToDelete(){
     // >>> EVENT HOLD CLICK DI ICON EDIT UNTUK MUNCULKAN ICON HAPUS <<<
     document.querySelectorAll(".icon-edit").forEach(icon => {
@@ -997,6 +1000,12 @@ function setupHoldToDelete(){
 
     // >>> KLIK ICON EDIT (BISA EDIT LANGSUNG) <<<
     $(document).off('click', '.icon-edit').on('click', '.icon-edit', function(e){
+        // >>> CEK APAKAH INI TEKAN LAMA ATAU KLIK BIASA <<<
+        if(isLongPress) {
+            isLongPress = false; // Reset status
+            return; // Kalau tekan lama, batalin buka edit
+        }
+
         e.stopPropagation(); // Mencegah event klik naik ke atas
         const $this = $(this);
 
@@ -1078,10 +1087,15 @@ function setupHoldToDelete(){
 
 function startPress(e){
     const icon = e.currentTarget;
+    isLongPress = false; // Reset dulu
+    
     pressTimer = setTimeout(() => {
+        isLongPress = true; // Tandai ini adalah tekan lama
         // Tampilkan icon hapus
-        icon.nextElementSibling.style.display = "inline";
-    }, 1000); // 1 detik
+        if(icon.nextElementSibling){
+            icon.nextElementSibling.style.display = "inline";
+        }
+    }, 600); // 0.6 detik biar responsif
 }
 
 function cancelPress(){
@@ -1444,7 +1458,7 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         btnNo.innerText = "Tidak";
         btnNo.onclick = ()=>{
             document.getElementById("confirmModal").classList.add("hidden");
-            noFunc();
+            if(noFunc) noFunc();
         };
         wrap.appendChild(btnNo);
     }
