@@ -264,35 +264,48 @@ body{
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important;
 }
 
-/* ========================================= */
-/* STYLE PENCARIAN DENGAN ICON DI DALAM */
-/* ========================================= */
-.search-wrapper {
+/* UKURAN ICON EDIT DIKECILKAN & STYLE PENCARIAN */
+.search-wrapper { 
     position: relative;
-    margin-bottom: 20px;
+    margin: 10px 0 15px 0;
     display: flex;
     align-items: center;
     background: white;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
     overflow: hidden;
-}
-
-.search-wrapper i {
+    }
+.search-wrapper i { 
     position: absolute;
     left: 15px;
     color: #94a3b8;
     pointer-events: none;
-}
-
+    }
 .search-wrapper input {
     width: 100%;
-    padding: 14px 15px 14px 45px;
+    padding: 12px 15px 12px 45px;
     border: none;
     outline: none;
-    font-size: 16px;
+    font-size: 14px;
     background: transparent;
-}
+    }
+
+.area-item .actions, .wilayah-item .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    }
+.icon-edit {
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer;
+    }
+.icon-delete {
+    width: 16px !important;
+    height: 16px !important;
+    display: none;
+    cursor: pointer;
+    }
 
 /* ========================================= */
 /* STYLE KHUSUS 2 KOLOM BERDAMPINGAN (PDAM) */
@@ -503,6 +516,11 @@ body{
                 <button onclick="showFormArea()" class="bg-cyan-600 text-white p-3 rounded-full btn-click">
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
+<!-- TAMBAHKAN INI DI DALAM STICKY HEADER AREA MODAL -->
+<div class="search-wrapper">
+    <i data-lucide="search" class="w-5 h-5"></i>
+    <input type="text" id="searchArea" placeholder="Cari Area...">
+</div>
             </div>
         </div>
 
@@ -544,6 +562,11 @@ body{
                 <button onclick="showFormWilayah()" class="bg-cyan-600 text-white p-3 rounded-full btn-click">
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
+<!-- TAMBAHKAN INI DI DALAM STICKY HEADER WILAYAH MODAL -->
+<div class="search-wrapper">
+    <i data-lucide="search" class="w-5 h-5"></i>
+    <input type="text" id="searchWilayah" placeholder="Cari Wilayah...">
+</div>
             </div>
         </div>
 
@@ -976,61 +999,91 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 // >>> FUNGSI HOLD CLICK 1 DETIK UNTUK HAPUS <<<
 // ==============================================
-function setupHoldToDelete(){
-    document.querySelectorAll(".icon-edit").forEach(icon => {
-        icon.addEventListener('mousedown', startPress);
-        icon.addEventListener('touchstart', startPress);
-        
-        icon.addEventListener('mouseup', cancelPress);
-        icon.addEventListener('touchend', cancelPress);
-        icon.addEventListener('mouseleave', cancelPress);
+function setupInteractions(){
+    // 1. KLIK EDIT = GANTI NAMA
+    document.querySelectorAll(".icon-edit").forEach(icon=>{
+        icon.onclick = function(e){
+            e.stopPropagation();
+            const name = this.dataset.name;
+            const idx = this.dataset.index;
+            
+            if(name){ // Edit Area
+                showPrompt("Edit Area", "Nama Area", name, (newName)=>{
+                    if(!newName || newName===name) return;
+                    if(prabayarData[currentMenuType][newName]){ 
+                        showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{}, "Oke"); 
+                        return; 
+                    }
+                    prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][name];
+                    delete prabayarData[currentMenuType][name];
+                    openAreaModal();
+                });
+            } else { // Edit Wilayah
+                const old = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+                showPrompt("Edit Wilayah", "Nama Wilayah", old.nama, (newName)=>{
+                    if(!newName || newName===old.nama) return;
+                    // Bisa tambah edit kode juga kalau mau
+                    old.nama = newName;
+                    openWilayahModal(currentAreaName);
+                });
+            }
+        };
+
+        // 2. HOLD 1 DETIK = MUNCULIN ICON HAPUS
+        let pressTimer;
+        icon.onmousedown = ()=> {
+            pressTimer = setTimeout(()=>{ 
+                icon.nextElementSibling.style.display = "inline"; 
+            }, 1000);
+        };
+        icon.onmouseup = ()=> clearTimeout(pressTimer);
+        icon.onmouseleave = ()=> clearTimeout(pressTimer);
     });
 
-    // Klik icon hapus
-    document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(){
-            const name = this.dataset.name || this.dataset.index;
-            const text = this.dataset.name ? `Area "${name}"` : `Wilayah ini`;
-            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-                if(this.dataset.name){
-                    // Hapus Area
-                    delete prabayarData[currentMenuType][this.dataset.name];
+    // 3. KLIK ICON HAPUS
+    document.querySelectorAll(".icon-delete").forEach(btn=>{
+        btn.onclick = function(e){
+            e.stopPropagation();
+            const name = this.dataset.name;
+            const idx = this.dataset.index;
+            showConfirm("Hapus", `Yakin hapus ${name ? 'Area "'+name+'"' : 'wilayah ini'}?`, ()=>{
+                if(name){
+                    delete prabayarData[currentMenuType][name];
                     openAreaModal();
                 } else {
-                    // Hapus Wilayah
-                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(this.dataset.index), 1);
+                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(idx,1);
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
-                checkPrabayarChange();
             }, "Ya, Hapus");
         };
     });
 
-    // Klik luar untuk sembunyikan icon hapus
+    // 4. KLIK LUAR ITEM = SEMBUNYIKAN ICON HAPUS
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
         }
     });
-}
 
-function startPress(e){
-    const icon = e.currentTarget;
-    pressTimer = setTimeout(() => {
-        // Tampilkan icon hapus
-        icon.nextElementSibling.style.display = "inline";
-    }, 1000); // 1 detik
-}
-
-function cancelPress(){
-    clearTimeout(pressTimer);
-}
-
-function hideAllDeleteIcons(){
-    document.querySelectorAll(".icon-delete").forEach(el => {
-        el.style.display = "none";
+    // 5. FUNGSI SEARCH
+    document.getElementById("searchArea")?.addEventListener("input", function(){
+        const val = this.value.toLowerCase();
+        document.querySelectorAll(".area-item").forEach(item=>{
+            item.style.display = item.querySelector('span').innerText.toLowerCase().includes(val) ? "flex" : "none";
+        });
     });
+
+    document.getElementById("searchWilayah")?.addEventListener("input", function(){
+        const val = this.value.toLowerCase();
+        document.querySelectorAll(".wilayah-item").forEach(item=>{
+            item.style.display = item.querySelector('div').innerText.toLowerCase().includes(val) ? "flex" : "none";
+        });
+    });
+}
+
+function hideAllDeleteIcons(){ 
+    document.querySelectorAll(".icon-delete").forEach(el=> el.style.display = "none"); 
 }
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
