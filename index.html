@@ -504,8 +504,9 @@ body{
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
             </div>
+
      <!-- KOLOM CARI -->
-        <div class="px-4 py-3">
+        <div class="px-4 py-4">
             <input type="text" id="cariArea" placeholder="Cari nama area..." 
                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
            </div>
@@ -559,6 +560,12 @@ body{
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
             </div>
+
+        <!-- KOLOM CARI -->
+        <div class="px-4 py-3">
+            <input type="text" id="cariWilayah" placeholder="Cari nama wilayah atau kode..." 
+                   class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+           </div>
         </div>
 
         <!-- FORM TAMBAH WILAYAH -->
@@ -582,12 +589,6 @@ body{
                 <button onclick="hideFormWilayah()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg">Batal</button>
                 <button id="btnSimpanWilayah" onclick="simpanWilayah()" class="px-4 py-2 bg-cyan-600 text-white rounded-lg opacity-50 cursor-not-allowed">Simpan</button>
             </div>
-        </div>
-
-        <!-- KOLOM CARI -->
-        <div class="px-4 py-3">
-            <input type="text" id="cariWilayah" placeholder="Cari nama wilayah atau kode..." 
-                   class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500">
         </div>
 
         <div id="wilayahListContainer">
@@ -773,6 +774,8 @@ function openPrabayar(){
     setTimeout(() => { lucide.createIcons(); }, 50);
 }
 
+// >>> 🅰️🅰️🅰️🅰️🅰️🅰️🅰️ <<<
+
 // >>> FUNGSI BUKA MENU PASCA BAYAR <<<
 function openPascabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
@@ -812,7 +815,7 @@ function closePrabayar(){
 }
 
 // ==============================================
-// >>> VARIABEL GLOBAL UNTUK CEK PERUBAHAN <<<
+// >>> VARIABEL GLOBAL WAJIB <<<
 // ==============================================
 let originalAreaData = "";
 let originalWilayahData = "";
@@ -828,7 +831,7 @@ function openAreaModal(){
         prabayarData[currentMenuType] = {};
     }
 
-    // Simpan data awal untuk bandingkan
+    // Simpan data awal
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 
     const modal = document.getElementById("areaModal");
@@ -863,7 +866,7 @@ function openAreaModal(){
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
-    disableButton("btnSimpanDaftarArea"); // Tombol mati awal
+    disableButton("btnSimpanDaftarArea"); // Mati awal
 }
 
 function backToPrabayar(){
@@ -910,7 +913,7 @@ function simpanArea(){
     hideFormArea();
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
-    checkAreaChange(); // Cek perubahan
+    checkAreaChange(); // <-- WAJIB DIPANGGIL
 }
 
 // ==============================================
@@ -951,7 +954,7 @@ function openWilayahModal(areaName){
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
-    disableButton("btnSimpanDaftarWilayah"); // Tombol mati awal
+    disableButton("btnSimpanDaftarWilayah"); // Mati awal
 }
 
 function backToArea(){
@@ -1005,7 +1008,7 @@ function simpanWilayah(){
     hideFormWilayah();
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
-    checkWilayahChange(); // Cek perubahan
+    checkWilayahChange(); // <-- WAJIB DIPANGGIL
 }
 
 // Pasang event listener untuk validasi form wilayah
@@ -1044,8 +1047,8 @@ function setupHoldToDelete(){
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
-                checkAreaChange();
-                checkWilayahChange();
+                checkAreaChange();  // <-- WAJIB
+                checkWilayahChange(); // <-- WAJIB
             }, "Ya, Hapus");
         };
     });
@@ -1076,7 +1079,7 @@ function hideAllDeleteIcons(){
     });
 }
 
-// >>> FUNGSI CEK PERUBAHAN AREA & WILAYAH <<<
+// >>> FUNGSI CEK PERUBAHAN <<<
 function checkAreaChange(){
     if(JSON.stringify(prabayarData[currentMenuType]) !== originalAreaData){
         enableButton("btnSimpanDaftarArea");
@@ -1669,15 +1672,15 @@ document.getElementById('cariWilayah').addEventListener('input', function() {
 function simpanDaftarArea() {
     saveData();
     toast("Daftar Area Berhasil Disimpan");
-    disableButton("btnSimpanDaftarArea"); // Mati lagi setelah simpan
-    originalAreaData = JSON.stringify(prabayarData[currentMenuType]); // Update data asli
+    disableButton("btnSimpanDaftarArea");
+    originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
 
 function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
-    disableButton("btnSimpanDaftarWilayah"); // Mati lagi setelah simpan
-    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah); // Update data asli
+    disableButton("btnSimpanDaftarWilayah");
+    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
 
 // === INIT ===
