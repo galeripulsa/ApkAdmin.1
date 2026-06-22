@@ -1026,8 +1026,36 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 
 function setupInteractions(){
+    // Sembunyikan semua icon hapus dulu
+    hideAllDeleteIcons();
+
     // 1. KLIK ICON EDIT = GANTI NAMA
+    // 2. HOLD ICON EDIT 1 DETIK = MUNCULIN ICON HAPUS
     document.querySelectorAll(".icon-edit").forEach(icon => {
+        let pressTimer;
+
+        // Event Mouse Down = mulai hitung waktu
+        icon.onmousedown = (e) => {
+            e.stopPropagation();
+            pressTimer = setTimeout(()=>{ 
+                // Tahan lebih dari 1 detik = tampilkan icon hapus
+                hideAllDeleteIcons(); // Sembunyikan yang lain dulu
+                icon.nextElementSibling.style.display = "inline"; 
+            }, 1000);
+        };
+
+        // Event Mouse Up = jika kurang dari 1 detik berarti klik biasa
+        icon.onmouseup = (e) => {
+            e.stopPropagation();
+            clearTimeout(pressTimer);
+        };
+
+        // Event Mouse Leave = batal jika kursor keluar
+        icon.onmouseleave = () => {
+            clearTimeout(pressTimer);
+        };
+
+        // Event Click biasa = edit nama
         icon.onclick = function(e){
             e.stopPropagation();
             const name = this.dataset.name;
@@ -1055,16 +1083,6 @@ function setupInteractions(){
                 });
             }
         };
-
-        // 2. HOLD 1 DETIK = MUNCULIN ICON HAPUS
-        let pressTimer;
-        icon.onmousedown = ()=> {
-            pressTimer = setTimeout(()=>{ 
-                icon.nextElementSibling.style.display = "inline"; 
-            }, 1000);
-        };
-        icon.onmouseup = ()=> clearTimeout(pressTimer);
-        icon.onmouseleave = ()=> clearTimeout(pressTimer);
     });
 
     // 3. KLIK ICON HAPUS
@@ -1089,7 +1107,7 @@ function setupInteractions(){
         };
     });
 
-    // 4. KLIK LUAR = SEMBUNYIKAN ICON HAPUS
+    // 4. KLIK DI LUAR = SEMBUNYIKAN ICON HAPUS
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
