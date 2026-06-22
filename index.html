@@ -1042,28 +1042,28 @@ function setupInteractions(){
     // 1. SETTING ICON EDIT
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let pressTimer;
-        let isHoldAction = false;
+        let isHold = false; // Tanda apakah ini aksi tahan lama
 
-        // Ketika mouse ditekan
+        // Saat mouse ditekan
         icon.onmousedown = (e) => {
-            e.stopPropagation(); // Hentikan event supaya tidak nge-trigger klik item
-            isHoldAction = false;
+            e.stopPropagation(); // ⛔ PENTING: Jangan tembus ke klik item
+            isHold = false;
             
-            // Timer untuk hold 1 detik
+            // Timer: Jika ditahan 1 detik
             pressTimer = setTimeout(()=>{ 
-                isHoldAction = true; // Tandai ini aksi hold
-                hideAllDeleteIcons();
+                isHold = true; // Tandai ini hold
+                hideAllDeleteIcons(); // Sembunyikan yang lain
                 icon.nextElementSibling.style.display = "inline"; // Munculkan hapus
             }, 1000);
         };
 
-        // Ketika mouse dilepas
+        // Saat mouse dilepas
         icon.onmouseup = (e) => {
             e.stopPropagation();
-            clearTimeout(pressTimer);
+            clearTimeout(pressTimer); // Hentikan timer
             
-            // Jika kurang dari 1 detik = klik biasa (EDIT)
-            if (!isHoldAction) {
+            // ✅ JIKA KURANG DARI 1 DETIK = EDIT NAMA
+            if (!isHold) {
                 const name = icon.dataset.name;
                 const idx = icon.dataset.index;
                 
@@ -1091,7 +1091,7 @@ function setupInteractions(){
             }
         };
 
-        // Jika kursor keluar dari icon
+        // Jika kursor keluar sebelum 1 detik
         icon.onmouseleave = () => {
             clearTimeout(pressTimer);
         };
@@ -1103,9 +1103,16 @@ function setupInteractions(){
             e.stopPropagation();
             const name = this.dataset.name;
             const idx = this.dataset.index;
-            const text = name ? `Area "${name}"` : `Wilayah ini`;
+            let textItem = "";
+
+            if(name){ // Hapus Area
+                textItem = `Area "${name}"`;
+            } else { // Hapus Wilayah
+                const wil = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+                textItem = `Wilayah "${wil.nama}"`;
+            }
             
-            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+            showConfirm("Hapus", `Yakin hapus ${textItem}?`, ()=>{
                 if(name){
                     delete prabayarData[currentMenuType][name];
                     openAreaModal();
@@ -1119,7 +1126,7 @@ function setupInteractions(){
         };
     });
 
-    // 3. KLIK LUAR ATAU ITEM LAIN = SEMBUNYIKAN ICON HAPUS
+    // 3. KLIK DI LUAR / ITEM LAIN = SEMBUNYIKAN HAPUS
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
