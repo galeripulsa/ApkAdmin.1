@@ -951,7 +951,7 @@ function simpanWilayah(){
     // Cek duplikat
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     if(listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
-        showConfirm("Duplikat", "Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
+        showConfirm("Duplikat", "❌","Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
         return;
@@ -1396,7 +1396,7 @@ function toast(msg){
     setTimeout(()=> el.style.display="none", 2500);
 }
 
-// === MENU TRANSAKSI ===
+// ===🆔🆔🆔🆔🆔 MENU TRANSAKSI ===
 let transaksiData = { menus: [] };
 let originalTransaksi = [];
 
