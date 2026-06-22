@@ -531,7 +531,7 @@ body{
      </div>
 <!-- TAMBAHKAN INI DI DALAM STICKY HEADER AREA MODAL -->
 <div class="search-wrapper">
-    <i data-lucide="search" class="w-5 h-2"></i>
+    <i data-lucide="search" class="w-5 h-5"></i>
     <input type="text" id="searchInput" onkeyup="searchItems()" placeholder="Cari...">
     </div>            
        
@@ -840,6 +840,12 @@ function openAreaModal(){
         prabayarData[currentMenuType] = {};
     }
 
+    // >>> TAMBAHKAN BARIS INI <<<
+    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+
+   
+
+
     const modal = document.getElementById("areaModal");
     const container = document.getElementById("areaListContainer");
 
@@ -929,6 +935,10 @@ function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
 
+    // >>> TAMBAHKAN BARIS INI <<<
+    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
+
+    
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
 
@@ -1281,18 +1291,55 @@ function attachInputListeners(){
 
 function checkPrabayarChange(){
     let changed = false;
+
+    // 1. CEK PERUBAHAN DI PRODUK (input teks)
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const inputs = wrap.querySelectorAll('input');
         inputs.forEach(inp => {
             const key = inp.dataset.operator;
             const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
-            const originalVal = originalPrabayarData[currentMenuType][key]?.[type] || "";
+            const originalVal = originalPrabayarData[currentMenuType]?.[key]?.[type] || "";
             if(inp.value !== originalVal){
                 changed = true;
             }
         });
     });
 
+    // 2. CEK PERUBAHAN DI AREA ATAU WILAYAH
+    // Jika ada data baru atau data berubah, maka changed = true
+    if (currentMenuType === "pdam") {
+        // Cek apakah jumlah area berubah
+        const currentAreaCount = Object.keys(prabayarData.pdam || {}).length;
+        const originalAreaCount = Object.keys(originalPrabayarData.pdam || {}).length;
+        
+        if(currentAreaCount !== originalAreaCount){
+            changed = true;
+        } else {
+            // Cek isi detail area & wilayah
+            for(const areaName in prabayarData.pdam){
+                const originalArea = originalPrabayarData.pdam?.[areaName];
+                if(!originalArea){
+                    changed = true;
+                    break;
+                }
+                // Cek jumlah wilayah
+                if(prabayarData.pdam[areaName].wilayah.length !== originalArea.wilayah.length){
+                    changed = true;
+                    break;
+                }
+                // Cek nama wilayah
+                for(let i=0; i<prabayarData.pdam[areaName].wilayah.length; i++){
+                    if(prabayarData.pdam[areaName].wilayah[i].nama !== originalArea.wilayah[i].nama){
+                        changed = true;
+                        break;
+                    }
+                }
+                if(changed) break;
+            }
+        }
+    }
+
+    // Aktifkan / Nonaktifkan tombol
     if(changed){
         enableButton("savePrabayarBtn");
     } else {
