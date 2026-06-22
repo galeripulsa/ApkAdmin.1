@@ -1290,10 +1290,9 @@ function renderAreaListMain(){
     areas.forEach((area, index) => {
         const div = document.createElement("div");
         div.className = "area-item";
-        // PERBAIKAN: KLIK AREA LANGSUNG BUKA WILAYAH
         div.style.cursor = "pointer";
+        // KLIK AREA LANGSUNG BUKA WILAYAH
         div.onclick = function(e) {
-            // Jangan jalan kalau yang diklik adalah tombol
             if(!e.target.closest('button')) {
                 openModalWilayah(${index});
             }
@@ -1330,7 +1329,6 @@ function setupLongPressEvents(){
     let pressTimer;
 
     document.querySelectorAll('.btn-edit-area').forEach(btn => {
-        // Hapus event lama agar tidak dobel
         btn.removeEventListener('mousedown', startPress);
         btn.removeEventListener('touchstart', startPress);
         btn.removeEventListener('mouseup', cancelPress);
@@ -1341,12 +1339,10 @@ function setupLongPressEvents(){
             e.preventDefault();
             const index = this.dataset.index;
             pressTimer = setTimeout(() => {
-                // Sembunyikan semua tombol hapus lain
                 document.querySelectorAll('.btn-delete-area').forEach(b => b.style.display = 'none');
-                // Tampilkan tombol hapus yang bersangkutan
                 const deleteBtn = this.parentElement.querySelector('.btn-delete-area');
                 if(deleteBtn) deleteBtn.style.display = 'inline-flex';
-            }, 500); // 500ms = klik lama
+            }, 500);
         }
 
         function cancelPress() {
@@ -1359,14 +1355,12 @@ function setupLongPressEvents(){
         btn.addEventListener('touchend', cancelPress);
         btn.addEventListener('mouseleave', cancelPress);
         
-        // Tambah fungsi edit saat klik biasa
         btn.onclick = function() {
             editArea(this.dataset.index);
         }
     });
 
-    // Klik di luar untuk sembunyikan
-    document.removeEventListener('click', hideAllDeleteButtons);
+    // KLIK DI LUAR UNTUK SEMBUNYIKAN
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.action-buttons')) {
             document.querySelectorAll('.btn-delete-area').forEach(btn => {
@@ -1397,15 +1391,18 @@ function openModalWilayah(areaIndex){
                     <h4 class="font-bold mb-3">Tambah Wilayah Baru</h4>
                     <div class="double-input">
                         <div class="floating">
-                            <input type="text" id="inputKodeWilayah" placeholder=" ">
+                            <input type="text" id="inputKodeWilayah" placeholder=" " oninput="checkWilayahForm(${areaIndex})">
                             <label>Kode / Prefiks</label>
                         </div>
                         <div class="floating">
-                            <input type="text" id="inputNamaWilayah" placeholder=" ">
+                            <input type="text" id="inputNamaWilayah" placeholder=" " oninput="checkWilayahForm(${areaIndex})">
                             <label>Nama Wilayah</label>
                         </div>
                     </div>
-                    <button onclick="saveWilayah(${areaIndex})" class="btn btn-cyan w-full mt-3">
+                    <button id="btnSaveWilayah${areaIndex}" 
+                            onclick="saveWilayah(${areaIndex})" 
+                            class="btn btn-cyan w-full mt-3" 
+                            disabled>
                         <i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah Wilayah
                     </button>
                 </div>
@@ -1421,6 +1418,23 @@ function openModalWilayah(areaIndex){
     
     renderWilayahList(areaIndex);
     lucide.createIcons();
+}
+
+// >>> CEK FORM WILAYAH AGAR TOMBOL AKTIF KALO SUDAH LENGKAP <<<
+function checkWilayahForm(areaIndex){
+    const kode = document.getElementById("inputKodeWilayah").value.trim();
+    const nama = document.getElementById("inputNamaWilayah").value.trim();
+    const btn = document.getElementById(`btnSaveWilayah${areaIndex}`);
+
+    if(kode !== "" && nama !== ""){
+        btn.disabled = false;
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        btn.classList.add("bg-cyan-600", "hover:bg-cyan-700");
+    } else {
+        btn.disabled = true;
+        btn.classList.add("bg-gray-400", "cursor-not-allowed");
+        btn.classList.remove("bg-cyan-600", "hover:bg-cyan-700");
+    }
 }
 
 function closeModalWilayah(){
@@ -1456,6 +1470,11 @@ function saveWilayah(areaIndex){
 
     document.getElementById("inputKodeWilayah").value = "";
     document.getElementById("inputNamaWilayah").value = "";
+    
+    // Nonaktifkan lagi tombol setelah simpan
+    const btn = document.getElementById(`btnSaveWilayah${areaIndex}`);
+    btn.disabled = true;
+    btn.classList.add("bg-gray-400", "cursor-not-allowed");
 
     renderWilayahList(areaIndex);
     checkPrabayarChange();
@@ -1502,6 +1521,11 @@ function editWilayah(areaIndex, wilIndex){
 
     document.getElementById("inputKodeWilayah").value = wilData.kode;
     document.getElementById("inputNamaWilayah").value = wilData.nama;
+
+    // Aktifkan tombol
+    const btn = document.getElementById(`btnSaveWilayah${areaIndex}`);
+    btn.disabled = false;
+    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
 
     // Hapus lama
     areaData.wilayah.splice(wilIndex, 1);
@@ -1551,7 +1575,6 @@ function toggleOperator(el){
 }
 
 function attachInputListeners(){
-    // Hapus listener lama agar tidak dobel
     document.querySelectorAll('.input-cek-harga, .input-nama-produk').forEach(input => {
         input.removeEventListener('input', checkPrabayarChange);
         input.addEventListener('input', checkPrabayarChange);
@@ -1561,7 +1584,6 @@ function attachInputListeners(){
 function checkPrabayarChange(){
     let changed = false;
 
-    // Cek input biasa
     document.querySelectorAll('.input-cek-harga, .input-nama-produk').forEach(input => {
         const op = input.dataset.operator;
         const type = input.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
@@ -1572,9 +1594,8 @@ function checkPrabayarChange(){
         }
     });
 
-    // Cek data PDAM (area & wilayah)
     if(currentMenuType === "pdam"){
-        changed = true; // Asumsikan berubah jika ada interaksi
+        changed = true;
     }
 
     if(changed){
@@ -1603,7 +1624,6 @@ function enableButton(id){
 }
 
 function confirmSavePrabayar(){
-    // Simpan data dari input ke object
     document.querySelectorAll('.input-cek-harga').forEach(input => {
         const op = input.dataset.operator;
         if(!prabayarData[currentMenuType][op]) prabayarData[currentMenuType][op] = {};
@@ -1615,7 +1635,6 @@ function confirmSavePrabayar(){
         prabayarData[currentMenuType][op].namaProduk = input.value;
     });
 
-    // Update original data
     originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
     
     toast("Data berhasil disimpan!");
@@ -1658,15 +1677,6 @@ function toast(text){
 document.addEventListener("DOMContentLoaded", function(){
     renderMenus();
     lucide.createIcons();
-});
-
-// Klik di luar item untuk sembunyikan tombol hapus
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.wilayah-item')) {
-        document.querySelectorAll('.btn-delete-wilayah').forEach(btn => {
-            if(btn) btn.style.display = 'none';
-        });
-    }
 });
 </script>
 
