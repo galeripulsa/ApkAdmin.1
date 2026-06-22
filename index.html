@@ -745,7 +745,6 @@ function openPrabayar(){
     setTimeout(() => { lucide.createIcons(); }, 50);
 }
 
-// >>> 🅰️🅰️🅰️🅰️🅰️🅰️🅰️ <<<
 // >>> FUNGSI BUKA MENU PASCA BAYAR <<<
 function openPascabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
@@ -780,18 +779,16 @@ function openPascabayar(){
 }
 
 function closePrabayar(){
-    // >>> PERBAIKAN: Saat tutup modal, tombol menu utama MUNCUL LAGI <<<
-    document.getElementById("fixedButtonWrapper").style.display = "block";
+    document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("prabayarModal").classList.remove("show");
 }
-
 
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR AREA PDAM <<<
 // ==============================================
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
-
+    
     currentMenuType = "pdam";
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
@@ -860,7 +857,7 @@ function hideFormArea(){
 
 function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
-
+    
     // Cek duplikat
     if(prabayarData[currentMenuType][nama]){
         showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{
@@ -871,7 +868,7 @@ function simpanArea(){
 
     // Simpan data
     prabayarData[currentMenuType][nama] = { wilayah: [] };
-
+    
     hideFormArea();
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
@@ -962,7 +959,7 @@ function simpanWilayah(){
 
     // Simpan
     prabayarData[currentMenuType][currentAreaName].wilayah.push({nama, cek, bayar});
-
+    
     hideFormWilayah();
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
@@ -979,126 +976,51 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 // >>> FUNGSI HOLD CLICK 1 DETIK UNTUK HAPUS <<<
 // ==============================================
-let pressTimer;
-let isLongPress = false;
-
 function setupHoldToDelete(){
-    // >>> EVENT HOLD CLICK DI ICON EDIT UNTUK MUNCULKAN ICON HAPUS <<<
     document.querySelectorAll(".icon-edit").forEach(icon => {
-        // Hapus event lama dulu biar nggak numpuk
-        icon.removeEventListener('mousedown', startPress);
-        icon.removeEventListener('touchstart', startPress);
-        icon.removeEventListener('mouseup', cancelPress);
-        icon.removeEventListener('touchend', cancelPress);
-        icon.removeEventListener('mouseleave', cancelPress);
-
-        // Pasang event baru
         icon.addEventListener('mousedown', startPress);
         icon.addEventListener('touchstart', startPress);
-
+        
         icon.addEventListener('mouseup', cancelPress);
         icon.addEventListener('touchend', cancelPress);
         icon.addEventListener('mouseleave', cancelPress);
     });
 
-    // >>> KLIK ICON EDIT (BISA EDIT LANGSUNG) <<<
-    $(document).off('click', '.icon-edit').on('click', '.icon-edit', function(e){
-        // >>> CEK APAKAH INI TEKAN LAMA ATAU KLIK BIASA <<<
-        if(isLongPress) {
-            isLongPress = false; // Reset status
-            return; // Kalau tekan lama, batalin buka edit
-        }
-
-        e.stopPropagation(); // Mencegah event klik naik ke atas
-        const $this = $(this);
-
-        if($this.data('name')){
-            // EDIT AREA
-            const oldName = $this.data('name');
-            showPrompt("Edit Area", "Nama Area", oldName, (newName) => {
-                if(!newName || newName === oldName) return;
-
-                if(prabayarData[currentMenuType][newName]){
-                    toast("Nama sudah ada!");
-                    return;
-                }
-
-                prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][oldName];
-                delete prabayarData[currentMenuType][oldName];
-
-                openAreaModal();
-                toast("Area Berhasil Diubah");
-                checkPrabayarChange();
-            });
-        } else if($this.data('index') !== undefined){
-            // EDIT WILAYAH
-            const idx = parseInt($this.data('index'));
-            const wil = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-
-            showFormInput("Edit Wilayah", `
-                <div class="floating"><input id="editNama" placeholder=" " value="${wil.nama}"><label>Nama Wilayah</label></div>
-                <div class="double-input">
-                    <div class="floating"><input id="editCek" placeholder=" " value="${wil.cek}"><label>Kode Cek</label></div>
-                    <div class="floating"><input id="editBayar" placeholder=" " value="${wil.bayar}"><label>Kode Bayar</label></div>
-                </div>
-            `, () => {
-                const nama = document.getElementById("editNama").value.trim();
-                const cek = document.getElementById("editCek").value.trim();
-                const bayar = document.getElementById("editBayar").value.trim();
-
-                if(nama && cek && bayar){
-                    prabayarData[currentMenuType][currentAreaName].wilayah[idx] = {nama, cek, bayar};
-                    openWilayahModal(currentAreaName);
-                    toast("Wilayah Berhasil Diubah");
-                    checkPrabayarChange();
+    // Klik icon hapus
+    document.querySelectorAll(".icon-delete").forEach(btn => {
+        btn.onclick = function(){
+            const name = this.dataset.name || this.dataset.index;
+            const text = this.dataset.name ? `Area "${name}"` : `Wilayah ini`;
+            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+                if(this.dataset.name){
+                    // Hapus Area
+                    delete prabayarData[currentMenuType][this.dataset.name];
+                    openAreaModal();
                 } else {
-                    toast("Lengkapi semua data!");
+                    // Hapus Wilayah
+                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(this.dataset.index), 1);
+                    openWilayahModal(currentAreaName);
                 }
-            });
-        }
-        hideAllDeleteIcons();
-    });
-
-    // >>> KLIK ICON HAPUS <<<
-    $(document).off('click', '.icon-delete').on('click', '.icon-delete', function(e){
-        e.stopPropagation();
-        const $this = $(this);
-        const name = $this.data('name') || $this.data('index');
-        const text = $this.data('name') ? `Area "${name}"` : `Wilayah ini`;
-
-        showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-            if($this.data('name')){
-                delete prabayarData[currentMenuType][$this.data('name')];
-                openAreaModal();
-            } else {
-                prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt($this.data('index')), 1);
-                openWilayahModal(currentAreaName);
-            }
-            toast("Berhasil dihapus");
-            checkPrabayarChange();
-        }, "Ya, Hapus");
+                toast("Berhasil dihapus");
+                checkPrabayarChange();
+            }, "Ya, Hapus");
+        };
     });
 
     // Klik luar untuk sembunyikan icon hapus
-    $(document).off('click.hideDelete').on('click.hideDelete', function(e){
-        if(!$(e.target).closest('.actions').length){
+    document.addEventListener('click', function(e){
+        if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
         }
     });
 }
 
-
 function startPress(e){
     const icon = e.currentTarget;
-    isLongPress = false; // Reset dulu
-    
     pressTimer = setTimeout(() => {
-        isLongPress = true; // Tandai ini adalah tekan lama
         // Tampilkan icon hapus
-        if(icon.nextElementSibling){
-            icon.nextElementSibling.style.display = "inline";
-        }
-    }, 600); // 0.6 detik biar responsif
+        icon.nextElementSibling.style.display = "inline";
+    }, 1000); // 1 detik
 }
 
 function cancelPress(){
@@ -1218,8 +1140,7 @@ function openOperatorListPascabayar(title, actionType){
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
         originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || ""};
 
-
-        const wrapper = document.createElement("div");
+       const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
         wrapper.dataset.productname = itemName.toLowerCase();
         wrapper.innerHTML = `
@@ -1461,7 +1382,7 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         btnNo.innerText = "Tidak";
         btnNo.onclick = ()=>{
             document.getElementById("confirmModal").classList.add("hidden");
-            if(noFunc) noFunc();
+            noFunc();
         };
         wrap.appendChild(btnNo);
     }
