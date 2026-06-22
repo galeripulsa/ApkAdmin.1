@@ -960,7 +960,8 @@ function openOperatorList(title, actionType){
     attachInputListeners();
 }
 
-// >>> FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
+// >>> 🅰️🅰️🅰️🅰️🅰️FUNGSI BUKA DAFTAR PRODUK PASCA BAYAR <<<
+
 function openOperatorListPascabayar(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
 
@@ -1370,7 +1371,7 @@ function setupLongPressEvents(){
     });
 }
 
-// >>> 3. MODAL DAFTAR WILAYAH (FULL SCREEN) <<<
+// >>> 3. MODAL DAFTAR WILAYAH <<<
 function openModalWilayah(areaIndex){
     const areaData = prabayarData[currentMenuType][Object.keys(prabayarData[currentMenuType])[0]].areas[areaIndex];
 
@@ -1402,7 +1403,8 @@ function openModalWilayah(areaIndex){
                     <button id="btnSaveWilayah${areaIndex}" 
                             onclick="saveWilayah(${areaIndex})" 
                             class="btn btn-cyan w-full mt-3" 
-                            disabled>
+                            disabled
+                            style="opacity: 0.5; cursor: not-allowed;">
                         <i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah Wilayah
                     </button>
                 </div>
@@ -1428,12 +1430,16 @@ function checkWilayahForm(areaIndex){
 
     if(kode !== "" && nama !== ""){
         btn.disabled = false;
-        btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        btn.style.opacity = "1";
+        btn.style.cursor = "pointer";
+        btn.classList.remove("bg-gray-400");
         btn.classList.add("bg-cyan-600", "hover:bg-cyan-700");
     } else {
         btn.disabled = true;
-        btn.classList.add("bg-gray-400", "cursor-not-allowed");
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
         btn.classList.remove("bg-cyan-600", "hover:bg-cyan-700");
+        btn.classList.add("bg-gray-400");
     }
 }
 
@@ -1474,7 +1480,8 @@ function saveWilayah(areaIndex){
     // Nonaktifkan lagi tombol setelah simpan
     const btn = document.getElementById(`btnSaveWilayah${areaIndex}`);
     btn.disabled = true;
-    btn.classList.add("bg-gray-400", "cursor-not-allowed");
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
 
     renderWilayahList(areaIndex);
     checkPrabayarChange();
@@ -1525,7 +1532,8 @@ function editWilayah(areaIndex, wilIndex){
     // Aktifkan tombol
     const btn = document.getElementById(`btnSaveWilayah${areaIndex}`);
     btn.disabled = false;
-    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
 
     // Hapus lama
     areaData.wilayah.splice(wilIndex, 1);
