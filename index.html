@@ -46,7 +46,6 @@ body{
 }
 
 /* STYLE FLOATING LABEL (GLOBAL) */
-
 .floating{
     position:relative;
     margin-top:20px;
@@ -137,9 +136,8 @@ body{
 }
 
 /* ========================================= */
-/* STYLE MODAL PRABAYAR – FULL SCREEN SCROLL */
+/* STYLE MODAL PRABAYAR - FULL SCREEN SCROLL */
 /* ========================================= */
-
 .submenu-modal {
     position: fixed;
     top: 0;
@@ -192,7 +190,6 @@ body{
 /* ========================================= */
 /* STYLE ITEM OPERATOR DENGAN FORM DI BAWAH */
 /* ========================================= */
-
 .operator-wrapper {
     background: #f8fafc;
     border-radius: 12px;
@@ -241,7 +238,6 @@ body{
 /* ========================================= */
 /* STYLE HEADER STICKY (TIDAK IKUT SCROLL) */
 /* ========================================= */
-
 .sticky-header {
     position: sticky;
     top: 0;
@@ -256,7 +252,6 @@ body{
 /* ========================================= */
 /* >>> PERBAIKAN MUTLAK: TOMBOL FIXED BENAR */
 /* ========================================= */
-
 .fixed-button-container {
     position: fixed !important;
     bottom: 0 !important;
@@ -272,7 +267,6 @@ body{
 /* ========================================= */
 /* STYLE PENCARIAN DENGAN ICON DI DALAM */
 /* ========================================= */
-
 .search-wrapper {
     position: relative;
     margin-bottom: 20px;
@@ -303,7 +297,6 @@ body{
 /* ========================================= */
 /* STYLE KHUSUS 2 KOLOM BERDAMPINGAN (PDAM) */
 /* ========================================= */
-
 .double-input {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -313,7 +306,6 @@ body{
 /* ========================================= */
 /* STYLE UNTUK ITEM YANG DITAMBAH DINAMIS */
 /* ========================================= */
-
 .product-item {
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -325,7 +317,6 @@ body{
 /* ========================================= */
 /* STYLE KHUSUS AREA & WILAYAH PDAM */
 /* ========================================= */
-
 .area-item, .wilayah-item {
     background: white;
     border-radius: 12px;
@@ -343,23 +334,7 @@ body{
     align-items: center;
 }
 
-/* ========================================= */
-/* ✅ UKURAN ICON EDIT & DELETE JADI KECIL */
-/* ========================================= */
-.icon-edit { 
-    width: 16px !important; 
-    height: 16px !important; 
-    cursor: pointer; 
-}
-.icon-delete { 
-    width: 16px !important; 
-    height: 16px !important; 
-    display: none; 
-    cursor: pointer; 
-}
-
 /* STYLE FORM INPUT */
-
 .form-popup {
     background: #f8fafc;
     border-radius: 12px;
@@ -368,7 +343,6 @@ body{
     border: 1px solid #e2e8f0;
 }
 </style>
-
 
 </head>
 
@@ -514,8 +488,9 @@ body{
     </div>
 </div>
 
-
-<!-- 🆔MODAL DAFTAR AREA PDAM -->
+<!-- ========================================= -->
+<!-- MODAL DAFTAR AREA PDAM -->
+<!-- ========================================= -->
 <div id="areaModal" class="submenu-modal">
     <div class="submenu-content">
         <!-- HEADER STICKY -->
@@ -528,13 +503,9 @@ body{
                 <button onclick="showFormArea()" class="bg-cyan-600 text-white p-3 rounded-full btn-click">
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
-     </div>
-<!-- TAMBAHKAN INI DI DALAM STICKY HEADER AREA MODAL -->
-<div class="search-wrapper">
-    <i data-lucide="search" class="w-5 h-5"></i>
-    <input type="text" id="searchInput" onkeyup="searchItems()" placeholder="Cari...">
-    </div>            
-       
+            </div>
+        </div>
+
         <!-- FORM TAMBAH AREA (AWALNYA HILANG) -->
         <div id="formAreaContainer" class="form-popup" style="display: none;">
             <h4 class="font-bold text-slate-700 mb-3">Tambah Area Baru</h4>
@@ -554,14 +525,10 @@ body{
 
     </div>
 </div>
-<!-- Tombol Simpan -->
-<div class="fixed-button-container">
-    <button id="btnSimpanAreaGlobal" onclick="saveData()" class="w-full bg-cyan-600 text-white py-3 rounded-xl font-bold opacity-50 cursor-not-allowed" disabled>
-        Simpan Perubahan
-    </button>
-</div>
 
-<!-- 🆔🆔MODAL DAFTAR WILAYAH -->
+<!-- ========================================= -->
+<!-- MODAL DAFTAR WILAYAH -->
+<!-- ========================================= -->
 <div id="wilayahModal" class="submenu-modal">
     <div class="submenu-content">
         <!-- HEADER STICKY -->
@@ -571,19 +538,13 @@ body{
                     <i data-lucide="arrow-left" class="w-7 h-7"></i>
                 </button>
                 <div class="text-center">
-<p class="text-xl font-bold text-slate-800">Daftar Wilayah</p>
-                    <h3 id="namaAreaTitle" class="text-SM font-bold text-slate-500">Nama Area</h3>                  
+                    <h3 id="namaAreaTitle" class="text-xl font-bold text-slate-800">Nama Area</h3>
+                    <p class="text-sm text-slate-500">Daftar Wilayah</p>
                 </div>
                 <button onclick="showFormWilayah()" class="bg-cyan-600 text-white p-3 rounded-full btn-click">
                     <i data-lucide="plus" class="w-7 h-7"></i>
                 </button>
             </div>
-<!-- TAMBAHKAN INI DI DALAM STICKY HEADER WILAYAH MODAL -->
-<div class="search-wrapper">
-    <i data-lucide="search" class="w-5 h-5"></i>
-    <input type="text" id="searchWilayah" placeholder="Cari Wilayah...">
-</div>
-
         </div>
 
         <!-- FORM TAMBAH WILAYAH -->
@@ -615,12 +576,7 @@ body{
 
     </div>
 </div>
-<!-- Tombol Simpan -->
-<div class="fixed-button-container">
-    <button id="btnSimpanWilayahGlobal" onclick="saveData()" class="w-full bg-cyan-600 text-white py-3 rounded-xl font-bold opacity-50 cursor-not-allowed" disabled>
-        Simpan Perubahan
-    </button>
-</div>
+
 <!-- ========================================= -->
 <!-- TOMBOL SIMPAN DITAROH DI LUAR BIAR FIXED -->
 <!-- ========================================= -->
@@ -789,8 +745,7 @@ function openPrabayar(){
     setTimeout(() => { lucide.createIcons(); }, 50);
 }
 
-// >>> 🅱️🅱️🅱️🅱️🅱️FUNGSI BUKA MENU PASCA BAYAR <<<
-
+// >>> FUNGSI BUKA MENU PASCA BAYAR <<<
 function openPascabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
@@ -831,7 +786,6 @@ function closePrabayar(){
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR AREA PDAM <<<
 // ==============================================
-
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
     
@@ -839,12 +793,6 @@ function openAreaModal(){
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
-
-    // >>> TAMBAHKAN BARIS INI <<<
-    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
-
-   
-
 
     const modal = document.getElementById("areaModal");
     const container = document.getElementById("areaListContainer");
@@ -858,8 +806,8 @@ function openAreaModal(){
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
             <div class="actions">
-                <i class="icon-edit" data-name="${areaName}" data-lucide="edit-3" class="text-slate-500"></i>
-                <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="text-red-500 ml-2" style="display: none;"></i>
+                <i class="icon-edit" data-name="${areaName}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
+                <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
             </div>
         `;
 
@@ -873,8 +821,8 @@ function openAreaModal(){
         container.appendChild(div);
     });
 
-    // Pasang event edit & hold delete
-    setupInteractions();
+    // Event Hold to Delete
+    setupHoldToDelete();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -930,15 +878,10 @@ function simpanArea(){
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR WILAYAH <<<
 // ==============================================
-
 function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
 
-    // >>> TAMBAHKAN BARIS INI <<<
-    originalPrabayarData = JSON.parse(JSON.stringify(prabayarData));
-
-    
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
 
@@ -956,15 +899,14 @@ function openWilayahModal(areaName){
                 <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
             </div>
             <div class="actions">
-                <i class="icon-edit" data-index="${idx}" data-lucide="edit-3" class="text-slate-500"></i>
-                <i class="icon-delete" data-index="${idx}" data-lucide="trash-2" class="text-red-500 ml-2" style="display: none;"></i>
+                <i class="icon-edit" data-index="${idx}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
+                <i class="icon-delete" data-index="${idx}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
             </div>
         `;
         container.appendChild(div);
     });
 
-    // Pasang event edit & hold delete
-    setupInteractions();
+    setupHoldToDelete();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -1009,7 +951,7 @@ function simpanWilayah(){
     // Cek duplikat
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     if(listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
-        showConfirm("Duplikat","Nama Wilayah sudah ada.", ()=>{
+        showConfirm("Duplikat", "Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
         return;
@@ -1032,92 +974,31 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 // ==============================================
-// >>> FUNGSI EDIT & HOLD CLICK 1 DETIK <<<
+// >>> FUNGSI HOLD CLICK 1 DETIK UNTUK HAPUS <<<
 // ==============================================
-
-function setupInteractions(){
-    // Sembunyikan semua icon hapus dulu
-    hideAllDeleteIcons();
-
-    // 1. SETTING ICON EDIT
+function setupHoldToDelete(){
     document.querySelectorAll(".icon-edit").forEach(icon => {
-        let pressTimer;
-        let isHold = false; // Tanda apakah ini aksi tahan lama
-
-        // Saat mouse ditekan
-        icon.onmousedown = (e) => {
-            e.stopPropagation(); // ⛔ PENTING: Jangan tembus ke klik item
-            isHold = false;
-            
-            // Timer: Jika ditahan 1 detik
-            pressTimer = setTimeout(()=>{ 
-                isHold = true; // Tandai ini hold
-                hideAllDeleteIcons(); // Sembunyikan yang lain
-                icon.nextElementSibling.style.display = "inline"; // Munculkan hapus
-            }, 1000);
-        };
-
-        // Saat mouse dilepas
-        icon.onmouseup = (e) => {
-            e.stopPropagation();
-            clearTimeout(pressTimer); // Hentikan timer
-            
-            // ✅ JIKA KURANG DARI 1 DETIK = EDIT NAMA
-            if (!isHold) {
-                const name = icon.dataset.name;
-                const idx = icon.dataset.index;
-                
-                if(name){ // Edit Area
-                    showPrompt("Edit Area", "Nama Area", name, (newName)=>{
-                        if(!newName || newName === name) return;
-                        if(prabayarData[currentMenuType][newName]){ 
-                            showConfirm("Duplikat", "Nama Area sudah ada.", ()=>{}, "Oke"); 
-                            return; 
-                        }
-                        prabayarData[currentMenuType][newName] = prabayarData[currentMenuType][name];
-                        delete prabayarData[currentMenuType][name];
-                        openAreaModal();
-                        checkPrabayarChange();
-                    });
-                } else { // Edit Wilayah
-                    const old = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-                    showPrompt("Edit Wilayah", "Nama Wilayah", old.nama, (newName)=>{
-                        if(!newName || newName === old.nama) return;
-                        old.nama = newName;
-                        openWilayahModal(currentAreaName);
-                        checkPrabayarChange();
-                    });
-                }
-            }
-        };
-
-        // Jika kursor keluar sebelum 1 detik
-        icon.onmouseleave = () => {
-            clearTimeout(pressTimer);
-        };
+        icon.addEventListener('mousedown', startPress);
+        icon.addEventListener('touchstart', startPress);
+        
+        icon.addEventListener('mouseup', cancelPress);
+        icon.addEventListener('touchend', cancelPress);
+        icon.addEventListener('mouseleave', cancelPress);
     });
 
-    // 2. KLIK ICON HAPUS
+    // Klik icon hapus
     document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(e){
-            e.stopPropagation();
-            const name = this.dataset.name;
-            const idx = this.dataset.index;
-            let textItem = "";
-
-            if(name){ // Hapus Area
-                textItem = `Area "${name}"`;
-            } else { // Hapus Wilayah
-                const wil = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-                textItem = `Wilayah "${wil.nama}"`;
-            }
-            
-            showConfirm("Hapus", `Yakin hapus ${textItem}?`, ()=>{
-                if(name){
-                    delete prabayarData[currentMenuType][name];
+        btn.onclick = function(){
+            const name = this.dataset.name || this.dataset.index;
+            const text = this.dataset.name ? `Area "${name}"` : `Wilayah ini`;
+            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+                if(this.dataset.name){
+                    // Hapus Area
+                    delete prabayarData[currentMenuType][this.dataset.name];
                     openAreaModal();
                 } else {
-                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                    // Hapus Wilayah
+                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(this.dataset.index), 1);
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
@@ -1126,7 +1007,7 @@ function setupInteractions(){
         };
     });
 
-    // 3. KLIK DI LUAR / ITEM LAIN = SEMBUNYIKAN HAPUS
+    // Klik luar untuk sembunyikan icon hapus
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){
             hideAllDeleteIcons();
@@ -1134,12 +1015,23 @@ function setupInteractions(){
     });
 }
 
+function startPress(e){
+    const icon = e.currentTarget;
+    pressTimer = setTimeout(() => {
+        // Tampilkan icon hapus
+        icon.nextElementSibling.style.display = "inline";
+    }, 1000); // 1 detik
+}
+
+function cancelPress(){
+    clearTimeout(pressTimer);
+}
+
 function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => {
         el.style.display = "none";
     });
 }
-
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
@@ -1248,6 +1140,7 @@ function openOperatorListPascabayar(title, actionType){
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
         originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || ""};
 
+
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
         wrapper.dataset.productname = itemName.toLowerCase();
@@ -1298,55 +1191,18 @@ function attachInputListeners(){
 
 function checkPrabayarChange(){
     let changed = false;
-
-    // 1. CEK PERUBAHAN DI PRODUK (input teks)
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const inputs = wrap.querySelectorAll('input');
         inputs.forEach(inp => {
             const key = inp.dataset.operator;
             const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
-            const originalVal = originalPrabayarData[currentMenuType]?.[key]?.[type] || "";
+            const originalVal = originalPrabayarData[currentMenuType][key]?.[type] || "";
             if(inp.value !== originalVal){
                 changed = true;
             }
         });
     });
 
-    // 2. CEK PERUBAHAN DI AREA ATAU WILAYAH
-    // Jika ada data baru atau data berubah, maka changed = true
-    if (currentMenuType === "pdam") {
-        // Cek apakah jumlah area berubah
-        const currentAreaCount = Object.keys(prabayarData.pdam || {}).length;
-        const originalAreaCount = Object.keys(originalPrabayarData.pdam || {}).length;
-        
-        if(currentAreaCount !== originalAreaCount){
-            changed = true;
-        } else {
-            // Cek isi detail area & wilayah
-            for(const areaName in prabayarData.pdam){
-                const originalArea = originalPrabayarData.pdam?.[areaName];
-                if(!originalArea){
-                    changed = true;
-                    break;
-                }
-                // Cek jumlah wilayah
-                if(prabayarData.pdam[areaName].wilayah.length !== originalArea.wilayah.length){
-                    changed = true;
-                    break;
-                }
-                // Cek nama wilayah
-                for(let i=0; i<prabayarData.pdam[areaName].wilayah.length; i++){
-                    if(prabayarData.pdam[areaName].wilayah[i].nama !== originalArea.wilayah[i].nama){
-                        changed = true;
-                        break;
-                    }
-                }
-                if(changed) break;
-            }
-        }
-    }
-
-    // Aktifkan / Nonaktifkan tombol
     if(changed){
         enableButton("savePrabayarBtn");
     } else {
@@ -1444,10 +1300,10 @@ function saveData(){
 
 function checkInputs(){
     let ok = true;
-    if(namaKonter.value.trim()=="" || alamatKonter.value.trim()=="") ok=false;
-    if(ipNama.value.trim()=="" || ipServer.value.trim()=="" || ipHost.value.trim()=="") ok=false;
-    if(jabberNama.value.trim()=="" || jabberServer.value.trim()=="" || jabberHost.value.trim()=="") ok=false;
-    if(waCenter.value.trim()=="" || smsCenter.value.trim()=="") ok=false;
+    if(namaKonter.value.trim()==="" || alamatKonter.value.trim()==="") ok=false;
+    if(ipNama.value.trim()==="" || ipServer.value.trim()==="" || ipHost.value.trim()==="") ok=false;
+    if(jabberNama.value.trim()==="" || jabberServer.value.trim()==="" || jabberHost.value.trim()==="") ok=false;
+    if(waCenter.value.trim()==="" || smsCenter.value.trim()==="") ok=false;
 
     if(ok) enableButton("saveServerBtn"); else disableButton("saveServerBtn");
     if(ok) enableButton("saveCenterBtn"); else disableButton("saveCenterBtn");
@@ -1527,7 +1383,7 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         btnNo.innerText = "Tidak";
         btnNo.onclick = ()=>{
             document.getElementById("confirmModal").classList.add("hidden");
-            if(noFunc) noFunc();
+            noFunc();
         };
         wrap.appendChild(btnNo);
     }
@@ -1541,9 +1397,8 @@ function toast(msg){
     setTimeout(()=> el.style.display="none", 2500);
 }
 
-// ===🆔🆔🆔🆔🆔 MENU TRANSAKSI ===
+// === MENU TRANSAKSI ===
 let transaksiData = { menus: [] };
-
 let originalTransaksi = [];
 
 function renderTransaksiList(){
@@ -1697,7 +1552,6 @@ function showFormInput(title, contentHtml, okFunc){
 }
 
 // === PREVIEW ===
-
 function generatePreview(){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     const cont = document.getElementById("previewContent");
@@ -1714,7 +1568,6 @@ function generatePreview(){
 }
 
 // === INIT ===
-
 document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
@@ -1724,7 +1577,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 </script>
 
-<!--MODAL DAFTAR OPERATOR/PRODUK -->
+<!-- MODAL DAFTAR OPERATOR/PRODUK -->
 <div id="operatorListModal" class="submenu-modal">
     <div class="submenu-content">
         <div class="sticky-header">
@@ -1737,7 +1590,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             </div>
         </div>
         <div id="operatorListContainer" class="px-2">
-            <!--Isi dari JS -->
+            <!-- Isi dari JS -->
         </div>
     </div>
 </div>
