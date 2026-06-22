@@ -822,6 +822,9 @@ function openAreaModal(){
         prabayarData[currentMenuType] = {};
     }
 
+    // Simpan data awal untuk bandingkan
+    originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
+
     const modal = document.getElementById("areaModal");
     const container = document.getElementById("areaListContainer");
 
@@ -854,6 +857,7 @@ function openAreaModal(){
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
+    disableButton("btnSimpanDaftarArea"); // Tombol mati awal
 }
 
 function backToPrabayar(){
@@ -900,7 +904,7 @@ function simpanArea(){
     hideFormArea();
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
-    checkPrabayarChange();
+    checkAreaChange(); // Cek perubahan
 }
 
 // ==============================================
@@ -909,6 +913,9 @@ function simpanArea(){
 function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
+
+    // Simpan data awal wilayah
+    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][areaName].wilayah);
 
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
@@ -938,6 +945,7 @@ function openWilayahModal(areaName){
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
+    disableButton("btnSimpanDaftarWilayah"); // Tombol mati awal
 }
 
 function backToArea(){
@@ -991,7 +999,7 @@ function simpanWilayah(){
     hideFormWilayah();
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
-    checkPrabayarChange();
+    checkWilayahChange(); // Cek perubahan
 }
 
 // Pasang event listener untuk validasi form wilayah
@@ -1030,7 +1038,8 @@ function setupHoldToDelete(){
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
-                checkPrabayarChange();
+                checkAreaChange();
+                checkWilayahChange();
             }, "Ya, Hapus");
         };
     });
@@ -1059,6 +1068,23 @@ function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => {
         el.style.display = "none";
     });
+}
+
+// >>> FUNGSI CEK PERUBAHAN AREA & WILAYAH <<<
+function checkAreaChange(){
+    if(JSON.stringify(prabayarData[currentMenuType]) !== originalAreaData){
+        enableButton("btnSimpanDaftarArea");
+    } else {
+        disableButton("btnSimpanDaftarArea");
+    }
+}
+
+function checkWilayahChange(){
+    if(JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah) !== originalWilayahData){
+        enableButton("btnSimpanDaftarWilayah");
+    } else {
+        disableButton("btnSimpanDaftarWilayah");
+    }
 }
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
@@ -1637,11 +1663,15 @@ document.getElementById('cariWilayah').addEventListener('input', function() {
 function simpanDaftarArea() {
     saveData();
     toast("Daftar Area Berhasil Disimpan");
+    disableButton("btnSimpanDaftarArea"); // Mati lagi setelah simpan
+    originalAreaData = JSON.stringify(prabayarData[currentMenuType]); // Update data asli
 }
 
 function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
+    disableButton("btnSimpanDaftarWilayah"); // Mati lagi setelah simpan
+    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah); // Update data asli
 }
 
 // === INIT ===
