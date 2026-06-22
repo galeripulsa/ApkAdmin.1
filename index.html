@@ -532,7 +532,7 @@ body{
      </div>
 <!-- TAMBAHKAN INI DI DALAM STICKY HEADER AREA MODAL -->
 <div class="search-wrapper">
-    <i data-lucide="search" class="w-5 h-4"></i>
+    <i data-lucide="search" class="w-5 h-2"></i>
     <input type="text" id="searchInput" onkeyup="searchItems()" placeholder="Cari...">
     </div>            
        
@@ -576,8 +576,7 @@ body{
                 </button>
                 <div class="text-center">
 <p class="text-xl font-bold text-slate-500">Daftar Wilayah</p>
-                    <h3 id="namaAreaTitle" class="text-xl font-bold text-slate-800">Nama Area</h3>
-                    <p class="text-sm text-slate-500">Daftar Wilayah</p>
+                    <h3 id="namaAreaTitle" class="text-SM font-bold text-slate-800">Nama Area</h3>                  
                 </div>
                 <button onclick="showFormWilayah()" class="bg-cyan-600 text-white p-3 rounded-full btn-click">
                     <i data-lucide="plus" class="w-7 h-7"></i>
@@ -620,7 +619,12 @@ body{
 
     </div>
 </div>
-
+<!-- Tombol Simpan -->
+<div class="fixed-button-container">
+    <button id="btnSimpanWilayahGlobal" onclick="saveData()" class="w-full bg-cyan-600 text-white py-3 rounded-xl font-bold opacity-50 cursor-not-allowed" disabled>
+        Simpan Perubahan
+    </button>
+</div>
 <!-- ========================================= -->
 <!-- TOMBOL SIMPAN DITAROH DI LUAR BIAR FIXED -->
 <!-- ========================================= -->
