@@ -1150,8 +1150,14 @@ function openOperatorListPascabayar(title, actionType){
 
     container.innerHTML = "";
 
-    if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
-    originalPrabayarData = { [currentMenuType]: {} };
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
+    }
+
+    originalPrabayarData = {};
+    if(!originalPrabayarData[currentMenuType]){
+        originalPrabayarData[currentMenuType] = {};
+    }
 
     let listToShow = [];
     let iconName = "file-text";
@@ -1168,7 +1174,7 @@ function openOperatorListPascabayar(title, actionType){
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
         originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || ""};
 
-       const wrapper = document.createElement("div");
+        const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
         wrapper.dataset.productname = itemName.toLowerCase();
         wrapper.innerHTML = `
@@ -1592,6 +1598,50 @@ function generatePreview(){
         });
     }
     cont.innerHTML = html || "<p class='text-center text-slate-500'>Belum ada data</p>";
+}
+
+// ==============================================
+// >>> FUNGSI PENCARIAN AREA & WILAYAH <<<
+// ==============================================
+document.getElementById('cariArea').addEventListener('input', function() {
+    let keyword = this.value.toLowerCase();
+    let items = document.querySelectorAll('#areaListContainer .area-item');
+    
+    items.forEach(function(item) {
+        let text = item.textContent.toLowerCase();
+        if(text.includes(keyword)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('cariWilayah').addEventListener('input', function() {
+    let keyword = this.value.toLowerCase();
+    let items = document.querySelectorAll('#wilayahListContainer .wilayah-item');
+    
+    items.forEach(function(item) {
+        let text = item.textContent.toLowerCase();
+        if(text.includes(keyword)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+// ==============================================
+// >>> FUNGSI SIMPAN DAFTAR AREA & WILAYAH <<<
+// ==============================================
+function simpanDaftarArea() {
+    saveData();
+    toast("Daftar Area Berhasil Disimpan");
+}
+
+function simpanDaftarWilayah() {
+    saveData();
+    toast("Daftar Wilayah Berhasil Disimpan");
 }
 
 // === INIT ===
