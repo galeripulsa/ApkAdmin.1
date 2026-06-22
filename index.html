@@ -1778,6 +1778,50 @@ function renderPdamItem(productName, item){
 }
 
 
+// >>> FUNGSI CEK PERUBAHAN DATA <<<
+function checkPrabayarChange(){
+    let adaPerubahan = false;
+
+    // CEK SEMUA INPUT DI HALAMAN INI
+    const inputs = document.querySelectorAll(".input-cek-harga, .input-nama-produk, .input-wilayah");
+
+    inputs.forEach(input => {
+        const op = input.dataset.operator;
+        let type = "cekHarga";
+        if(input.classList.contains("input-nama-produk")) type = "namaProduk";
+        if(input.classList.contains("input-wilayah")) type = "wilayah";
+
+        // AMBIL DATA ASLI YANG DISIMPAN SAAT PERTAMA BUKA
+        let nilaiAsli = "";
+        if(currentMenuType === "pdam"){
+            // Logika khusus PDAM
+            const itemDiv = input.closest('.area-item');
+            const idx = itemDiv ? Array.from(itemDiv.parentElement.children).indexOf(itemDiv) : -1;
+            if(idx >= 0){
+                nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.items?.[idx]?.[type] || "").trim();
+            }
+        } else {
+            nilaiAsli = (originalPrabayarData[currentMenuType]?.[op]?.[type] || "").trim();
+        }
+        
+        // AMBIL NILAI YANG SEKARANG ADA DI KOTAK INPUT
+        const nilaiSekarang = (input.value || "").trim();
+
+        // KALAU ADA SATU SAJA YANG BEDA, TOMBOL HARUS NYALA
+        if(nilaiSekarang !== nilaiAsli){
+            adaPerubahan = true;
+        }
+    });
+
+    // PUTUSKAN TOMBOL NYALA ATAU MATI
+    if(adaPerubahan){
+        enableButton("savePrabayarBtn");
+    } else {
+        disableButton("savePrabayarBtn");
+    }
+}
+
+
 // === INISIALISASI AWAL ===
 window.onload = function(){
     renderMenus();
