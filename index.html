@@ -613,6 +613,12 @@ body{
 <!-- ========================================= -->
 <!-- TOMBOL SIMPAN DITAROH DI LUAR BIAR FIXED -->
 <!-- ========================================= -->
+<div class="fixed-button-container" id="fixedButtonWrapper" style="display: none;">
+    <div class="flex gap-3 max-w-screen-md mx-auto">
+        <button id="savePrabayarBtn" onclick="confirmSavePrabayar()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
+        <button onclick="backToPrabayarFromList()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
+    </div>
+</div>
 
 <div id="toast" class="toast"></div>
 
