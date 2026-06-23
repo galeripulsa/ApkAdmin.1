@@ -660,7 +660,7 @@ let originalServerData = "";
 let originalCenterData = "";
 let originalAreaData = "";
 let originalWilayahData = "";
-let originalTransaksiData = ""; // <<< BARU: Untuk Transaksi
+let originalTransaksiData = "";
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -775,13 +775,13 @@ function closeCenter(){
 
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
-    saveOriginalTransaksiData(); // <<< BARU: Simpan data awal saat buka
+    saveOriginalTransaksiData();
 }
 function closeTransaksi(){
     document.getElementById("transaksiModal").classList.remove("show");
 }
 
-// === SIMPAN DATA ASLI UNTUK BANDINGAN ===
+// === SIMPAN DATA ASLI ===
 function saveOriginalServerData(){
     originalServerData = JSON.stringify({
         nama: namaKonter.value,
@@ -796,53 +796,32 @@ function saveOriginalCenterData(){
     });
 }
 function saveOriginalTransaksiData(){
-    // Simpan data menu & kategori saat pertama dibuka
-    const menusHtml = document.getElementById("transaksiList").innerHTML;
-    originalTransaksiData = menusHtml;
+    originalTransaksiData = document.getElementById("transaksiList").innerHTML;
 }
 
-// === CEK PERUBAHAN & AKTIFKAN TOMBOL ===
+// === CEK PERUBAHAN ===
 function checkServerChange(){
-    const currentData = JSON.stringify({
-        nama: namaKonter.value,
-        alamat: alamatKonter.value
-    });
-    if(currentData !== originalServerData){
-        enableButton("saveServerBtn");
-    } else {
-        disableButton("saveServerBtn");
-    }
+    const currentData = JSON.stringify({ nama: namaKonter.value, alamat: alamatKonter.value });
+    currentData !== originalServerData ? enableButton("saveServerBtn") : disableButton("saveServerBtn");
 }
-
 function checkCenterChange(){
     const currentData = JSON.stringify({
         ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
         jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
         wa: waCenter.value, sms: smsCenter.value
     });
-    if(currentData !== originalCenterData){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
+    currentData !== originalCenterData ? enableButton("saveCenterBtn") : disableButton("saveCenterBtn");
 }
-
 function checkTransaksiChange(){
     const currentHtml = document.getElementById("transaksiList").innerHTML;
-    if(currentHtml !== originalTransaksiData){
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
+    currentHtml !== originalTransaksiData ? enableButton("saveTransaksiBtn") : disableButton("saveTransaksiBtn");
 }
 
-// === PASANG EVENT LISTENER KE INPUT ===
+// === PASANG EVENT LISTENER ===
 document.addEventListener('DOMContentLoaded', function(){
-    // Setup Server
+    // Server & Center
     namaKonter.addEventListener('input', checkServerChange);
     alamatKonter.addEventListener('input', checkServerChange);
-    
-    // Setup Center
     ipNama.addEventListener('input', checkCenterChange);
     ipServer.addEventListener('input', checkCenterChange);
     ipHost.addEventListener('input', checkCenterChange);
@@ -852,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function(){
     waCenter.addEventListener('input', checkCenterChange);
     smsCenter.addEventListener('input', checkCenterChange);
 
-    // Area & Wilayah
+    // Area & Wilayah Form
     document.getElementById("inputNamaArea").addEventListener("input", checkFormArea);
     document.getElementById("inputNamaWilayah").addEventListener("input", checkFormWilayah);
     document.getElementById("inputKodeCek").addEventListener("input", checkFormWilayah);
@@ -866,9 +845,7 @@ function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
     
     currentMenuType = "pdam";
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
+    if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
     previousMenu = "pascabayar";
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 
@@ -937,11 +914,10 @@ function simpanArea(){
     
     hideFormArea();
     openAreaModal();
-    toast(isEditMode ? "Area Berhasil Diubah" : "Area Berhasil Ditambahkan");
-    
+    // NOTIF DIHAPUS DISINI
     setTimeout(() => {
         enableButton("btnSimpanDaftarArea");
-        checkAreaChange(); // Cek perubahan
+        checkAreaChange();
     }, 150);
 }
 
@@ -1028,8 +1004,7 @@ function simpanWilayah(){
     
     hideFormWilayah();
     openWilayahModal(currentAreaName);
-    toast(isEditMode ? "Wilayah Berhasil Diubah" : "Wilayah Berhasil Ditambahkan");
-    
+    // NOTIF DIHAPUS DISINI
     setTimeout(() => {
         enableButton("btnSimpanDaftarWilayah");
         checkWilayahChange();
@@ -1084,7 +1059,6 @@ function setupHoldToDelete(){
                     prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(this.dataset.index), 1);
                     openWilayahModal(currentAreaName);
                 }
-                toast("Berhasil dihapus");
                 setTimeout(() => { checkAreaChange(); checkWilayahChange(); }, 100);
             }, "Ya, Hapus");
         };
@@ -1357,7 +1331,6 @@ function saveData(){
     localStorage.setItem("gs_data", JSON.stringify(data));
     saveOriginalServerData();
     saveOriginalCenterData();
-    toast("Data Berhasil Disimpan");
 }
 
 function enableButton(id){
@@ -1370,17 +1343,13 @@ function disableButton(id){
 }
 
 function confirmSaveServer(){
-    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ saveData(); closeServer(); }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ saveData(); closeServer(); toast("Data Server Berhasil Disimpan"); }, "Ya, Simpan");
 }
 function confirmSaveCenter(){
-    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ saveData(); closeCenter(); }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ saveData(); closeCenter(); toast("Data Center Berhasil Disimpan"); }, "Ya, Simpan");
 }
 function confirmSaveTransaksi(){
-    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
-        saveData(); 
-        saveOriginalTransaksiData(); // Update data asli setelah simpan
-        closeTransaksi(); 
-    }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ saveData(); saveOriginalTransaksiData(); closeTransaksi(); toast("Menu Transaksi Berhasil Disimpan"); }, "Ya, Simpan");
 }
 
 function checkCloseServer(){ checkClose("server"); }
@@ -1396,7 +1365,7 @@ function checkClose(type){
         if(waCenter.value != (d.center?.wa||"") || smsCenter.value != (d.center?.sms||"")) changed=true;
     }
     if(changed){
-        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ saveData(); if(type==="server") closeServer(); else closeCenter(); }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
+        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ saveData(); if(type==="server") closeServer(); else closeCenter(); toast("Data Berhasil Disimpan"); }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
     } else { if(type==="server") closeServer(); else closeCenter(); }
 }
 
@@ -1463,13 +1432,13 @@ document.getElementById('cariWilayah').addEventListener('input', function() {
 // ==============================================
 function simpanDaftarArea() {
     saveData();
-    toast("Daftar Area Berhasil Disimpan");
+    toast("Daftar Area Berhasil Disimpan"); // NOTIF TETAP DISINI
     disableButton("btnSimpanDaftarArea");
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
 function simpanDaftarWilayah() {
     saveData();
-    toast("Daftar Wilayah Berhasil Disimpan");
+    toast("Daftar Wilayah Berhasil Disimpan"); // NOTIF TETAP DISINI
     disableButton("btnSimpanDaftarWilayah");
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
@@ -1509,6 +1478,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
 });
 </script>
+
 
 <!-- MODAL DAFTAR OPERATOR/PRODUK -->
 <div id="operatorListModal" class="submenu-modal">
