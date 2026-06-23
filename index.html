@@ -655,6 +655,8 @@ let pressTimer;
 // === VARIABEL UNTUK CEK PERUBAHAN ===
 let originalServerData = "";
 let originalCenterData = "";
+let originalAreaData = "";
+let originalWilayahData = "";
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -711,7 +713,7 @@ const tvList = [
     "Biznet Home", "MNC Vision", "K-Vision", "Transvision", "Big TV"
 ];
 const ewalletList = [
-    "Dana", "GoPay", "OVO", "ShopeePay", "LinkAja"
+    "Dana", "GoPay", "OVP", "ShopeePay", "LinkAja"
 ];
 const bankList = [
     "Bank BRI", "Bank BNI", "Bank Mandiri", "Bank BCA", "Bank BSI"
@@ -818,9 +820,6 @@ function closePrabayar(){
 // ==============================================
 // >>> MODAL DAFTAR AREA PDAM <<<
 // ==============================================
-let originalAreaData = "";
-let originalWilayahData = "";
-
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
     
@@ -927,7 +926,7 @@ function openWilayahModal(areaName){
     document.getElementById("namaAreaTitle").innerText = areaName;
     container.innerHTML = "";
 
-    const listWilayah = prabayarData[currentMenuType][areaName]?.wilayah || [];
+    const listWilayah = prabayarData[currentMenuType][currentAreaName]?.wilayah || [];
     listWilayah.forEach((wil, idx) => {
         const div = document.createElement("div");
         div.className = "wilayah-item";
@@ -1077,6 +1076,7 @@ function hideAllDeleteIcons(){
 // >>> CEK PERUBAHAN AREA & WILAYAH <<<
 // ==============================================
 function checkAreaChange(){
+    console.log("Checking Area Change...");
     if(JSON.stringify(prabayarData[currentMenuType]) !== originalAreaData){
         enableButton("btnSimpanDaftarArea");
     } else {
@@ -1085,6 +1085,7 @@ function checkAreaChange(){
 }
 
 function checkWilayahChange(){
+    console.log("Checking Wilayah Change...");
     if(JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah) !== originalWilayahData){
         enableButton("btnSimpanDaftarWilayah");
     } else {
@@ -1303,51 +1304,68 @@ function savePrabayarData(){
 }
 
 // ==============================================
-// >>> FUNGSI SERVER & CENTER <<<
+// >>> FUNGSI SERVER & CENTER - DIPERBAIKI TOTAL <<<
 // ==============================================
 function openServer(){
     document.getElementById("serverModal").classList.add("show");
     loadData();
-    // Simpan data awal untuk dibandingkan
+    
+    // Simpan data awal
+    saveOriginalServerData();
+    
+    // Pasang event listener langsung ke semua input
+    namaKonter.oninput = checkServerChange;
+    alamatKonter.oninput = checkServerChange;
+    
+    disableButton("saveServerBtn");
+}
+
+function saveOriginalServerData() {
     originalServerData = JSON.stringify({
         nama: namaKonter.value,
         alamat: alamatKonter.value
     });
-    // Pasang event listener untuk cek perubahan REAL TIME
-    namaKonter.oninput = checkServerChange;
-    alamatKonter.oninput = checkServerChange;
-    disableButton("saveServerBtn"); // Awalnya mati
 }
-function closeServer(){ document.getElementById("serverModal").classList.remove("show"); }
 
-function openCenter(){
-    document.getElementById("centerModal").classList.add("show");
-    loadData();
-    // Simpan data awal
-    originalCenterData = JSON.stringify({
-        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
-        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
-        wa: waCenter.value, sms: smsCenter.value
-    });
-    // Pasang event listener
-    document.querySelectorAll("#centerModal input").forEach(i => {
-        i.addEventListener("input", checkCenterChange);
-    });
-    disableButton("saveCenterBtn"); // Awalnya mati
-}
-function closeCenter(){ document.getElementById("centerModal").classList.remove("show"); }
-
-// >>> FUNGSI BARU: CEK PERUBAHAN SERVER & CENTER <<<
 function checkServerChange(){
     const currentData = JSON.stringify({
         nama: namaKonter.value,
         alamat: alamatKonter.value
     });
-    if(currentData !== originalServerData && namaKonter.value && alamatKonter.value){
+    
+    // Hanya cek apakah berubah, tidak perlu cek kosong
+    if(currentData !== originalServerData){
         enableButton("saveServerBtn");
     } else {
         disableButton("saveServerBtn");
     }
+}
+
+function closeServer(){ 
+    document.getElementById("serverModal").classList.remove("show"); 
+}
+
+function openCenter(){
+    document.getElementById("centerModal").classList.add("show");
+    loadData();
+    
+    // Simpan data awal
+    saveOriginalCenterData();
+    
+    // Pasang event listener ke SEMUA input
+    document.querySelectorAll("#centerModal input").forEach(input => {
+        input.oninput = checkCenterChange;
+    });
+    
+    disableButton("saveCenterBtn");
+}
+
+function saveOriginalCenterData() {
+    originalCenterData = JSON.stringify({
+        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
+        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
+        wa: waCenter.value, sms: smsCenter.value
+    });
 }
 
 function checkCenterChange(){
@@ -1356,18 +1374,20 @@ function checkCenterChange(){
         jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
         wa: waCenter.value, sms: smsCenter.value
     });
-    // Cek apakah berubah dari awal DAN semua field terisi
-    const allFilled = ipNama.value && ipServer.value && ipHost.value && jabberNama.value && jabberServer.value && jabberHost.value && waCenter.value && smsCenter.value;
     
-    if(currentData !== originalCenterData && allFilled){
+    if(currentData !== originalCenterData){
         enableButton("saveCenterBtn");
     } else {
         disableButton("saveCenterBtn");
     }
 }
 
+function closeCenter(){ 
+    document.getElementById("centerModal").classList.remove("show"); 
+}
+
 // ==============================================
-// >>> MENU TRANSAKSI <<<
+// >>> MENU TRANSAKSI - DIPERBAIKI <<<
 // ==============================================
 let transaksiData = { menus: [] };
 let originalTransaksi = [];
@@ -1407,7 +1427,11 @@ function renderTransaksiList(){
     initSortable();
     updateTransaksiInfo();
     lucide.createIcons();
-    checkTransaksiChange(); // Cek kondisi awal
+    
+    // Cek kondisi awal
+    setTimeout(() => {
+        checkTransaksiChange();
+    }, 100);
 }
 
 function updateTransaksiInfo(){
@@ -1481,7 +1505,11 @@ function deleteTransaksiItem(idx){
 function checkTransaksiChange(){
     const now = JSON.stringify(transaksiData.menus);
     const old = JSON.stringify(originalTransaksi);
-    if(now !== old) enableButton("saveTransaksiBtn"); else disableButton("saveTransaksiBtn");
+    if(now !== old) {
+        enableButton("saveTransaksiBtn");
+    } else {
+        disableButton("saveTransaksiBtn");
+    }
 }
 
 function confirmSaveTransaksi(){
@@ -1542,23 +1570,28 @@ function saveData(){
     localStorage.setItem("gs_data", JSON.stringify(data));
     
     // Update data original setelah simpan
-    originalServerData = JSON.stringify(data.server);
-    originalCenterData = JSON.stringify(data.center);
+    saveOriginalServerData();
+    saveOriginalCenterData();
     
     toast("Data Berhasil Disimpan");
 }
 
 function enableButton(id){
     const btn = document.getElementById(id);
-    btn.disabled = false;
-    btn.classList.remove("bg-gray-400", "cursor-not-allowed");
-    btn.classList.add("bg-cyan-600");
+    if(btn) {
+        btn.disabled = false;
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed", "opacity-50");
+        btn.classList.add("bg-cyan-600");
+    }
 }
+
 function disableButton(id){
     const btn = document.getElementById(id);
-    btn.disabled = true;
-    btn.classList.add("bg-gray-400", "cursor-not-allowed");
-    btn.classList.remove("bg-cyan-600");
+    if(btn) {
+        btn.disabled = true;
+        btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50");
+        btn.classList.remove("bg-cyan-600");
+    }
 }
 
 function confirmSaveServer(){
@@ -1736,7 +1769,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
 });
 </script>
-
 
 <!-- MODAL DAFTAR OPERATOR/PRODUK -->
 <div id="operatorListModal" class="submenu-modal">
