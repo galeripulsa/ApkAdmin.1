@@ -916,7 +916,7 @@ function simpanArea(){
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
     checkAreaChange(); // Aktifkan tombol simpan
-}
+checkAreaChange(); // >>>> TAMBAHKAN INI <<<<}
 
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR WILAYAH <<<
@@ -1011,6 +1011,8 @@ function simpanWilayah(){
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
     checkWilayahChange(); // Aktifkan tombol simpan
+
+    checkWilayahChange(); // >>>> TAMBAHKAN INI <<<<
 }
 
 // Pasang event listener untuk validasi form wilayah
@@ -1083,6 +1085,7 @@ function hideAllDeleteIcons(){
 
 // >>> FUNGSI CEK PERUBAHAN <<<
 function checkAreaChange(){
+    // Cek apakah data sekarang berbeda dengan data awal
     if(JSON.stringify(prabayarData[currentMenuType]) !== originalAreaData){
         enableButton("btnSimpanDaftarArea");
     } else {
@@ -1091,12 +1094,14 @@ function checkAreaChange(){
 }
 
 function checkWilayahChange(){
+    // Cek apakah data sekarang berbeda dengan data awal
     if(JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah) !== originalWilayahData){
         enableButton("btnSimpanDaftarWilayah");
     } else {
         disableButton("btnSimpanDaftarWilayah");
     }
 }
+
 
 // >>> FUNGSI BUKA DAFTAR PRODUK PRABAYAR <<<
 function openOperatorList(title, actionType){
