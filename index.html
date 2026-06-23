@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -506,7 +506,7 @@ body{
                 </button>
             </div>
 
-            <!-- KOLOM CARI (SUDAH DIPANJANGKAN) -->
+            <!-- KOLOM CARI -->
             <div class="px-0 py-4 relative">
                 <input type="text" id="cariArea" placeholder="Cari nama area..." 
                        class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
@@ -564,7 +564,7 @@ body{
                 </button>
             </div>
 
-            <!-- KOLOM CARI (SUDAH DIPANJANGKAN) -->
+            <!-- KOLOM CARI -->
             <div class="px-0 py-4 relative">
                 <input type="text" id="cariWilayah" placeholder="Cari nama wilayah..." 
                        class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
@@ -648,6 +648,8 @@ let originalPrabayarData = {};
 let currentMenuType = "";
 let currentAreaName = "";
 let allProducts = [];
+let isEditMode = false;
+let editIndex = -1;
 
 // === VARIABEL UNTUK TIMER HOLD CLICK ===
 let pressTimer;
@@ -713,7 +715,7 @@ const tvList = [
     "Biznet Home", "MNC Vision", "K-Vision", "Transvision", "Big TV"
 ];
 const ewalletList = [
-    "Dana", "GoPay", "OVP", "ShopeePay", "LinkAja"
+    "Dana", "GoPay", "OVO", "ShopeePay", "LinkAja"
 ];
 const bankList = [
     "Bank BRI", "Bank BNI", "Bank Mandiri", "Bank BCA", "Bank BSI"
@@ -858,6 +860,7 @@ function openAreaModal(){
     });
 
     setupHoldToDelete();
+    setupEditArea();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -868,10 +871,30 @@ function openAreaModal(){
     }, 100);
 }
 
+function showFormArea(){
+    document.getElementById("formAreaContainer").style.display = "block";
+    document.getElementById("inputNamaArea").value = "";
+    isEditMode = false;
+    disableButton("btnSimpanArea");
+    setTimeout(() => {
+        document.getElementById("inputNamaArea").focus();
+    }, 300);
+}
+
+function hideFormArea(){
+    document.getElementById("formAreaContainer").style.display = "none";
+    document.getElementById("inputNamaArea").value = "";
+}
+
 function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
     
-    if(prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
+    if(!nama){
+        toast("Nama Area tidak boleh kosong");
+        return;
+    }
+    
+    if(!isEditMode && prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
         showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaArea").focus();
         }, "Oke");
@@ -879,11 +902,22 @@ function simpanArea(){
     }
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
-    prabayarData[currentMenuType][nama] = { wilayah: [] };
+    
+    if(isEditMode){
+        // Edit mode
+        const oldName = Object.keys(prabayarData[currentMenuType])[editIndex];
+        if(oldName !== nama){
+            prabayarData[currentMenuType][nama] = prabayarData[currentMenuType][oldName];
+            delete prabayarData[currentMenuType][oldName];
+        }
+    } else {
+        // Tambah baru
+        prabayarData[currentMenuType][nama] = { wilayah: [] };
+    }
     
     hideFormArea();
     openAreaModal();
-    toast("Area Berhasil Ditambahkan");
+    toast(isEditMode ? "Area Berhasil Diubah" : "Area Berhasil Ditambahkan");
     
     // Aktifkan tombol setelah ada perubahan
     setTimeout(() => {
@@ -930,6 +964,7 @@ function openWilayahModal(areaName){
     });
 
     setupHoldToDelete();
+    setupEditWilayah();
 
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
@@ -940,28 +975,56 @@ function openWilayahModal(areaName){
     }, 100);
 }
 
+function showFormWilayah(){
+    document.getElementById("formWilayahContainer").style.display = "block";
+    document.getElementById("inputNamaWilayah").value = "";
+    document.getElementById("inputKodeCek").value = "";
+    document.getElementById("inputKodeBayar").value = "";
+    isEditMode = false;
+    editIndex = -1;
+    disableButton("btnSimpanWilayah");
+    setTimeout(() => {
+        document.getElementById("inputNamaWilayah").focus();
+    }, 300);
+}
+
+function hideFormWilayah(){
+    document.getElementById("formWilayahContainer").style.display = "none";
+}
+
 function simpanWilayah(){
     const nama = document.getElementById("inputNamaWilayah").value.trim();
     const cek = document.getElementById("inputKodeCek").value.trim();
     const bayar = document.getElementById("inputKodeBayar").value.trim();
+
+    if(!nama){
+        toast("Nama Wilayah tidak boleh kosong");
+        return;
+    }
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     if(!prabayarData[currentMenuType][currentAreaName]) prabayarData[currentMenuType][currentAreaName] = { wilayah: [] };
 
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     
-    if(listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
+    if(!isEditMode && listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
         showConfirm("Duplikat", "Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
         return;
     }
 
-    prabayarData[currentMenuType][currentAreaName].wilayah.push({nama, cek, bayar});
+    if(isEditMode){
+        listWilayah[editIndex] = {nama, cek, bayar};
+    } else {
+        listWilayah.push({nama, cek, bayar});
+    }
+    
+    prabayarData[currentMenuType][currentAreaName].wilayah = listWilayah;
     
     hideFormWilayah();
     openWilayahModal(currentAreaName);
-    toast("Wilayah Berhasil Ditambahkan");
+    toast(isEditMode ? "Wilayah Berhasil Diubah" : "Wilayah Berhasil Ditambahkan");
     
     // Aktifkan tombol
     setTimeout(() => {
@@ -1000,10 +1063,32 @@ function checkWilayahChange(){
 
 
 document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById("inputNamaArea").addEventListener("input", checkFormArea);
     document.getElementById("inputNamaWilayah").addEventListener("input", checkFormWilayah);
     document.getElementById("inputKodeCek").addEventListener("input", checkFormWilayah);
     document.getElementById("inputKodeBayar").addEventListener("input", checkFormWilayah);
 });
+
+function checkFormArea(){
+    const val = document.getElementById("inputNamaArea").value.trim();
+    if(val){
+        enableButton("btnSimpanArea");
+    } else {
+        disableButton("btnSimpanArea");
+    }
+}
+
+function checkFormWilayah(){
+    const nama = document.getElementById("inputNamaWilayah").value.trim();
+    const cek = document.getElementById("inputKodeCek").value.trim();
+    const bayar = document.getElementById("inputKodeBayar").value.trim();
+    
+    if(nama && cek && bayar){
+        enableButton("btnSimpanWilayah");
+    } else {
+        disableButton("btnSimpanWilayah");
+    }
+}
 
 // ==============================================
 // >>> HOLD CLICK DELETE <<<
@@ -1047,6 +1132,35 @@ function setupHoldToDelete(){
     });
 }
 
+function setupEditArea(){
+    document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
+        icon.onclick = function(){
+            const name = this.dataset.name;
+            isEditMode = true;
+            editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
+            document.getElementById("inputNamaArea").value = name;
+            document.getElementById("formAreaContainer").style.display = "block";
+            enableButton("btnSimpanArea");
+        };
+    });
+}
+
+function setupEditWilayah(){
+    document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
+        icon.onclick = function(){
+            const idx = parseInt(this.dataset.index);
+            const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+            isEditMode = true;
+            editIndex = idx;
+            document.getElementById("inputNamaWilayah").value = data.nama;
+            document.getElementById("inputKodeCek").value = data.cek;
+            document.getElementById("inputKodeBayar").value = data.bayar;
+            document.getElementById("formWilayahContainer").style.display = "block";
+            enableButton("btnSimpanWilayah");
+        };
+    });
+}
+
 function startPress(e){
     const icon = e.currentTarget;
     pressTimer = setTimeout(() => {
@@ -1065,27 +1179,6 @@ function hideAllDeleteIcons(){
 }
 
 // ==============================================
-// >>> CEK PERUBAHAN AREA & WILAYAH <<<
-// ==============================================
-function checkAreaChange(){
-    console.log("Checking Area Change...");
-    if(JSON.stringify(prabayarData[currentMenuType]) !== originalAreaData){
-        enableButton("btnSimpanDaftarArea");
-    } else {
-        disableButton("btnSimpanDaftarArea");
-    }
-}
-
-function checkWilayahChange(){
-    console.log("Checking Wilayah Change...");
-    if(JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah) !== originalWilayahData){
-        enableButton("btnSimpanDaftarWilayah");
-    } else {
-        disableButton("btnSimpanDaftarWilayah");
-    }
-}
-
-// ==============================================
 // >>> BUKA DAFTAR PRODUK <<<
 // ==============================================
 function openOperatorList(title, actionType){
@@ -1099,11 +1192,7 @@ function openOperatorList(title, actionType){
 
     container.innerHTML = "";
 
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
-
-    originalPrabayarData = {};
+    
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
@@ -1293,230 +1382,6 @@ function savePrabayarData(){
 
     disableButton("savePrabayarBtn");
     toast("Data Produk Berhasil Disimpan");
-}
-
-// ==============================================
-// >>> FUNGSI SERVER & CENTER - DIPERBAIKI TOTAL <<<
-// ==============================================
-function openServer(){
-    document.getElementById("serverModal").classList.add("show");
-    loadData();
-    
-    // Simpan data awal
-    saveOriginalServerData();
-    
-    // Pasang event listener langsung ke semua input
-    namaKonter.oninput = checkServerChange;
-    alamatKonter.oninput = checkServerChange;
-    
-    disableButton("saveServerBtn");
-}
-
-function saveOriginalServerData() {
-    originalServerData = JSON.stringify({
-        nama: namaKonter.value,
-        alamat: alamatKonter.value
-    });
-}
-
-function checkServerChange(){
-    const currentData = JSON.stringify({
-        nama: namaKonter.value,
-        alamat: alamatKonter.value
-    });
-    
-    // Hanya cek apakah berubah, tidak perlu cek kosong
-    if(currentData !== originalServerData){
-        enableButton("saveServerBtn");
-    } else {
-        disableButton("saveServerBtn");
-    }
-}
-
-function closeServer(){ 
-    document.getElementById("serverModal").classList.remove("show"); 
-}
-
-function openCenter(){
-    document.getElementById("centerModal").classList.add("show");
-    loadData();
-    
-    // Simpan data awal
-    saveOriginalCenterData();
-    
-    // Pasang event listener ke SEMUA input
-    document.querySelectorAll("#centerModal input").forEach(input => {
-        input.oninput = checkCenterChange;
-    });
-    
-    disableButton("saveCenterBtn");
-}
-
-function saveOriginalCenterData() {
-    originalCenterData = JSON.stringify({
-        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
-        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
-        wa: waCenter.value, sms: smsCenter.value
-    });
-}
-
-function checkCenterChange(){
-    const currentData = JSON.stringify({
-        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
-        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
-        wa: waCenter.value, sms: smsCenter.value
-    });
-    
-    if(currentData !== originalCenterData){
-        enableButton("saveCenterBtn");
-    } else {
-        disableButton("saveCenterBtn");
-    }
-}
-
-function closeCenter(){ 
-    document.getElementById("centerModal").classList.remove("show"); 
-}
-
-// ==============================================
-// >>> MENU TRANSAKSI - DIPERBAIKI <<<
-// ==============================================
-let transaksiData = { menus: [] };
-let originalTransaksi = [];
-
-function openTransaksi(){
-    document.getElementById("transaksiModal").classList.add("show");
-    renderTransaksiList();
-}
-function closeTransaksi(){ document.getElementById("transaksiModal").classList.remove("show"); }
-
-function renderTransaksiList(){
-    const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
-    if(d.transaksi) transaksiData = d.transaksi;
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiData.menus));
-
-    const list = document.getElementById("transaksiList");
-    list.innerHTML = "";
-
-    transaksiData.menus.forEach((item, idx)=>{
-        const div = document.createElement("div");
-        div.className = "bg-white rounded-xl shadow p-4 border border-slate-100";
-        div.dataset.idx = idx;
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <i data-lucide="menu" class="w-5 h-5 text-slate-400 drag-handle"></i>
-                <div class="flex-1">
-                    <div class="font-bold text-slate-700">${item.judul || "Menu"}</div>
-                    <div class="text-sm text-slate-500">${item.items?.length || 0} Item</div>
-                </div>
-                <button onclick="editMenu(${idx})" class="text-cyan-600"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
-                <button onclick="deleteTransaksiItem(${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
-            </div>
-        `;
-        list.appendChild(div);
-    });
-
-    initSortable();
-    updateTransaksiInfo();
-    lucide.createIcons();
-    
-    // Cek kondisi awal
-    setTimeout(() => {
-        checkTransaksiChange();
-    }, 100);
-}
-
-function updateTransaksiInfo(){
-    const m = transaksiData.menus.length;
-    let k = 0;
-    transaksiData.menus.forEach(x=> k += x.items.length);
-    document.getElementById("transaksiInfo").innerText = `${m} Menu • ${k} Kategori`;
-}
-
-function initSortable(){
-    if(sortableInstance) sortableInstance.destroy();
-    const el = document.getElementById("transaksiList");
-    sortableInstance = new Sortable(el, {
-        animation: 150,
-        handle: '.drag-handle',
-        onEnd: function(){
-            checkTransaksiChange();
-        }
-    });
-}
-
-function addMenu(){
-    showPrompt("Tambah Menu", "Nama Menu", "", (val)=>{
-        if(!val) return;
-        transaksiData.menus.push({ judul: val, items: [] });
-        renderTransaksiList();
-        checkTransaksiChange();
-        toast("Menu Ditambahkan");
-    });
-}
-
-function addKategori(){
-    if(transaksiData.menus.length === 0){
-        toast("Buat Menu dulu ya!");
-        return;
-    }
-    let opt = `<option value="">-- Pilih Menu --</option>`;
-    transaksiData.menus.forEach((m,i)=> opt += `<option value="${i}">${m.judul}</option>`);
-    showFormInput("Tambah Kategori", `
-        <div class="floating"><select id="formSelect" class="w-full border p-3 rounded-xl">${opt}</select></div>
-        <div class="floating mt-4"><input id="formText" placeholder=" "><label>Nama Kategori</label></div>
-    `, ()=>{
-        const idx = parseInt(document.getElementById("formSelect").value);
-        const val = document.getElementById("formText").value.trim();
-        if(isNaN(idx) || !val) return;
-        transaksiData.menus[idx].items.push(val);
-        renderTransaksiList();
-        checkTransaksiChange();
-        toast("Kategori Ditambahkan");
-    });
-}
-
-function editMenu(idx){
-    const item = transaksiData.menus[idx];
-    showPrompt("Edit Menu", "Nama Menu", item.judul, (val)=>{
-        if(!val) return;
-        transaksiData.menus[idx].judul = val;
-        renderTransaksiList();
-        checkTransaksiChange();
-    });
-}
-
-function deleteTransaksiItem(idx){
-    showConfirm("Hapus", "Yakin hapus menu ini?", ()=>{
-        transaksiData.menus.splice(idx,1);
-        renderTransaksiList();
-        checkTransaksiChange();
-    }, "Ya, Hapus");
-}
-
-function checkTransaksiChange(){
-    const now = JSON.stringify(transaksiData.menus);
-    const old = JSON.stringify(originalTransaksi);
-    if(now !== old) {
-        enableButton("saveTransaksiBtn");
-    } else {
-        disableButton("saveTransaksiBtn");
-    }
-}
-
-function confirmSaveTransaksi(){
-    showConfirm("Simpan", "Yakin simpan perubahan menu transaksi?", ()=>{
-        saveTransaksi();
-    }, "Ya, Simpan");
-}
-
-function saveTransaksi(){
-    const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
-    d.transaksi = transaksiData;
-    localStorage.setItem("gs_data", JSON.stringify(d));
-    originalTransaksi = JSON.parse(JSON.stringify(transaksiData.menus));
-    disableButton("saveTransaksiBtn");
-    toast("Berhasil Disimpan");
 }
 
 // ==============================================
@@ -1753,6 +1618,35 @@ function simpanDaftarWilayah() {
     toast("Daftar Wilayah Berhasil Disimpan");
     disableButton("btnSimpanDaftarWilayah");
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+}
+
+// ==============================================
+// >>> FUNGSI BACK / TUTUP DENGAN KONFIRMASI <<<
+// ==============================================
+function backToPrabayar(){
+    const currentData = JSON.stringify(prabayarData[currentMenuType]);
+    if(currentData !== originalAreaData){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+            document.getElementById("areaModal").classList.remove("show");
+            openPrabayar();
+        }, "Ya, Keluar");
+    } else {
+        document.getElementById("areaModal").classList.remove("show");
+        openPrabayar();
+    }
+}
+
+function backToArea(){
+    const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+    if(currentData !== originalWilayahData){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+            document.getElementById("wilayahModal").classList.remove("show");
+            openAreaModal();
+        }, "Ya, Keluar");
+    } else {
+        document.getElementById("wilayahModal").classList.remove("show");
+        openAreaModal();
+    }
 }
 
 // === INIT ===
