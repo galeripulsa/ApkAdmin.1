@@ -1,5 +1,3 @@
- kode terpotong, kirim kode bagian berikutnya
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -652,6 +650,7 @@ let currentAreaName = "";
 let allProducts = [];
 let isEditMode = false;
 let editIndex = -1;
+let previousMenu = ""; // VARIABEL BARU UNTUK INGAT ASAL MENU
 
 // === VARIABEL UNTUK TIMER HOLD CLICK ===
 let pressTimer;
@@ -756,6 +755,44 @@ function renderMenus(){
     lucide.createIcons();
 }
 
+// === FUNGSI BUKA MODAL UTAMA ===
+function openServer(){
+    document.getElementById("serverModal").classList.add("show");
+    saveOriginalServerData();
+}
+function closeServer(){
+    document.getElementById("serverModal").classList.remove("show");
+}
+
+function openCenter(){
+    document.getElementById("centerModal").classList.add("show");
+    saveOriginalCenterData();
+}
+function closeCenter(){
+    document.getElementById("centerModal").classList.remove("show");
+}
+
+function openTransaksi(){
+    document.getElementById("transaksiModal").classList.add("show");
+}
+function closeTransaksi(){
+    document.getElementById("transaksiModal").classList.remove("show");
+}
+
+function saveOriginalServerData(){
+    originalServerData = JSON.stringify({
+        nama: namaKonter.value,
+        alamat: alamatKonter.value
+    });
+}
+function saveOriginalCenterData(){
+    originalCenterData = JSON.stringify({
+        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
+        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
+        wa: waCenter.value, sms: smsCenter.value
+    });
+}
+
 function openPrabayar(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
     document.getElementById("subMenuTitle").innerText = "Menu Prabayar";
@@ -832,6 +869,9 @@ function openAreaModal(){
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
+
+    // SIMPAN ASAL MENU
+    previousMenu = "pascabayar"; // Karena PDAM ada di Pascabayar
 
     // Simpan data awal untuk pembanding
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
@@ -1633,11 +1673,19 @@ function backToPrabayar(){
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            openPrabayar();
+            if(previousMenu === "pascabayar"){
+                openPascabayar();
+            } else {
+                openPrabayar();
+            }
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        openPrabayar();
+        if(previousMenu === "pascabayar"){
+            openPascabayar();
+        } else {
+            openPrabayar();
+        }
     }
 }
 
