@@ -506,12 +506,11 @@ body{
                 </button>
             </div>
 
-            <!-- KOLOM CARI -->
+            <!-- KOLOM CARI (SUDAH DIPANJANGKAN) -->
             <div class="px-0 py-4 relative">
                 <input type="text" id="cariArea" placeholder="Cari nama area..." 
-                       class="w-full px-4 py-2 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
-                <i class="fas fa-search absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
-focus:ring-cyan-500"></i>
+                       class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
 
@@ -530,14 +529,11 @@ focus:ring-cyan-500"></i>
 
         <div id="areaListContainer" class="pb-24">
             <!-- Daftar Area muncul di sini -->
-            <!-- Tambah pb-24 biar konten tidak ketutupan tombol -->
         </div>
 
     </div>
 
-    <!-- ========================================= -->
-    <!-- TOMBOL SIMPAN DI BAWAH (FIXED / FOTHER) -->
-    <!-- ========================================= -->
+    <!-- TOMBOL SIMPAN FIXED DI BAWAH -->
     <div class="fixed-button-container">
         <button id="btnSimpanDaftarArea" onclick="simpanDaftarArea()" 
                 class="w-full bg-cyan-600 text-white py-3 rounded-xl font-semibold btn-click">
@@ -568,13 +564,11 @@ focus:ring-cyan-500"></i>
                 </button>
             </div>
 
-            <!-- KOLOM CARI -->
+            <!-- KOLOM CARI (SUDAH DIPANJANGKAN) -->
             <div class="px-0 py-4 relative">
                 <input type="text" id="cariWilayah" placeholder="Cari nama wilayah..." 
-                       class="w-full px-4 py-2 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
-                <i class="fas fa-search absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
-focus:outline-none focus:ring-1
-focus:ring-cyan-500"></i>
+                       class="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
         </div>
 
@@ -601,15 +595,12 @@ focus:ring-cyan-500"></i>
             </div>
         </div>
 
-        <div id="wilayahListContainer"
-    class="pb-24">
+        <div id="wilayahListContainer" class="pb-24">
             <!-- Daftar Wilayah muncul di sini -->
         </div>
     </div>
 
-         <!-- ========================================= -->
-    <!-- TOMBOL SIMPAN DI BAWAH (FIXED / FOTHER) -->
-    <!-- ========================================= -->
+    <!-- TOMBOL SIMPAN FIXED DI BAWAH -->
     <div class="fixed-button-container">
         <button id="btnSimpanDaftarWilayah" onclick="simpanDaftarWilayah()" 
                 class="w-full bg-cyan-600 text-white py-3 rounded-xl font-semibold btn-click">
@@ -1167,7 +1158,7 @@ function openOperatorList(title, actionType){
             <div class="operator-body">
                 <div class="floating mt-4">
                     <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
-                    <label>${labelHarga}</label>
+                   <label>${labelHarga}</label>
                 </div>
                 <div class="floating mt-4">
                     <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
@@ -1462,7 +1453,7 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         btnNo.innerText = "Tidak";
         btnNo.onclick = ()=>{
             document.getElementById("confirmModal").classList.add("hidden");
-            noFunc();
+            if(noFunc) noFunc();
         };
         wrap.appendChild(btnNo);
     }
@@ -1704,7 +1695,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     });
 });
 </script>
-
 
 <!-- MODAL DAFTAR OPERATOR/PRODUK -->
 <div id="operatorListModal" class="submenu-modal">
