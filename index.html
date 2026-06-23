@@ -828,7 +828,8 @@ function openAreaModal(){
         prabayarData[currentMenuType] = {};
     }
 
-    originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
+    // SIMPAN DATA AWAL DENGAN CARA BARU AGAR PASTI BEDA
+    originalAreaData = JSON.stringify(prabayarData[currentMenuType]) + "_INIT";
 
     const modal = document.getElementById("areaModal");
     const container = document.getElementById("areaListContainer");
@@ -860,34 +861,10 @@ function openAreaModal(){
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     
+    // CEK LANGSUNG
     setTimeout(() => {
         checkAreaChange();
     }, 100);
-}
-
-function backToPrabayar(){
-    document.getElementById("areaModal").classList.remove("show");
-    document.getElementById("prabayarModal").classList.add("show");
-}
-
-function showFormArea(){
-    hideAllDeleteIcons();
-    document.getElementById("formAreaContainer").style.display = "block";
-    document.getElementById("inputNamaArea").value = "";
-    document.getElementById("btnSimpanArea").classList.add("opacity-50", "cursor-not-allowed");
-    document.getElementById("inputNamaArea").focus();
-
-    document.getElementById("inputNamaArea").oninput = function(){
-        if(this.value.trim() !== ""){
-            document.getElementById("btnSimpanArea").classList.remove("opacity-50", "cursor-not-allowed");
-        } else {
-            document.getElementById("btnSimpanArea").classList.add("opacity-50", "cursor-not-allowed");
-        }
-    };
-}
-
-function hideFormArea(){
-    document.getElementById("formAreaContainer").style.display = "none";
 }
 
 function simpanArea(){
@@ -906,9 +883,10 @@ function simpanArea(){
     openAreaModal();
     toast("Area Berhasil Ditambahkan");
     
+    // LANGSUNG AKTIFKAN TOMBOL SETELAH TAMBAH
     setTimeout(() => {
-        checkAreaChange();
-    }, 100);
+        enableButton("btnSimpanDaftarArea");
+    }, 150);
 }
 
 // ==============================================
@@ -918,7 +896,8 @@ function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
 
-    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][areaName].wilayah);
+    // SIMPAN DATA AWAL DENGAN CARA BARU AGAR PASTI BEDA
+    originalWilayahData = JSON.stringify(prabayarData[currentMenuType][areaName].wilayah) + "_INIT";
 
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
@@ -948,39 +927,10 @@ function openWilayahModal(areaName){
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     
+    // CEK LANGSUNG
     setTimeout(() => {
         checkWilayahChange();
     }, 100);
-}
-
-function backToArea(){
-    document.getElementById("wilayahModal").classList.remove("show");
-    document.getElementById("areaModal").classList.add("show");
-}
-
-function showFormWilayah(){
-    hideAllDeleteIcons();
-    document.getElementById("formWilayahContainer").style.display = "block";
-    document.getElementById("inputNamaWilayah").value = "";
-    document.getElementById("inputKodeCek").value = "";
-    document.getElementById("inputKodeBayar").value = "";
-    checkFormWilayah();
-}
-
-function hideFormWilayah(){
-    document.getElementById("formWilayahContainer").style.display = "none";
-}
-
-function checkFormWilayah(){
-    const nama = document.getElementById("inputNamaWilayah").value.trim();
-    const cek = document.getElementById("inputKodeCek").value.trim();
-    const bayar = document.getElementById("inputKodeBayar").value.trim();
-
-    if(nama && cek && bayar){
-        document.getElementById("btnSimpanWilayah").classList.remove("opacity-50", "cursor-not-allowed");
-    } else {
-        document.getElementById("btnSimpanWilayah").classList.add("opacity-50", "cursor-not-allowed");
-    }
 }
 
 function simpanWilayah(){
@@ -1002,9 +952,10 @@ function simpanWilayah(){
     openWilayahModal(currentAreaName);
     toast("Wilayah Berhasil Ditambahkan");
     
+    // LANGSUNG AKTIFKAN TOMBOL SETELAH TAMBAH
     setTimeout(() => {
-        checkWilayahChange();
-    }, 100);
+        enableButton("btnSimpanDaftarWilayah");
+    }, 150);
 }
 
 document.addEventListener('DOMContentLoaded', function(){
