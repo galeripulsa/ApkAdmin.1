@@ -824,7 +824,8 @@ let originalWilayahData = "";
 
 // ==============================================
 // >>> FUNGSI BARU: MODAL DAFTAR AREA PDAM <<<
-// ================================function openAreaModal(){
+// ================================
+function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
     
     currentMenuType = "pdam";
@@ -914,7 +915,7 @@ function simpanArea(){
     hideFormArea();
     openAreaModal(); // Refresh
     toast("Area Berhasil Ditambahkan");
-    
+    checkAreaChange(); // Aktifkan tombol simpan
 }
 
 // ==============================================
@@ -1009,7 +1010,7 @@ function simpanWilayah(){
     hideFormWilayah();
     openWilayahModal(currentAreaName); // Refresh
     toast("Wilayah Berhasil Ditambahkan");
-    
+    checkWilayahChange(); // Aktifkan tombol simpan
 }
 
 // Pasang event listener untuk validasi form wilayah
@@ -1079,7 +1080,6 @@ function hideAllDeleteIcons(){
         el.style.display = "none";
     });
 }
-
 
 // >>> FUNGSI CEK PERUBAHAN <<<
 function checkAreaChange(){
