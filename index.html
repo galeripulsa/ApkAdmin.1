@@ -1141,20 +1141,28 @@ function setupHoldToDelete(){
         };
     });
 
+    // Klik di luar atau item lain -> sembunyikan hapus
     document.addEventListener('click', function(e){
-        if(!e.target.closest('.actions')){ hideAllDeleteIcons(); }
+        if(!e.target.closest('.actions')){ 
+            hideAllDeleteIcons(); 
+        }
     });
 }
 
 function startPress(e){
     const icon = e.currentTarget;
     pressTimer = setTimeout(() => { 
+        // Tampilkan hapus, edit tetap ada
         icon.nextElementSibling.style.display = "inline"; 
     }, 1000); // TAHAN 1 DETIK
 }
-function cancelPress(){ clearTimeout(pressTimer); }
+function cancelPress(){ 
+    clearTimeout(pressTimer); 
+}
 function hideAllDeleteIcons(){
-    document.querySelectorAll(".icon-delete").forEach(el => { el.style.display = "none"; });
+    document.querySelectorAll(".icon-delete").forEach(el => { 
+        el.style.display = "none"; 
+    });
 }
 
 function setupEditAction(){
@@ -1164,7 +1172,7 @@ function setupEditAction(){
             isEditMode = true;
             editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
             document.getElementById("inputNamaArea").value = name;
-            document.getElementById("formAreaModal").classList.add("show"); // <-- POPUP
+            document.getElementById("formAreaModal").classList.add("show");
             enableButton("btnSimpanArea");
         };
     });
@@ -1177,7 +1185,7 @@ function setupEditAction(){
             document.getElementById("inputNamaWilayah").value = data.nama;
             document.getElementById("inputKodeCek").value = data.cek;
             document.getElementById("inputKodeBayar").value = data.bayar;
-            document.getElementById("formWilayahModal").classList.add("show"); // <-- POPUP
+            document.getElementById("formWilayahModal").classList.add("show");
             enableButton("btnSimpanWilayah");
         };
     });
