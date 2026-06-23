@@ -663,7 +663,7 @@ function autoGrow(element) {
 
 function escapeHtml(text) {
     if(!text) return "";
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 const menus = [
@@ -849,18 +849,26 @@ function openAreaModal(){
 
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
-        div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2";
+        div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
+        div.dataset.area="${areaName}";
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
             <div class="actions flex gap-2">
-                <button class="icon-edit px-2 py-1 bg-blue-500 text-white rounded text-sm" data-name="${areaName}">Edit</button>
-                <button class="icon-delete px-2 py-1 bg-red-500 text-white rounded text-sm" data-name="${areaName}">Hapus</button>
+                <i class="icon-edit text-blue-500" data-name="${areaName}" data-lucide="edit-3" stroke-width="1.5"></i>
+                <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
             </div>
         `;
+        // KLIK NAMA AREA BUKA WILAYAH
+        div.onclick = function(e){
+            if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
+                openWilayahModal(this.dataset.area);
+            }
+        };
         container.appendChild(div);
     });
 
-    setupActionButtons(); // SETUP TOMBOL EDIT & HAPUS
+    setupHoldToDelete();
+    setupEditAction();
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
@@ -938,14 +946,15 @@ function openWilayahModal(areaName){
                 <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
             </div>
             <div class="actions flex gap-2">
-                <button class="icon-edit px-2 py-1 bg-blue-500 text-white rounded text-sm" data-index="${idx}">Edit</button>
-                <button class="icon-delete px-2 py-1 bg-red-500 text-white rounded text-sm" data-index="${idx}">Hapus</button>
+                <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
+                <i class="icon-delete text-red-500 ml-1" data-index="${idx}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
             </div>
         `;
         container.appendChild(div);
     });
 
-    setupActionButtons(); // SETUP TOMBOL EDIT & HAPUS
+    setupHoldToDelete();
+    setupEditAction();
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
@@ -1003,53 +1012,74 @@ function simpanWilayah(){
 }
 
 // ==============================================
-// >>> SETUP TOMBOL ACTION (EDIT & HAPUS) <<<
+// >>> HOLD CLICK DELETE <<<
 // ==============================================
-function setupActionButtons(){
-    // TOMBOL EDIT
-    document.querySelectorAll(".icon-edit").forEach(btn => {
-        btn.onclick = function(e){
-            e.stopPropagation(); // AGAR TIDAK KLIK MASUK KE DETAIL
-            if(this.dataset.name !== undefined){ // AREA
-                const name = this.dataset.name;
-                isEditMode = true;
-                editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
-                document.getElementById("inputNamaArea").value = name;
-                document.getElementById("formAreaContainer").style.display = "block";
-                enableButton("btnSimpanArea");
-            } else if(this.dataset.index !== undefined){ // WILAYAH
-                const idx = parseInt(this.dataset.index);
-                const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-                isEditMode = true;
-                editIndex = idx;
-                document.getElementById("inputNamaWilayah").value = data.nama;
-                document.getElementById("inputKodeCek").value = data.cek;
-                document.getElementById("inputKodeBayar").value = data.bayar;
-                document.getElementById("formWilayahContainer").style.display = "block";
-                enableButton("btnSimpanWilayah");
-            }
-        };
+function setupHoldToDelete(){
+    document.querySelectorAll(".icon-edit").forEach(icon => {
+        icon.addEventListener('mousedown', startPress);
+        icon.addEventListener('touchstart', startPress);
+        icon.addEventListener('mouseup', cancelPress);
+        icon.addEventListener('touchend', cancelPress);
+        icon.addEventListener('mouseleave', cancelPress);
     });
 
-    // TOMBOL HAPUS
     document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(e){
-            e.stopPropagation();
+        btn.onclick = function(){
             const name = this.dataset.name;
             const idx = this.dataset.index;
             const text = name ? `Area "${name}"` : `Wilayah ini`;
-            
             showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-                if(name){ // AREA
+                if(name){
                     delete prabayarData[currentMenuType][name];
                     enableButton("btnSimpanDaftarArea");
                     openAreaModal();
-                } else { // WILAYAH
+                } else {
                     prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                     enableButton("btnSimpanDaftarWilayah");
                     openWilayahModal(currentAreaName);
                 }
             }, "Ya, Hapus");
+        };
+    });
+
+    document.addEventListener('click', function(e){
+        if(!e.target.closest('.actions')){ hideAllDeleteIcons(); }
+    });
+}
+
+function startPress(e){
+    const icon = e.currentTarget;
+    pressTimer = setTimeout(() => { 
+        icon.nextElementSibling.style.display = "inline"; 
+    }, 1000); // TAHAN 1 DETIK
+}
+function cancelPress(){ clearTimeout(pressTimer); }
+function hideAllDeleteIcons(){
+    document.querySelectorAll(".icon-delete").forEach(el => { el.style.display = "none"; });
+}
+
+function setupEditAction(){
+    document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
+        icon.onclick = function(){
+            const name = this.dataset.name;
+            isEditMode = true;
+            editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
+            document.getElementById("inputNamaArea").value = name;
+            document.getElementById("formAreaContainer").style.display = "block";
+            enableButton("btnSimpanArea");
+        };
+    });
+
+    document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
+        icon.onclick = function(){
+            const idx = parseInt(this.dataset.index);
+            const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+            isEditMode = true; editIndex = idx;
+            document.getElementById("inputNamaWilayah").value = data.nama;
+            document.getElementById("inputKodeCek").value = data.cek;
+            document.getElementById("inputKodeBayar").value = data.bayar;
+            document.getElementById("formWilayahContainer").style.display = "block";
+            enableButton("btnSimpanWilayah");
         };
     });
 }
