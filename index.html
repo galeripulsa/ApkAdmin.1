@@ -841,8 +841,6 @@ function openAreaModal(){
     currentMenuType = "pdam";
     if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
     previousMenu = "pascabayar";
-    
-    // SIMPAN DATA AWAL SAAT MEMBUKA MODAL
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 
     const modal = document.getElementById("areaModal");
@@ -851,24 +849,18 @@ function openAreaModal(){
 
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
-        div.className = "area-item";
+        div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2";
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
-            <div class="actions">
-                <i class="icon-edit" data-name="${areaName}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
-                <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
+            <div class="actions flex gap-2">
+                <button class="icon-edit px-2 py-1 bg-blue-500 text-white rounded text-sm" data-name="${areaName}">Edit</button>
+                <button class="icon-delete px-2 py-1 bg-red-500 text-white rounded text-sm" data-name="${areaName}">Hapus</button>
             </div>
         `;
-        div.onclick = function(e){
-            if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
-                openWilayahModal(areaName);
-            }
-        };
         container.appendChild(div);
     });
 
-    setupHoldToDelete();
-    setupEditArea();
+    setupActionButtons(); // SETUP TOMBOL EDIT & HAPUS
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
@@ -913,12 +905,9 @@ function simpanArea(){
     }
     
     hideFormArea();
-    
-    // SETELAH DATA BERUBAH, LANGSUNG AKTIFKAN TOMBOL
     setTimeout(() => {
         enableButton("btnSimpanDaftarArea");
     }, 150);
-    
     openAreaModal();
 }
 
@@ -942,22 +931,21 @@ function openWilayahModal(areaName){
     
     listWilayah.forEach((wil, idx) => {
         const div = document.createElement("div");
-        div.className = "wilayah-item";
+        div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2";
         div.innerHTML = `
             <div>
                 <div class="font-medium">${wil.nama}</div>
                 <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
             </div>
-            <div class="actions">
-                <i class="icon-edit" data-index="${idx}" data-lucide="edit-3" class="w-5 h-5 text-slate-500"></i>
-                <i class="icon-delete" data-index="${idx}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
+            <div class="actions flex gap-2">
+                <button class="icon-edit px-2 py-1 bg-blue-500 text-white rounded text-sm" data-index="${idx}">Edit</button>
+                <button class="icon-delete px-2 py-1 bg-red-500 text-white rounded text-sm" data-index="${idx}">Hapus</button>
             </div>
         `;
         container.appendChild(div);
     });
 
-    setupHoldToDelete();
-    setupEditWilayah();
+    setupActionButtons(); // SETUP TOMBOL EDIT & HAPUS
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
@@ -1008,13 +996,62 @@ function simpanWilayah(){
     prabayarData[currentMenuType][currentAreaName].wilayah = listWilayah;
     
     hideFormWilayah();
-    
-    // SETELAH DATA BERUBAH, LANGSUNG AKTIFKAN TOMBOL
     setTimeout(() => {
         enableButton("btnSimpanDaftarWilayah");
     }, 150);
-    
     openWilayahModal(currentAreaName);
+}
+
+// ==============================================
+// >>> SETUP TOMBOL ACTION (EDIT & HAPUS) <<<
+// ==============================================
+function setupActionButtons(){
+    // TOMBOL EDIT
+    document.querySelectorAll(".icon-edit").forEach(btn => {
+        btn.onclick = function(e){
+            e.stopPropagation(); // AGAR TIDAK KLIK MASUK KE DETAIL
+            if(this.dataset.name !== undefined){ // AREA
+                const name = this.dataset.name;
+                isEditMode = true;
+                editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
+                document.getElementById("inputNamaArea").value = name;
+                document.getElementById("formAreaContainer").style.display = "block";
+                enableButton("btnSimpanArea");
+            } else if(this.dataset.index !== undefined){ // WILAYAH
+                const idx = parseInt(this.dataset.index);
+                const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
+                isEditMode = true;
+                editIndex = idx;
+                document.getElementById("inputNamaWilayah").value = data.nama;
+                document.getElementById("inputKodeCek").value = data.cek;
+                document.getElementById("inputKodeBayar").value = data.bayar;
+                document.getElementById("formWilayahContainer").style.display = "block";
+                enableButton("btnSimpanWilayah");
+            }
+        };
+    });
+
+    // TOMBOL HAPUS
+    document.querySelectorAll(".icon-delete").forEach(btn => {
+        btn.onclick = function(e){
+            e.stopPropagation();
+            const name = this.dataset.name;
+            const idx = this.dataset.index;
+            const text = name ? `Area "${name}"` : `Wilayah ini`;
+            
+            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+                if(name){ // AREA
+                    delete prabayarData[currentMenuType][name];
+                    enableButton("btnSimpanDaftarArea");
+                    openAreaModal();
+                } else { // WILAYAH
+                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                    enableButton("btnSimpanDaftarWilayah");
+                    openWilayahModal(currentAreaName);
+                }
+            }, "Ya, Hapus");
+        };
+    });
 }
 
 // ==============================================
@@ -1023,21 +1060,12 @@ function simpanWilayah(){
 function checkAreaChange(){
     if(!prabayarData[currentMenuType]) { disableButton("btnSimpanDaftarArea"); return; }
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
-    // PERBANDINGAN
-    if(currentData !== originalAreaData) {
-        enableButton("btnSimpanDaftarArea");
-    } else {
-        disableButton("btnSimpanDaftarArea");
-    }
+    currentData !== originalAreaData ? enableButton("btnSimpanDaftarArea") : disableButton("btnSimpanDaftarArea");
 }
 function checkWilayahChange(){
     if(!prabayarData[currentMenuType] || !prabayarData[currentMenuType][currentAreaName]) { disableButton("btnSimpanDaftarWilayah"); return; }
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
-    if(currentData !== originalWilayahData) {
-        enableButton("btnSimpanDaftarWilayah");
-    } else {
-        disableButton("btnSimpanDaftarWilayah");
-    }
+    currentData !== originalWilayahData ? enableButton("btnSimpanDaftarWilayah") : disableButton("btnSimpanDaftarWilayah");
 }
 
 function checkFormArea(){
@@ -1048,84 +1076,6 @@ function checkFormWilayah(){
     const cek = document.getElementById("inputKodeCek").value.trim();
     const bayar = document.getElementById("inputKodeBayar").value.trim();
     (nama && cek && bayar) ? enableButton("btnSimpanWilayah") : disableButton("btnSimpanWilayah");
-}
-
-// ==============================================
-// >>> HOLD CLICK DELETE <<<
-// ==============================================
-function setupHoldToDelete(){
-    document.querySelectorAll(".icon-edit").forEach(icon => {
-        icon.addEventListener('mousedown', startPress);
-        icon.addEventListener('touchstart', startPress);
-        icon.addEventListener('mouseup', cancelPress);
-        icon.addEventListener('touchend', cancelPress);
-        icon.addEventListener('mouseleave', cancelPress);
-    });
-
-    document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(){
-            const name = this.dataset.name || this.dataset.index;
-            const text = this.dataset.name ? `Area "${name}"` : `Wilayah ini`;
-            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-                if(this.dataset.name){
-                    delete prabayarData[currentMenuType][this.dataset.name];
-                } else {
-                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(this.dataset.index), 1);
-                }
-                
-                // SETELAH HAPUS, TOMBOL LANGSUNG NYALA
-                if(this.dataset.name){
-                    enableButton("btnSimpanDaftarArea");
-                } else {
-                    enableButton("btnSimpanDaftarWilayah");
-                }
-                
-                if(this.dataset.name) openAreaModal(); else openWilayahModal(currentAreaName);
-                
-            }, "Ya, Hapus");
-        };
-    });
-
-    document.addEventListener('click', function(e){
-        if(!e.target.closest('.actions')){ hideAllDeleteIcons(); }
-    });
-}
-
-function setupEditArea(){
-    document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
-        icon.onclick = function(){
-            const name = this.dataset.name;
-            isEditMode = true;
-            editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
-            document.getElementById("inputNamaArea").value = name;
-            document.getElementById("formAreaContainer").style.display = "block";
-            enableButton("btnSimpanArea");
-        };
-    });
-}
-
-function setupEditWilayah(){
-    document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
-        icon.onclick = function(){
-            const idx = parseInt(this.dataset.index);
-            const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-            isEditMode = true; editIndex = idx;
-            document.getElementById("inputNamaWilayah").value = data.nama;
-            document.getElementById("inputKodeCek").value = data.cek;
-            document.getElementById("inputKodeBayar").value = data.bayar;
-            document.getElementById("formWilayahContainer").style.display = "block";
-            enableButton("btnSimpanWilayah");
-        };
-    });
-}
-
-function startPress(e){
-    const icon = e.currentTarget;
-    pressTimer = setTimeout(() => { icon.nextElementSibling.style.display = "inline"; }, 1000);
-}
-function cancelPress(){ clearTimeout(pressTimer); }
-function hideAllDeleteIcons(){
-    document.querySelectorAll(".icon-delete").forEach(el => { el.style.display = "none"; });
 }
 
 // ==============================================
@@ -1435,14 +1385,12 @@ function simpanDaftarArea() {
     saveData();
     toast("Daftar Area Berhasil Disimpan");
     disableButton("btnSimpanDaftarArea");
-    // UPDATE DATA ASLI SETELAH DISIMPAN
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
 function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
     disableButton("btnSimpanDaftarWilayah");
-    // UPDATE DATA ASLI SETELAH DISIMPAN
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
 
@@ -1481,6 +1429,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
 });
 </script>
+
 
 
 <!-- MODAL DAFTAR OPERATOR/PRODUK -->
