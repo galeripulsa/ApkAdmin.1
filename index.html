@@ -1105,8 +1105,9 @@ function simpanWilayah(){
     openWilayahModal(currentAreaName);
 }
 
+
 // ==============================================
-// >>> HOLD CLICK DELETE <<<
+// >>>🖍🖍🖍HOLD CLICK DELETE 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
     document.querySelectorAll(".icon-edit").forEach(icon => {
@@ -1143,7 +1144,7 @@ function setupHoldToDelete(){
         };
     });
 
-    // Klik di luar atau item lain -> sembunyikan hapus
+    // Klik di luar atau item lain -> sembunyikan hapus, munculkan edit
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){ 
             hideAllDeleteIcons(); 
@@ -1154,16 +1155,23 @@ function setupHoldToDelete(){
 function startPress(e){
     const icon = e.currentTarget;
     pressTimer = setTimeout(() => { 
-        // Tampilkan hapus, edit tetap ada
+        // Sembunyikan edit, tampilkan hapus
+        icon.style.display = "none";
         icon.nextElementSibling.style.display = "inline"; 
     }, 1000); // TAHAN 1 DETIK
 }
+
 function cancelPress(){ 
     clearTimeout(pressTimer); 
 }
+
 function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => { 
         el.style.display = "none"; 
+        // Tampilkan kembali icon edit
+        if(el.previousElementSibling){
+            el.previousElementSibling.style.display = "inline";
+        }
     });
 }
 
