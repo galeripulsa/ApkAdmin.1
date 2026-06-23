@@ -664,7 +664,7 @@ function autoGrow(element) {
 
 function escapeHtml(text) {
     if(!text) return "";
-    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&quot;").replace(/'/g, "&#039;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 const menus = [
@@ -851,7 +851,7 @@ function openAreaModal(){
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
         div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
-        div.dataset.area="${areaName}";
+        div.dataset.area = areaName;
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
             <div class="actions flex gap-2">
@@ -875,19 +875,16 @@ function openAreaModal(){
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
 
+// === FORM AREA SEKARANG JADI POPUP ===
 function showFormArea(){
-    document.getElementById("formAreaContainer").style.display = "block";
     document.getElementById("inputNamaArea").value = "";
     isEditMode = false;
     disableButton("btnSimpanArea");
+    document.getElementById("formAreaModal").classList.add("show");
     setTimeout(() => { document.getElementById("inputNamaArea").focus(); }, 300);
 }
 function hideFormArea(){
-    document.getElementById("formAreaContainer").style.display = "none";
-}
-function homeFromFormArea(){
-    hideFormArea();
-    openAreaModal();
+    document.getElementById("formAreaModal").classList.remove("show");
 }
 
 function simpanArea(){
@@ -933,7 +930,7 @@ function openWilayahModal(areaName){
 
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
-    document.getElementById("namaAreaTitle").innerText = areaName;
+    document.getElementById("namaAreaTitle").innerText = areaName; // <-- FIX HEADER
     container.innerHTML = "";
 
     const listWilayah = (prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]) ? prabayarData[currentMenuType][currentAreaName].wilayah : [];
@@ -961,21 +958,18 @@ function openWilayahModal(areaName){
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
 
+// === FORM WILAYAH JADI POPUP ===
 function showFormWilayah(){
-    document.getElementById("formWilayahContainer").style.display = "block";
     document.getElementById("inputNamaWilayah").value = "";
     document.getElementById("inputKodeCek").value = "";
     document.getElementById("inputKodeBayar").value = "";
     isEditMode = false; editIndex = -1;
     disableButton("btnSimpanWilayah");
+    document.getElementById("formWilayahModal").classList.add("show");
     setTimeout(() => { document.getElementById("inputNamaWilayah").focus(); }, 300);
 }
 function hideFormWilayah(){
-    document.getElementById("formWilayahContainer").style.display = "none";
-}
-function homeFromFormWilayah(){
-    hideFormWilayah();
-    openWilayahModal(currentAreaName);
+    document.getElementById("formWilayahModal").classList.remove("show");
 }
 
 function simpanWilayah(){
@@ -1017,6 +1011,13 @@ function simpanWilayah(){
 // ==============================================
 function setupHoldToDelete(){
     document.querySelectorAll(".icon-edit").forEach(icon => {
+        // Hapus event lama biar tidak double
+        icon.removeEventListener('mousedown', startPress);
+        icon.removeEventListener('touchstart', startPress);
+        icon.removeEventListener('mouseup', cancelPress);
+        icon.removeEventListener('touchend', cancelPress);
+        icon.removeEventListener('mouseleave', cancelPress);
+        
         icon.addEventListener('mousedown', startPress);
         icon.addEventListener('touchstart', startPress);
         icon.addEventListener('mouseup', cancelPress);
@@ -1066,7 +1067,7 @@ function setupEditAction(){
             isEditMode = true;
             editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
             document.getElementById("inputNamaArea").value = name;
-            document.getElementById("formAreaContainer").style.display = "block";
+            document.getElementById("formAreaModal").classList.add("show"); // <-- POPUP
             enableButton("btnSimpanArea");
         };
     });
@@ -1079,7 +1080,7 @@ function setupEditAction(){
             document.getElementById("inputNamaWilayah").value = data.nama;
             document.getElementById("inputKodeCek").value = data.cek;
             document.getElementById("inputKodeBayar").value = data.bayar;
-            document.getElementById("formWilayahContainer").style.display = "block";
+            document.getElementById("formWilayahModal").classList.add("show"); // <-- POPUP
             enableButton("btnSimpanWilayah");
         };
     });
