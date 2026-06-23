@@ -888,10 +888,15 @@ function showFormArea(){
 function hideFormArea(){
     document.getElementById("formAreaContainer").style.display = "none";
 }
+// ✅ TOMBOL HOME
+function homeFromFormArea(){
+    hideFormArea();
+    openAreaModal();
+}
 
 function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
-    if(!nama){ toast("Nama Area tidak boleh kosong"); return; }
+    if(!nama){ return; } // TANPA NOTIF
     
     if(!isEditMode && prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
         showConfirm("Duplikat", "Nama Area sudah ada. Gunakan nama lain", ()=>{
@@ -914,10 +919,9 @@ function simpanArea(){
     
     hideFormArea();
     openAreaModal();
-    // NOTIF DIHAPUS DISINI
     setTimeout(() => {
         enableButton("btnSimpanDaftarArea");
-        checkAreaChange();
+        checkAreaChange(); // PASTI CEK DISINI
     }, 150);
 }
 
@@ -974,13 +978,18 @@ function showFormWilayah(){
 function hideFormWilayah(){
     document.getElementById("formWilayahContainer").style.display = "none";
 }
+// ✅ TOMBOL HOME
+function homeFromFormWilayah(){
+    hideFormWilayah();
+    openWilayahModal(currentAreaName);
+}
 
 function simpanWilayah(){
     const nama = document.getElementById("inputNamaWilayah").value.trim();
     const cek = document.getElementById("inputKodeCek").value.trim();
     const bayar = document.getElementById("inputKodeBayar").value.trim();
 
-    if(!nama){ toast("Nama Wilayah tidak boleh kosong"); return; }
+    if(!nama){ return; } // TANPA NOTIF
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     if(!prabayarData[currentMenuType][currentAreaName]) prabayarData[currentMenuType][currentAreaName] = { wilayah: [] };
@@ -1004,10 +1013,9 @@ function simpanWilayah(){
     
     hideFormWilayah();
     openWilayahModal(currentAreaName);
-    // NOTIF DIHAPUS DISINI
     setTimeout(() => {
         enableButton("btnSimpanDaftarWilayah");
-        checkWilayahChange();
+        checkWilayahChange(); // PASTI CEK DISINI
     }, 150);
 }
 
@@ -1301,12 +1309,6 @@ function closePrabayar(){
     document.getElementById("prabayarModal").classList.remove("show");
 }
 
-function openPreview(){
-    document.getElementById("previewModal").classList.add("show");
-    generatePreview();
-}
-function closePreview(){ document.getElementById("previewModal").classList.remove("show"); }
-
 function loadData(){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     if(d.server){ namaKonter.value = d.server.nama || ""; alamatKonter.value = d.server.alamat || ""; }
@@ -1396,21 +1398,6 @@ function toast(msg){
     setTimeout(()=> el.style.display="none", 2500);
 }
 
-// === PREVIEW ===
-function generatePreview(){
-    const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
-    const cont = document.getElementById("previewContent");
-    let html = "";
-    if(d.transaksi?.menus){
-        d.transaksi.menus.forEach(menu=>{
-            html += `<div class="bg-white rounded-2xl shadow p-4 mb-4"><h3 class="font-bold text-lg text-slate-800 mb-2">${menu.judul}</h3><div class="grid grid-cols-2 gap-2">`;
-            menu.items.forEach(it=> html += `<div class="bg-slate-50 rounded-xl p-3 text-center text-slate-700 font-medium">${it}</div>`);
-            html += `</div></div>`;
-        });
-    }
-    cont.innerHTML = html || "<p class='text-center text-slate-500'>Belum ada data</p>";
-}
-
 // ==============================================
 // >>> PENCARIAN <<<
 // ==============================================
@@ -1432,13 +1419,13 @@ document.getElementById('cariWilayah').addEventListener('input', function() {
 // ==============================================
 function simpanDaftarArea() {
     saveData();
-    toast("Daftar Area Berhasil Disimpan"); // NOTIF TETAP DISINI
+    toast("Daftar Area Berhasil Disimpan"); // NOTIF DISINI
     disableButton("btnSimpanDaftarArea");
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
 function simpanDaftarWilayah() {
     saveData();
-    toast("Daftar Wilayah Berhasil Disimpan"); // NOTIF TETAP DISINI
+    toast("Daftar Wilayah Berhasil Disimpan"); // NOTIF DISINI
     disableButton("btnSimpanDaftarWilayah");
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
