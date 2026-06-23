@@ -897,7 +897,7 @@ function simpanArea(){
     }
     
     if(!isEditMode && prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
-        showConfirm("Duplikat", "Nama Area sudah ada. Klik Oke untuk kembali.", ()=>{
+        showConfirm("Duplikat", "Nama Area sudah ada. Gunakan nama lain", ()=>{
             document.getElementById("inputNamaArea").focus();
         }, "Oke");
         return;
