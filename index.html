@@ -1,3 +1,5 @@
+ kode terpotong, kirim kode bagian berikutnya
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1183,16 +1185,18 @@ function hideAllDeleteIcons(){
 // ==============================================
 function openOperatorList(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
-
+    
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
-
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
 
     container.innerHTML = "";
 
-    
+    if(!prabayarData[currentMenuType]){
+        prabayarData[currentMenuType] = {};
+    }
+
     if(!originalPrabayarData[currentMenuType]){
         originalPrabayarData[currentMenuType] = {};
     }
@@ -1253,6 +1257,7 @@ function openOperatorList(title, actionType){
     disableButton("savePrabayarBtn");
     attachInputListeners();
 }
+
 
 function openOperatorListPascabayar(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
