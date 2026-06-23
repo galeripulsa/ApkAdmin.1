@@ -32,6 +32,15 @@ body{
     box-sizing: border-box;
 }
 
+.row-dua {
+    display: flex;
+    gap: 12px;
+}
+
+.row-dua input {
+    flex: 1;
+}
+
 #formAreaModal.show, #formWilayahModal.show {
     display: flex;
 }
@@ -661,10 +670,14 @@ body{
       <h3>Tambah Wilayah</h3>
     </div>
     <div class="modal-body">
-      <input type="text" id="inputNamaWilayah" placeholder="Nama Wilayah">
-      <input type="text" id="inputKodeCek" placeholder="Kode Cek">
-      <input type="text" id="inputKodeBayar" placeholder="Kode Bayar">
-    </div>
+  <input type="text" id="inputNamaWilayah" placeholder="Nama Wilayah">
+  
+  <div class="row-dua">
+    <input type="text" id="inputKodeCek" placeholder="Kode Cek">
+    <input type="text" id="inputKodeBayar" placeholder="Kode Bayar">
+  </div>
+</div>
+
     <div class="modal-footer">
       <button onclick="hideFormWilayah()">Batal</button>
       <button id="btnSimpanWilayah" onclick="simpanWilayah()">Simpan</button>
