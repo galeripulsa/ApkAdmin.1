@@ -650,7 +650,7 @@ let currentAreaName = "";
 let allProducts = [];
 let isEditMode = false;
 let editIndex = -1;
-let previousMenu = ""; // VARIABEL BARU UNTUK INGAT ASAL MENU
+let previousMenu = "";
 
 // === VARIABEL UNTUK TIMER HOLD CLICK ===
 let pressTimer;
@@ -660,6 +660,7 @@ let originalServerData = "";
 let originalCenterData = "";
 let originalAreaData = "";
 let originalWilayahData = "";
+let originalTransaksiData = ""; // <<< BARU: Untuk Transaksi
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -774,11 +775,13 @@ function closeCenter(){
 
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
+    saveOriginalTransaksiData(); // <<< BARU: Simpan data awal saat buka
 }
 function closeTransaksi(){
     document.getElementById("transaksiModal").classList.remove("show");
 }
 
+// === SIMPAN DATA ASLI UNTUK BANDINGAN ===
 function saveOriginalServerData(){
     originalServerData = JSON.stringify({
         nama: namaKonter.value,
@@ -792,73 +795,70 @@ function saveOriginalCenterData(){
         wa: waCenter.value, sms: smsCenter.value
     });
 }
+function saveOriginalTransaksiData(){
+    // Simpan data menu & kategori saat pertama dibuka
+    const menusHtml = document.getElementById("transaksiList").innerHTML;
+    originalTransaksiData = menusHtml;
+}
 
-function openPrabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    document.getElementById("subMenuTitle").innerText = "Menu Prabayar";
-    const modal = document.getElementById("prabayarModal");
-    const listContainer = document.getElementById("prabayarList");
-
-    listContainer.innerHTML = "";
-    subMenuPrabayar.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "submenu-item";
-        div.innerHTML = `
-            <i data-lucide="${item.icon}" class="w-7 h-7"></i>
-            <span class="font-medium text-lg">${item.nama}</span>
-        `;
-
-        if(item.action){
-            div.onclick = function(){
-                openOperatorList(item.nama, item.action);
-            };
-        }
-
-        listContainer.appendChild(div);
+// === CEK PERUBAHAN & AKTIFKAN TOMBOL ===
+function checkServerChange(){
+    const currentData = JSON.stringify({
+        nama: namaKonter.value,
+        alamat: alamatKonter.value
     });
-
-    modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
+    if(currentData !== originalServerData){
+        enableButton("saveServerBtn");
+    } else {
+        disableButton("saveServerBtn");
+    }
 }
 
-function openPascabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
-    const modal = document.getElementById("prabayarModal");
-    const listContainer = document.getElementById("prabayarList");
-
-    listContainer.innerHTML = "";
-    subMenuPascabayar.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "submenu-item";
-        div.innerHTML = `
-            <i data-lucide="${item.icon}" class="w-7 h-7"></i>
-            <span class="font-medium text-lg">${item.nama}</span>
-        `;
-
-        if(item.action){
-            div.onclick = function(){
-                if(item.action === "pdam"){
-                    openAreaModal();
-                } else {
-                    openOperatorListPascabayar(item.nama, item.action);
-                }
-            };
-        }
-
-        listContainer.appendChild(div);
+function checkCenterChange(){
+    const currentData = JSON.stringify({
+        ipNama: ipNama.value, ipServer: ipServer.value, ipHost: ipHost.value,
+        jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
+        wa: waCenter.value, sms: smsCenter.value
     });
-
-    modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
+    if(currentData !== originalCenterData){
+        enableButton("saveCenterBtn");
+    } else {
+        disableButton("saveCenterBtn");
+    }
 }
 
-function closePrabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    document.getElementById("prabayarModal").classList.remove("show");
+function checkTransaksiChange(){
+    const currentHtml = document.getElementById("transaksiList").innerHTML;
+    if(currentHtml !== originalTransaksiData){
+        enableButton("saveTransaksiBtn");
+    } else {
+        disableButton("saveTransaksiBtn");
+    }
 }
 
-// >>> 🅰️🅰️🅰️🅰️🅰️🅰️🅰️<<<
+// === PASANG EVENT LISTENER KE INPUT ===
+document.addEventListener('DOMContentLoaded', function(){
+    // Setup Server
+    namaKonter.addEventListener('input', checkServerChange);
+    alamatKonter.addEventListener('input', checkServerChange);
+    
+    // Setup Center
+    ipNama.addEventListener('input', checkCenterChange);
+    ipServer.addEventListener('input', checkCenterChange);
+    ipHost.addEventListener('input', checkCenterChange);
+    jabberNama.addEventListener('input', checkCenterChange);
+    jabberServer.addEventListener('input', checkCenterChange);
+    jabberHost.addEventListener('input', checkCenterChange);
+    waCenter.addEventListener('input', checkCenterChange);
+    smsCenter.addEventListener('input', checkCenterChange);
+
+    // Area & Wilayah
+    document.getElementById("inputNamaArea").addEventListener("input", checkFormArea);
+    document.getElementById("inputNamaWilayah").addEventListener("input", checkFormWilayah);
+    document.getElementById("inputKodeCek").addEventListener("input", checkFormWilayah);
+    document.getElementById("inputKodeBayar").addEventListener("input", checkFormWilayah);
+});
+
 // ==============================================
 // >>> MODAL DAFTAR AREA PDAM <<<
 // ==============================================
@@ -869,16 +869,11 @@ function openAreaModal(){
     if(!prabayarData[currentMenuType]){
         prabayarData[currentMenuType] = {};
     }
-
-    // SIMPAN ASAL MENU
-    previousMenu = "pascabayar"; // Karena PDAM ada di Pascabayar
-
-    // Simpan data awal untuk pembanding
+    previousMenu = "pascabayar";
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 
     const modal = document.getElementById("areaModal");
     const container = document.getElementById("areaListContainer");
-
     container.innerHTML = "";
 
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
@@ -891,26 +886,19 @@ function openAreaModal(){
                 <i class="icon-delete" data-name="${areaName}" data-lucide="trash-2" class="w-5 h-5 text-red-500 ml-2" style="display: none;"></i>
             </div>
         `;
-
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
                 openWilayahModal(areaName);
             }
         };
-
         container.appendChild(div);
     });
 
     setupHoldToDelete();
     setupEditArea();
-
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
-    
-    // Pastikan tombol mati dulu saat buka
-    setTimeout(() => {
-        disableButton("btnSimpanDaftarArea");
-    }, 100);
+    setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
 
 function showFormArea(){
@@ -918,23 +906,15 @@ function showFormArea(){
     document.getElementById("inputNamaArea").value = "";
     isEditMode = false;
     disableButton("btnSimpanArea");
-    setTimeout(() => {
-        document.getElementById("inputNamaArea").focus();
-    }, 300);
+    setTimeout(() => { document.getElementById("inputNamaArea").focus(); }, 300);
 }
-
 function hideFormArea(){
     document.getElementById("formAreaContainer").style.display = "none";
-    document.getElementById("inputNamaArea").value = "";
 }
 
 function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
-    
-    if(!nama){
-        toast("Nama Area tidak boleh kosong");
-        return;
-    }
+    if(!nama){ toast("Nama Area tidak boleh kosong"); return; }
     
     if(!isEditMode && prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
         showConfirm("Duplikat", "Nama Area sudah ada. Gunakan nama lain", ()=>{
@@ -946,14 +926,12 @@ function simpanArea(){
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     
     if(isEditMode){
-        // Edit mode
         const oldName = Object.keys(prabayarData[currentMenuType])[editIndex];
         if(oldName !== nama){
             prabayarData[currentMenuType][nama] = prabayarData[currentMenuType][oldName];
             delete prabayarData[currentMenuType][oldName];
         }
     } else {
-        // Tambah baru
         prabayarData[currentMenuType][nama] = { wilayah: [] };
     }
     
@@ -961,9 +939,9 @@ function simpanArea(){
     openAreaModal();
     toast(isEditMode ? "Area Berhasil Diubah" : "Area Berhasil Ditambahkan");
     
-    // Aktifkan tombol setelah ada perubahan
     setTimeout(() => {
         enableButton("btnSimpanDaftarArea");
+        checkAreaChange(); // Cek perubahan
     }, 150);
 }
 
@@ -974,16 +952,12 @@ function openWilayahModal(areaName){
     currentAreaName = areaName;
     document.getElementById("areaModal").classList.remove("show");
 
-    // Simpan data awal
     if(prabayarData[currentMenuType] && prabayarData[currentMenuType][areaName]){
         originalWilayahData = JSON.stringify(prabayarData[currentMenuType][areaName].wilayah);
-    } else {
-        originalWilayahData = "[]";
-    }
+    } else { originalWilayahData = "[]"; }
 
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
-
     document.getElementById("namaAreaTitle").innerText = areaName;
     container.innerHTML = "";
 
@@ -1007,14 +981,9 @@ function openWilayahModal(areaName){
 
     setupHoldToDelete();
     setupEditWilayah();
-
     modal.classList.add("show");
     setTimeout(() => { lucide.createIcons(); }, 50);
-    
-    // Pastikan tombol mati dulu
-    setTimeout(() => {
-        disableButton("btnSimpanDaftarWilayah");
-    }, 100);
+    setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
 
 function showFormWilayah(){
@@ -1022,14 +991,10 @@ function showFormWilayah(){
     document.getElementById("inputNamaWilayah").value = "";
     document.getElementById("inputKodeCek").value = "";
     document.getElementById("inputKodeBayar").value = "";
-    isEditMode = false;
-    editIndex = -1;
+    isEditMode = false; editIndex = -1;
     disableButton("btnSimpanWilayah");
-    setTimeout(() => {
-        document.getElementById("inputNamaWilayah").focus();
-    }, 300);
+    setTimeout(() => { document.getElementById("inputNamaWilayah").focus(); }, 300);
 }
-
 function hideFormWilayah(){
     document.getElementById("formWilayahContainer").style.display = "none";
 }
@@ -1039,10 +1004,7 @@ function simpanWilayah(){
     const cek = document.getElementById("inputKodeCek").value.trim();
     const bayar = document.getElementById("inputKodeBayar").value.trim();
 
-    if(!nama){
-        toast("Nama Wilayah tidak boleh kosong");
-        return;
-    }
+    if(!nama){ toast("Nama Wilayah tidak boleh kosong"); return; }
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     if(!prabayarData[currentMenuType][currentAreaName]) prabayarData[currentMenuType][currentAreaName] = { wilayah: [] };
@@ -1068,9 +1030,9 @@ function simpanWilayah(){
     openWilayahModal(currentAreaName);
     toast(isEditMode ? "Wilayah Berhasil Diubah" : "Wilayah Berhasil Ditambahkan");
     
-    // Aktifkan tombol
     setTimeout(() => {
         enableButton("btnSimpanDaftarWilayah");
+        checkWilayahChange();
     }, 150);
 }
 
@@ -1078,58 +1040,24 @@ function simpanWilayah(){
 // >>> CEK PERUBAHAN AREA & WILAYAH <<<
 // ==============================================
 function checkAreaChange(){
-    if(!prabayarData[currentMenuType]) {
-        disableButton("btnSimpanDaftarArea");
-        return;
-    }
+    if(!prabayarData[currentMenuType]) { disableButton("btnSimpanDaftarArea"); return; }
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
-    if(currentData !== originalAreaData){
-        enableButton("btnSimpanDaftarArea");
-    } else {
-        disableButton("btnSimpanDaftarArea");
-    }
+    currentData !== originalAreaData ? enableButton("btnSimpanDaftarArea") : disableButton("btnSimpanDaftarArea");
 }
-
 function checkWilayahChange(){
-    if(!prabayarData[currentMenuType] || !prabayarData[currentMenuType][currentAreaName]) {
-        disableButton("btnSimpanDaftarWilayah");
-        return;
-    }
+    if(!prabayarData[currentMenuType] || !prabayarData[currentMenuType][currentAreaName]) { disableButton("btnSimpanDaftarWilayah"); return; }
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
-    if(currentData !== originalWilayahData){
-        enableButton("btnSimpanDaftarWilayah");
-    } else {
-        disableButton("btnSimpanDaftarWilayah");
-    }
+    currentData !== originalWilayahData ? enableButton("btnSimpanDaftarWilayah") : disableButton("btnSimpanDaftarWilayah");
 }
-
-
-document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById("inputNamaArea").addEventListener("input", checkFormArea);
-    document.getElementById("inputNamaWilayah").addEventListener("input", checkFormWilayah);
-    document.getElementById("inputKodeCek").addEventListener("input", checkFormWilayah);
-    document.getElementById("inputKodeBayar").addEventListener("input", checkFormWilayah);
-});
 
 function checkFormArea(){
-    const val = document.getElementById("inputNamaArea").value.trim();
-    if(val){
-        enableButton("btnSimpanArea");
-    } else {
-        disableButton("btnSimpanArea");
-    }
+    document.getElementById("inputNamaArea").value.trim() ? enableButton("btnSimpanArea") : disableButton("btnSimpanArea");
 }
-
 function checkFormWilayah(){
     const nama = document.getElementById("inputNamaWilayah").value.trim();
     const cek = document.getElementById("inputKodeCek").value.trim();
     const bayar = document.getElementById("inputKodeBayar").value.trim();
-    
-    if(nama && cek && bayar){
-        enableButton("btnSimpanWilayah");
-    } else {
-        disableButton("btnSimpanWilayah");
-    }
+    (nama && cek && bayar) ? enableButton("btnSimpanWilayah") : disableButton("btnSimpanWilayah");
 }
 
 // ==============================================
@@ -1139,7 +1067,6 @@ function setupHoldToDelete(){
     document.querySelectorAll(".icon-edit").forEach(icon => {
         icon.addEventListener('mousedown', startPress);
         icon.addEventListener('touchstart', startPress);
-        
         icon.addEventListener('mouseup', cancelPress);
         icon.addEventListener('touchend', cancelPress);
         icon.addEventListener('mouseleave', cancelPress);
@@ -1158,19 +1085,13 @@ function setupHoldToDelete(){
                     openWilayahModal(currentAreaName);
                 }
                 toast("Berhasil dihapus");
-                
-                setTimeout(() => {
-                    checkAreaChange();
-                    checkWilayahChange();
-                }, 100);
+                setTimeout(() => { checkAreaChange(); checkWilayahChange(); }, 100);
             }, "Ya, Hapus");
         };
     });
 
     document.addEventListener('click', function(e){
-        if(!e.target.closest('.actions')){
-            hideAllDeleteIcons();
-        }
+        if(!e.target.closest('.actions')){ hideAllDeleteIcons(); }
     });
 }
 
@@ -1192,8 +1113,7 @@ function setupEditWilayah(){
         icon.onclick = function(){
             const idx = parseInt(this.dataset.index);
             const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-            isEditMode = true;
-            editIndex = idx;
+            isEditMode = true; editIndex = idx;
             document.getElementById("inputNamaWilayah").value = data.nama;
             document.getElementById("inputKodeCek").value = data.cek;
             document.getElementById("inputKodeBayar").value = data.bayar;
@@ -1205,19 +1125,11 @@ function setupEditWilayah(){
 
 function startPress(e){
     const icon = e.currentTarget;
-    pressTimer = setTimeout(() => {
-        icon.nextElementSibling.style.display = "inline";
-    }, 1000);
+    pressTimer = setTimeout(() => { icon.nextElementSibling.style.display = "inline"; }, 1000);
 }
-
-function cancelPress(){
-    clearTimeout(pressTimer);
-}
-
+function cancelPress(){ clearTimeout(pressTimer); }
 function hideAllDeleteIcons(){
-    document.querySelectorAll(".icon-delete").forEach(el => {
-        el.style.display = "none";
-    });
+    document.querySelectorAll(".icon-delete").forEach(el => { el.style.display = "none"; });
 }
 
 // ==============================================
@@ -1225,43 +1137,22 @@ function hideAllDeleteIcons(){
 // ==============================================
 function openOperatorList(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
-    
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
-
     container.innerHTML = "";
 
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
+    if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
+    if(!originalPrabayarData[currentMenuType]){ originalPrabayarData[currentMenuType] = {}; }
 
-    if(!originalPrabayarData[currentMenuType]){
-        originalPrabayarData[currentMenuType] = {};
-    }
-
-    let listToShow = operators;
-    let iconName = "signal";
-    let labelHarga = "Cek Harga";
-    let labelNama = "Nama Produk";
-
-    if(actionType === "voucherGames"){
-        listToShow = gameList;
-        iconName = "gamepad-2";
-    } else if(actionType === "voucherTv"){
-        listToShow = tvList;
-        iconName = "tv";
-    } else if(actionType === "ewallet"){
-        listToShow = ewalletList;
-        iconName = "wallet";
-    } else if(actionType === "transferUang"){
-        listToShow = bankList;
-        iconName = "building";
-    }
+    let listToShow = operators, iconName = "signal", labelHarga = "Cek Harga", labelNama = "Nama Produk";
+    if(actionType === "voucherGames"){ listToShow = gameList; iconName = "gamepad-2"; } 
+    else if(actionType === "voucherTv"){ listToShow = tvList; iconName = "tv"; } 
+    else if(actionType === "ewallet"){ listToShow = ewalletList; iconName = "wallet"; } 
+    else if(actionType === "transferUang"){ listToShow = bankList; iconName = "building"; }
 
     allProducts = [...listToShow];
-
     listToShow.forEach(itemName => {
         const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
         originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || ""};
@@ -1298,32 +1189,18 @@ function openOperatorList(title, actionType){
     attachInputListeners();
 }
 
-
 function openOperatorListPascabayar(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
-
     const modal = document.getElementById("operatorListModal");
     const container = document.getElementById("operatorListContainer");
-
     document.getElementById("operatorListTitle").innerText = title;
     currentMenuType = actionType;
-
     container.innerHTML = "";
 
-    if(!prabayarData[currentMenuType]){
-        prabayarData[currentMenuType] = {};
-    }
+    if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
+    if(!originalPrabayarData[currentMenuType]){ originalPrabayarData[currentMenuType] = {}; }
 
-    originalPrabayarData = {};
-    if(!originalPrabayarData[currentMenuType]){
-        originalPrabayarData[currentMenuType] = {};
-    }
-
-    let listToShow = [];
-    let iconName = "file-text";
-    let labelInput1 = "Kode / Format";
-    let labelInput2 = "Nama Produk";
-
+    let listToShow = [], iconName = "file-text", labelInput1 = "Kode / Format", labelInput2 = "Nama Produk";
     if(actionType === "plnPascabayar"){ listToShow = plnList; iconName = "zap"; } 
     else if(actionType === "bpjs"){ listToShow = bpjsList; iconName = "heart"; } 
     else if(actionType === "pbb"){ listToShow = pbbList; iconName = "home"; } 
@@ -1366,10 +1243,7 @@ function openOperatorListPascabayar(title, actionType){
     attachInputListeners();
 }
 
-function toggleOperator(el){
-    el.classList.toggle("open");
-}
-
+function toggleOperator(el){ el.classList.toggle("open"); }
 function backToPrabayarFromList(){
     document.getElementById("operatorListModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
@@ -1385,28 +1259,18 @@ function attachInputListeners(){
 function checkPrabayarChange(){
     let changed = false;
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
-        const inputs = wrap.querySelectorAll('input');
-        inputs.forEach(inp => {
+        wrap.querySelectorAll('input').forEach(inp => {
             const key = inp.dataset.operator;
             const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
             const originalVal = originalPrabayarData[currentMenuType][key]?.[type] || "";
-            if(inp.value !== originalVal){
-                changed = true;
-            }
+            if(inp.value !== originalVal) changed = true;
         });
     });
-
-    if(changed){
-        enableButton("savePrabayarBtn");
-    } else {
-        disableButton("savePrabayarBtn");
-    }
+    changed ? enableButton("savePrabayarBtn") : disableButton("savePrabayarBtn");
 }
 
 function confirmSavePrabayar(){
-    showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{
-        savePrabayarData();
-    }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{ savePrabayarData(); }, "Ya, Simpan");
 }
 
 function savePrabayarData(){
@@ -1414,17 +1278,9 @@ function savePrabayarData(){
         const cekInput = wrap.querySelector('.input-cek-harga');
         const namaInput = wrap.querySelector('.input-nama-produk');
         const key = cekInput.dataset.operator;
-
-        prabayarData[currentMenuType][key] = {
-            cekHarga: cekInput.value,
-            namaProduk: namaInput.value
-        };
-        originalPrabayarData[currentMenuType][key] = {
-            cekHarga: cekInput.value,
-            namaProduk: namaInput.value
-        };
+        prabayarData[currentMenuType][key] = { cekHarga: cekInput.value, namaProduk: namaInput.value };
+        originalPrabayarData[currentMenuType][key] = { cekHarga: cekInput.value, namaProduk: namaInput.value };
     });
-
     disableButton("savePrabayarBtn");
     toast("Data Produk Berhasil Disimpan");
 }
@@ -1432,6 +1288,45 @@ function savePrabayarData(){
 // ==============================================
 // >>> FUNGSI LAINNYA <<<
 // ==============================================
+function openPrabayar(){
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("subMenuTitle").innerText = "Menu Prabayar";
+    const modal = document.getElementById("prabayarModal");
+    const listContainer = document.getElementById("prabayarList");
+    listContainer.innerHTML = "";
+    subMenuPrabayar.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerHTML = `<i data-lucide="${item.icon}" class="w-7 h-7"></i><span class="font-medium text-lg">${item.nama}</span>`;
+        if(item.action) div.onclick = ()=>{ openOperatorList(item.nama, item.action); };
+        listContainer.appendChild(div);
+    });
+    modal.classList.add("show");
+    setTimeout(() => { lucide.createIcons(); }, 50);
+}
+
+function openPascabayar(){
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
+    const modal = document.getElementById("prabayarModal");
+    const listContainer = document.getElementById("prabayarList");
+    listContainer.innerHTML = "";
+    subMenuPascabayar.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerHTML = `<i data-lucide="${item.icon}" class="w-7 h-7"></i><span class="font-medium text-lg">${item.nama}</span>`;
+        if(item.action) div.onclick = ()=>{ item.action === "pdam" ? openAreaModal() : openOperatorListPascabayar(item.nama, item.action); };
+        listContainer.appendChild(div);
+    });
+    modal.classList.add("show");
+    setTimeout(() => { lucide.createIcons(); }, 50);
+}
+
+function closePrabayar(){
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("prabayarModal").classList.remove("show");
+}
+
 function openPreview(){
     document.getElementById("previewModal").classList.add("show");
     generatePreview();
@@ -1440,23 +1335,13 @@ function closePreview(){ document.getElementById("previewModal").classList.remov
 
 function loadData(){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
-    if(d.server){
-        namaKonter.value = d.server.nama || "";
-        alamatKonter.value = d.server.alamat || "";
+    if(d.server){ namaKonter.value = d.server.nama || ""; alamatKonter.value = d.server.alamat || ""; }
+    if(d.center){ 
+        ipNama.value = d.center.ipNama || ""; ipServer.value = d.center.ipServer || ""; ipHost.value = d.center.ipHost || "";
+        jabberNama.value = d.center.jabberNama || ""; jabberServer.value = d.center.jabberServer || ""; jabberHost.value = d.center.jabberHost || "";
+        waCenter.value = d.center.wa || ""; smsCenter.value = d.center.sms || "";
     }
-    if(d.center){
-        ipNama.value = d.center.ipNama || "";
-        ipServer.value = d.center.ipServer || "";
-        ipHost.value = d.center.ipHost || "";
-        jabberNama.value = d.center.jabberNama || "";
-        jabberServer.value = d.center.jabberServer || "";
-        jabberHost.value = d.center.jabberHost || "";
-        waCenter.value = d.center.wa || "";
-        smsCenter.value = d.center.sms || "";
-    }
-    if(d.prabayar){
-        prabayarData = d.prabayar;
-    }
+    if(d.prabayar){ prabayarData = d.prabayar; }
 }
 
 function saveData(){
@@ -1470,51 +1355,36 @@ function saveData(){
         prabayar: prabayarData
     };
     localStorage.setItem("gs_data", JSON.stringify(data));
-    
-    // Update data original setelah simpan
     saveOriginalServerData();
     saveOriginalCenterData();
-    
     toast("Data Berhasil Disimpan");
 }
 
 function enableButton(id){
     const btn = document.getElementById(id);
-    if(btn) {
-        btn.disabled = false;
-        btn.classList.remove("bg-gray-400", "cursor-not-allowed", "opacity-50");
-        btn.classList.add("bg-cyan-600");
-    }
+    if(btn) { btn.disabled = false; btn.classList.remove("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.add("bg-cyan-600"); }
 }
-
 function disableButton(id){
     const btn = document.getElementById(id);
-    if(btn) {
-        btn.disabled = true;
-        btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50");
-        btn.classList.remove("bg-cyan-600");
-    }
+    if(btn) { btn.disabled = true; btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.remove("bg-cyan-600"); }
 }
 
 function confirmSaveServer(){
-    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{
-        saveData();
-        closeServer();
-    }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ saveData(); closeServer(); }, "Ya, Simpan");
 }
 function confirmSaveCenter(){
-    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{
-        saveData();
-        closeCenter();
+    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ saveData(); closeCenter(); }, "Ya, Simpan");
+}
+function confirmSaveTransaksi(){
+    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
+        saveData(); 
+        saveOriginalTransaksiData(); // Update data asli setelah simpan
+        closeTransaksi(); 
     }, "Ya, Simpan");
 }
 
-function checkCloseServer(){
-    checkClose("server");
-}
-function checkCloseCenter(){
-    checkClose("center");
-}
+function checkCloseServer(){ checkClose("server"); }
+function checkCloseCenter(){ checkClose("center"); }
 function checkClose(type){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     let changed = false;
@@ -1526,15 +1396,8 @@ function checkClose(type){
         if(waCenter.value != (d.center?.wa||"") || smsCenter.value != (d.center?.sms||"")) changed=true;
     }
     if(changed){
-        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{
-            saveData();
-            if(type==="server") closeServer(); else closeCenter();
-        }, "Simpan", ()=>{
-            if(type==="server") closeServer(); else closeCenter();
-        });
-    } else {
-        if(type==="server") closeServer(); else closeCenter();
-    }
+        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ saveData(); if(type==="server") closeServer(); else closeCenter(); }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
+    } else { if(type==="server") closeServer(); else closeCenter(); }
 }
 
 function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
@@ -1545,20 +1408,13 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
     const btnYes = document.createElement("button");
     btnYes.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click";
     btnYes.innerText = yesText;
-    btnYes.onclick = ()=>{
-        document.getElementById("confirmModal").classList.add("hidden");
-        if(yesFunc) yesFunc();
-    };
+    btnYes.onclick = ()=>{ document.getElementById("confirmModal").classList.add("hidden"); if(yesFunc) yesFunc(); };
     wrap.appendChild(btnYes);
-
     if(noFunc){
         const btnNo = document.createElement("button");
         btnNo.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold btn-click";
         btnNo.innerText = "Tidak";
-        btnNo.onclick = ()=>{
-            document.getElementById("confirmModal").classList.add("hidden");
-            if(noFunc) noFunc();
-        };
+        btnNo.onclick = ()=>{ document.getElementById("confirmModal").classList.add("hidden"); if(noFunc) noFunc(); };
         wrap.appendChild(btnNo);
     }
     document.getElementById("confirmModal").classList.remove("hidden");
@@ -1571,42 +1427,11 @@ function toast(msg){
     setTimeout(()=> el.style.display="none", 2500);
 }
 
-function showPrompt(title, label, defVal, callback){
-    showFormInput(title, `
-        <div class="floating"><input id="formText" placeholder=" " value="${defVal}"><label>${label}</label></div>
-    `, ()=>{
-        callback(document.getElementById("formText").value.trim());
-    });
-}
-
-function showFormInput(title, contentHtml, okFunc){
-    document.getElementById("confirmTitle").innerText = title;
-    document.getElementById("confirmMessage").innerHTML = contentHtml;
-    const wrap = document.getElementById("confirmButtons");
-    wrap.innerHTML = "";
-    const btnOk = document.createElement("button");
-    btnOk.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click";
-    btnOk.innerText = "Simpan";
-    btnOk.onclick = ()=>{
-        document.getElementById("confirmModal").classList.add("hidden");
-        if(okFunc) okFunc();
-    };
-    wrap.appendChild(btnOk);
-    const btnNo = document.createElement("button");
-    btnNo.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold btn-click";
-    btnNo.innerText = "Batal";
-    btnNo.onclick = ()=> document.getElementById("confirmModal").classList.add("hidden");
-    wrap.appendChild(btnNo);
-    document.getElementById("confirmModal").classList.remove("hidden");
-    lucide.createIcons();
-}
-
 // === PREVIEW ===
 function generatePreview(){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     const cont = document.getElementById("previewContent");
     let html = "";
-
     if(d.transaksi?.menus){
         d.transaksi.menus.forEach(menu=>{
             html += `<div class="bg-white rounded-2xl shadow p-4 mb-4"><h3 class="font-bold text-lg text-slate-800 mb-2">${menu.judul}</h3><div class="grid grid-cols-2 gap-2">`;
@@ -1622,29 +1447,14 @@ function generatePreview(){
 // ==============================================
 document.getElementById('cariArea').addEventListener('input', function() {
     let keyword = this.value.toLowerCase();
-    let items = document.querySelectorAll('#areaListContainer .area-item');
-
-    items.forEach(function(item) {
-        let text = item.textContent.toLowerCase();
-        if(text.includes(keyword)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
+    document.querySelectorAll('#areaListContainer .area-item').forEach(item => {
+        item.textContent.toLowerCase().includes(keyword) ? item.style.display = '' : item.style.display = 'none';
     });
 });
-
 document.getElementById('cariWilayah').addEventListener('input', function() {
     let keyword = this.value.toLowerCase();
-    let items = document.querySelectorAll('#wilayahListContainer .wilayah-item');
-
-    items.forEach(function(item) {
-        let namaWilayah = item.querySelector('.font-medium').textContent.toLowerCase();
-        if(namaWilayah.includes(keyword)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
+    document.querySelectorAll('#wilayahListContainer .wilayah-item').forEach(item => {
+        item.querySelector('.font-medium').textContent.toLowerCase().includes(keyword) ? item.style.display = '' : item.style.display = 'none';
     });
 });
 
@@ -1657,7 +1467,6 @@ function simpanDaftarArea() {
     disableButton("btnSimpanDaftarArea");
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
-
 function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
@@ -1666,26 +1475,18 @@ function simpanDaftarWilayah() {
 }
 
 // ==============================================
-// >>> FUNGSI BACK / TUTUP DENGAN KONFIRMASI <<<
+// >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
 function backToPrabayar(){
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            if(previousMenu === "pascabayar"){
-                openPascabayar();
-            } else {
-                openPrabayar();
-            }
+            previousMenu === "pascabayar" ? openPascabayar() : openPrabayar();
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        if(previousMenu === "pascabayar"){
-            openPascabayar();
-        } else {
-            openPrabayar();
-        }
+        previousMenu === "pascabayar" ? openPascabayar() : openPrabayar();
     }
 }
 
