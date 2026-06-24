@@ -1114,43 +1114,81 @@ function simpanWilayah(){
 
 
 // ==============================================
-// >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE 🖍🖍🖍<<<
+// >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
+
 function setupHoldToDelete(){
-    // Bersihkan dulu event lama kalau ada
-    document.querySelectorAll(".icon-edit").forEach(icon => {
+    // Hapus semua event lama dulu agar tidak tumpuk tindih
+    document.querySelectorAll(".icon-edit, .icon-delete").forEach(icon => {
         icon.replaceWith(icon.cloneNode(true));
     });
 
-    // Pasang event baru
+    // >>> EVENT UNTUK TAHAN (HOLD) <<<
     document.querySelectorAll(".icon-edit").forEach(icon => {
-        icon.addEventListener('mousedown', startPress);
-        icon.addEventListener('touchstart', startPress);
-        icon.addEventListener('mouseup', cancelPress);
-        icon.addEventListener('touchend', cancelPress);
-        icon.addEventListener('mouseleave', cancelPress);
+        let timer;
+        
+        icon.onmousedown = function(e) {
+            // Jangan jalankan timer kalau ini cuma klik biasa untuk EDIT
+            if (e.button !== 0) return; // Hanya klik kiri
+            
+            timer = setTimeout(() => {
+                // Sembunyikan edit, tampilkan hapus
+                this.style.display = "none";
+                if(this.nextElementSibling){
+                    this.nextElementSibling.style.display = "inline"; 
+                }
+            }, 600);
+        };
+
+        icon.onmouseup = () => clearTimeout(timer);
+        icon.onmouseleave = () => clearTimeout(timer);
+        icon.ontouchstart = function(e) {
+            timer = setTimeout(() => {
+                this.style.display = "none";
+                if(this.nextElementSibling){
+                    this.nextElementSibling.style.display = "inline"; 
+                }
+            }, 600);
+        };
+        icon.ontouchend = () => clearTimeout(timer);
     });
 
+    // >>> EVENT KLIK TOMBOL HAPUS <<<
     document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(){
+        btn.onclick = function(e){
+            e.stopPropagation(); // Biar tidak nge-trigger klik lain
             const name = this.dataset.name;
             const idx = this.dataset.index;
             const text = name ? `Area "${name}"` : `Wilayah ini`;
+            
             showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-                if(name){
-                    delete prabayarData[currentMenuType][name];
-                    enableButton("btnSimpanDaftarArea");
-                    openAreaModal();
-                } else {
-                    prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                    enableButton("btnSimpanDaftarWilayah");
-                    openWilayahModal(currentAreaName);
+                try {
+                    if(name){
+                        delete prabayarData[currentMenuType][name];
+                        enableButton("btnSimpanDaftarArea");
+                        openAreaModal();
+                    } else {
+                        if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
+                            prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                            enableButton("btnSimpanDaftarWilayah");
+                            openWilayahModal(currentAreaName);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error hapus:", err);
+                    toast("Terjadi kesalahan, coba lagi");
                 }
             }, "Ya, Hapus");
+
+            // Sembunyikan tombol hapus setelah diklik
+            this.style.display = "none";
+            if(this.previousElementSibling){
+                this.previousElementSibling.style.display = "inline";
+            }
         };
     });
 
-    // Klik di luar -> sembunyikan hapus
+    // Klik di luar -> sembunyikan semua tombol hapus
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){ 
             hideAllDeleteIcons(); 
@@ -1158,25 +1196,9 @@ function setupHoldToDelete(){
     });
 }
 
-function startPress(e){
-    const icon = e.currentTarget;
-    pressTimer = setTimeout(() => { 
-        // Sembunyikan edit, tampilkan hapus
-        icon.style.display = "none";
-        if(icon.nextElementSibling){
-            icon.nextElementSibling.style.display = "inline"; 
-        }
-    }, 700); // TAHAN 0.7 DETIK
-}
-
-function cancelPress(){ 
-    clearTimeout(pressTimer); 
-}
-
 function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => { 
         el.style.display = "none"; 
-        // Tampilkan kembali icon edit
         if(el.previousElementSibling){
             el.previousElementSibling.style.display = "inline";
         }
@@ -1184,37 +1206,51 @@ function hideAllDeleteIcons(){
 }
 
 // ==============================================
-// >>>🖍🖍🖍 PERBAIKAN FUNGSI EDIT 🖍🖍🖍<<<
+// >>>🖍🖍🖍 PERBAIKAN FUNGSI EDIT (STABIL) 🖍🖍🖍<<<
 // ==============================================
 function setupEditAction(){
+    // >>> EDIT AREA <<<
     document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
-        icon.onclick = function(){
+        icon.onclick = function(e){
+            e.stopPropagation(); // PENTING: Biar tidak bentrok dengan event hold
             const name = this.dataset.name;
-            isEditMode = true;
-            editIndex = Array.from(document.querySelectorAll(".icon-edit[data-name]")).indexOf(this);
-            document.getElementById("inputNamaArea").value = name;
-            document.getElementById("formAreaModal").classList.add("show");
-            enableButton("btnSimpanArea");
+            try {
+                isEditMode = true;
+                document.getElementById("inputNamaArea").value = name;
+                document.getElementById("formAreaModal").classList.add("show");
+                enableButton("btnSimpanArea");
+            } catch (err) {
+                console.error("Error edit area:", err);
+            }
         };
     });
 
+    // >>> EDIT WILAYAH <<<
     document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
-        icon.onclick = function(){
-            const idx = parseInt(this.dataset.index);
-            const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-            isEditMode = true; 
-            editIndex = idx;
-            document.getElementById("inputNamaWilayah").value = data.nama;
-            document.getElementById("inputKodeCek").value = data.cek;
-            document.getElementById("inputKodeBayar").value = data.bayar;
-            document.getElementById("formWilayahModal").classList.add("show");
-            enableButton("btnSimpanWilayah");
+        icon.onclick = function(e){
+            e.stopPropagation(); // PENTING: Biar tidak bentrok dengan event hold
+            try {
+                const idx = parseInt(this.dataset.index);
+                const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
+                
+                if(dataList && dataList[idx]){
+                    isEditMode = true; 
+                    editIndex = idx;
+                    document.getElementById("inputNamaWilayah").value = dataList[idx].nama || "";
+                    document.getElementById("inputKodeCek").value = dataList[idx].cek || "";
+                    document.getElementById("inputKodeBayar").value = dataList[idx].bayar || "";
+                    document.getElementById("formWilayahModal").classList.add("show");
+                    enableButton("btnSimpanWilayah");
+                }
+            } catch (err) {
+                console.error("Error edit wilayah:", err);
+            }
         };
     });
 }
 
 // ==============================================
-// >>> CEK PERUBAHAN AREA & WILAYAH <<<
+// >>>♾️♾️♾️ CEK PERUBAHAN AREA & WILAYAH <<<
 // ==============================================
 function checkAreaChange(){
     if(!prabayarData[currentMenuType]) { disableButton("btnSimpanDaftarArea"); return; }
