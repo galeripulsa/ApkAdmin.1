@@ -1331,53 +1331,6 @@ function hideAllDeleteIcons(){
 }
 
 
-// ==============================================
-// >>>🖍🖍🖍 PERBAIKAN FUNGSI EDIT (STABIL) 🖍🖍🖍<<<
-// ==============================================
-function setupEditAction(){
-    // >>> EDIT AREA <<<
-    document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
-        icon.onclick = function(e){
-            e.stopPropagation();
-            e.preventDefault();
-            const name = this.dataset.name;
-            try {
-                isEditMode = true;
-                editIndex = Array.from(document.querySelectorAll("#areaListContainer .area-item")).findIndex(el => el.dataset.area === name);
-                document.getElementById("inputNamaArea").value = name;
-                document.getElementById("formAreaModal").classList.add("show");
-                enableButton("btnSimpanArea");
-            } catch (err) {
-                console.error("Error edit area:", err);
-            }
-        };
-    });
-
-    // >>> EDIT WILAYAH <<<
-    document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
-        icon.onclick = function(e){
-            e.stopPropagation();
-            e.preventDefault();
-            try {
-                const idx = parseInt(this.dataset.index);
-                const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
-                
-                if(dataList && dataList[idx]){
-                    isEditMode = true; 
-                    editIndex = idx;
-                    document.getElementById("inputNamaWilayah").value = dataList[idx].nama || "";
-                    document.getElementById("inputKodeCek").value = dataList[idx].cek || "";
-                    document.getElementById("inputKodeBayar").value = dataList[idx].bayar || "";
-                    document.getElementById("formWilayahModal").classList.add("show");
-                    enableButton("btnSimpanWilayah");
-                }
-            } catch (err) {
-                console.error("Error edit wilayah:", err);
-            }
-        };
-    });
-}
-
 
 // ==============================================
 // >>>♾️♾️♾️ CEK PERUBAHAN AREA & WILAYAH <<<
