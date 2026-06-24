@@ -1051,7 +1051,7 @@ function openWilayahModal(areaName){
         div.innerHTML = `
     <div>
         <div class="font-medium">${wil.nama}</div>
-        <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
+        <div class="text-xs text-slate-500">Cek: ${wil.cek}    |    Bayar: ${wil.bayar}</div>
     </div>
     <div class="actions flex gap-2">
         <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
@@ -1233,7 +1233,7 @@ function setupHoldToDelete(){
                 if(this.nextElementSibling){
                     this.nextElementSibling.style.display = "inline";
                 }
-            }, 600);
+            }, 1000);
         };
 
         icon.ontouchend = function(e) {
@@ -1689,13 +1689,20 @@ function backToPrabayar(){
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            document.getElementById("prabayarModal").classList.add("show");
+            document.getElementById("prabayarModal").classList.remove("show"); 
+ document.getElementById("prabayarModal").classList.add("show");
+            // ✅ TAMBAH ini agar kembali ke menu utama
+            document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        document.getElementById("prabayarModal").classList.add("show");
+        document.getElementById("prabayarModal").classList.remove("show"); 
+ document.getElementById("prabayarModal").classList.add("show");
+        // ✅ TAMBAH ini agar kembali ke menu utama
+        document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
     }
 }
+
 
 function backToArea(){
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
