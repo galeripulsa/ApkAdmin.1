@@ -1186,7 +1186,9 @@ function setupHoldToDelete(){
             timer = setTimeout(() => {
                 this.style.display = "none";
                 if(this.nextElementSibling){
-                    this.nextElementSibling.style.display = "inline"; 
+                                        
+
+this.nextElementSibling.style.display = "inline"; 
                 }
             }, 600);
         };
@@ -1264,6 +1266,7 @@ function setupEditAction(){
             const name = this.dataset.name;
             try {
                 isEditMode = true;
+                editIndex = Array.from(document.querySelectorAll("#areaListContainer .area-item")).findIndex(el => el.dataset.area === name);
                 document.getElementById("inputNamaArea").value = name;
                 document.getElementById("formAreaModal").classList.add("show");
                 enableButton("btnSimpanArea");
