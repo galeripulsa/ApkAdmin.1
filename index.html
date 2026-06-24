@@ -1143,18 +1143,22 @@ function setupHoldToDelete(){
         let timer;
         
         icon.onmousedown = function(e) {
-            // Jangan jalankan timer kalau ini cuma klik biasa untuk EDIT
-            if (e.button !== 0) return; // Hanya klik kiri
+            if (e.button !== 0) return; 
             
-            // >>> TAMBAHKAN INI AGAR TEKS TIDAK TERBLOK/TERSELECT <<<
+            // >>> PERBAIKAN: CEGAH TEKS TERBLOK <<<
+            e.preventDefault(); // Kunci utama biar teks nggak ke-select
+            
             const parentItem = this.closest('.area-item, .wilayah-item');
             if(parentItem) {
                 parentItem.style.userSelect = 'none';
                 parentItem.style.webkitUserSelect = 'none';
             }
 
+            // >>> PERBAIKAN: SEMBUNYIKAN SEMUA TOMBOL DULU <<<
+            hideAllDeleteIcons();
+
             timer = setTimeout(() => {
-                // Sembunyikan edit, tampilkan hapus
+                // >>> PERBAIKAN: HANYA YANG DITEKAN YANG MUNCUL <<<
                 this.style.display = "none";
                 if(this.nextElementSibling){
                     this.nextElementSibling.style.display = "inline"; 
@@ -1164,7 +1168,6 @@ function setupHoldToDelete(){
 
         icon.onmouseup = function() {
             clearTimeout(timer);
-            // >>> KEMBALIKAN NORMAL SETELAH DILEPAS <<<
             document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
                 el.style.userSelect = 'auto';
                 el.style.webkitUserSelect = 'auto';
@@ -1178,17 +1181,21 @@ function setupHoldToDelete(){
             });
         };
         icon.ontouchstart = function(e) {
+            e.preventDefault(); // >>> PERBAIKAN: CEGAH TEKS TERBLOK <<<
+            
             const parentItem = this.closest('.area-item, .wilayah-item');
             if(parentItem) {
                 parentItem.style.userSelect = 'none';
                 parentItem.style.webkitUserSelect = 'none';
             }
+
+            // >>> PERBAIKAN: SEMBUNYIKAN SEMUA TOMBOL DULU <<<
+            hideAllDeleteIcons();
+
             timer = setTimeout(() => {
                 this.style.display = "none";
                 if(this.nextElementSibling){
-                                        
-
-this.nextElementSibling.style.display = "inline"; 
+                    this.nextElementSibling.style.display = "inline"; 
                 }
             }, 600);
         };
@@ -1204,11 +1211,12 @@ this.nextElementSibling.style.display = "inline";
     // >>> EVENT KLIK TOMBOL HAPUS <<<
     document.querySelectorAll(".icon-delete").forEach(btn => {
         btn.onclick = function(e){
-            e.stopPropagation(); // Biar tidak nge-trigger klik lain
+            e.stopPropagation();
             const name = this.dataset.name;
             const idx = this.dataset.index;
             const text = name ? `Area "${name}"` : `Wilayah ini`;
             
+            // >>> PERBAIKAN: TAMBAH TOMBOL TIDAK <<<
             showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
                 try {
                     if(name){
@@ -1228,7 +1236,10 @@ this.nextElementSibling.style.display = "inline";
                     console.error("Error hapus:", err);
                     toast("Terjadi kesalahan, coba lagi");
                 }
-            }, "Ya, Hapus");
+            }, "Ya, Hapus", ()=>{
+                // Callback jika klik Tidak
+                hideAllDeleteIcons();
+            });
 
             // Sembunyikan tombol hapus setelah diklik
             this.style.display = "none";
@@ -1586,18 +1597,29 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
     document.getElementById("confirmMessage").innerText = msg;
     const wrap = document.getElementById("confirmButtons");
     wrap.innerHTML = "";
-    const btnYes = document.createElement("button");
-    btnYes.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click";
-    btnYes.innerText = yesText;
-    btnYes.onclick = ()=>{ document.getElementById("confirmModal").classList.add("hidden"); if(yesFunc) yesFunc(); };
-    wrap.appendChild(btnYes);
+    
+    // Tombol Tidak (Kiri)
     if(noFunc){
         const btnNo = document.createElement("button");
         btnNo.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold btn-click";
         btnNo.innerText = "Tidak";
-        btnNo.onclick = ()=>{ document.getElementById("confirmModal").classList.add("hidden"); if(noFunc) noFunc(); };
+        btnNo.onclick = ()=>{ 
+            document.getElementById("confirmModal").classList.add("hidden"); 
+            if(noFunc) noFunc(); 
+        };
         wrap.appendChild(btnNo);
     }
+
+    // Tombol Ya (Kanan)
+    const btnYes = document.createElement("button");
+    btnYes.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click";
+    btnYes.innerText = yesText;
+    btnYes.onclick = ()=>{ 
+        document.getElementById("confirmModal").classList.add("hidden"); 
+        if(yesFunc) yesFunc(); 
+    };
+    wrap.appendChild(btnYes);
+
     document.getElementById("confirmModal").classList.remove("hidden");
 }
 
