@@ -1546,18 +1546,21 @@ function simpanDaftarWilayah() {
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
+// Ganti fungsi backToPrabayar menjadi seperti ini:
 function backToPrabayar(){
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            previousMenu === "pascabayar" ? openPascabayar() : openPrabayar();
+            // Hanya tampilkan modal, jangan render ulang
+            document.getElementById("prabayarModal").classList.add("show");
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        previousMenu === "pascabayar" ? openPascabayar() : openPrabayar();
+        document.getElementById("prabayarModal").classList.add("show");
     }
 }
+
 
 function backToArea(){
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
