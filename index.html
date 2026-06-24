@@ -1274,6 +1274,7 @@ function setupEditAction(){
     document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
         icon.onclick = function(e){
             e.stopPropagation(); // PENTING: Biar tidak bentrok dengan event hold
+            e.preventDefault(); // Tambahan biar aman
             const name = this.dataset.name;
             try {
                 isEditMode = true;
@@ -1291,6 +1292,7 @@ function setupEditAction(){
     document.querySelectorAll(".icon-edit[data-index]").forEach(icon => {
         icon.onclick = function(e){
             e.stopPropagation(); // PENTING: Biar tidak bentrok dengan event hold
+            e.preventDefault(); // Tambahan biar aman
             try {
                 const idx = parseInt(this.dataset.index);
                 const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
@@ -1310,6 +1312,7 @@ function setupEditAction(){
         };
     });
 }
+
 
 // ==============================================
 // >>>♾️♾️♾️ CEK PERUBAHAN AREA & WILAYAH <<<
