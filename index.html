@@ -958,7 +958,6 @@ function openAreaModal(){
         <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
     </div>
 `;
-
         // KLIK NAMA AREA BUKA WILAYAH
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
@@ -968,10 +967,13 @@ function openAreaModal(){
         container.appendChild(div);
     });
 
-    setupHoldToDelete();
-    setupEditAction();
     modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
+    setTimeout(() => { 
+        lucide.createIcons(); 
+        // === PERBAIKAN: Pasang event SETELAH icon dibuat ===
+        setupHoldToDelete(); 
+        setupEditAction();
+    }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
 
@@ -1001,6 +1003,7 @@ function simpanArea(){
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     
     if(isEditMode){
+        // === PERBAIKAN EDIT AREA ===
         const oldName = Object.keys(prabayarData[currentMenuType])[editIndex];
         if(oldName !== nama){
             prabayarData[currentMenuType][nama] = prabayarData[currentMenuType][oldName];
@@ -1030,7 +1033,7 @@ function openWilayahModal(areaName){
 
     const modal = document.getElementById("wilayahModal");
     const container = document.getElementById("wilayahListContainer");
-    document.getElementById("namaAreaTitle").innerText = areaName; // <-- FIX HEADER
+    document.getElementById("namaAreaTitle").innerText = areaName;
     container.innerHTML = "";
 
     const listWilayah = (prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]) ? prabayarData[currentMenuType][currentAreaName].wilayah : [];
@@ -1048,14 +1051,16 @@ function openWilayahModal(areaName){
         <i class="icon-delete text-red-500 ml-1" data-index="${idx}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
     </div>
 `;
-
         container.appendChild(div);
     });
 
-    setupHoldToDelete();
-    setupEditAction();
     modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
+    setTimeout(() => { 
+        lucide.createIcons();
+        // === PERBAIKAN: Pasang event SETELAH icon dibuat ===
+        setupHoldToDelete();
+        setupEditAction();
+    }, 50);
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
 
@@ -1109,17 +1114,16 @@ function simpanWilayah(){
 
 
 // ==============================================
-// >>>🖍🖍🖍HOLD CLICK DELETE 🖍🖍🖍<<<
+// >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
+    // Bersihkan dulu event lama kalau ada
     document.querySelectorAll(".icon-edit").forEach(icon => {
-        // Hapus event lama biar tidak double
-        icon.removeEventListener('mousedown', startPress);
-        icon.removeEventListener('touchstart', startPress);
-        icon.removeEventListener('mouseup', cancelPress);
-        icon.removeEventListener('touchend', cancelPress);
-        icon.removeEventListener('mouseleave', cancelPress);
-        
+        icon.replaceWith(icon.cloneNode(true));
+    });
+
+    // Pasang event baru
+    document.querySelectorAll(".icon-edit").forEach(icon => {
         icon.addEventListener('mousedown', startPress);
         icon.addEventListener('touchstart', startPress);
         icon.addEventListener('mouseup', cancelPress);
@@ -1146,7 +1150,7 @@ function setupHoldToDelete(){
         };
     });
 
-    // Klik di luar atau item lain -> sembunyikan hapus, munculkan edit
+    // Klik di luar -> sembunyikan hapus
     document.addEventListener('click', function(e){
         if(!e.target.closest('.actions')){ 
             hideAllDeleteIcons(); 
@@ -1159,8 +1163,10 @@ function startPress(e){
     pressTimer = setTimeout(() => { 
         // Sembunyikan edit, tampilkan hapus
         icon.style.display = "none";
-        icon.nextElementSibling.style.display = "inline"; 
-    }, 1000); // TAHAN 1 DETIK
+        if(icon.nextElementSibling){
+            icon.nextElementSibling.style.display = "inline"; 
+        }
+    }, 700); // TAHAN 0.7 DETIK
 }
 
 function cancelPress(){ 
@@ -1177,6 +1183,9 @@ function hideAllDeleteIcons(){
     });
 }
 
+// ==============================================
+// >>>🖍🖍🖍 PERBAIKAN FUNGSI EDIT 🖍🖍🖍<<<
+// ==============================================
 function setupEditAction(){
     document.querySelectorAll(".icon-edit[data-name]").forEach(icon => {
         icon.onclick = function(){
@@ -1193,7 +1202,8 @@ function setupEditAction(){
         icon.onclick = function(){
             const idx = parseInt(this.dataset.index);
             const data = prabayarData[currentMenuType][currentAreaName].wilayah[idx];
-            isEditMode = true; editIndex = idx;
+            isEditMode = true; 
+            editIndex = idx;
             document.getElementById("inputNamaWilayah").value = data.nama;
             document.getElementById("inputKodeCek").value = data.cek;
             document.getElementById("inputKodeBayar").value = data.bayar;
@@ -1546,13 +1556,11 @@ function simpanDaftarWilayah() {
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
-// Ganti fungsi backToPrabayar menjadi seperti ini:
 function backToPrabayar(){
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            // Hanya tampilkan modal, jangan render ulang
             document.getElementById("prabayarModal").classList.add("show");
         }, "Ya, Keluar");
     } else {
@@ -1560,7 +1568,6 @@ function backToPrabayar(){
         document.getElementById("prabayarModal").classList.add("show");
     }
 }
-
 
 function backToArea(){
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
@@ -1580,6 +1587,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
 });
+
 </script>
 
 
