@@ -1132,18 +1132,22 @@ function simpanWilayah(){
 // >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
-    // >>> EVENT UNTUK TAHAN (HOLD) <<<
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let timer;
-        
-        // Hapus event lama dulu
+        let isHold = false;
+
+        // Hapus event lama
         icon.replaceWith(icon.cloneNode(true));
     });
 
     document.querySelectorAll(".icon-edit").forEach(icon => {
+        let timer;
+        let isHold = false;
+
         icon.onmousedown = function(e) {
-            if (e.button !== 0) return; 
-            e.preventDefault(); 
+            if (e.button !== 0) return;
+            e.preventDefault();
+            isHold = false;
 
             const parentItem = this.closest('.area-item, .wilayah-item');
             if(parentItem) {
@@ -1153,21 +1157,57 @@ function setupHoldToDelete(){
 
             hideAllDeleteIcons();
 
+            // Timer untuk deteksi tekan lama
             timer = setTimeout(() => {
+                isHold = true;
                 this.style.display = "none";
                 if(this.nextElementSibling){
-                    this.nextElementSibling.style.display = "inline"; 
+                    this.nextElementSibling.style.display = "inline";
                 }
             }, 600);
         };
 
-        icon.onmouseup = function() {
+        icon.onmouseup = function(e) {
             clearTimeout(timer);
             document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
                 el.style.userSelect = 'auto';
                 el.style.webkitUserSelect = 'auto';
             });
+
+            // Jika bukan hold (artinya klik cepat), jalankan EDIT
+            if (!isHold) {
+                // Jalankan fungsi edit manual di sini
+                const name = this.dataset.name;
+                const idx = this.dataset.index;
+                
+                try {
+                    if(name) {
+                        // EDIT AREA
+                        isEditMode = true;
+                        editIndex = Array.from(document.querySelectorAll("#areaListContainer .area-item")).findIndex(el => el.dataset.area === name);
+                        document.getElementById("inputNamaArea").value = name;
+                        document.getElementById("formAreaModal").classList.add("show");
+                        enableButton("btnSimpanArea");
+                    } else if(idx !== undefined) {
+                        // EDIT WILAYAH
+                        const index = parseInt(idx);
+                        const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
+                        if(dataList && dataList[index]){
+                            isEditMode = true; 
+                            editIndex = index;
+                            document.getElementById("inputNamaWilayah").value = dataList[index].nama || "";
+                            document.getElementById("inputKodeCek").value = dataList[index].cek || "";
+                            document.getElementById("inputKodeBayar").value = dataList[index].bayar || "";
+                            document.getElementById("formWilayahModal").classList.add("show");
+                            enableButton("btnSimpanWilayah");
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error edit:", err);
+                }
+            }
         };
+
         icon.onmouseleave = function() {
             clearTimeout(timer);
             document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
@@ -1175,9 +1215,12 @@ function setupHoldToDelete(){
                 el.style.webkitUserSelect = 'auto';
             });
         };
+
+        // === VERSI TOUCH SCREEN (HP) ===
         icon.ontouchstart = function(e) {
-            e.preventDefault(); 
-            
+            e.preventDefault();
+            isHold = false;
+
             const parentItem = this.closest('.area-item, .wilayah-item');
             if(parentItem) {
                 parentItem.style.userSelect = 'none';
@@ -1187,18 +1230,50 @@ function setupHoldToDelete(){
             hideAllDeleteIcons();
 
             timer = setTimeout(() => {
+                isHold = true;
                 this.style.display = "none";
                 if(this.nextElementSibling){
-                    this.nextElementSibling.style.display = "inline"; 
+                    this.nextElementSibling.style.display = "inline";
                 }
             }, 600);
         };
-        icon.ontouchend = function() {
+
+        icon.ontouchend = function(e) {
             clearTimeout(timer);
             document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
                 el.style.userSelect = 'auto';
                 el.style.webkitUserSelect = 'auto';
             });
+
+            if (!isHold) {
+                // Jalankan EDIT
+                const name = this.dataset.name;
+                const idx = this.dataset.index;
+                
+                try {
+                    if(name) {
+                        isEditMode = true;
+                        editIndex = Array.from(document.querySelectorAll("#areaListContainer .area-item")).findIndex(el => el.dataset.area === name);
+                        document.getElementById("inputNamaArea").value = name;
+                        document.getElementById("formAreaModal").classList.add("show");
+                        enableButton("btnSimpanArea");
+                    } else if(idx !== undefined) {
+                        const index = parseInt(idx);
+                        const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
+                        if(dataList && dataList[index]){
+                            isEditMode = true; 
+                            editIndex = index;
+                            document.getElementById("inputNamaWilayah").value = dataList[index].nama || "";
+                            document.getElementById("inputKodeCek").value = dataList[index].cek || "";
+                            document.getElementById("inputKodeBayar").value = dataList[index].bayar || "";
+                            document.getElementById("formWilayahModal").classList.add("show");
+                            enableButton("btnSimpanWilayah");
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error edit:", err);
+                }
+            }
         };
     });
 
@@ -1214,12 +1289,12 @@ function setupHoldToDelete(){
                 try {
                     if(name){
                         delete prabayarData[currentMenuType][name];
-                        checkAreaChange();
+                        checkAreaChange(); // WAJIB: Aktifkan tombol simpan
                         openAreaModal();
                     } else {
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                            checkWilayahChange();
+                            checkWilayahChange(); // WAJIB: Aktifkan tombol simpan
                             openWilayahModal(currentAreaName);
                         }
                     }
@@ -1254,6 +1329,7 @@ function hideAllDeleteIcons(){
         }
     });
 }
+
 
 // ==============================================
 // >>>🖍🖍🖍 PERBAIKAN FUNGSI EDIT (STABIL) 🖍🖍🖍<<<
