@@ -937,7 +937,7 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
-    
+
     currentMenuType = "pdam";
     if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
     previousMenu = "pascabayar";
@@ -993,17 +993,25 @@ function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
     if(!nama){ return; }
     
-    if(!isEditMode && prabayarData[currentMenuType] && prabayarData[currentMenuType][nama]){
+    // >>> CEK DUPLIKAT BAIK TAMBAH BARU ATAU EDIT <<<
+    const namaSudahAda = Object.keys(prabayarData[currentMenuType] || {}).some(existingName => {
+        // Jika mode Edit, abaikan nama dirinya sendiri
+        if(isEditMode && existingName === Object.keys(prabayarData[currentMenuType])[editIndex]) {
+            return false; 
+        }
+        return existingName.toLowerCase() === nama.toLowerCase();
+    });
+
+    if(namaSudahAda){
         showConfirm("Duplikat", "Nama Area sudah ada. Gunakan nama lain", ()=>{
             document.getElementById("inputNamaArea").focus();
         }, "Oke");
-        return;
+        return; // Jangan lanjut simpan
     }
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
     
     if(isEditMode){
-        // === PERBAIKAN EDIT AREA ===
         const oldName = Object.keys(prabayarData[currentMenuType])[editIndex];
         if(oldName !== nama){
             prabayarData[currentMenuType][nama] = prabayarData[currentMenuType][oldName];
@@ -1090,11 +1098,18 @@ function simpanWilayah(){
 
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     
-    if(!isEditMode && listWilayah.some(w => w.nama.toLowerCase() === nama.toLowerCase())){
-        showConfirm("Duplikat", "Nama Wilayah sudah ada. Klik Oke untuk kembali.", ()=>{
+    // >>> CEK DUPLIKAT <<<
+    const namaSudahAda = listWilayah.some((wil, index) => {
+        // Jika mode Edit, lewati data dirinya sendiri
+        if(isEditMode && index === editIndex) return false;
+        return wil.nama.toLowerCase() === nama.toLowerCase();
+    });
+
+    if(namaSudahAda){
+        showConfirm("Duplikat", "Nama Wilayah sudah ada. Gunakan nama lain", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
-        return;
+        return; // Jangan lanjut
     }
 
     if(isEditMode){
@@ -1131,6 +1146,13 @@ function setupHoldToDelete(){
             // Jangan jalankan timer kalau ini cuma klik biasa untuk EDIT
             if (e.button !== 0) return; // Hanya klik kiri
             
+            // >>> TAMBAHKAN INI AGAR TEKS TIDAK TERBLOK/TERSELECT <<<
+            const parentItem = this.closest('.area-item, .wilayah-item');
+            if(parentItem) {
+                parentItem.style.userSelect = 'none';
+                parentItem.style.webkitUserSelect = 'none';
+            }
+
             timer = setTimeout(() => {
                 // Sembunyikan edit, tampilkan hapus
                 this.style.display = "none";
@@ -1140,9 +1162,27 @@ function setupHoldToDelete(){
             }, 600);
         };
 
-        icon.onmouseup = () => clearTimeout(timer);
-        icon.onmouseleave = () => clearTimeout(timer);
+        icon.onmouseup = function() {
+            clearTimeout(timer);
+            // >>> KEMBALIKAN NORMAL SETELAH DILEPAS <<<
+            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
+                el.style.userSelect = 'auto';
+                el.style.webkitUserSelect = 'auto';
+            });
+        };
+        icon.onmouseleave = function() {
+            clearTimeout(timer);
+            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
+                el.style.userSelect = 'auto';
+                el.style.webkitUserSelect = 'auto';
+            });
+        };
         icon.ontouchstart = function(e) {
+            const parentItem = this.closest('.area-item, .wilayah-item');
+            if(parentItem) {
+                parentItem.style.userSelect = 'none';
+                parentItem.style.webkitUserSelect = 'none';
+            }
             timer = setTimeout(() => {
                 this.style.display = "none";
                 if(this.nextElementSibling){
@@ -1150,7 +1190,13 @@ function setupHoldToDelete(){
                 }
             }, 600);
         };
-        icon.ontouchend = () => clearTimeout(timer);
+        icon.ontouchend = function() {
+            clearTimeout(timer);
+            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
+                el.style.userSelect = 'auto';
+                el.style.webkitUserSelect = 'auto';
+            });
+        };
     });
 
     // >>> EVENT KLIK TOMBOL HAPUS <<<
@@ -1166,11 +1212,13 @@ function setupHoldToDelete(){
                     if(name){
                         delete prabayarData[currentMenuType][name];
                         enableButton("btnSimpanDaftarArea");
+                        checkAreaChange(); // Aktifkan tombol simpan
                         openAreaModal();
                     } else {
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                             enableButton("btnSimpanDaftarWilayah");
+                            checkWilayahChange(); // Aktifkan tombol simpan
                             openWilayahModal(currentAreaName);
                         }
                     }
@@ -1625,7 +1673,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 </script>
-
 
 
 <!-- MODAL DAFTAR OPERATOR/PRODUK -->
