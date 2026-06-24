@@ -950,7 +950,7 @@ function openAreaModal(){
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
         div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
-        div.dataset.area = areaName;
+        div.dataset.area = Areana70me;
         div.innerHTML = `
     <span class="font-medium">${areaName}</span>
     <div class="actions flex gap-2">
@@ -969,11 +969,10 @@ function openAreaModal(){
 
     modal.classList.add("show");
     setTimeout(() => { 
-        lucide.createIcons(); 
-        // === PERBAIKAN: Pasang event SETELAH icon dibuat ===
-        setupHoldToDelete(); 
-        setupEditAction();
-    }, 50);
+    lucide.createIcons(); 
+    setupHoldToDelete(); 
+}, 50);
+
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
 
@@ -1064,11 +1063,10 @@ function openWilayahModal(areaName){
 
     modal.classList.add("show");
     setTimeout(() => { 
-        lucide.createIcons();
-        // === PERBAIKAN: Pasang event SETELAH icon dibuat ===
-        setupHoldToDelete();
-        setupEditAction();
-    }, 50);
+    lucide.createIcons();
+    setupHoldToDelete();
+}, 50);
+
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
 
