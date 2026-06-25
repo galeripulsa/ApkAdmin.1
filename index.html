@@ -1689,15 +1689,15 @@ function backToPrabayar(){
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            document.getElementById("prabayarModal").classList.remove("show"); 
- document.getElementById("prabayarModal").classList.add("show");
+            document.getElementById("prabayarModal").classList.remove("show"); // TUTUP JUGA
+            // ❌ HAPUS baris ini: document.getElementById("prabayarModal").classList.add("show");
             // ✅ TAMBAH ini agar kembali ke menu utama
             document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        document.getElementById("prabayarModal").classList.remove("show"); 
- document.getElementById("prabayarModal").classList.add("show");
+        document.getElementById("prabayarModal").classList.remove("show"); // TUTUP JUGA
+        // ❌ HAPUS baris ini: document.getElementById("prabayarModal").classList.add("show");
         // ✅ TAMBAH ini agar kembali ke menu utama
         document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
     }
