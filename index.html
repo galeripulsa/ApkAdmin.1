@@ -1528,7 +1528,8 @@ function backToPrabayarFromList(){
 }
 
 function attachInputListeners(){
-    document.querySelectorAll('.input-cek-harga, .input-nama-produk').forEach(input => {
+    // ✅ TAMBAH .input-bayar
+    document.querySelectorAll('.input-cek-harga, .input-bayar, .input-nama-produk').forEach(input => {
         input.addEventListener('input', checkPrabayarChange);
     });
 }
@@ -1538,7 +1539,10 @@ function checkPrabayarChange(){
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         wrap.querySelectorAll('input').forEach(inp => {
             const key = inp.dataset.operator;
-            const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 'namaProduk';
+            // ✅ DETECT INPUT BAYAR
+            const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 
+                         inp.classList.contains('input-bayar') ? 'bayar' : 
+                         'namaProduk';
             const originalVal = originalPrabayarData[currentMenuType][key]?.[type] || "";
             if(inp.value !== originalVal) changed = true;
         });
@@ -1546,21 +1550,29 @@ function checkPrabayarChange(){
     changed ? enableButton("savePrabayarBtn") : disableButton("savePrabayarBtn");
 }
 
-function confirmSavePrabayar(){
-    showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{ savePrabayarData(); }, "Ya, Simpan");
-}
-
 function savePrabayarData(){
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const cekInput = wrap.querySelector('.input-cek-harga');
+        const bayarInput = wrap.querySelector('.input-bayar'); // ✅ AMBIL INPUT BAYAR
         const namaInput = wrap.querySelector('.input-nama-produk');
         const key = cekInput.dataset.operator;
-        prabayarData[currentMenuType][key] = { cekHarga: cekInput.value, namaProduk: namaInput.value };
-        originalPrabayarData[currentMenuType][key] = { cekHarga: cekInput.value, namaProduk: namaInput.value };
+        
+        // ✅ SIMPAN SEMUA DATA TERMASUK BAYAR
+        prabayarData[currentMenuType][key] = { 
+            cekHarga: cekInput.value, 
+            bayar: bayarInput.value, 
+            namaProduk: namaInput.value 
+        };
+        originalPrabayarData[currentMenuType][key] = { 
+            cekHarga: cekInput.value, 
+            bayar: bayarInput.value, 
+            namaProduk: namaInput.value 
+        };
     });
     disableButton("savePrabayarBtn");
     toast("Data Produk Berhasil Disimpan");
 }
+
 
 // ==============================================
 // >>> FUNGSI LAINNYA <<<
