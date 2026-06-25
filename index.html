@@ -1147,7 +1147,7 @@ function simpanWilayah(){
 }
 
 // ==============================================
-// >>>❌❌❌ PERBAIKAN HOLD CLICK DELETE & EDIT ❌❌❌<<<
+// >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
     // Bersihkan event lama dulu agar tidak double
@@ -1184,8 +1184,8 @@ function setupHoldToDelete(){
 
         icon.onmouseup = function(e) {
             clearTimeout(timer);
-            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
-                el.style.userSelect = 'auto';
+            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {                
+               el.style.userSelect = 'auto';
                 el.style.webkitUserSelect = 'auto';
             });
 
@@ -1287,71 +1287,57 @@ function setupHoldToDelete(){
 
 
     // >>> ❌❌❌EVENT KLIK TOMBOL HAPUS <<<
-document.querySelectorAll(".icon-delete").forEach(btn => {
-    btn.onclick = function(e){
-        e.stopPropagation();
-        const name = this.dataset.name;
-        const idx = this.dataset.index;
-        const text = name ? `Area "${name}"` : `Wilayah ini`;
-        
-        showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-            try {
-                if(name){
-                    delete prabayarData[currentMenuType][name];
-                    
-                    // 🚫 MATIKAN FUNGSI PENGECEKAN DULU
-                    window.checkAreaChange = function(){}; 
-                    
-                    openAreaModal();
-                    
-                    // ✅ LANGSUNG HIDUPKAN
-                    setTimeout(() => {
-                        const btnArea = document.getElementById("btnSimpanDaftarArea");
-                        if(btnArea){
-                            btnArea.disabled = false;
-                            btnArea.classList.remove("disabled");
-                            btnArea.style.opacity = "1";
-                            btnArea.style.cursor = "pointer";
-                            btnArea.style.pointerEvents = "auto";
-                        }
-                    }, 10);
-
-                } else {
-                    if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
-                        prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+    document.querySelectorAll(".icon-delete").forEach(btn => {
+        btn.onclick = function(e){
+            e.stopPropagation();
+            const name = this.dataset.name;
+            const idx = this.dataset.index;
+            const text = name ? `Area "${name}"` : `Wilayah ini`;
+            
+            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+                try {
+                    if(name){
+                        delete prabayarData[currentMenuType][name];
                         
-                        // 🚫 MATIKAN FUNGSI PENGECEKAN DULU
-                        window.checkWilayahChange = function(){};
+                        // ✅ SOLUSI AKHIR: Update data asli SEBELUM buka modal
+                        originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
                         
-                        openWilayahModal(currentAreaName);
+                        openAreaModal();
                         
-                        // ✅ LANGSUNG HIDUPKAN
+                        // ✅ Paksa nyala tombol
                         setTimeout(() => {
-                            const btnWil = document.getElementById("btnSimpanDaftarWilayah");
-                            if(btnWil){
-                                btnWil.disabled = false;
-                                btnWil.classList.remove("disabled");
-                                btnWil.style.opacity = "1";
-                                btnWil.style.cursor = "pointer";
-                                btnWil.style.pointerEvents = "auto";
-                            }
+                            enableButton("btnSimpanDaftarArea");
                         }, 10);
-                    }
-                }
-            } catch (err) {
-                console.error("Error hapus:", err);
-                toast("Terjadi kesalahan, coba lagi");
-            }
-        }, "Ya, Hapus", ()=>{
-            hideAllDeleteIcons();
-        });
 
-        this.style.display = "none";
-        if(this.previousElementSibling){
-            this.previousElementSibling.style.display = "inline";
-        }
-    };
-});
+                    } else {
+                        if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
+                            prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                            
+                            // ✅ SOLUSI AKHIR: Update data asli SEBELUM buka modal
+                            originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+                            
+                            openWilayahModal(currentAreaName);
+                            
+                            // ✅ Paksa nyala tombol
+                            setTimeout(() => {
+                                enableButton("btnSimpanDaftarWilayah");
+                            }, 10);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error hapus:", err);
+                    toast("Terjadi kesalahan, coba lagi");
+                }
+            }, "Ya, Hapus", ()=>{
+                hideAllDeleteIcons();
+            });
+
+            this.style.display = "none";
+            if(this.previousElementSibling){
+                this.previousElementSibling.style.display = "inline";
+            }
+        };
+    });
 
 
 
