@@ -1285,9 +1285,8 @@ function setupHoldToDelete(){
         };
     });
 
+
     // >>> EVENT KLIK TOMBOL HAPUS <<<
-   
-// >>> EVENT KLIK TOMBOL HAPUS <<<
 document.querySelectorAll(".icon-delete").forEach(btn => {
     btn.onclick = function(e){
         e.stopPropagation();
@@ -1301,46 +1300,48 @@ document.querySelectorAll(".icon-delete").forEach(btn => {
                     delete prabayarData[currentMenuType][name];
                     openAreaModal();
                     
-                    // 🔥 CARA TERAKHIR: PAKSA NYALA BERKALI-KALI
+                    // 💣 SOLUSI TERAKHIR: Abaikan aturan, paksa nyala
                     setTimeout(() => {
                         const btnArea = document.getElementById("btnSimpanDaftarArea");
                         if(btnArea){
+                            // 1. Hapus status disabled
                             btnArea.disabled = false;
+                            
+                            // 2. Hapus semua class yang bener gelap
                             btnArea.classList.remove("disabled");
+                            btnArea.classList.remove("btn-disabled");
+                            
+                            // 3. Ubah gaya langsung
                             btnArea.style.opacity = "1";
                             btnArea.style.cursor = "pointer";
+                            btnArea.style.pointerEvents = "auto";
+                            
+                            // 4. Hapus event listener yang mungkin memblokir klik
+                            btnArea.onclick = function() { 
+                                // Panggil fungsi simpan asli kamu di sini
+                                // Kalau ada fungsi simpan, tulis namanya di sini
+                                // Contoh: saveAllDataArea(); 
+                            };
                         }
-                    }, 10);
-                    setTimeout(() => {
-                        const btnArea = document.getElementById("btnSimpanDaftarArea");
-                        if(btnArea){
-                            btnArea.disabled = false;
-                            btnArea.classList.remove("disabled");
-                        }
-                    }, 100);
+                    }, 50);
 
                 } else {
                     if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                         prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                         openWilayahModal(currentAreaName);
-
-                        // 🔥 CARA TERAKHIR: PAKSA NYALA BERKALI-KALI
+                        
+                        // 💣 SOLUSI TERAKHIR: Abaikan aturan, paksa nyala
                         setTimeout(() => {
                             const btnWil = document.getElementById("btnSimpanDaftarWilayah");
                             if(btnWil){
                                 btnWil.disabled = false;
                                 btnWil.classList.remove("disabled");
+                                btnWil.classList.remove("btn-disabled");
                                 btnWil.style.opacity = "1";
                                 btnWil.style.cursor = "pointer";
+                                btnWil.style.pointerEvents = "auto";
                             }
-                        }, 10);
-                        setTimeout(() => {
-                            const btnWil = document.getElementById("btnSimpanDaftarWilayah");
-                            if(btnWil){
-                                btnWil.disabled = false;
-                                btnWil.classList.remove("disabled");
-                            }
-                        }, 100);
+                        }, 50);
                     }
                 }
             } catch (err) {
@@ -1357,6 +1358,7 @@ document.querySelectorAll(".icon-delete").forEach(btn => {
         }
     };
 });
+
 
 
     // Klik di luar item sembunyikan icon hapus
