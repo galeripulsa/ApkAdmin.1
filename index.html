@@ -717,6 +717,7 @@ body{
 
 
 <script>
+
 window.onerror = function(message, source, line, column){
     console.error("ERROR:", message, "Baris:", line);
 };
@@ -953,6 +954,7 @@ function openAreaModal(){
     currentMenuType = "pdam";
     if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
     previousMenu = "pascabayar";
+    // ✅ Data asli diambil DARI DATA TERKINI sebelum ditampilkan
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 
     const modal = document.getElementById("areaModal");
@@ -970,10 +972,9 @@ function openAreaModal(){
                 <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
             </div>
         `;
-        // KLIK NAMA AREA BUKA WILAYAH
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
-                hideAllDeleteIcons(); // ✅ Sembunyikan icon hapus sebelum buka baru
+                hideAllDeleteIcons();
                 openWilayahModal(this.dataset.area);
             }
         };
@@ -984,16 +985,14 @@ function openAreaModal(){
     setTimeout(() => { 
         lucide.createIcons(); 
         setupHoldToDelete();
-        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul, jadi tombol tetap nyala
+        // ✅ CEK PERUBAHAN TERAKHIR SETELAH SEMUA SIAP
         checkAreaChange(); 
-    }, 50);
+    }, 100);
 
-    // ✅ HAPUS atau KOMENTARI baris ini:
-    // setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
+    // ❌ BARIS INI SUDAH DIHAPUS TOTAL -> disableButton("btnSimpanDaftarArea");
 }
 
 
-// === FORM AREA SEKARANG JADI POPUP ===
 function showFormArea(){
     document.getElementById("inputNamaArea").value = "";
     isEditMode = false;
@@ -1009,11 +1008,8 @@ function simpanArea(){
     const nama = document.getElementById("inputNamaArea").value.trim();
     if(!nama){ return; }
     
-    // >>> CEK DUPLIKAT BAIK TAMBAH BARU ATAU EDIT <<<
     const namaSudahAda = Object.keys(prabayarData[currentMenuType] || {}).some(existingName => {
-        if(isEditMode && existingName === Object.keys(prabayarData[currentMenuType])[editIndex]) {
-            return false; 
-        }
+        if(isEditMode && existingName === Object.keys(prabayarData[currentMenuType])[editIndex]) return false;
         return existingName.toLowerCase() === nama.toLowerCase();
     });
 
@@ -1038,9 +1034,8 @@ function simpanArea(){
     
     hideFormArea();
     setTimeout(() => {
-        checkAreaChange(); // ✅ Cek perubahan agar tombol simpan aktif
-        enableButton("btnSimpanDaftarArea");
-    }, 150);
+        checkAreaChange(); // ✅ Langsung nyalakan cek
+    }, 50);
     openAreaModal();
 }
 
@@ -1068,7 +1063,7 @@ function openWilayahModal(areaName){
         div.innerHTML = `
             <div>
                 <div class="font-medium">${wil.nama}</div>
-                <div class="text-xs text-slate-500">Cek: ${wil.cek}    |    Bayar: ${wil.bayar}</div>
+                <div class="text-xs text-slate-500">Cek: ${wil.cek} | Bayar: ${wil.bayar}</div>
             </div>
             <div class="actions flex gap-2">
                 <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
@@ -1082,16 +1077,14 @@ function openWilayahModal(areaName){
     setTimeout(() => { 
         lucide.createIcons();
         setupHoldToDelete();
-        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul
+        // ✅ CEK PERUBAHAN TERAKHIR
         checkWilayahChange();
-    }, 50);
+    }, 100);
 
-    // ✅ HAPUS atau KOMENTARI baris ini:
-    // setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
+    // ❌ BARIS INI SUDAH DIHAPUS TOTAL -> disableButton("btnSimpanDaftarWilayah");
 }
 
 
-// === FORM WILAYAH JADI POPUP ===
 function showFormWilayah(){
     document.getElementById("inputNamaWilayah").value = "";
     document.getElementById("inputKodeCek").value = "";
@@ -1117,7 +1110,6 @@ function simpanWilayah(){
 
     const listWilayah = prabayarData[currentMenuType][currentAreaName].wilayah || [];
     
-    // >>> CEK DUPLIKAT <<<
     const namaSudahAda = listWilayah.some((wil, index) => {
         if(isEditMode && index === editIndex) return false;
         return wil.nama.toLowerCase() === nama.toLowerCase();
@@ -1140,9 +1132,8 @@ function simpanWilayah(){
     
     hideFormWilayah();
     setTimeout(() => {
-        checkWilayahChange(); // ✅ Cek perubahan agar tombol simpan aktif
-        enableButton("btnSimpanDaftarWilayah");
-    }, 150);
+        checkWilayahChange(); // ✅ Langsung cek perubahan
+    }, 50);
     openWilayahModal(currentAreaName);
 }
 
@@ -1150,7 +1141,6 @@ function simpanWilayah(){
 // >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
-    // Bersihkan event lama dulu agar tidak double
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let newIcon = icon.cloneNode(true);
         icon.replaceWith(newIcon);
@@ -1195,14 +1185,12 @@ function setupHoldToDelete(){
                 
                 try {
                     if(name) {
-                        // EDIT AREA
                         isEditMode = true;
                         editIndex = Array.from(document.querySelectorAll("#areaListContainer .area-item")).findIndex(el => el.dataset.area === name);
                         document.getElementById("inputNamaArea").value = name;
                         document.getElementById("formAreaModal").classList.add("show");
                         enableButton("btnSimpanArea");
                     } else if(idx !== undefined) {
-                        // EDIT WILAYAH
                         const index = parseInt(idx);
                         const dataList = prabayarData[currentMenuType][currentAreaName].wilayah;
                         if(dataList && dataList[index]){
@@ -1225,19 +1213,15 @@ function setupHoldToDelete(){
             clearTimeout(timer);
         };
 
-        // === VERSI TOUCH SCREEN (HP) ===
         icon.ontouchstart = function(e) {
             e.preventDefault();
             isHold = false;
-
             const parentItem = this.closest('.area-item, .wilayah-item');
             if(parentItem) {
                 parentItem.style.userSelect = 'none';
                 parentItem.style.webkitUserSelect = 'none';
             }
-
             hideAllDeleteIcons();
-
             timer = setTimeout(() => {
                 isHold = true;
                 this.style.display = "none";
@@ -1253,11 +1237,9 @@ function setupHoldToDelete(){
                 el.style.userSelect = 'auto';
                 el.style.webkitUserSelect = 'auto';
             });
-
             if (!isHold) {
                 const name = this.dataset.name;
                 const idx = this.dataset.index;
-                
                 try {
                     if(name) {
                         isEditMode = true;
@@ -1285,7 +1267,7 @@ function setupHoldToDelete(){
         };
     });
 
-    // >>> EVENT KLIK TOMBOL HAPUS <<<
+    // >>> PERBAIKAN UTAMA SAAT HAPUS <<<
     document.querySelectorAll(".icon-delete").forEach(btn => {
         btn.onclick = function(e){
             e.stopPropagation();
@@ -1296,13 +1278,17 @@ function setupHoldToDelete(){
             showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
                 try {
                     if(name){
+                        // Hapus dulu
                         delete prabayarData[currentMenuType][name];
-                        checkAreaChange(); // ✅ Aktifkan tombol simpan
+                        // ✅ PENTING: Cek perubahan SEBELUM memuat ulang tampilan
+                        checkAreaChange(); 
+                        // Baru buka ulang
                         openAreaModal();
                     } else {
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                            checkWilayahChange(); // ✅ Aktifkan tombol simpan
+                            // ✅ PENTING: Cek perubahan SEBELUM memuat ulang tampilan
+                            checkWilayahChange(); 
                             openWilayahModal(currentAreaName);
                         }
                     }
@@ -1321,7 +1307,6 @@ function setupHoldToDelete(){
         };
     });
 
-    // ✅ BARU: Klik di body item tapi bukan di icon, sembunyikan hapus
     document.querySelectorAll(".area-item, .wilayah-item").forEach(item => {
         item.addEventListener('click', function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
@@ -1345,14 +1330,30 @@ function hideAllDeleteIcons(){
 // >>>♾️♾️♾️ CEK PERUBAHAN AREA & WILAYAH <<<
 // ==============================================
 function checkAreaChange(){
-    if(!prabayarData[currentMenuType]) { disableButton("btnSimpanDaftarArea"); return; }
+    if(!prabayarData[currentMenuType]) { 
+        disableButton("btnSimpanDaftarArea"); 
+        return; 
+    }
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
-    currentData !== originalAreaData ? enableButton("btnSimpanDaftarArea") : disableButton("btnSimpanDaftarArea");
+    // ✅ Logika: Jika beda -> Aktifkan, jika sama -> Matikan
+    if (currentData !== originalAreaData) {
+        enableButton("btnSimpanDaftarArea");
+    } else {
+        disableButton("btnSimpanDaftarArea");
+    }
 }
+
 function checkWilayahChange(){
-    if(!prabayarData[currentMenuType] || !prabayarData[currentMenuType][currentAreaName]) { disableButton("btnSimpanDaftarWilayah"); return; }
+    if(!prabayarData[currentMenuType] || !prabayarData[currentMenuType][currentAreaName]) { 
+        disableButton("btnSimpanDaftarWilayah"); 
+        return; 
+    }
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
-    currentData !== originalWilayahData ? enableButton("btnSimpanDaftarWilayah") : disableButton("btnSimpanDaftarWilayah");
+    if (currentData !== originalWilayahData) {
+        enableButton("btnSimpanDaftarWilayah");
+    } else {
+        disableButton("btnSimpanDaftarWilayah");
+    }
 }
 
 function checkFormArea(){
@@ -1596,11 +1597,19 @@ function saveData(){
 
 function enableButton(id){
     const btn = document.getElementById(id);
-    if(btn) { btn.disabled = false; btn.classList.remove("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.add("bg-cyan-600"); }
+    if(btn) { 
+        btn.disabled = false; 
+        btn.classList.remove("bg-gray-400", "cursor-not-allowed", "opacity-50"); 
+        btn.classList.add("bg-cyan-600"); 
+    }
 }
 function disableButton(id){
     const btn = document.getElementById(id);
-    if(btn) { btn.disabled = true; btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.remove("bg-cyan-600"); }
+    if(btn) { 
+        btn.disabled = true; 
+        btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50"); 
+        btn.classList.remove("bg-cyan-600"); 
+    }
 }
 
 function confirmSaveServer(){
@@ -1655,8 +1664,6 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         if(yesFunc) yesFunc(); 
     };
     wrap.appendChild(btnYes);
-
-    document.getElementById("confirmModal").classList.remove("hidden");
 }
 
 function toast(msg){
@@ -1689,7 +1696,7 @@ function simpanDaftarArea() {
     saveData();
     toast("Daftar Area Berhasil Disimpan");
     disableButton("btnSimpanDaftarArea");
-    // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
+    // ✅ Kunci utama: Perbarui data acuan agar dianggap sama lagi
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
 
@@ -1697,7 +1704,7 @@ function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
     disableButton("btnSimpanDaftarWilayah");
-    // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
+    // ✅ Kunci utama: Perbarui data acuan agar dianggap sama lagi
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
 
@@ -1705,7 +1712,6 @@ function simpanDaftarWilayah() {
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
-
 function backToPrabayar(){
     document.getElementById("areaModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
