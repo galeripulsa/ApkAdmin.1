@@ -945,7 +945,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 
 // ==============================================
-// >>> MODAL DAFTAR AREA PDAM <<<
+// >>> 🔰🔰🔰MODAL DAFTAR AREA PDAM🔰🔰🔰 <<<
 // ==============================================
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
@@ -983,11 +983,15 @@ function openAreaModal(){
     modal.classList.add("show");
     setTimeout(() => { 
         lucide.createIcons(); 
-        setupHoldToDelete(); 
+        setupHoldToDelete();
+        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul, jadi tombol tetap nyala
+        checkAreaChange(); 
     }, 50);
 
-    setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
+    // ✅ HAPUS atau KOMENTARI baris ini:
+    // setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
+
 
 // === FORM AREA SEKARANG JADI POPUP ===
 function showFormArea(){
@@ -1041,7 +1045,7 @@ function simpanArea(){
 }
 
 // ==============================================
-// >>> MODAL DAFTAR WILAYAH <<<
+// >>> 🔰🔰🔰MODAL DAFTAR WILAYAH🔰🔰🔰 <<<
 // ==============================================
 function openWilayahModal(areaName){
     currentAreaName = areaName;
@@ -1078,10 +1082,14 @@ function openWilayahModal(areaName){
     setTimeout(() => { 
         lucide.createIcons();
         setupHoldToDelete();
+        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul
+        checkWilayahChange();
     }, 50);
 
-    setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
+    // ✅ HAPUS atau KOMENTARI baris ini:
+    // setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
+
 
 // === FORM WILAYAH JADI POPUP ===
 function showFormWilayah(){
