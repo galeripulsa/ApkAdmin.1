@@ -1147,7 +1147,7 @@ function simpanWilayah(){
 }
 
 // ==============================================
-// >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
+// >>>❌❌❌ PERBAIKAN HOLD CLICK DELETE & EDIT ❌❌❌<<<
 // ==============================================
 function setupHoldToDelete(){
     // Bersihkan event lama dulu agar tidak double
@@ -1286,42 +1286,78 @@ function setupHoldToDelete(){
     });
 
     // >>> EVENT KLIK TOMBOL HAPUS <<<
-    document.querySelectorAll(".icon-delete").forEach(btn => {
-        btn.onclick = function(e){
-            e.stopPropagation();
-            const name = this.dataset.name;
-            const idx = this.dataset.index;
-            const text = name ? `Area "${name}"` : `Wilayah ini`;
-            
-            showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
-                try {
-                    if(name){
-                        delete prabayarData[currentMenuType][name];
-                        // ✅ SOLUSI: Aktifkan tombol SEKARANG JUGA sebelum buka modal baru
-                        enableButton("btnSimpanDaftarArea"); 
-                        openAreaModal();
-                    } else {
-                        if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
-                            prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                            // ✅ SOLUSI: Aktifkan tombol SEKARANG JUGA sebelum buka modal baru
-                            enableButton("btnSimpanDaftarWilayah");
-                            openWilayahModal(currentAreaName);
+   
+// >>> EVENT KLIK TOMBOL HAPUS <<<
+document.querySelectorAll(".icon-delete").forEach(btn => {
+    btn.onclick = function(e){
+        e.stopPropagation();
+        const name = this.dataset.name;
+        const idx = this.dataset.index;
+        const text = name ? `Area "${name}"` : `Wilayah ini`;
+        
+        showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
+            try {
+                if(name){
+                    delete prabayarData[currentMenuType][name];
+                    openAreaModal();
+                    
+                    // 🔥 CARA TERAKHIR: PAKSA NYALA BERKALI-KALI
+                    setTimeout(() => {
+                        const btnArea = document.getElementById("btnSimpanDaftarArea");
+                        if(btnArea){
+                            btnArea.disabled = false;
+                            btnArea.classList.remove("disabled");
+                            btnArea.style.opacity = "1";
+                            btnArea.style.cursor = "pointer";
                         }
-                    }
-                } catch (err) {
-                    console.error("Error hapus:", err);
-                    toast("Terjadi kesalahan, coba lagi");
-                }
-            }, "Ya, Hapus", ()=>{
-                hideAllDeleteIcons();
-            });
+                    }, 10);
+                    setTimeout(() => {
+                        const btnArea = document.getElementById("btnSimpanDaftarArea");
+                        if(btnArea){
+                            btnArea.disabled = false;
+                            btnArea.classList.remove("disabled");
+                        }
+                    }, 100);
 
-            this.style.display = "none";
-            if(this.previousElementSibling){
-                this.previousElementSibling.style.display = "inline";
+                } else {
+                    if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
+                        prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                        openWilayahModal(currentAreaName);
+
+                        // 🔥 CARA TERAKHIR: PAKSA NYALA BERKALI-KALI
+                        setTimeout(() => {
+                            const btnWil = document.getElementById("btnSimpanDaftarWilayah");
+                            if(btnWil){
+                                btnWil.disabled = false;
+                                btnWil.classList.remove("disabled");
+                                btnWil.style.opacity = "1";
+                                btnWil.style.cursor = "pointer";
+                            }
+                        }, 10);
+                        setTimeout(() => {
+                            const btnWil = document.getElementById("btnSimpanDaftarWilayah");
+                            if(btnWil){
+                                btnWil.disabled = false;
+                                btnWil.classList.remove("disabled");
+                            }
+                        }, 100);
+                    }
+                }
+            } catch (err) {
+                console.error("Error hapus:", err);
+                toast("Terjadi kesalahan, coba lagi");
             }
-        };
-    });
+        }, "Ya, Hapus", ()=>{
+            hideAllDeleteIcons();
+        });
+
+        this.style.display = "none";
+        if(this.previousElementSibling){
+            this.previousElementSibling.style.display = "inline";
+        }
+    };
+});
+
 
     // Klik di luar item sembunyikan icon hapus
     document.querySelectorAll(".area-item, .wilayah-item").forEach(item => {
