@@ -1453,6 +1453,7 @@ function openOperatorList(title, actionType){
     attachInputListeners();
 }
 
+// >>> ♾️♾️♾️♾️♾️♾️♾️♾️♾️ <<<
 function openOperatorListPascabayar(title, actionType){
     document.getElementById("prabayarModal").classList.remove("show");
     const modal = document.getElementById("operatorListModal");
@@ -1464,7 +1465,7 @@ function openOperatorListPascabayar(title, actionType){
     if(!prabayarData[currentMenuType]){ prabayarData[currentMenuType] = {}; }
     if(!originalPrabayarData[currentMenuType]){ originalPrabayarData[currentMenuType] = {}; }
 
-    let listToShow = [], iconName = "file-text", labelInput1 = "Kode / Format", labelInput2 = "Nama Produk";
+    let listToShow = [], iconName = "file-text";
     if(actionType === "plnPascabayar"){ listToShow = plnList; iconName = "zap"; } 
     else if(actionType === "bpjs"){ listToShow = bpjsList; iconName = "heart"; } 
     else if(actionType === "pbb"){ listToShow = pbbList; iconName = "home"; } 
@@ -1472,8 +1473,9 @@ function openOperatorListPascabayar(title, actionType){
     else if(actionType === "internetTelpon"){ listToShow = internetList; iconName = "wifi"; }
 
     listToShow.forEach(itemName => {
-        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", namaProduk: ""};
-        originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", namaProduk: saved.namaProduk || ""};
+        // ⚠️ UBAH DISINI: Tambah property 'bayar'
+        const saved = prabayarData[currentMenuType][itemName] || {cekHarga: "", bayar: "", namaProduk: ""};
+        originalPrabayarData[currentMenuType][itemName] = {cekHarga: saved.cekHarga || "", bayar: saved.bayar || "", namaProduk: saved.namaProduk || ""};
 
         const wrapper = document.createElement("div");
         wrapper.className = "operator-wrapper";
@@ -1487,14 +1489,25 @@ function openOperatorListPascabayar(title, actionType){
                 <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400 chevron-icon"></i>
             </div>
             <div class="operator-body">
-                <div class="floating mt-4">
-                    <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
-                    <label>${labelInput1}</label>
+                
+                <!-- ✅ BARU: KODE CEK & KODE BAYAR BERDAMPINGAN -->
+                <div class="flex gap-4 mt-4">
+                    <div class="floating flex-1">
+                        <input type="text" class="input-cek-harga" data-operator="${itemName}" placeholder=" " value="${saved.cekHarga || ""}">
+                        <label>Kode Cek</label>
+                    </div>
+                    <div class="floating flex-1">
+                        <input type="text" class="input-bayar" data-operator="${itemName}" placeholder=" " value="${saved.bayar || ""}">
+                        <label>Kode Bayar</label>
+                    </div>
                 </div>
+
+                <!-- ✅ NAMA PRODUK TETAP DI BAWAH -->
                 <div class="floating mt-4">
                     <input type="text" class="input-nama-produk" data-operator="${itemName}" placeholder=" " value="${saved.namaProduk || ""}">
-                    <label>${labelInput2}</label>
+                    <label>Nama Produk</label>
                 </div>
+
             </div>
         `;
         container.appendChild(wrapper);
