@@ -1286,7 +1286,7 @@ function setupHoldToDelete(){
     });
 
 
-    // >>> EVENT KLIK TOMBOL HAPUS <<<
+    // >>> ❌❌❌EVENT KLIK TOMBOL HAPUS <<<
 document.querySelectorAll(".icon-delete").forEach(btn => {
     btn.onclick = function(e){
         e.stopPropagation();
@@ -1298,50 +1298,44 @@ document.querySelectorAll(".icon-delete").forEach(btn => {
             try {
                 if(name){
                     delete prabayarData[currentMenuType][name];
+                    
+                    // 🚫 MATIKAN FUNGSI PENGECEKAN DULU
+                    window.checkAreaChange = function(){}; 
+                    
                     openAreaModal();
                     
-                    // 💣 SOLUSI TERAKHIR: Abaikan aturan, paksa nyala
+                    // ✅ LANGSUNG HIDUPKAN
                     setTimeout(() => {
                         const btnArea = document.getElementById("btnSimpanDaftarArea");
                         if(btnArea){
-                            // 1. Hapus status disabled
                             btnArea.disabled = false;
-                            
-                            // 2. Hapus semua class yang bener gelap
                             btnArea.classList.remove("disabled");
-                            btnArea.classList.remove("btn-disabled");
-                            
-                            // 3. Ubah gaya langsung
                             btnArea.style.opacity = "1";
                             btnArea.style.cursor = "pointer";
                             btnArea.style.pointerEvents = "auto";
-                            
-                            // 4. Hapus event listener yang mungkin memblokir klik
-                            btnArea.onclick = function() { 
-                                // Panggil fungsi simpan asli kamu di sini
-                                // Kalau ada fungsi simpan, tulis namanya di sini
-                                // Contoh: saveAllDataArea(); 
-                            };
                         }
-                    }, 50);
+                    }, 10);
 
                 } else {
                     if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                         prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
+                        
+                        // 🚫 MATIKAN FUNGSI PENGECEKAN DULU
+                        window.checkWilayahChange = function(){};
+                        
                         openWilayahModal(currentAreaName);
                         
-                        // 💣 SOLUSI TERAKHIR: Abaikan aturan, paksa nyala
+                        // ✅ LANGSUNG HIDUPKAN
                         setTimeout(() => {
                             const btnWil = document.getElementById("btnSimpanDaftarWilayah");
                             if(btnWil){
                                 btnWil.disabled = false;
                                 btnWil.classList.remove("disabled");
-                                btnWil.classList.remove("btn-disabled");
                                 btnWil.style.opacity = "1";
                                 btnWil.style.cursor = "pointer";
                                 btnWil.style.pointerEvents = "auto";
                             }
-                        }, 50);
+                        }, 10);
                     }
                 }
             } catch (err) {
