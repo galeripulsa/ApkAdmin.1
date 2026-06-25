@@ -950,14 +950,15 @@ function openAreaModal(){
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
         div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
-        div.dataset.area = Areana70me;
+        // ✅ PERBAIKAN: Variabel yang salah diperbaiki
+        div.dataset.area = areaName; 
         div.innerHTML = `
-    <span class="font-medium">${areaName}</span>
-    <div class="actions flex gap-2">
-        <i class="icon-edit text-blue-500" data-name="${areaName}" data-lucide="edit-3" stroke-width="1.5"></i>
-        <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
-    </div>
-`;
+            <span class="font-medium">${areaName}</span>
+            <div class="actions flex gap-2">
+                <i class="icon-edit text-blue-500" data-name="${areaName}" data-lucide="edit-3" stroke-width="1.5"></i>
+                <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
+            </div>
+        `;
         // KLIK NAMA AREA BUKA WILAYAH
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
@@ -969,9 +970,9 @@ function openAreaModal(){
 
     modal.classList.add("show");
     setTimeout(() => { 
-    lucide.createIcons(); 
-    setupHoldToDelete(); 
-}, 50);
+        lucide.createIcons(); 
+        setupHoldToDelete(); 
+    }, 50);
 
     setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
@@ -994,7 +995,6 @@ function simpanArea(){
     
     // >>> CEK DUPLIKAT BAIK TAMBAH BARU ATAU EDIT <<<
     const namaSudahAda = Object.keys(prabayarData[currentMenuType] || {}).some(existingName => {
-        // Jika mode Edit, abaikan nama dirinya sendiri
         if(isEditMode && existingName === Object.keys(prabayarData[currentMenuType])[editIndex]) {
             return false; 
         }
@@ -1005,7 +1005,7 @@ function simpanArea(){
         showConfirm("Duplikat", "Nama Area sudah ada. Gunakan nama lain", ()=>{
             document.getElementById("inputNamaArea").focus();
         }, "Oke");
-        return; // Jangan lanjut simpan
+        return;
     }
 
     if(!prabayarData[currentMenuType]) prabayarData[currentMenuType] = {};
@@ -1049,23 +1049,23 @@ function openWilayahModal(areaName){
         const div = document.createElement("div");
         div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2";
         div.innerHTML = `
-    <div>
-        <div class="font-medium">${wil.nama}</div>
-        <div class="text-xs text-slate-500">Cek: ${wil.cek}    |    Bayar: ${wil.bayar}</div>
-    </div>
-    <div class="actions flex gap-2">
-        <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
-        <i class="icon-delete text-red-500 ml-1" data-index="${idx}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
-    </div>
-`;
+            <div>
+                <div class="font-medium">${wil.nama}</div>
+                <div class="text-xs text-slate-500">Cek: ${wil.cek}    |    Bayar: ${wil.bayar}</div>
+            </div>
+            <div class="actions flex gap-2">
+                <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
+                <i class="icon-delete text-red-500 ml-1" data-index="${idx}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
+            </div>
+        `;
         container.appendChild(div);
     });
 
     modal.classList.add("show");
     setTimeout(() => { 
-    lucide.createIcons();
-    setupHoldToDelete();
-}, 50);
+        lucide.createIcons();
+        setupHoldToDelete();
+    }, 50);
 
     setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
@@ -1098,7 +1098,6 @@ function simpanWilayah(){
     
     // >>> CEK DUPLIKAT <<<
     const namaSudahAda = listWilayah.some((wil, index) => {
-        // Jika mode Edit, lewati data dirinya sendiri
         if(isEditMode && index === editIndex) return false;
         return wil.nama.toLowerCase() === nama.toLowerCase();
     });
@@ -1107,7 +1106,7 @@ function simpanWilayah(){
         showConfirm("Duplikat", "Nama Wilayah sudah ada. Gunakan nama lain", ()=>{
             document.getElementById("inputNamaWilayah").focus();
         }, "Oke");
-        return; // Jangan lanjut
+        return;
     }
 
     if(isEditMode){
@@ -1125,17 +1124,14 @@ function simpanWilayah(){
     openWilayahModal(currentAreaName);
 }
 
-
 // ==============================================
 // >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
 function setupHoldToDelete(){
+    // Bersihkan event lama dulu agar tidak double
     document.querySelectorAll(".icon-edit").forEach(icon => {
-        let timer;
-        let isHold = false;
-
-        // Hapus event lama
-        icon.replaceWith(icon.cloneNode(true));
+        let newIcon = icon.cloneNode(true);
+        icon.replaceWith(newIcon);
     });
 
     document.querySelectorAll(".icon-edit").forEach(icon => {
@@ -1155,7 +1151,6 @@ function setupHoldToDelete(){
 
             hideAllDeleteIcons();
 
-            // Timer untuk deteksi tekan lama
             timer = setTimeout(() => {
                 isHold = true;
                 this.style.display = "none";
@@ -1172,9 +1167,7 @@ function setupHoldToDelete(){
                 el.style.webkitUserSelect = 'auto';
             });
 
-            // Jika bukan hold (artinya klik cepat), jalankan EDIT
             if (!isHold) {
-                // Jalankan fungsi edit manual di sini
                 const name = this.dataset.name;
                 const idx = this.dataset.index;
                 
@@ -1208,10 +1201,6 @@ function setupHoldToDelete(){
 
         icon.onmouseleave = function() {
             clearTimeout(timer);
-            document.querySelectorAll('.area-item, .wilayah-item').forEach(el => {
-                el.style.userSelect = 'auto';
-                el.style.webkitUserSelect = 'auto';
-            });
         };
 
         // === VERSI TOUCH SCREEN (HP) ===
@@ -1244,7 +1233,6 @@ function setupHoldToDelete(){
             });
 
             if (!isHold) {
-                // Jalankan EDIT
                 const name = this.dataset.name;
                 const idx = this.dataset.index;
                 
@@ -1287,12 +1275,12 @@ function setupHoldToDelete(){
                 try {
                     if(name){
                         delete prabayarData[currentMenuType][name];
-                        checkAreaChange(); // WAJIB: Aktifkan tombol simpan
+                        checkAreaChange();
                         openAreaModal();
                     } else {
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                            checkWilayahChange(); // WAJIB: Aktifkan tombol simpan
+                            checkWilayahChange();
                             openWilayahModal(currentAreaName);
                         }
                     }
@@ -1310,13 +1298,6 @@ function setupHoldToDelete(){
             }
         };
     });
-
-    // Klik di luar -> sembunyikan semua tombol hapus
-    document.addEventListener('click', function(e){
-        if(!e.target.closest('.actions')){ 
-            hideAllDeleteIcons(); 
-        }
-    });
 }
 
 function hideAllDeleteIcons(){
@@ -1327,8 +1308,6 @@ function hideAllDeleteIcons(){
         }
     });
 }
-
-
 
 // ==============================================
 // >>>♾️♾️♾️ CEK PERUBAHAN AREA & WILAYAH <<<
@@ -1537,7 +1516,15 @@ function openPascabayar(){
         const div = document.createElement("div");
         div.className = "submenu-item";
         div.innerHTML = `<i data-lucide="${item.icon}" class="w-7 h-7"></i><span class="font-medium text-lg">${item.nama}</span>`;
-        if(item.action) div.onclick = ()=>{ item.action === "pdam" ? openAreaModal() : openOperatorListPascabayar(item.nama, item.action); };
+        if(item.action) {
+            div.onclick = ()=>{ 
+                if(item.action === "pdam") {
+                    openAreaModal(); 
+                } else {
+                    openOperatorListPascabayar(item.nama, item.action); 
+                }
+            };
+        }
         listContainer.appendChild(div);
     });
     modal.classList.add("show");
@@ -1617,7 +1604,6 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
     const wrap = document.getElementById("confirmButtons");
     wrap.innerHTML = "";
     
-    // Tombol Tidak (Kiri)
     if(noFunc){
         const btnNo = document.createElement("button");
         btnNo.className = "flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold btn-click";
@@ -1629,7 +1615,6 @@ function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
         wrap.appendChild(btnNo);
     }
 
-    // Tombol Ya (Kanan)
     const btnYes = document.createElement("button");
     btnYes.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold btn-click";
     btnYes.innerText = yesText;
@@ -1685,50 +1670,11 @@ function simpanDaftarWilayah() {
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
 
-// >>>> INI KHUSUS UNTUK TOMBOL PANAH KEMBALI (BALIK KE MENU UTAMA) <<<<
+// ✅ PERBAIKAN: Navigasi kembali yang benar
 function backToPrabayar(){
-    const currentData = JSON.stringify(prabayarData[currentMenuType]);
-    if(currentData !== originalAreaData){
-        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
-            document.getElementById("areaModal").classList.remove("show");
-            document.getElementById("prabayarModal").classList.remove("show"); // TUTUP SEMUA
-            document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
-        }, "Ya, Keluar");
-    } else {
-        document.getElementById("areaModal").classList.remove("show");
-        document.getElementById("prabayarModal").classList.remove("show"); // TUTUP SEMUA
-        document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
-    }
+    document.getElementById("areaModal").classList.remove("show");
+    document.getElementById("prabayarModal").classList.add("show");
 }
-
-// >>>> INI KHUSUS UNTUK KLIK MENU PDAM (BUKA DAFTAR AREA) <<<<
-function openPascabayar(){
-    document.getElementById("fixedButtonWrapper").style.display = "none";
-    document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
-    const modal = document.getElementById("prabayarModal");
-    const listContainer = document.getElementById("prabayarList");
-    listContainer.innerHTML = "";
-    subMenuPascabayar.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "submenu-item";
-        div.innerHTML = `<i data-lucide="${item.icon}" class="w-7 h-7"></i><span class="font-medium text-lg">${item.nama}</span>`;
-        if(item.action) {
-            div.onclick = ()=>{ 
-                if(item.action === "pdam") {
-                    // >>>> KLIK PDAM => BUKA AREA <<<<
-                    openAreaModal(); 
-                } else {
-                    openOperatorListPascabayar(item.nama, item.action); 
-                }
-            };
-        }
-        listContainer.appendChild(div);
-    });
-    modal.classList.add("show");
-    setTimeout(() => { lucide.createIcons(); }, 50);
-}
-
-
 
 function backToArea(){
     const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
