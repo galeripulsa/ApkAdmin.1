@@ -1680,14 +1680,18 @@ function simpanDaftarArea() {
     saveData();
     toast("Daftar Area Berhasil Disimpan");
     disableButton("btnSimpanDaftarArea");
+    // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
 }
+
 function simpanDaftarWilayah() {
     saveData();
     toast("Daftar Wilayah Berhasil Disimpan");
     disableButton("btnSimpanDaftarWilayah");
+    // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
+
 
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
