@@ -1285,6 +1285,7 @@ function setupHoldToDelete(){
         };
     });
 
+   
 
     // >>> ❌❌❌EVENT KLIK TOMBOL HAPUS <<<
     document.querySelectorAll(".icon-delete").forEach(btn => {
@@ -1297,31 +1298,37 @@ function setupHoldToDelete(){
             showConfirm("Hapus", `Yakin hapus ${text}?`, ()=>{
                 try {
                     if(name){
+                        // HAPUS AREA
                         delete prabayarData[currentMenuType][name];
                         
-                        // ✅ SOLUSI AKHIR: Update data asli SEBELUM buka modal
+                        // ✅ PERBAIKAN UTAMA: Update data asli SEBELUM buka modal
                         originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
                         
                         openAreaModal();
                         
-                        // ✅ Paksa nyala tombol
+                        // ✅ PAKSA NYALA DENGAN CARA BARU
                         setTimeout(() => {
                             enableButton("btnSimpanDaftarArea");
-                        }, 10);
+                            // Kita ubah sedikit value di original agar terdeteksi berubah
+                            originalAreaData = ""; 
+                        }, 100);
 
                     } else {
+                        // HAPUS WILAYAH
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                             
-                            // ✅ SOLUSI AKHIR: Update data asli SEBELUM buka modal
+                            // ✅ PERBAIKAN UTAMA: Update data asli SEBELUM buka modal
                             originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
                             
                             openWilayahModal(currentAreaName);
                             
-                            // ✅ Paksa nyala tombol
+                            // ✅ PAKSA NYALA DENGAN CARA BARU
                             setTimeout(() => {
                                 enableButton("btnSimpanDaftarWilayah");
-                            }, 10);
+                                // Kita ubah sedikit value di original agar terdeteksi berubah
+                                originalWilayahData = ""; 
+                            }, 100);
                         }
                     }
                 } catch (err) {
@@ -1338,7 +1345,6 @@ function setupHoldToDelete(){
             }
         };
     });
-
 
 
     // Klik di luar item sembunyikan icon hapus
