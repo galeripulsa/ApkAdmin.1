@@ -1684,24 +1684,50 @@ function simpanDaftarWilayah() {
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
+
+// >>>> INI KHUSUS UNTUK TOMBOL PANAH KEMBALI (BALIK KE MENU UTAMA) <<<<
 function backToPrabayar(){
     const currentData = JSON.stringify(prabayarData[currentMenuType]);
     if(currentData !== originalAreaData){
         showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
             document.getElementById("areaModal").classList.remove("show");
-            document.getElementById("prabayarModal").classList.remove("show"); // TUTUP JUGA
-            // ❌ HAPUS baris ini: document.getElementById("prabayarModal").classList.add("show");
-            // ✅ TAMBAH ini agar kembali ke menu utama
+            document.getElementById("prabayarModal").classList.remove("show"); // TUTUP SEMUA
             document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
         }, "Ya, Keluar");
     } else {
         document.getElementById("areaModal").classList.remove("show");
-        document.getElementById("prabayarModal").classList.remove("show"); // TUTUP JUGA
-        // ❌ HAPUS baris ini: document.getElementById("prabayarModal").classList.add("show");
-        // ✅ TAMBAH ini agar kembali ke menu utama
+        document.getElementById("prabayarModal").classList.remove("show"); // TUTUP SEMUA
         document.querySelectorAll(".card-menu").forEach(el=>el.classList.remove("menu-active"));
     }
 }
+
+// >>>> INI KHUSUS UNTUK KLIK MENU PDAM (BUKA DAFTAR AREA) <<<<
+function openPascabayar(){
+    document.getElementById("fixedButtonWrapper").style.display = "none";
+    document.getElementById("subMenuTitle").innerText = "Menu Pascabayar";
+    const modal = document.getElementById("prabayarModal");
+    const listContainer = document.getElementById("prabayarList");
+    listContainer.innerHTML = "";
+    subMenuPascabayar.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "submenu-item";
+        div.innerHTML = `<i data-lucide="${item.icon}" class="w-7 h-7"></i><span class="font-medium text-lg">${item.nama}</span>`;
+        if(item.action) {
+            div.onclick = ()=>{ 
+                if(item.action === "pdam") {
+                    // >>>> KLIK PDAM => BUKA AREA <<<<
+                    openAreaModal(); 
+                } else {
+                    openOperatorListPascabayar(item.nama, item.action); 
+                }
+            };
+        }
+        listContainer.appendChild(div);
+    });
+    modal.classList.add("show");
+    setTimeout(() => { lucide.createIcons(); }, 50);
+}
+
 
 
 function backToArea(){
