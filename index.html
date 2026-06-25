@@ -1067,11 +1067,13 @@ function openWilayahModal(areaName){
         div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
         div.innerHTML = `
             <div>
+
                 <div class="font-medium">${wil.nama}</div>
-                <div class="text-xs text-slate-500 grid grid-cols-2 gap-4">
-    <span>Cek: ${wil.cek}</span>
+                <div class="text-xs text-slate-500">
+    <span class="inline-block w-48">Cek: ${wil.cek}</span>
     <span>Bayar: ${wil.bayar}</span>
 </div>
+
             </div>
             <div class="actions flex gap-2">
                 <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
