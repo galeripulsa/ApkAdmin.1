@@ -930,6 +930,18 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById("inputNamaWilayah").addEventListener("input", checkFormWilayah);
     document.getElementById("inputKodeCek").addEventListener("input", checkFormWilayah);
     document.getElementById("inputKodeBayar").addEventListener("input", checkFormWilayah);
+
+    // ✅ BARU: Event klik di luar item untuk sembunyikan icon hapus
+    document.getElementById("areaListContainer").addEventListener('click', function(e){
+        if(!e.target.closest('.area-item')) {
+            hideAllDeleteIcons();
+        }
+    });
+    document.getElementById("wilayahListContainer").addEventListener('click', function(e){
+        if(!e.target.closest('.wilayah-item')) {
+            hideAllDeleteIcons();
+        }
+    });
 });
 
 // ==============================================
@@ -950,7 +962,6 @@ function openAreaModal(){
     Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
         const div = document.createElement("div");
         div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
-        // ✅ PERBAIKAN: Variabel yang salah diperbaiki
         div.dataset.area = areaName; 
         div.innerHTML = `
             <span class="font-medium">${areaName}</span>
@@ -962,6 +973,7 @@ function openAreaModal(){
         // KLIK NAMA AREA BUKA WILAYAH
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
+                hideAllDeleteIcons(); // ✅ Sembunyikan icon hapus sebelum buka baru
                 openWilayahModal(this.dataset.area);
             }
         };
@@ -1022,6 +1034,7 @@ function simpanArea(){
     
     hideFormArea();
     setTimeout(() => {
+        checkAreaChange(); // ✅ Cek perubahan agar tombol simpan aktif
         enableButton("btnSimpanDaftarArea");
     }, 150);
     openAreaModal();
@@ -1047,7 +1060,7 @@ function openWilayahModal(areaName){
     
     listWilayah.forEach((wil, idx) => {
         const div = document.createElement("div");
-        div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2";
+        div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
         div.innerHTML = `
             <div>
                 <div class="font-medium">${wil.nama}</div>
@@ -1119,6 +1132,7 @@ function simpanWilayah(){
     
     hideFormWilayah();
     setTimeout(() => {
+        checkWilayahChange(); // ✅ Cek perubahan agar tombol simpan aktif
         enableButton("btnSimpanDaftarWilayah");
     }, 150);
     openWilayahModal(currentAreaName);
@@ -1275,12 +1289,12 @@ function setupHoldToDelete(){
                 try {
                     if(name){
                         delete prabayarData[currentMenuType][name];
-                        checkAreaChange();
+                        checkAreaChange(); // ✅ Aktifkan tombol simpan
                         openAreaModal();
                     } else {
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
-                            checkWilayahChange();
+                            checkWilayahChange(); // ✅ Aktifkan tombol simpan
                             openWilayahModal(currentAreaName);
                         }
                     }
@@ -1297,6 +1311,15 @@ function setupHoldToDelete(){
                 this.previousElementSibling.style.display = "inline";
             }
         };
+    });
+
+    // ✅ BARU: Klik di body item tapi bukan di icon, sembunyikan hapus
+    document.querySelectorAll(".area-item, .wilayah-item").forEach(item => {
+        item.addEventListener('click', function(e){
+            if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
+                hideAllDeleteIcons();
+            }
+        });
     });
 }
 
@@ -1670,7 +1693,6 @@ function simpanDaftarWilayah() {
 // >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
 
-// ✅ PERBAIKAN: Navigasi kembali yang benar
 function backToPrabayar(){
     document.getElementById("areaModal").classList.remove("show");
     document.getElementById("prabayarModal").classList.add("show");
@@ -1694,6 +1716,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
 });
+
 
 </script>
 
