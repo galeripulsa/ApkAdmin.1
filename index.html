@@ -1553,14 +1553,13 @@ function checkPrabayarChange(){
 function savePrabayarData(){
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const cekInput = wrap.querySelector('.input-cek-harga');
-        const bayarInput = wrap.querySelector('.input-bayar'); // ✅ AMBIL INPUT BAYAR
+        const bayarInput = wrap.querySelector('.input-bayar'); // ✅ PASTIKAN ADA INI
         const namaInput = wrap.querySelector('.input-nama-produk');
         const key = cekInput.dataset.operator;
         
-        // ✅ SIMPAN SEMUA DATA TERMASUK BAYAR
         prabayarData[currentMenuType][key] = { 
             cekHarga: cekInput.value, 
-            bayar: bayarInput.value, 
+            bayar: bayarInput.value,  // ✅ SIMPAN DATA BAYAR
             namaProduk: namaInput.value 
         };
         originalPrabayarData[currentMenuType][key] = { 
@@ -1660,11 +1659,20 @@ function disableButton(id){
 }
 
 function confirmSaveServer(){
-    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ saveData(); closeServer(); toast("Data Server Berhasil Disimpan"); }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ 
+        saveData(); 
+        // HAPUS baris closeServer() biar gak nutup
+        toast("Data Server Berhasil Disimpan"); 
+    }, "Ya, Simpan");
 }
 function confirmSaveCenter(){
-    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ saveData(); closeCenter(); toast("Data Center Berhasil Disimpan"); }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
+        saveData(); 
+        // HAPUS baris closeCenter() biar gak nutup
+        toast("Data Center Berhasil Disimpan"); 
+    }, "Ya, Simpan");
 }
+
 function confirmSaveTransaksi(){
     showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ saveData(); saveOriginalTransaksiData(); closeTransaksi(); toast("Menu Transaksi Berhasil Disimpan"); }, "Ya, Simpan");
 }
