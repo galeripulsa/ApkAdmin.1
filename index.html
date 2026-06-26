@@ -717,6 +717,7 @@ body{
 
 
 <script>
+
 window.onerror = function(message, source, line, column){
     console.error("ERROR:", message, "Baris:", line);
 };
@@ -987,9 +988,6 @@ function openAreaModal(){
         // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul, jadi tombol tetap nyala
         checkAreaChange(); 
     }, 50);
-
-    // ✅ HAPUS atau KOMENTARI baris ini:
-    // setTimeout(() => { disableButton("btnSimpanDaftarArea"); }, 100);
 }
 
 
@@ -1067,13 +1065,11 @@ function openWilayahModal(areaName){
         div.className = "wilayah-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
         div.innerHTML = `
             <div>
-
                 <div class="font-medium">${wil.nama}</div>
                 <div class="text-xs text-slate-500">
-    <span class="inline-block w-44">Cek: ${wil.cek}</span>
-    <span>Bayar: ${wil.bayar}</span>
-</div>
-
+                    <span class="inline-block w-44">Cek: ${wil.cek}</span>
+                    <span>Bayar: ${wil.bayar}</span>
+                </div>
             </div>
             <div class="actions flex gap-2">
                 <i class="icon-edit text-blue-500" data-index="${idx}" data-lucide="edit-3" stroke-width="1.5"></i>
@@ -1090,9 +1086,6 @@ function openWilayahModal(areaName){
         // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul
         checkWilayahChange();
     }, 50);
-
-    // ✅ HAPUS atau KOMENTARI baris ini:
-    // setTimeout(() => { disableButton("btnSimpanDaftarWilayah"); }, 100);
 }
 
 
@@ -1290,8 +1283,6 @@ function setupHoldToDelete(){
         };
     });
 
-   
-
     // >>> ❌❌❌EVENT KLIK TOMBOL HAPUS <<<
     document.querySelectorAll(".icon-delete").forEach(btn => {
         btn.onclick = function(e){
@@ -1351,7 +1342,6 @@ function setupHoldToDelete(){
         };
     });
 
-
     // Klik di luar item sembunyikan icon hapus
     document.querySelectorAll(".area-item, .wilayah-item").forEach(item => {
         item.addEventListener('click', function(e){
@@ -1361,7 +1351,6 @@ function setupHoldToDelete(){
         });
     });
 }
-
 
 function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => { 
@@ -1553,7 +1542,7 @@ function checkPrabayarChange(){
 function savePrabayarData(){
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const cekInput = wrap.querySelector('.input-cek-harga');
-        const bayarInput = wrap.querySelector('.input-bayar'); // ✅ PASTIKAN ADA INI
+        const bayarInput = wrap.querySelector('.input-bayar'); // ✅ AMBIL INPUT BAYAR
         const namaInput = wrap.querySelector('.input-nama-produk');
         const key = cekInput.dataset.operator;
         
@@ -1572,6 +1561,12 @@ function savePrabayarData(){
     toast("Data Produk Berhasil Disimpan");
 }
 
+// ✅ TAMBAHAN: Fungsi Konfirmasi Simpan Produk
+function confirmSavePrabayar(){
+    showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{ 
+        savePrabayarData(); 
+    }, "Ya, Simpan");
+}
 
 // ==============================================
 // >>> FUNGSI LAINNYA <<<
@@ -1658,17 +1653,16 @@ function disableButton(id){
     if(btn) { btn.disabled = true; btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.remove("bg-cyan-600"); }
 }
 
+// ✅ PERBAIKAN: Hapus perintah close biar modal gak hilang
 function confirmSaveServer(){
     showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ 
         saveData(); 
-        // HAPUS baris closeServer() biar gak nutup
         toast("Data Server Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
 function confirmSaveCenter(){
     showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
         saveData(); 
-        // HAPUS baris closeCenter() biar gak nutup
         toast("Data Center Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
@@ -1764,7 +1758,6 @@ function simpanDaftarWilayah() {
     // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
-
 
 // ==============================================
 // >>> FUNGSI BACK / TUTUP <<<
