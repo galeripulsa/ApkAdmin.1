@@ -11,7 +11,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
 <style>
 body{
     background:#f1f5f9;
@@ -107,7 +106,6 @@ body{
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
 
 .menu-active{
     background:linear-gradient(135deg,#0891b2,#2563eb);
@@ -522,7 +520,6 @@ body{
     color: #dc2626;
 }
 </style>
-
 
 </head>
 
@@ -1135,13 +1132,13 @@ function setupHoldToDelete(){
         let ditekanLama = false;
 
         const aksiMulai = (e) => {
-            e.preventDefault(); ditekanLama = false;
+            e.preventDefault(); 
+            ditekanLama = false;
             hideAllDeleteIcons();
             timer = setTimeout(()=>{
                 ditekanLama = true;
                 ikon.style.display = "none";
-                if(ikon.nextElementSibling) 
-ikon.nextElementSibling.style.display = "inline";
+                if(ikon.nextElementSibling) ikon.nextElementSibling.style.display = "inline";
             }, 500);
         };
 
@@ -1338,7 +1335,7 @@ function showConfirm(title, msg, yesCallback, yesText="Ya", noCallback=null, noT
     btnYes.className = "flex-1 bg-cyan-600 text-white py-3 rounded-xl font-bold";
     btnYes.innerText = yesText;
     btnYes.onclick = ()=>{
-        document.getElementById("confirmModal").classList.add("hidden");
+        document.getElementById("confirmModal").classList.remove("hidden");
         if(yesCallback) yesCallback();
     };
     wrap.appendChild(btnNo);
@@ -1527,3 +1524,4 @@ document.addEventListener("DOMContentLoaded", ()=>{
 </script>
 </body>
 </html>
+
