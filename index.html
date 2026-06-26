@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
 body{
     background:#f1f5f9;
@@ -435,6 +434,92 @@ body{
     margin-bottom: 15px;
     border: 1px solid #e2e8f0;
 }
+
+/* ========================================= */
+/* ✨✨✨ STYLE BARU UNTUK MENU TRANSAKSI ✨✨✨ */
+/* ========================================= */
+.trans-item-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+.trans-item-card:hover {
+    border-color: #06b6d4;
+    box-shadow: 0 6px 16px rgba(8, 145, 178, 0.1);
+    transform: translateY(-2px);
+}
+
+.trans-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.trans-text {
+    flex-grow: 1;
+}
+
+.trans-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.trans-type {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.type-menu {
+    background: #ecfeff;
+    color: #0891b2;
+}
+
+.type-category {
+    background: #f0fdf4;
+    color: #059669;
+}
+
+.trans-action {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit-trans, .btn-del-trans {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit-trans {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.btn-del-trans {
+    background: #fee2e2;
+    color: #dc2626;
+}
 </style>
 
 </head>
@@ -517,24 +602,57 @@ body{
     </div>
 </div>
 
+<!-- ============================================== -->
+<!-- ✨✨✨ MODAL MENU TRANSAKSI VERSI BARU ✨✨✨ -->
+<!-- ============================================== -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
-        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-3 z-50">
-            <div class="flex items-center justify-between">
+        <!-- HEADER GRADIENT -->
+        <div class="sticky top-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-5 z-50">
+            <div class="flex items-center justify-between mb-4">
                 <h2 class="font-bold text-2xl">Menu Transaksi</h2>
+                <button onclick="closeTransaksi()" class="text-white hover:bg-white/20 rounded-full p-2 transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-            <div class="flex gap-3 mt-4 mb-2">
-                <button id="btnMenu" onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Menu</button>
-                <button id="btnKategori" onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-cyan-600 text-white py-3 rounded-2xl font-bold border-2 border-white btn-click">+ Kategori</button>
+            
+            <!-- TOMBOL TAMBAH -->
+            <div class="flex gap-3 mb-3">
+                <button onclick="hideAllDeleteButtons(); addMenu()" class="flex-1 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl py-3 font-bold flex items-center justify-center gap-2 hover:bg-white/30 transition btn-click">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> + Menu
+                </button>
+                <button onclick="hideAllDeleteButtons(); addKategori()" class="flex-1 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl py-3 font-bold flex items-center justify-center gap-2 hover:bg-white/30 transition btn-click">
+                    <i data-lucide="layout-grid" class="w-5 h-5"></i> + Kategori
+                </button>
             </div>
-            <div class="bg-white rounded-md px-3">
-                <div id="transaksiInfo" class="text-sm text-slate-600">0 Menu • 0 Kategori</div>
+
+            <!-- INFO COUNT -->
+            <div class="bg-white rounded-lg p-2 text-center text-slate-600 text-sm">
+                <span id="countMenu">0</span> Menu &nbsp;•&nbsp; <span id="countCategory">0</span> Kategori
             </div>
         </div>
-        <div id="transaksiList" class="p-3 space-y-2 pb-28"></div>
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex gap-3 z-50 max-w-screen-md mx-auto">
-            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl btn-click">Simpan</button>
-            <button onclick="closeTransaksi()" class="flex-1 bg-red-500 text-white py-4 rounded-xl btn-click">Tutup</button>
+        
+        <!-- BODY LIST -->
+        <div class="p-4 bg-slate-50 min-h-screen">
+            <!-- SEARCH BOX -->
+            <div class="relative mb-4">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                <input type="text" id="searchTransaksi" placeholder="Cari menu atau kategori..." class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition">
+            </div>
+
+            <div id="transaksiList" class="space-y-3 pb-28">
+                <!-- Item akan muncul disini -->
+            </div>
+        </div>
+
+        <!-- FOOTER TOMBOL -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex gap-3 z-50 max-w-screen-md mx-auto">
+            <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl font-bold shadow-lg disabled:shadow-none transition btn-click">
+                <i data-lucide="save" class="w-5 h-5 inline mr-2"></i>Simpan Perubahan
+            </button>
+            <button onclick="closeTransaksi()" class="w-14 h-14 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 transition flex items-center justify-center btn-click">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
         </div>
     </div>
 </div>
@@ -555,6 +673,7 @@ body{
 </div>
 
 <!-- 🅱️🅱️🅱️🅱️🅱️🅱️🅱️ -->
+
 <!-- MODAL SUB MENU PRABAYAR & PASCABAYAR -->
 
 <div id="prabayarModal" class="submenu-modal">
