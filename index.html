@@ -1590,12 +1590,15 @@ function attachInputListeners(){
     });
 }
 
+// ✅ Tambahkan variabel global di paling atas (deklarasi variabel)
+let changed = false; 
+
+// Lalu di dalam fungsi checkPrabayarChange() ubah jadi begini:
 function checkPrabayarChange(){
-    let changed = false;
+    changed = false;
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         wrap.querySelectorAll('input').forEach(inp => {
             const key = inp.dataset.operator;
-            // ✅ DETECT INPUT BAYAR
             const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 
                          inp.classList.contains('input-bayar') ? 'bayar' : 
                          'namaProduk';
@@ -1603,7 +1606,14 @@ function checkPrabayarChange(){
             if(inp.value !== originalVal) changed = true;
         });
     });
-    changed ? enableButton("savePrabayarBtn") : disableButton("savePrabayarBtn");
+    
+    // ✅ Paksa status tombol sesuai variabel changed
+    const btn = document.getElementById("savePrabayarBtn");
+    if(changed) {
+        enableButton("savePrabayarBtn");
+    } else {
+        disableButton("savePrabayarBtn");
+    }
 }
 
 function savePrabayarData(){
