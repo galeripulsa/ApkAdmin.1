@@ -1213,12 +1213,16 @@ function simpanWilayah(){
 // ==============================================
 // >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
 // ==============================================
+
 function setupHoldToDelete(){
     // Bersihkan event lama dulu agar tidak double
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let newIcon = icon.cloneNode(true);
         icon.replaceWith(newIcon);
     });
+
+    // ✅ PERBAIKAN: Render ulang icon biar tidak hilang
+    lucide.createIcons();
 
     document.querySelectorAll(".icon-edit").forEach(icon => {
         let timer;
@@ -1363,16 +1367,14 @@ function setupHoldToDelete(){
                         // HAPUS AREA
                         delete prabayarData[currentMenuType][name];
                         
-                        // ✅ PERBAIKAN UTAMA: Update data asli SEBELUM buka modal
+                        // ✅ PERBAIKAN: Update data asli SEBELUM buka modal
                         originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
                         
                         openAreaModal();
                         
-                        // ✅ PAKSA NYALA DENGAN CARA BARU
+                        // ✅ Paksa tombol simpan nyala
                         setTimeout(() => {
                             enableButton("btnSimpanDaftarArea");
-                            // Kita ubah sedikit value di original agar terdeteksi berubah
-                            originalAreaData = ""; 
                         }, 100);
 
                     } else {
@@ -1380,16 +1382,14 @@ function setupHoldToDelete(){
                         if(prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]){
                             prabayarData[currentMenuType][currentAreaName].wilayah.splice(parseInt(idx), 1);
                             
-                            // ✅ PERBAIKAN UTAMA: Update data asli SEBELUM buka modal
+                            // ✅ PERBAIKAN: Update data asli SEBELUM buka modal
                             originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
                             
                             openWilayahModal(currentAreaName);
                             
-                            // ✅ PAKSA NYALA DENGAN CARA BARU
+                            // ✅ Paksa tombol simpan nyala
                             setTimeout(() => {
                                 enableButton("btnSimpanDaftarWilayah");
-                                // Kita ubah sedikit value di original agar terdeteksi berubah
-                                originalWilayahData = ""; 
                             }, 100);
                         }
                     }
@@ -1417,6 +1417,7 @@ function setupHoldToDelete(){
         });
     });
 }
+
 
 function hideAllDeleteIcons(){
     document.querySelectorAll(".icon-delete").forEach(el => { 
