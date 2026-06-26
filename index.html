@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
 body{
     background:#f1f5f9;
@@ -228,7 +229,7 @@ button:not(:disabled):active {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.5) !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -662,7 +663,78 @@ input:checked + .toggle-slider {
 input:checked + .toggle-slider:before {
     transform: translateX(24px);
 }
+
+/* ========================================= */
+/* ✅✅✅ PERBAIKAN MODAL INPUT & CONFIRM ✅✅✅ */
+/* ========================================= */
+#inputModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.2s ease-out;
+}
+
+#inputModal > div {
+    background: white !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+#inputModal h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #1e293b;
+}
+
+#inputModal p {
+    color: #64748b;
+    margin-bottom: 24px;
+}
+
+#inputModal .btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+#inputModal button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#inputModal .btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+#inputModal .btn-yes {
+    background: #06b6d4;
+    color: white;
+}
+
+/* Pastikan semua modal background gelap */
+.modal, .submenu-modal {
+    background: rgba(0,0,0,0.5) !important;
+}
 </style>
+
 
 
 </head>
