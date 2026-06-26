@@ -1583,17 +1583,15 @@ function backToPrabayarFromList(){
     document.getElementById("fixedButtonWrapper").style.display = "none";
 }
 
+// ✅ Pastikan variabel ini ada di paling atas (deklarasi)
+let changed = false;
+
 function attachInputListeners(){
-    // ✅ TAMBAH .input-bayar
     document.querySelectorAll('.input-cek-harga, .input-bayar, .input-nama-produk').forEach(input => {
         input.addEventListener('input', checkPrabayarChange);
     });
 }
 
-// ✅ Tambahkan variabel global di paling atas (deklarasi variabel)
-let changed = false; 
-
-// Lalu di dalam fungsi checkPrabayarChange() ubah jadi begini:
 function checkPrabayarChange(){
     changed = false;
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
@@ -1602,12 +1600,18 @@ function checkPrabayarChange(){
             const type = inp.classList.contains('input-cek-harga') ? 'cekHarga' : 
                          inp.classList.contains('input-bayar') ? 'bayar' : 
                          'namaProduk';
-            const originalVal = originalPrabayarData[currentMenuType][key]?.[type] || "";
-            if(inp.value !== originalVal) changed = true;
+            
+            // Ambil nilai asli
+            const originalVal = originalPrabayarData[currentMenuType]?.[key]?.[type] || "";
+            
+            // Bandingkan
+            if(inp.value !== originalVal) {
+                changed = true;
+            }
         });
     });
-    
-    // ✅ Paksa status tombol sesuai variabel changed
+
+    // Atur tombol
     const btn = document.getElementById("savePrabayarBtn");
     if(changed) {
         enableButton("savePrabayarBtn");
@@ -1621,41 +1625,47 @@ function savePrabayarData(){
         const cekInput = wrap.querySelector('.input-cek-harga');
         const bayarInput = wrap.querySelector('.input-bayar');
         const namaInput = wrap.querySelector('.input-nama-produk');
-        const key = cekInput.dataset.operator;
         
-        prabayarData[currentMenuType][key] = { 
-            cekHarga: cekInput.value, 
-            bayar: bayarInput.value,
-            namaProduk: namaInput.value 
-        };
-        originalPrabayarData[currentMenuType][key] = { 
-            cekHarga: cekInput.value, 
-            bayar: bayarInput.value,
-            namaProduk: namaInput.value 
-        };
+        if(cekInput) {
+            const key = cekInput.dataset.operator;
+            
+            // Simpan ke data utama
+            prabayarData[currentMenuType][key] = { 
+                cekHarga: cekInput.value, 
+                bayar: bayarInput ? bayarInput.value : "",
+                namaProduk: namaInput.value 
+            };
+            
+            // ✅ PALING PENTING: Update data asli agar dianggap SAMA
+            originalPrabayarData[currentMenuType][key] = { 
+                cekHarga: cekInput.value, 
+                bayar: bayarInput ? bayarInput.value : "",
+                namaProduk: namaInput.value 
+            };
+        }
     });
-    
-    // ✅ CARA PALING AMPUH: Matikan tombol secara paksa
+
+    // Simpan ke Local Storage SEKARANG JUGA
+    saveData(); 
+
+    // Matikan tombol secara paksa
     const btn = document.getElementById("savePrabayarBtn");
     if(btn) {
         btn.disabled = true;
         btn.classList.remove("bg-cyan-600");
         btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50");
     }
-
-    // ✅ TAMBAH INI: Kosongkan flag perubahan biar gak ke-deteksi berubah lagi
-    changed = false; 
     
+    changed = false; // Reset flag
     toast("Data Produk Berhasil Disimpan");
 }
 
-
-// ✅ TAMBAHAN: Fungsi Konfirmasi Simpan Produk
 function confirmSavePrabayar(){
     showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{ 
         savePrabayarData(); 
     }, "Ya, Simpan");
 }
+
 
 // ==============================================
 // >>> FUNGSI LAINNYA <<<
