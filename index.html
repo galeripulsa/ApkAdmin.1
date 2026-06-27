@@ -1863,6 +1863,10 @@ function loadData(){
     }
     if(d.prabayar){ prabayarData = d.prabayar; }
 }
+if(d.menu){ menuData = d.menu; }
+     if(d.category){ categoryData = d.category; }
+ }
+
 
 function saveData(){
     const data = {
@@ -2223,6 +2227,7 @@ function initSortable(){
 document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
+    renderTransaksiList();
 });
 
 </script>
