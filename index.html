@@ -1905,8 +1905,15 @@ function confirmSaveCenter(){
 }
 
 function confirmSaveTransaksi(){
-    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ saveData(); saveOriginalTransaksiData(); closeTransaksi(); toast("Menu Transaksi Berhasil Disimpan"); }, "Ya, Simpan");
+    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
+        saveData(); 
+        saveOriginalTransaksiData(); 
+        disableButton("saveTransaksiBtn"); // ✅ Tambah ini biar tombol mati
+        closeTransaksi(); 
+        toast("Menu Transaksi Berhasil Disimpan"); 
+    }, "Ya, Simpan");
 }
+
 
 function checkCloseServer(){ checkClose("server"); }
 function checkCloseCenter(){ checkClose("center"); }
