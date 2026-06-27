@@ -1872,12 +1872,16 @@ function saveData(){
             jabberNama: jabberNama.value, jabberServer: jabberServer.value, jabberHost: jabberHost.value,
             wa: waCenter.value, sms: smsCenter.value
         },
-        prabayar: prabayarData
+        prabayar: prabayarData,
+        menu: menuData,        // ✅ TAMBAH INI
+        category: categoryData // ✅ TAMBAH INI
     };
     localStorage.setItem("gs_data", JSON.stringify(data));
     saveOriginalServerData();
     saveOriginalCenterData();
+    saveOriginalTransaksiData(); // ✅ Pastikan ini juga ada
 }
+
 
 function enableButton(id){
     const btn = document.getElementById(id);
@@ -2096,12 +2100,10 @@ function createItemElement(item, index, type){
             <i data-lucide="${item.icon}"></i>
         </div>
 
-        <!-- NAMA & INFO -->
+        <!-- BODY: Hanya input dengan placeholder, tulisan dihapus -->
         <div class="item-body">
-            <div class="item-name">${item.name}</div>
-            <div class="item-type">${type === 'menu' ? 'Menu' : 'Kategori'}</div>
             <input type="text" class="form-input-item" value="${item.name}" 
-                   oninput="updateName(this, ${item.id})" placeholder="Tulis nama disini...">
+                   oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
         </div>
 
         <!-- TOGGLE ON/OFF -->
@@ -2121,6 +2123,7 @@ function createItemElement(item, index, type){
     `;
     return div;
 }
+
 
 // >>> INTERAKSI ITEM <<<
 function setupItemInteractions(){
