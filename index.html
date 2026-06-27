@@ -519,6 +519,136 @@ body{
     background: #fee2e2;
     color: #dc2626;
 }
+
+/* Ⓜ️Ⓜ️Ⓜ️ITEM MENU & KATEGORIⓂ️Ⓜ️Ⓜ️ */
+.menu-item-card, .category-item-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item-card:hover, .category-item-card:hover {
+    border-color: #06b6d4;
+    box-shadow: 0 6px 16px rgba(8, 145, 178, 0.1);
+    transform: translateY(-2px);
+}
+
+/* ICON AREA */
+.item-icon-area {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #06b6d4, #2563eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.item-icon-area i {
+    stroke: white;
+    width: 28px;
+    height: 28px;
+}
+
+/* BODY CONTENT */
+.item-body {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.item-type {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    background: #ecfeff;
+    color: #0891b2;
+}
+
+/* TOGGLE SWITCH */
+.toggle-switch {
+    width: 45px;
+    height: 25px;
+    background: #cbd5e1;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.toggle-switch.active {
+    background: #10b981;
+}
+
+.toggle-knob {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2.5px;
+    left: 3px;
+    transition: 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active .toggle-knob {
+    left: 22px;
+}
+
+/* DRAG HANDLE & DELETE */
+.drag-handle {
+    cursor: grab;
+    touch-action: none;
+    color: #94a3b8;
+    padding: 5px;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.btn-del-item {
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: none; /* Default hidden */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* INPUT FORM */
+.form-input-item {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
 </style>
 
 </head>
@@ -1887,6 +2017,198 @@ function backToArea(){
         openAreaModal();
     }
 }
+
+
+let menuData = [];
+let categoryData = [];
+let currentItemId = 0;
+
+// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+function addMenu(){
+    const newItem = {
+        id: ++currentItemId,
+        name: "Menu Baru",
+        icon: "layout-grid",
+        active: true,
+        type: "menu"
+    };
+    menuData.push(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+// >>> FUNGSI TAMBAH KATEGORI <<<
+function addKategori(){
+    const newItem = {
+        id: ++currentItemId,
+        name: "Kategori Baru",
+        icon: "folder",
+        active: true,
+        type: "category"
+    };
+    categoryData.push(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+// >>> RENDER SEMUA ITEM <<<
+function renderTransaksiList(){
+    const container = document.getElementById("transaksiList");
+    container.innerHTML = "";
+
+    // Render Menu
+    menuData.forEach((item, index) => {
+        const div = createItemElement(item, index, 'menu');
+        container.appendChild(div);
+    });
+
+    // Render Kategori
+    categoryData.forEach((item, index) => {
+        const div = createItemElement(item, index, 'category');
+        container.appendChild(div);
+    });
+
+    // Update Counter
+    document.getElementById("countMenu").innerText = menuData.length;
+    document.getElementById("countCategory").innerText = categoryData.length;
+
+    lucide.createIcons();
+    setupItemInteractions();
+    initSortable();
+}
+
+function createItemElement(item, index, type){
+    const div = document.createElement("div");
+    div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
+    div.dataset.id = item.id;
+    div.dataset.type = type;
+    div.dataset.index = index;
+
+    div.innerHTML = `
+        <!-- ICON AREA -->
+        <div class="item-icon-area" onclick="openIconSelector(this)">
+            <i data-lucide="${item.icon}"></i>
+        </div>
+
+        <!-- NAMA & INFO -->
+        <div class="item-body">
+            <div class="item-name">${item.name}</div>
+            <div class="item-type">${type === 'menu' ? 'Menu' : 'Kategori'}</div>
+            <input type="text" class="form-input-item" value="${item.name}" 
+                   oninput="updateName(this, ${item.id})" placeholder="Tulis nama disini...">
+        </div>
+
+        <!-- TOGGLE ON/OFF -->
+        <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
+            <div class="toggle-knob"></div>
+        </div>
+
+        <!-- DRAG HANDLE -->
+        <div class="drag-handle">
+            <i data-lucide="move" class="w-5 h-5"></i>
+        </div>
+
+        <!-- TOMBOL HAPUS (HIDDEN) -->
+        <button class="btn-del-item" onclick="deleteItem(${item.id})">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
+    return div;
+}
+
+// >>> INTERAKSI ITEM <<<
+function setupItemInteractions(){
+    // Sembunyikan delete saat klik luar
+    document.addEventListener('click', function(e){
+        if(!e.target.closest('.menu-item-card') && !e.target.closest('.category-item-card')){
+            document.querySelectorAll('.btn-del-item').forEach(btn => {
+                btn.style.display = 'none';
+            });
+        }
+    });
+
+    // Hold to delete
+    document.querySelectorAll('.drag-handle').forEach(handle => {
+        let timer;
+        handle.onmousedown = function(e) {
+            timer = setTimeout(() => {
+                const delBtn = this.parentElement.querySelector('.btn-del-item');
+                if(delBtn) delBtn.style.display = 'flex';
+            }, 700);
+        };
+
+        handle.onmouseup = function() {
+            clearTimeout(timer);
+        };
+
+        handle.onmouseleave = function() {
+            clearTimeout(timer);
+        };
+
+        // Touch version
+        handle.ontouchstart = function(e) {
+            timer = setTimeout(() => {
+                const delBtn = this.parentElement.querySelector('.btn-del-item');
+                if(delBtn) delBtn.style.display = 'flex';
+            }, 700);
+        };
+
+        handle.ontouchend = function() {
+            clearTimeout(timer);
+        };
+    });
+}
+
+// >>> FUNGSI PENDUKUNG <<<
+function toggleActive(el, id){
+    el.classList.toggle('active');
+    const arr = el.parentElement.dataset.type === 'menu' ? menuData : categoryData;
+    const item = arr.find(i => i.id === id);
+    if(item) item.active = el.classList.contains('active');
+    enableButton("saveTransaksiBtn");
+}
+
+function updateName(inputEl, id){
+    const parentCard = inputEl.closest('[data-type]');
+    const type = parentCard.dataset.type;
+    const arr = type === 'menu' ? menuData : categoryData;
+    const item = arr.find(i => i.id === id);
+    
+    if(item) {
+        item.name = inputEl.value;
+        parentCard.querySelector('.item-name').innerText = inputEl.value;
+        enableButton("saveTransaksiBtn");
+    }
+}
+
+function deleteItem(id){
+    menuData = menuData.filter(i => i.id !== id);
+    categoryData = categoryData.filter(i => i.id !== id);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+function openIconSelector(el){
+    // Sementara ini demo, nanti bisa dikembangkan jadi popup pilihan icon
+    showConfirm("Ganti Icon", "Fitur pilih icon dari galeri akan segera tersedia! Saat ini pakai icon default dulu ya.", null, "Oke");
+}
+
+// >>> SORTABLE JS <<<
+function initSortable(){
+    if(sortableInstance) sortableInstance.destroy();
+    
+    const list = document.getElementById('transaksiList');
+    sortableInstance = new Sortable.create(list, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: function () {
+            enableButton("saveTransaksiBtn");
+        },
+    });
+}
+
 
 // === INIT ===
 document.addEventListener("DOMContentLoaded", ()=>{
