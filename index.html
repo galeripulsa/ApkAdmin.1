@@ -2083,11 +2083,6 @@ function createItemElement(item, index, type){
 
     div.innerHTML = `
         <div class="item-content-wrapper">
-            <!-- TOGGLE PINDAH KE KIRI -->
-            <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
-                <div class="toggle-knob"></div>
-            </div>
-
             <!-- ICON LEBIH KECIL -->
             <div class="item-icon-area" onclick="openIconSelector(this)">
                 <i data-lucide="${item.icon}"></i>
@@ -2095,8 +2090,13 @@ function createItemElement(item, index, type){
 
             <!-- INPUT FIELD -->
             <div class="item-body">
-                <input type="text" class="form-input-item" value="${item.name}" 
+                <input type="text" class="form-input-item" value="" 
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
+            </div>
+
+            <!-- TOGGLE PINDAH KE KANAN SEBELUM DRAG -->
+            <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
+                <div class="toggle-knob"></div>
             </div>
 
             <!-- DRAG HANDLE -->
@@ -2112,6 +2112,7 @@ function createItemElement(item, index, type){
     `;
     return div;
 }
+
 
 // >>> INTERAKSI ITEM: SWIPE TO DELETE <<<
 function setupItemInteractions(){
