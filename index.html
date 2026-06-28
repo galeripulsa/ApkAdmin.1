@@ -543,7 +543,7 @@ body{
 .item-content-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px; /* JARAK ANTAR ELEMEN LEBIH RAPAT */
+    gap: 8px; /* JARAK ANTAR ELEMEN LEBIH RAPAT */
     width: 100%;
     transition: transform 0.2s ease;
     position: relative;
@@ -621,8 +621,8 @@ body{
     right: 0;
     top: 0;
     height: 100%;
-    background: #ef4444;
-    color: white;
+    background: white;
+    color: #ef4444;
     border: none;
     width: 50px;
     display: flex;
@@ -2100,17 +2100,16 @@ function createItemElement(item, index, type){
                 <div class="toggle-knob"></div>
             </div>
 
-     
+            <!-- 👇👇👇 ICON DRAG BARU YANG MIRIP GAMBAR 👇👇👇 -->
             <div class="drag-handle">
-                <i data-lucide="grip-vertical" class="w-5 h-5"></i>
+                <i data-lucide="menu" class="w-5 h-5"></i>
             </div>
-            <!-- ☝️☝️☝️ SAMPAI SINI ☝️☝️☝️ -->
 
         </div>
 
         <!-- TOMBOL HAPUS -->
         <button class="btn-del-item" onclick="deleteItem(${item.id})">
-            <i data-lucide="trash-2" class="w-2 h-2"></i>
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
         </button>
     `;
     return div;
@@ -2118,57 +2117,94 @@ function createItemElement(item, index, type){
 
 
 // >>> INTERAKSI ITEM: SWIPE TO DELETE <<<
+
+// >>> INTERAKSI ITEM: SWIPE TO DELETE DENGAN DELAY / TAHAN DULU <<<
 function setupItemInteractions(){
     document.querySelectorAll('.menu-item-card, .category-item-card').forEach(card => {
         let startX = 0;
         let isDragging = false;
+        let isLongEnough = false; // Flag untuk cek apakah sudah ditekan cukup lama
+        let pressTimer = null;    // Timer untuk hitung waktu tekan
 
         // --- VERSI MOUSE / PC ---
         card.addEventListener('mousedown', (e) => {
-            isDragging = true;
+            isDragging = false; // Awalnya belum boleh geser
+            isLongEnough = false;
             startX = e.clientX;
+            
+            // Set timer: setelah 500ms baru boleh geser
+            pressTimer = setTimeout(() => {
+                isLongEnough = true; // Waktu sudah terpenuhi
+            }, 500); // 500ms = 0.5 detik
+            
             card.querySelector('.item-content-wrapper').style.transition = 'none';
         });
 
         document.addEventListener('mousemove', (e) => {
-            if(!isDragging) return;
+            // Hanya jalan jika sudah ditekan cukup lama
+            if(!isLongEnough) return; 
+            
+            if(!isDragging) {
+                isDragging = true; // Baru mulai status dragging
+            }
+
             let diffX = startX - e.clientX;
-            if(diffX > 30) { // Geser ke kiri lebih dari 30px
-                card.querySelector('.item-content-wrapper').style.transform = `translateX(-50px)`;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+
+            if(diffX > 30) { 
+                contentWrap.style.transform = `translateX(-50px)`;
             } else if(diffX < -10) {
-                card.querySelector('.item-content-wrapper').style.transform = `translateX(0)`;
+                contentWrap.style.transform = `translateX(0)`;
             }
         });
 
         document.addEventListener('mouseup', () => {
+            clearTimeout(pressTimer); // Hentikan timer kalau dilepas dulu
             isDragging = false;
-            card.querySelector('.item-content-wrapper').style.transition = 'transform 0.2s ease';
+            isLongEnough = false;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            contentWrap.style.transition = `transform 0.2s ease`;
         });
+
 
         // --- VERSI TOUCH / HP ---
         card.addEventListener('touchstart', (e) => {
-            isDragging = true;
+            isDragging = false;
+            isLongEnough = false;
             startX = e.touches[0].clientX;
+            
+            // Set timer: setelah 500ms baru boleh geser
+            pressTimer = setTimeout(() => {
+                isLongEnough = true;
+            }, 500); 
+            
             card.querySelector('.item-content-wrapper').style.transition = 'none';
         });
 
         card.addEventListener('touchmove', (e) => {
-            if(!isDragging) return;
+            // Hanya jalan jika sudah ditekan cukup lama
+            if(!isLongEnough) return;
+
+            if(!isDragging) {
+                isDragging = true;
+            }
+
             let diffX = startX - e.touches[0].clientX;
             const contentWrap = card.querySelector('.item-content-wrapper');
             
             if(diffX > 20) { 
-                // Geser cukup jauh ke kiri -> tampilkan tombol hapus
                 contentWrap.style.transform = `translateX(-50px)`;
             } else if(diffX < -5) {
-                // Geser ke kanan -> kembali normal
                 contentWrap.style.transform = `translateX(0)`;
             }
         });
 
         card.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
             isDragging = false;
-            card.querySelector('.item-content-wrapper').style.transition = 'transform 0.2s ease';
+            isLongEnough = false;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            contentWrap.style.transition = `transform 0.2s ease`;
         });
     });
 
