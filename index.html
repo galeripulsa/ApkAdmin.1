@@ -2021,12 +2021,13 @@ let categoryData = [];
 let currentItemId = 0;
 
 // >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
 function addMenu(){
     const newItem = {
         id: ++currentItemId,
-        name: "Menu Baru",
+        name: "", // Nama kosong
         icon: "layout-grid",
-        active: true,
+        active: false, // ❌ Default OFF
         type: "menu"
     };
     menuData.push(newItem);
@@ -2038,15 +2039,16 @@ function addMenu(){
 function addKategori(){
     const newItem = {
         id: ++currentItemId,
-        name: "Kategori Baru",
+        name: "", // Nama kosong
         icon: "folder",
-        active: true,
+        active: false, // ❌ Default OFF
         type: "category"
     };
     categoryData.push(newItem);
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
 }
+
 
 // >>> RENDER SEMUA ITEM <<<
 function renderTransaksiList(){
@@ -2081,12 +2083,16 @@ function createItemElement(item, index, type){
     div.dataset.type = type;
     div.dataset.index = index;
 
+    // Khusus Menu, tambahkan input hidden untuk pilih gambar
+    const fileInput = type === 'menu' ? `<input type="file" id="fileInput_${item.id}" accept="image/*" style="display:none" onchange="handleImageUpload(this, ${item.id})">` : "";
+
     div.innerHTML = `
         <div class="item-content-wrapper">
             
-            <!-- ICON -->
-            <div class="item-icon-area" onclick="openIconSelector(this)">
+            <!-- ICON AREA -->
+            <div class="item-icon-area" onclick="${type === 'menu' ? `document.getElementById('fileInput_${item.id}').click()` : 'openIconSelector(this)'}">
                 <i data-lucide="${item.icon}"></i>
+                ${fileInput} <!-- Masukkan input file disini -->
             </div>
 
             <!-- INPUT FIELD -->
@@ -2095,12 +2101,12 @@ function createItemElement(item, index, type){
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
-            <!-- TOGGLE / TOMBOL ON OFF -->
+            <!-- TOGGLE / TOMBOL ON OFF (Default OFF) -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
                 <div class="toggle-knob"></div>
             </div>
 
-            <!-- 👇👇👇 ICON DRAG BARU YANG MIRIP GAMBAR 👇👇👇 -->
+            <!-- DRAG HANDLE -->
             <div class="drag-handle">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </div>
@@ -2266,6 +2272,34 @@ function initSortable(){
         },
     });
 }
+
+// >>> FUNGSI UPLOAD GAMBAR DARI GALERI KHUSUS MENU <<<
+function handleImageUpload(input, id){
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // Cari item menu berdasarkan ID
+            const menuItem = menuData.find(i => i.id === id);
+            if(menuItem) {
+                // Simpan URL gambar base64 ke data menu
+                menuItem.icon = e.target.result; 
+                
+                // Ubah tampilan icon jadi gambar
+                const iconArea = document.querySelector(`[data-id="${id}"] .item-icon-area`);
+                if(iconArea) {
+                    iconArea.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+                }
+                
+                enableButton("saveTransaksiBtn");
+                showConfirm("Berhasil", "Icon menu berhasil diganti!", null, "Oke");
+            }
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 
 // === INIT ===
 document.addEventListener("DOMContentLoaded", ()=>{
