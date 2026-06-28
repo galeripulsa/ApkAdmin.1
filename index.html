@@ -523,14 +523,14 @@ body{
 /* Ⓜ️Ⓜ️Ⓜ️ITEM MENU & KATEGORIⓂ️Ⓜ️Ⓜ️ */
 .menu-item-card, .category-item-card {
     background: white;
-    border-radius: 10px; /* ✅ Lebih kecil sudutnya */
-    padding: 6px 10px !important; /* ✅ Dirapatkan & diperkecil isi dalam */
-    margin-bottom: 5px !important; /* ✅ Jarak antar item jadi rapat */
-    min-height: 38px !important; /* ✅ Tinggi kotak diperkecil */
+    border-radius: 10px; /* Lebih kecil sudutnya */
+    padding: 6px 10px !important; /* ✅ Lebih rapat dalam */
+    margin-bottom: 5px !important; /* ✅ Jarak antar item diperkecil */
+    min-height: 38px !important; /* ✅ Tinggi total diperkecil */
     display: flex;
     align-items: center;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
     transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
@@ -538,14 +538,14 @@ body{
 
 .menu-item-card:hover, .category-item-card:hover {
     border-color: #06b6d4;
-    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.08);
+    box-shadow: 0 3px 10px rgba(8, 145, 178, 0.08);
 }
 
 /* CONTAINER UTAMA AGAR BISA DIGESER & LEBIH RAPAT */
 .item-content-wrapper {
     display: flex;
     align-items: center;
-    gap: 6px !important; /* ✅ Jarak antar elemen makin rapat */
+    gap: 6px !important; /* ✅ Jarak antar elemen lebih sempit */
     width: 100%;
     transition: transform 0.2s ease;
     position: relative;
@@ -555,9 +555,9 @@ body{
 
 /* ICON AREA LEBIH KECIL */
 .item-icon-area {
-    width: 34px !important; /* ✅ Diperkecil lagi */
-    height: 34px !important; /* ✅ Diperkecil lagi */
-    border-radius: 8px !important; /* ✅ Sudut lebih kecil */
+    width: 34px !important; /* ✅ Lebih kecil */
+    height: 34px !important; /* ✅ Lebih kecil */
+    border-radius: 8px;
     background: linear-gradient(135deg, #06b6d4, #2563eb);
     display: flex;
     align-items: center;
@@ -566,39 +566,36 @@ body{
     flex-shrink: 0;
 }
 
-.item-icon-area i,
-.item-icon-area img { /* Khusus gambar dari galeri juga ikut disesuaikan */
+.item-icon-area i {
     stroke: white;
-    width: 17px !important; /* ✅ Ukuran icon dalam diperkecil */
+    width: 17px !important; /* ✅ Icon dalam lebih kecil */
     height: 17px !important;
-    object-fit: cover;
-    border-radius: inherit;
 }
 
-/* BODY & INPUT */
+/* BODY & INPUT LEBIH PADAT */
 .item-body {
     flex-grow: 1;
 }
 
 .form-input-item {
     width: 100%;
-    padding: 6px 9px !important; /* ✅ Isian input lebih kecil */
+    padding: 6px 9px !important; /* ✅ Lebih kecil */
     border: 1px solid #cbd5e1;
-    border-radius: 7px !important;
-    font-size: 13px !important; /* ✅ Tulisan lebih kecil & rapi */
-    line-height: 1.3;
+    border-radius: 7px;
+    font-size: 13px !important; /* ✅ Huruf lebih kecil */
 }
 
 /* TOGGLE SWITCH DIKECILKAN SEDIKIT */
 .toggle-switch {
     width: 40px !important; /* ✅ Lebih kecil */
-    height: 22px !important; /* ✅ Lebih kecil */
+    height: 22px !important;
     background: #cbd5e1;
-    border-radius: 30px;
+    border-radius: 20px;
     position: relative;
     cursor: pointer;
     transition: 0.3s;
     flex-shrink: 0;
+    transform: scale(0.92); /* ✅ Sedikit diperkecil visual */
 }
 
 .toggle-switch.active {
@@ -606,32 +603,22 @@ body{
 }
 
 .toggle-knob {
-    width: 17px !important; /* ✅ Tombol dalam lebih kecil */
+    width: 17px !important;
     height: 17px !important;
     background: white;
     border-radius: 50%;
     position: absolute;
-    top: 2.5px !important;
-    left: 3px !important;
+    top: 2.2px;
+    left: 2.5px;
     transition: 0.3s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
 .toggle-switch.active .toggle-knob {
-    left: 20px !important; /* ✅ Sesuai lebar baru */
+    left: 20px !important;
 }
 
-/* --- ICON DRAG DIPERKECILKAN --- */
-.drag-handle {
-    flex-shrink: 0;
-}
-.drag-handle i {
-    width: 16px !important;
-    height: 16px !important;
-    opacity: 0.75;
-}
-
-/* TOMBOL HAPUS ADA DI BELAKANG & DISESUAIKAN TINGGI BARU */
+/* TOMBOL HAPUS DI BELAKANG */
 .btn-del-item {
     position: absolute;
     right: 0;
@@ -640,13 +627,13 @@ body{
     background: white;
     color: #ef4444;
     border: none;
-    width: 45px !important; /* ✅ Lebar tombol hapus disesuaikan */
+    width: 45px !important; /* ✅ Lebih pas */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 1;
-    border-radius: 0 10px 10px 0 !important; /* ✅ Sesuai sudut kartu baru */
+    border-radius: 0 10px 10px 0;
 }
 
 
