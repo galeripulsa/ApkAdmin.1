@@ -523,11 +523,10 @@ body{
 /* Ⓜ️Ⓜ️Ⓜ️ITEM MENU & KATEGORIⓂ️Ⓜ️Ⓜ️ */
 .menu-item-card, .category-item-card {
     background: white;
-    border-radius: 16px;
-    padding: 16px;
+    border-radius: 12px; /* LEBIH KECIL */
+    padding: 10px 12px; /* LEBIH KECIL */
     display: flex;
     align-items: center;
-    gap: 12px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: all 0.2s ease;
@@ -538,14 +537,25 @@ body{
 .menu-item-card:hover, .category-item-card:hover {
     border-color: #06b6d4;
     box-shadow: 0 6px 16px rgba(8, 145, 178, 0.1);
-    transform: translateY(-2px);
 }
 
-/* ICON AREA */
+/* CONTAINER UTAMA AGAR BISA DIGESER */
+.item-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* JARAK ANTAR ELEMEN LEBIH RAPAT */
+    width: 100%;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 2;
+    background: white;
+}
+
+/* ICON AREA LEBIH KECIL */
 .item-icon-area {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
+    width: 40px; /* KECILIN */
+    height: 40px; /* KECILIN */
+    border-radius: 10px;
     background: linear-gradient(135deg, #06b6d4, #2563eb);
     display: flex;
     align-items: center;
@@ -556,32 +566,24 @@ body{
 
 .item-icon-area i {
     stroke: white;
-    width: 28px;
-    height: 28px;
+    width: 20px; /* ICON DI DALAMNYA JUGA KECIL */
+    height: 20px;
 }
 
-/* BODY CONTENT */
+/* BODY & INPUT */
 .item-body {
     flex-grow: 1;
 }
 
-.item-name {
-    font-weight: 600;
-    color: #1e293b;
-    font-size: 16px;
-    margin-bottom: 4px;
+.form-input-item {
+    width: 100%;
+    padding: 10px 12px; /* LEBIH KECIL */
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px; /* FONT LEBIH KECIL */
 }
 
-.item-type {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    display: inline-block;
-    background: #ecfeff;
-    color: #0891b2;
-}
-
-/* TOGGLE SWITCH */
+/* TOGGLE SWITCH UKURAN STANDAR ATAU KECILIN SEDIKIT */
 .toggle-switch {
     width: 45px;
     height: 25px;
@@ -613,40 +615,22 @@ body{
     left: 22px;
 }
 
-/* DRAG HANDLE & DELETE */
-.drag-handle {
-    cursor: grab;
-    touch-action: none;
-    color: #94a3b8;
-    padding: 5px;
-}
-
-.drag-handle:active {
-    cursor: grabbing;
-}
-
+/* TOMBOL HAPUS ADA DI BELAKANG */
 .btn-del-item {
-    background: #fee2e2;
-    color: #dc2626;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: #ef4444;
+    color: white;
     border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: none; /* Default hidden */
+    width: 50px;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    margin-left: 5px;
-}
-
-/* INPUT FORM */
-.form-input-item {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    font-size: 15px;
-    margin-top: 10px;
+    z-index: 1;
+    border-radius: 0 12px 12px 0;
 }
 
 </style>
@@ -2098,28 +2082,30 @@ function createItemElement(item, index, type){
     div.dataset.index = index;
 
     div.innerHTML = `
-        <!-- ICON AREA -->
-        <div class="item-icon-area" onclick="openIconSelector(this)">
-            <i data-lucide="${item.icon}"></i>
+        <div class="item-content-wrapper">
+            <!-- TOGGLE PINDAH KE KIRI -->
+            <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
+                <div class="toggle-knob"></div>
+            </div>
+
+            <!-- ICON LEBIH KECIL -->
+            <div class="item-icon-area" onclick="openIconSelector(this)">
+                <i data-lucide="${item.icon}"></i>
+            </div>
+
+            <!-- INPUT FIELD -->
+            <div class="item-body">
+                <input type="text" class="form-input-item" value="${item.name}" 
+                       oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
+            </div>
+
+            <!-- DRAG HANDLE -->
+            <div class="drag-handle">
+                <i data-lucide="move" class="w-4 h-4"></i>
+            </div>
         </div>
 
-        <!-- BODY: Hanya input dengan placeholder, tulisan dihapus -->
-        <div class="item-body">
-            <input type="text" class="form-input-item" value="${item.name}" 
-                   oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
-        </div>
-
-        <!-- TOGGLE ON/OFF -->
-        <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
-            <div class="toggle-knob"></div>
-        </div>
-
-        <!-- DRAG HANDLE -->
-        <div class="drag-handle">
-            <i data-lucide="move" class="w-5 h-5"></i>
-        </div>
-
-        <!-- TOMBOL HAPUS (HIDDEN) -->
+        <!-- TOMBOL HAPUS (ADA DI BELAKANG/BAWAH) -->
         <button class="btn-del-item" onclick="deleteItem(${item.id})">
             <i data-lucide="trash-2" class="w-4 h-4"></i>
         </button>
@@ -2139,35 +2125,68 @@ function setupItemInteractions(){
         }
     });
 
-    // Hold to delete
-    document.querySelectorAll('.drag-handle').forEach(handle => {
-        let timer;
-        handle.onmousedown = function(e) {
-            timer = setTimeout(() => {
-                const delBtn = this.parentElement.querySelector('.btn-del-item');
-                if(delBtn) delBtn.style.display = 'flex';
-            }, 700);
-        };
+// >>> INTERAKSI ITEM: SWIPE TO DELETE <<<
+function setupItemInteractions(){
+    document.querySelectorAll('.menu-item-card, .category-item-card').forEach(card => {
+        let startX = 0;
+        let isDragging = false;
 
-        handle.onmouseup = function() {
-            clearTimeout(timer);
-        };
+        // --- VERSI MOUSE / PC ---
+        card.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            card.querySelector('.item-content-wrapper').style.transition = 'none';
+        });
 
-        handle.onmouseleave = function() {
-            clearTimeout(timer);
-        };
+        document.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            let diffX = startX - e.clientX;
+            if(diffX > 30) { // Geser ke kiri lebih dari 30px
+                card.querySelector('.item-content-wrapper').style.transform = `translateX(-50px)`;
+            } else if(diffX < -10) {
+                card.querySelector('.item-content-wrapper').style.transform = `translateX(0)`;
+            }
+        });
 
-        // Touch version
-        handle.ontouchstart = function(e) {
-            timer = setTimeout(() => {
-                const delBtn = this.parentElement.querySelector('.btn-del-item');
-                if(delBtn) delBtn.style.display = 'flex';
-            }, 700);
-        };
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            card.querySelector('.item-content-wrapper').style.transition = 'transform 0.2s ease';
+        });
 
-        handle.ontouchend = function() {
-            clearTimeout(timer);
-        };
+        // --- VERSI TOUCH / HP ---
+        card.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            card.querySelector('.item-content-wrapper').style.transition = 'none';
+        });
+
+        card.addEventListener('touchmove', (e) => {
+            if(!isDragging) return;
+            let diffX = startX - e.touches[0].clientX;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            
+            if(diffX > 20) { 
+                // Geser cukup jauh ke kiri -> tampilkan tombol hapus
+                contentWrap.style.transform = `translateX(-50px)`;
+            } else if(diffX < -5) {
+                // Geser ke kanan -> kembali normal
+                contentWrap.style.transform = `translateX(0)`;
+            }
+        });
+
+        card.addEventListener('touchend', () => {
+            isDragging = false;
+            card.querySelector('.item-content-wrapper').style.transition = 'transform 0.2s ease';
+        });
+    });
+
+    // --- KLIK LUAR UNTUK SEMBUNYIKAN TOMBOL HAPUS ---
+    document.addEventListener('click', function(e){
+        if(!e.target.closest('.menu-item-card') && !e.target.closest('.category-item-card')){
+            document.querySelectorAll('.item-content-wrapper').forEach(wrap => {
+                wrap.style.transform = `translateX(0)`;
+            });
+        }
     });
 }
 
