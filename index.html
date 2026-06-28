@@ -716,7 +716,7 @@ body{
 </div>
 
 <!-- ============================================== -->
-<!-- 🆔🆔🆔MODAL MENU TRANSAKSI🆔🆔 -->
+<!-- Ⓜ️Ⓜ️Ⓜ️MODAL MENU TRANSAKSIⓂ️Ⓜ️Ⓜ️ -->
 <!-- ============================================== -->
 <div id="transaksiModal" class="modal fixed inset-0 bg-white z-50 overflow-auto">
     <div class="w-full">
@@ -2083,7 +2083,8 @@ function createItemElement(item, index, type){
 
     div.innerHTML = `
         <div class="item-content-wrapper">
-            <!-- ICON LEBIH KECIL -->
+            
+            <!-- ICON -->
             <div class="item-icon-area" onclick="openIconSelector(this)">
                 <i data-lucide="${item.icon}"></i>
             </div>
@@ -2094,20 +2095,22 @@ function createItemElement(item, index, type){
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
-            <!-- TOGGLE PINDAH KE KANAN SEBELUM DRAG -->
+            <!-- TOGGLE / TOMBOL ON OFF -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
                 <div class="toggle-knob"></div>
             </div>
 
-            <!-- DRAG HANDLE -->
+     
             <div class="drag-handle">
-                <i data-lucide="move" class="w-4 h-4"></i>
+                <i data-lucide="grip-vertical" class="w-5 h-5"></i>
             </div>
+            <!-- ☝️☝️☝️ SAMPAI SINI ☝️☝️☝️ -->
+
         </div>
 
-        <!-- TOMBOL HAPUS (ADA DI BELAKANG/BAWAH) -->
+        <!-- TOMBOL HAPUS -->
         <button class="btn-del-item" onclick="deleteItem(${item.id})">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <i data-lucide="trash-2" class="w-2 h-2"></i>
         </button>
     `;
     return div;
