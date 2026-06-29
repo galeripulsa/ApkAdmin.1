@@ -2111,6 +2111,16 @@ function createItemElement(item, index, type){
     div.dataset.type = type;
     div.dataset.index = index;
 
+    // === PERBAIKAN POIN 2: CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
+    let iconHtml = '';
+    if (item.icon && item.icon.startsWith('data:image')) {
+        // Kalau itu gambar (base64)
+        iconHtml = `<img src="${item.icon}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+    } else {
+        // Kalau itu nama icon biasa
+        iconHtml = `<i data-lucide="${item.icon || 'help-circle'}"></i>`;
+    }
+
     // Khusus Menu, tambahkan input hidden untuk pilih gambar
     const fileInput = type === 'menu' ? `<input type="file" id="fileInput_${item.id}" accept="image/*" style="display:none" onchange="handleImageUpload(this, ${item.id})">` : "";
 
@@ -2119,13 +2129,13 @@ function createItemElement(item, index, type){
             
             <!-- ICON AREA -->
             <div class="item-icon-area" onclick="${type === 'menu' ? `document.getElementById('fileInput_${item.id}').click()` : 'openIconSelector(this)'}">
-                <i data-lucide="${item.icon}"></i>
+                ${iconHtml} <!-- Pakai variabel iconHtml di sini -->
                 ${fileInput} <!-- Masukkan input file disini -->
             </div>
 
-            <!-- INPUT FIELD -->
+            <!-- === PERBAIKAN POIN 1: ISI VALUE DARI DATA === -->
             <div class="item-body">
-                <input type="text" class="form-input-item" value="" 
+                <input type="text" class="form-input-item" value="${item.name || ''}" 
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
@@ -2148,9 +2158,6 @@ function createItemElement(item, index, type){
     `;
     return div;
 }
-
-
-// >>> INTERAKSI ITEM: SWIPE TO DELETE <<<
 
 // >>> INTERAKSI ITEM: SWIPE TO DELETE DENGAN DELAY / TAHAN DULU <<<
 function setupItemInteractions(){
