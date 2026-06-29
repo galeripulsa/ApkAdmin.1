@@ -2318,6 +2318,89 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
+// ==================================================
+// ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
+// ==================================================
+let hasChanges = false;
+
+// --- 1. TANDAI ADA PERUBAHAN ---
+function markAsChanged() {
+    hasChanges = true;
+    // console.log("Terjadi perubahan..."); // Bisa di-uncomment buat debug
+}
+
+// --- 2. TANDAI SUDAH DISIMPAN ---
+function markAsSaved() {
+    hasChanges = false;
+}
+
+// --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
+// Ini jalan di SEMUA input, select, textarea di aplikasi
+document.addEventListener('input', markAsChanged);
+document.addEventListener('change', markAsChanged);
+
+// --- 4. OVERRIDE FUNGSI enableButton AGAR TAHU KALO ADA YANG BERUBAH ---
+const originalEnableButton = enableButton;
+enableButton = function(id) {
+    originalEnableButton(id);
+    markAsChanged(); // Setiap tombol aktifkan berarti ada perubahan
+}
+
+// --- 5. OVERRIDE FUNGSI SIMPAN AGAR RESET STATUS ---
+const originalSaveFunctions = [
+    confirmSaveTransaksi, 
+    // Tambah nama fungsi simpan lain kalau ada, misal:
+    // savePrabayar, 
+    // savePascabayar
+];
+
+// Kita modifikasi fungsi confirmSaveTransaksi yang utama
+window.confirmSaveTransaksi = function() {
+    showConfirm("Simpan Data", "Yakin simpan perubahan?", ()=>{ 
+        saveData(); 
+        saveOriginalTransaksiData(); 
+        disableButton("saveTransaksiBtn");
+        markAsSaved(); // ✅ Reset status
+        toast("Berhasil Disimpan"); 
+    }, "Ya, Simpan");
+}
+
+// ==================================================
+// ✅ BLOKIR TOMBOL BACK HP
+// ==================================================
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    history.go(1); // Tetap di halaman dulu
+    
+    if (hasChanges) {
+        // ✅ JIKA ADA PERUBAHAN -> MUNCUL POP-UP
+        showConfirm(
+            "Perubahan Terdeteksi", 
+            "Ada data yang belum disimpan. Yakin ingin keluar?", 
+            function() {
+                // KLIK YA -> KELUAR
+                markAsSaved();
+                history.back();
+            }, 
+            "Ya, Keluar", 
+            function() {
+                // KLIK TIDAK -> TETAP DISINI
+                history.pushState(null, null, location.href);
+            }
+        );
+    } else {
+        // ✅ JIKA TIDAK ADA PERUBAHAN -> TUTUP MODAL SESUAI URUTAN
+        const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
+        if (modals.length > 0) {
+            // Tutup modal yang paling atas dulu
+            modals[modals.length - 1].classList.remove('show');
+        } else {
+            // Jika tidak ada modal, baru keluar halaman
+            history.back();
+        }
+    }
+};
+
 </script>
 </body>
 </html>
