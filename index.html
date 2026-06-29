@@ -1103,7 +1103,7 @@ function checkTransaksiChange(){
     currentHtml !== originalTransaksiData ? enableButton("saveTransaksiBtn") : disableButton("saveTransaksiBtn");
 }
 
-// === PASANG EVENT LISTENER ===
+// === 🔴🔴🔴🔴🔴PASANG EVENT LISTENER ===
 document.addEventListener('DOMContentLoaded', function(){
     // Server & Center
     namaKonter.addEventListener('input', checkServerChange);
@@ -1134,7 +1134,30 @@ document.addEventListener('DOMContentLoaded', function(){
             hideAllDeleteIcons();
         }
     });
-});
+// ✅ ✅ ✅ TOMBOL HAPUS MODE (HOLD 800ms) ✅ ✅ ✅
+     const btnDeleteMode = document.getElementById("btnDeleteMode");
+     let holdTimer;
+     let deleteModeActive = false;
+     btnDeleteMode.addEventListener('mousedown', () => {
+         holdTimer = setTimeout(() => {
+             toggleDeleteMode();
+         }, 800);
+     });
+     btnDeleteMode.addEventListener('mouseup', () => { clearTimeout(holdTimer); });
+     btnDeleteMode.addEventListener('mouseleave', () => { clearTimeout(holdTimer); });
+     btnDeleteMode.addEventListener('touchstart', (e) => {
+         e.preventDefault();
+         holdTimer = setTimeout(() => { toggleDeleteMode(); }, 800);
+     });
+     btnDeleteMode.addEventListener('touchend', () => { clearTimeout(holdTimer); });
+     // Klik biasa tidak menutup modal, hanya keluar mode hapus jika aktif
+     btnDeleteMode.addEventListener('click', function() {
+         if (deleteModeActive) { 
+             toggleDeleteMode(); 
+         }
+      });
+   });
+
 
 // ==============================================
 // >>> 🔰🔰🔰MODAL DAFTAR AREA PDAM🔰🔰🔰 <<<
