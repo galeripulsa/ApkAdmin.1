@@ -567,7 +567,7 @@ body{
 
 .item-icon-area i {
     stroke: white;
-    width: 17px !important; /* ✅ Icon dalam lebih kecil */
+    width: 20px !important; /* ✅ Icon dalam lebih kecil */
     height: 20px !important;
 }
 
@@ -756,14 +756,17 @@ body{
             <div id="transaksiList" class="space-y-4 pb-28"></div>
            
         </div>
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex gap-3 z-50 max-w-screen-md mx-auto">
+               <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex gap-3 z-50 max-w-screen-md mx-auto">
             <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl font-bold shadow-lg disabled:shadow-none transition btn-click">
                 <i data-lucide="save" class="w-5 h-5 inline mr-2"></i>Simpan Perubahan
             </button>
-            <button onclick="closeTransaksi()" class="w-14 h-14 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 transition flex items-center justify-center btn-click">
-                <i data-lucide="x" class="w-6 h-6"></i>
+
+            <!-- ✅ TOMBOL MODE HAPUS -->
+            <button id="btnDeleteMode" onclick="toggleDeleteMode()" class="w-14 h-14 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 transition flex items-center justify-center btn-click">
+                <i data-lucide="trash-2" class="w-6 h-6"></i>
             </button>
         </div>
+
     </div>
 </div>
 
@@ -2047,7 +2050,7 @@ let menuData = [];
 let categoryData = [];
 let currentItemId = 0;
 
-// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+
 // >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
 function addMenu(){
     const newItem = {
@@ -2099,7 +2102,7 @@ function renderTransaksiList(){
     document.getElementById("countCategory").innerText = categoryData.length;
 
     lucide.createIcons();
-    setupItemInteractions();
+    // setupItemInteractions(); // ❌ DIHAPUS (TIDAK ADA SWIPE LAGI)
     initSortable();
 }
 
@@ -2110,7 +2113,7 @@ function createItemElement(item, index, type){
     div.dataset.type = type;
     div.dataset.index = index;
 
-    // === PERBAIKAN POIN 2: CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
+    // === ✅ PERBAIKAN POIN 2: CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
     let iconHtml = '';
     if (item.icon && item.icon.startsWith('data:image')) {
         // Kalau itu gambar (base64)
@@ -2128,17 +2131,17 @@ function createItemElement(item, index, type){
             
             <!-- ICON AREA -->
             <div class="item-icon-area" onclick="${type === 'menu' ? `document.getElementById('fileInput_${item.id}').click()` : 'openIconSelector(this)'}">
-                ${iconHtml} <!-- Pakai variabel iconHtml di sini -->
-                ${fileInput} <!-- Masukkan input file disini -->
+                ${iconHtml}
+                ${fileInput}
             </div>
 
-            <!-- === PERBAIKAN POIN 1: ISI VALUE DARI DATA === -->
+            <!-- === ✅ PERBAIKAN POIN 1: ISI VALUE DARI DATA === -->
             <div class="item-body">
                 <input type="text" class="form-input-item" value="${item.name || ''}" 
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
-            <!-- TOGGLE / TOMBOL ON OFF (Default OFF) -->
+            <!-- TOGGLE ON/OFF -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
                 <div class="toggle-knob"></div>
             </div>
@@ -2148,115 +2151,23 @@ function createItemElement(item, index, type){
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </div>
 
-        </div>
+            <!-- ✅ TOMBOL HAPUS (AWALNYA HILANG) -->
+            <button class="btn-del-item-inline" onclick="confirmDeleteItem(${item.id})" 
+                    style="width: 36px; height: 36px; display: none; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
 
-        <!-- TOMBOL HAPUS -->
-        <button class="btn-del-item" onclick="deleteItem(${item.id})">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-        </button>
+        </div>
     `;
     return div;
 }
 
-// >>> INTERAKSI ITEM: SWIPE TO DELETE DENGAN DELAY / TAHAN DULU <<<
+
+// >>> ❌ FUNGSI SWIPE DIHAPUS TOTAL, TIDAK ADA LAGI <<<
 function setupItemInteractions(){
-    document.querySelectorAll('.menu-item-card, .category-item-card').forEach(card => {
-        let startX = 0;
-        let isDragging = false;
-        let isLongEnough = false; // Flag untuk cek apakah sudah ditekan cukup lama
-        let pressTimer = null;    // Timer untuk hitung waktu tekan
-
-        // --- VERSI MOUSE / PC ---
-        card.addEventListener('mousedown', (e) => {
-            isDragging = false; // Awalnya belum boleh geser
-            isLongEnough = false;
-            startX = e.clientX;
-            
-            // Set timer: setelah 500ms baru boleh geser
-            pressTimer = setTimeout(() => {
-                isLongEnough = true; // Waktu sudah terpenuhi
-            }, 500); // 500ms = 0.5 detik
-            
-            card.querySelector('.item-content-wrapper').style.transition = 'none';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            // Hanya jalan jika sudah ditekan cukup lama
-            if(!isLongEnough) return; 
-            
-            if(!isDragging) {
-                isDragging = true; // Baru mulai status dragging
-            }
-
-            let diffX = startX - e.clientX;
-            const contentWrap = card.querySelector('.item-content-wrapper');
-
-            if(diffX > 30) { 
-                contentWrap.style.transform = `translateX(-50px)`;
-            } else if(diffX < -10) {
-                contentWrap.style.transform = `translateX(0)`;
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            clearTimeout(pressTimer); // Hentikan timer kalau dilepas dulu
-            isDragging = false;
-            isLongEnough = false;
-            const contentWrap = card.querySelector('.item-content-wrapper');
-            contentWrap.style.transition = `transform 0.2s ease`;
-        });
-
-
-        // --- VERSI TOUCH / HP ---
-        card.addEventListener('touchstart', (e) => {
-            isDragging = false;
-            isLongEnough = false;
-            startX = e.touches[0].clientX;
-            
-            // Set timer: setelah 500ms baru boleh geser
-            pressTimer = setTimeout(() => {
-                isLongEnough = true;
-            }, 500); 
-            
-            card.querySelector('.item-content-wrapper').style.transition = 'none';
-        });
-
-        card.addEventListener('touchmove', (e) => {
-            // Hanya jalan jika sudah ditekan cukup lama
-            if(!isLongEnough) return;
-
-            if(!isDragging) {
-                isDragging = true;
-            }
-
-            let diffX = startX - e.touches[0].clientX;
-            const contentWrap = card.querySelector('.item-content-wrapper');
-            
-            if(diffX > 20) { 
-                contentWrap.style.transform = `translateX(-50px)`;
-            } else if(diffX < -5) {
-                contentWrap.style.transform = `translateX(0)`;
-            }
-        });
-
-        card.addEventListener('touchend', () => {
-            clearTimeout(pressTimer);
-            isDragging = false;
-            isLongEnough = false;
-            const contentWrap = card.querySelector('.item-content-wrapper');
-            contentWrap.style.transition = `transform 0.2s ease`;
-        });
-    });
-
-    // --- KLIK LUAR UNTUK SEMBUNYIKAN TOMBOL HAPUS ---
-    document.addEventListener('click', function(e){
-        if(!e.target.closest('.menu-item-card') && !e.target.closest('.category-item-card')){
-            document.querySelectorAll('.item-content-wrapper').forEach(wrap => {
-                wrap.style.transform = `translateX(0)`;
-            });
-        }
-    });
+    // Dinonaktifkan sesuai permintaan
 }
+
 
 // >>> FUNGSI PENDUKUNG <<<
 function toggleActive(el, id){
@@ -2333,6 +2244,68 @@ function handleImageUpload(input, id){
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+// ==================================================
+// ✅ FUNGSI BARU: MODE HAPUS & KONFIRMASI
+// ==================================================
+let deleteModeActive = false;
+
+function toggleDeleteMode() {
+    deleteModeActive = !deleteModeActive;
+    const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+    
+    if(deleteModeActive) {
+        // Munculkan semua tombol hapus
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'flex';
+        });
+        // Ubah warna tombol jadi hijau/kuning tanda aktif
+        document.getElementById('btnDeleteMode').classList.remove('bg-red-500');
+        document.getElementById('btnDeleteMode').classList.add('bg-green-500');
+    } else {
+        // Sembunyikan semua tombol hapus
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'none';
+        });
+        // Kembalikan warna tombol
+        document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
+        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
+    }
+}
+
+// ✅ FUNGSI KONFIRMASI HAPUS DENGAN NAMA
+function confirmDeleteItem(id) {
+    // Cari data itemnya
+    const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
+    
+    if(!item) return;
+
+    showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, ()=>{
+        // Jalankan hapus
+        deleteItem(id);
+        // Setelah hapus, sembunyikan lagi tombol hapus mode
+        deleteModeActive = true; 
+        toggleDeleteMode(); // Matikan mode
+    }, "Ya, Hapus");
+}
+
+// ✅ FUNGSI: KLIK LUAR / INPUT / DRAG -> HIDE TOMBOL
+document.addEventListener('click', function(e){
+    // Jika klik di luar tombol hapus, atau klik input, atau klik drag handle
+    if(!e.target.closest('.btn-del-item-inline') && 
+       !e.target.closest('#btnDeleteMode') && 
+       deleteModeActive) {
+        
+        // Sembunyikan semua
+        const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'none';
+        });
+        document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
+        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
+        deleteModeActive = false;
+    }
+});
 
 
 // === INIT ===
