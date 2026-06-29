@@ -2055,7 +2055,7 @@ function addMenu(){
         active: false, // ❌ Default OFF
         type: "menu"
     };
-    // ✅ TAMBAH DI AWAL ARRAY MENU
+    // ✅ TAMBAH DI AWAL (PALING ATAS)
     menuData.unshift(newItem); 
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
@@ -2070,7 +2070,7 @@ function addKategori(){
         active: false, // ❌ Default OFF
         type: "category"
     };
-    // ✅ TAMBAH DI AWAL ARRAY KATEGORI
+    // ✅ TAMBAH DI AWAL (PALING ATAS)
     categoryData.unshift(newItem);
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
@@ -2082,15 +2082,16 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ URUTAN: RENDER KATEGORI DULU DI ATAS
-    categoryData.forEach((item, index) => {
-        const div = createItemElement(item, index, 'category');
-        container.appendChild(div);
-    });
+    // ✅ GABUNGKAN DUA ARRAY MENJADI SATU
+    // Urutan: Kategori dulu + Menu, tapi karena pakai unshift, yang baru akan di atas
+    const allItems = [
+        ...categoryData.map(item => ({ ...item, type: 'category' })),
+        ...menuData.map(item => ({ ...item, type: 'menu' }))
+    ];
 
-    // ✅ BARU RENDER MENU SETELAHNYA
-    menuData.forEach((item, index) => {
-        const div = createItemElement(item, index, 'menu');
+    // Render semua item dalam satu urutan
+    allItems.forEach((item) => {
+        const div = createItemElement(item, 0, item.type);
         container.appendChild(div);
     });
 
@@ -2136,7 +2137,7 @@ function createItemElement(item, index, type){
             </div>
 
             <!-- TOGGLE ON/OFF -->
-            <!-- ✅ CEK KONDISI NAMA KOSONG -->
+            <!-- ✅ PERUBAHAN 2: TAMBAH CEK KONDISI NAMA KOSONG -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" 
                  onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
                  style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
@@ -2169,9 +2170,7 @@ function setupItemInteractions(){
 // >>> FUNGSI PENDUKUNG <<<
 function toggleActive(el, id){
     el.classList.toggle('active');
-    const parentCard = el.closest('[data-type]');
-    const type = parentCard.dataset.type;
-    const arr = type === 'menu' ? menuData : categoryData;
+    const arr = el.parentElement.dataset.type === 'menu' ? menuData : categoryData;
     const item = arr.find(i => i.id === id);
     if(item) item.active = el.classList.contains('active');
     enableButton("saveTransaksiBtn");
@@ -2189,16 +2188,15 @@ function updateName(inputEl, id){
     }
 }
 
-// ✅ PERBAIKAN BUG HAPUS: CEK DARI DOM
+// ✅ BUG FIX 1: HAPUS BERDASARKAN TYPE AGAR TIDAK SALING HAPUS
 function deleteItem(id){
-    const itemElement = document.querySelector(`[data-id="${id}"]`);
-    if(!itemElement) return;
+    // Cari dulu itemnya untuk tahu typenya
+    const menuItem = menuData.find(i => i.id === id);
+    const categoryItem = categoryData.find(i => i.id === id);
 
-    const type = itemElement.dataset.type;
-
-    if(type === 'menu') {
+    if(menuItem) {
         menuData = menuData.filter(i => i.id !== id);
-    } else if(type === 'category') {
+    } else if(categoryItem) {
         categoryData = categoryData.filter(i => i.id !== id);
     }
     
@@ -2274,22 +2272,27 @@ function toggleDeleteMode() {
     }
 }
 
-// ✅ SETELAH HAPUS ATAU BATAL, MODE TETAP AKTIF
+// ✅ PERUBAHAN 3 & 4: TAMBAH TOMBOL TIDAK & JANGAN HIDE SEMUA
 function confirmDeleteItem(id) {
     const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
     
     if(!item) return;
 
+    // ✅ PERUBAHAN 3: PANGGIL showConfirm dengan 2 tombol
     showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
         ()=>{
+            // Klik YA
             deleteItem(id);
-            // ❌ TIDAK ADA KODE MATIKAN MODE DISINI
+            // ✅ PERUBAHAN 4: TIDAK PERLU MATIKAN MODE, TOMBOL TETAP MUNCUL
+            // deleteModeActive = true; 
+            // toggleDeleteMode(); 
         }, 
         "Ya, Hapus", 
-        "Tidak"
+        "Tidak" // ✅ TOMBOL TIDAK
     );
 }
 
+// ✅ FUNGSI: KLIK LUAR -> HIDE TOMBOL
 document.addEventListener('click', function(e){
     if(!e.target.closest('.btn-del-item-inline') && 
        !e.target.closest('#btnDeleteMode') && 
@@ -2322,6 +2325,7 @@ let hasChanges = false;
 // --- 1. TANDAI ADA PERUBAHAN ---
 function markAsChanged() {
     hasChanges = true;
+    // console.log("Terjadi perubahan..."); // Bisa di-uncomment buat debug
 }
 
 // --- 2. TANDAI SUDAH DISIMPAN ---
@@ -2330,23 +2334,32 @@ function markAsSaved() {
 }
 
 // --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
+// Ini jalan di SEMUA input, select, textarea di aplikasi
 document.addEventListener('input', markAsChanged);
 document.addEventListener('change', markAsChanged);
 
-// --- 4. OVERRIDE FUNGSI enableButton ---
+// --- 4. OVERRIDE FUNGSI enableButton AGAR TAHU KALO ADA YANG BERUBAH ---
 const originalEnableButton = enableButton;
 enableButton = function(id) {
     originalEnableButton(id);
-    markAsChanged();
+    markAsChanged(); // Setiap tombol aktifkan berarti ada perubahan
 }
 
-// --- 5. OVERRIDE FUNGSI SIMPAN ---
+// --- 5. OVERRIDE FUNGSI SIMPAN AGAR RESET STATUS ---
+const originalSaveFunctions = [
+    confirmSaveTransaksi, 
+    // Tambah nama fungsi simpan lain kalau ada, misal:
+    // savePrabayar, 
+    // savePascabayar
+];
+
+// Kita modifikasi fungsi confirmSaveTransaksi yang utama
 window.confirmSaveTransaksi = function() {
     showConfirm("Simpan Data", "Yakin simpan perubahan?", ()=>{ 
         saveData(); 
         saveOriginalTransaksiData(); 
         disableButton("saveTransaksiBtn");
-        markAsSaved();
+        markAsSaved(); // ✅ Reset status
         toast("Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
@@ -2356,31 +2369,38 @@ window.confirmSaveTransaksi = function() {
 // ==================================================
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
-    history.go(1);
+    history.go(1); // Tetap di halaman dulu
     
     if (hasChanges) {
+        // ✅ JIKA ADA PERUBAHAN -> MUNCUL POP-UP
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
             function() {
+                // KLIK YA -> KELUAR
                 markAsSaved();
                 history.back();
             }, 
-            "Ya, Keluar",
+            "Ya, Keluar", 
             function() {
+                // KLIK TIDAK -> TETAP DISINI
                 history.pushState(null, null, location.href);
             }
         );
     } else {
+        // ✅ JIKA TIDAK ADA PERUBAHAN -> TUTUP MODAL SESUAI URUTAN
         const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
         if (modals.length > 0) {
+            // Tutup modal yang paling atas dulu
             modals[modals.length - 1].classList.remove('show');
         } else {
+            // Jika tidak ada modal, baru keluar halaman
             history.back();
         }
     }
 };
 
 </script>
+
 </body>
 </html>
