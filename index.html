@@ -2055,7 +2055,8 @@ function addMenu(){
         active: false, // ❌ Default OFF
         type: "menu"
     };
-    menuData.push(newItem);
+    // ✅ PERUBAHAN 1: TAMBAH DI AWAL (PALING ATAS)
+    menuData.unshift(newItem); 
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
 }
@@ -2069,7 +2070,8 @@ function addKategori(){
         active: false, // ❌ Default OFF
         type: "category"
     };
-    categoryData.push(newItem);
+    // ✅ PERUBAHAN 1: TAMBAH DI AWAL (PALING ATAS)
+    categoryData.unshift(newItem);
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
 }
@@ -2097,7 +2099,6 @@ function renderTransaksiList(){
     document.getElementById("countCategory").innerText = categoryData.length;
 
     lucide.createIcons();
-    // setupItemInteractions(); // ❌ DIHAPUS (TIDAK ADA SWIPE LAGI)
     initSortable();
 }
 
@@ -2108,13 +2109,11 @@ function createItemElement(item, index, type){
     div.dataset.type = type;
     div.dataset.index = index;
 
-    // === ✅ PERBAIKAN POIN 2: CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
+    // === CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
     let iconHtml = '';
     if (item.icon && item.icon.startsWith('data:image')) {
-        // Kalau itu gambar (base64)
         iconHtml = `<img src="${item.icon}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
     } else {
-        // Kalau itu nama icon biasa
         iconHtml = `<i data-lucide="${item.icon || 'help-circle'}"></i>`;
     }
 
@@ -2130,14 +2129,17 @@ function createItemElement(item, index, type){
                 ${fileInput}
             </div>
 
-            <!-- === ✅ PERBAIKAN POIN 1: ISI VALUE DARI DATA === -->
+            <!-- INPUT NAMA -->
             <div class="item-body">
                 <input type="text" class="form-input-item" value="${item.name || ''}" 
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
             <!-- TOGGLE ON/OFF -->
-            <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
+            <!-- ✅ PERUBAHAN 2: TAMBAH CEK KONDISI NAMA KOSONG -->
+            <div class="toggle-switch ${item.active ? 'active' : ''}" 
+                 onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
+                 style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                 <div class="toggle-knob"></div>
             </div>
 
@@ -2146,7 +2148,7 @@ function createItemElement(item, index, type){
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </div>
 
-            <!-- ✅ TOMBOL HAPUS (AWALNYA HILANG) -->
+            <!-- TOMBOL HAPUS (AWALNYA HILANG) -->
             <button class="btn-del-item-inline" onclick="confirmDeleteItem(${item.id})" 
                     style="width: 36px; height: 36px; display: none; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -2158,9 +2160,9 @@ function createItemElement(item, index, type){
 }
 
 
-// >>> ❌ FUNGSI SWIPE DIHAPUS TOTAL, TIDAK ADA LAGI <<<
+// >>> ❌ FUNGSI SWIPE DIHAPUS TOTAL <<<
 function setupItemInteractions(){
-    // Dinonaktifkan sesuai permintaan
+    // Dinonaktifkan
 }
 
 
@@ -2182,19 +2184,29 @@ function updateName(inputEl, id){
     if(item) {
         item.name = inputEl.value;
         enableButton("saveTransaksiBtn");
+        // Re-render agar toggle bisa diklik kalau nama sudah diisi
+        renderTransaksiList(); 
     }
 }
 
+// ✅ BUG FIX 1: HAPUS BERDASARKAN TYPE AGAR TIDAK SALING HAPUS
 function deleteItem(id){
-    menuData = menuData.filter(i => i.id !== id);
-    categoryData = categoryData.filter(i => i.id !== id);
+    // Cari dulu itemnya untuk tahu typenya
+    const menuItem = menuData.find(i => i.id === id);
+    const categoryItem = categoryData.find(i => i.id === id);
+
+    if(menuItem) {
+        menuData = menuData.filter(i => i.id !== id);
+    } else if(categoryItem) {
+        categoryData = categoryData.filter(i => i.id !== id);
+    }
+    
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
 }
 
 function openIconSelector(el){
-    // Sementara ini demo, nanti bisa dikembangkan jadi popup pilihan icon
-    showConfirm("Ganti Icon", "Fitur pilih icon dari galeri akan segera tersedia! Saat ini pakai icon default dulu ya.", null, "Oke");
+    showConfirm("Ganti Icon", "Ganti icon kategori belum tersedia.", null, "Oke");
 }
 
 // >>> SORTABLE JS <<<
@@ -2213,19 +2225,16 @@ function initSortable(){
     });
 }
 
-// >>> FUNGSI UPLOAD GAMBAR DARI GALERI KHUSUS MENU <<<
+// >>> FUNGSI UPLOAD GAMBAR <<<
 function handleImageUpload(input, id){
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         
         reader.onload = function(e) {
-            // Cari item menu berdasarkan ID
             const menuItem = menuData.find(i => i.id === id);
             if(menuItem) {
-                // Simpan URL gambar base64 ke data menu
                 menuItem.icon = e.target.result; 
                 
-                // Ubah tampilan icon jadi gambar
                 const iconArea = document.querySelector(`[data-id="${id}"] .item-icon-area`);
                 if(iconArea) {
                     iconArea.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
@@ -2241,7 +2250,7 @@ function handleImageUpload(input, id){
 }
 
 // ==================================================
-// ✅ FUNGSI BARU: MODE HAPUS & KONFIRMASI
+// ✅ FUNGSI: MODE HAPUS & KONFIRMASI
 // ==================================================
 let deleteModeActive = false;
 
@@ -2250,48 +2259,46 @@ function toggleDeleteMode() {
     const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
     
     if(deleteModeActive) {
-        // Munculkan semua tombol hapus
         deleteButtons.forEach(btn => {
             btn.style.display = 'flex';
         });
-        // Ubah warna tombol jadi hijau/kuning tanda aktif
         document.getElementById('btnDeleteMode').classList.remove('bg-red-500');
         document.getElementById('btnDeleteMode').classList.add('bg-green-500');
     } else {
-        // Sembunyikan semua tombol hapus
         deleteButtons.forEach(btn => {
             btn.style.display = 'none';
         });
-        // Kembalikan warna tombol
         document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
         document.getElementById('btnDeleteMode').classList.add('bg-red-500');
     }
 }
 
-// ✅ FUNGSI KONFIRMASI HAPUS DENGAN NAMA
+// ✅ PERUBAHAN 3 & 4: TAMBAH TOMBOL TIDAK & JANGAN HIDE SEMUA
 function confirmDeleteItem(id) {
-    // Cari data itemnya
     const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
     
     if(!item) return;
 
-    showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, ()=>{
-        // Jalankan hapus
-        deleteItem(id);
-        // Setelah hapus, sembunyikan lagi tombol hapus mode
-        deleteModeActive = true; 
-        toggleDeleteMode(); // Matikan mode
-    }, "Ya, Hapus");
+    // ✅ PERUBAHAN 3: PANGGIL showConfirm dengan 2 tombol
+    showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
+        ()=>{
+            // Klik YA
+            deleteItem(id);
+            // ✅ PERUBAHAN 4: TIDAK PERLU MATIKAN MODE, TOMBOL TETAP MUNCUL
+            // deleteModeActive = true; 
+            // toggleDeleteMode(); 
+        }, 
+        "Ya, Hapus", 
+        "Tidak" // ✅ TOMBOL TIDAK
+    );
 }
 
-// ✅ FUNGSI: KLIK LUAR / INPUT / DRAG -> HIDE TOMBOL
+// ✅ FUNGSI: KLIK LUAR -> HIDE TOMBOL
 document.addEventListener('click', function(e){
-    // Jika klik di luar tombol hapus, atau klik input, atau klik drag handle
     if(!e.target.closest('.btn-del-item-inline') && 
        !e.target.closest('#btnDeleteMode') && 
        deleteModeActive) {
         
-        // Sembunyikan semua
         const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
         deleteButtons.forEach(btn => {
             btn.style.display = 'none';
@@ -2309,6 +2316,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
     renderTransaksiList();
 });
+
 
 </script>
 </body>
