@@ -1790,7 +1790,6 @@ function savePrabayarData(){
         }
     });
 
-    // Simpan ke Local Storage SEKARANG JUGA
     saveData(); 
 
     // Matikan tombol secara paksa
@@ -1804,6 +1803,7 @@ function savePrabayarData(){
     changed = false; // Reset flag
     toast("Data Produk Berhasil Disimpan");
 }
+
 
 function confirmSavePrabayar(){
     showConfirm("Simpan Data", "Yakin simpan perubahan data produk?", ()=>{ 
@@ -2082,33 +2082,29 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ GABUNGKAN SEMUA ITEM MENJADI SATU BARISAN
-    // Urutan: Kategori + Menu, tapi karena pakai unshift, yang baru akan selalu di atas
+    // ✅ Urutan: Kategori dulu, baru Menu (tetap urut sesuai input)
     const allItems = [];
     
-    // Masukkan semua kategori
     categoryData.forEach(item => {
         allItems.push({ ...item, type: 'category' });
     });
     
-    // Masukkan semua menu
     menuData.forEach(item => {
         allItems.push({ ...item, type: 'menu' });
     });
 
-    // Render semua item tanpa dipisah
-    allItems.forEach((item) => {
-        const div = createItemElement(item, 0, item.type);
+    allItems.forEach((item, index) => {
+        const div = createItemElement(item, index, item.type);
         container.appendChild(div);
     });
 
-    // Update Counter
     document.getElementById("countMenu").innerText = menuData.length;
     document.getElementById("countCategory").innerText = categoryData.length;
 
     lucide.createIcons();
     initSortable();
 }
+
 
 function createItemElement(item, index, type){
     const div = document.createElement("div");
@@ -2371,39 +2367,40 @@ window.confirmSaveTransaksi = function() {
     }, "Ya, Simpan");
 }
 
-// ==================================================
-// ✅ BLOKIR TOMBOL BACK HP
-// ==================================================
+
+// ✅ BLOKIR TOMBOL BACK HP - VERSI PERBAIKI
+
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
     history.go(1); // Tetap di halaman dulu
     
-    if (hasChanges) {
+    // Cek semua modal yang terbuka
+    const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
+    
+    if (modals.length > 0) {
+        // ✅ Tutup modal yang paling atas dulu
+        modals[modals.length - 1].classList.remove('show');
+        
+        // Tambah history lagi agar bisa back berkali-kali
+        history.pushState(null, null, location.href);
+        
+    } else if (hasChanges) {
         // ✅ JIKA ADA PERUBAHAN -> MUNCUL POP-UP
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
             function() {
-                // KLIK YA -> KELUAR
                 markAsSaved();
                 history.back();
             }, 
             "Ya, Keluar", 
             function() {
-                // KLIK TIDAK -> TETAP DISINI
                 history.pushState(null, null, location.href);
             }
         );
     } else {
-        // ✅ JIKA TIDAK ADA PERUBAHAN -> TUTUP MODAL SESUAI URUTAN
-        const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
-        if (modals.length > 0) {
-            // Tutup modal yang paling atas dulu
-            modals[modals.length - 1].classList.remove('show');
-        } else {
-            // Jika tidak ada modal, baru keluar halaman
-            history.back();
-        }
+        // ✅ JIKA TIDAK ADA MODAL & TIDAK ADA PERUBAHAN -> KELUAR
+        history.back();
     }
 };
 
