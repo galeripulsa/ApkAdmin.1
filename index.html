@@ -2082,14 +2082,21 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ GABUNGKAN DUA ARRAY MENJADI SATU
-    // Urutan: Kategori dulu + Menu, tapi karena pakai unshift, yang baru akan di atas
-    const allItems = [
-        ...categoryData.map(item => ({ ...item, type: 'category' })),
-        ...menuData.map(item => ({ ...item, type: 'menu' }))
-    ];
+    // ✅ GABUNGKAN SEMUA ITEM MENJADI SATU BARISAN
+    // Urutan: Kategori + Menu, tapi karena pakai unshift, yang baru akan selalu di atas
+    const allItems = [];
+    
+    // Masukkan semua kategori
+    categoryData.forEach(item => {
+        allItems.push({ ...item, type: 'category' });
+    });
+    
+    // Masukkan semua menu
+    menuData.forEach(item => {
+        allItems.push({ ...item, type: 'menu' });
+    });
 
-    // Render semua item dalam satu urutan
+    // Render semua item tanpa dipisah
     allItems.forEach((item) => {
         const div = createItemElement(item, 0, item.type);
         container.appendChild(div);
@@ -2401,6 +2408,7 @@ window.onpopstate = function () {
 };
 
 </script>
+
 
 </body>
 </html>
