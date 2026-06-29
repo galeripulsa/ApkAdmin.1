@@ -761,9 +761,9 @@ body{
             <button id="saveTransaksiBtn" onclick="confirmSaveTransaksi()" disabled class="flex-1 bg-gray-400 cursor-not-allowed text-white py-4 rounded-xl font-bold shadow-lg disabled:shadow-none transition btn-click">
                 <i data-lucide="save" class="w-5 h-5 inline mr-2"></i>Simpan Perubahan
             </button>
-            <button id="btnDeleteMode" class="w-14 h-14 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 transition flex items-center justify-center btn-click">
-    <i data-lucide="trash-2" class="w-6 h-6"></i>
-</button>
+            <button onclick="closeTransaksi()" class="w-14 h-14 bg-red-500 text-white rounded-xl font-bold shadow-lg hover:bg-red-600 transition flex items-center justify-center btn-click">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
         </div>
     </div>
 </div>
@@ -909,7 +909,6 @@ body{
 </div>
 
 <script>
-
 window.onerror = function(message, source, line, column){
     console.error("ERROR:", message, "Baris:", line);
 };
@@ -1135,35 +1134,6 @@ document.addEventListener('DOMContentLoaded', function(){
             hideAllDeleteIcons();
         }
     });
-
-    // ✅ ✅ ✅ TOMBOL HAPUS MODE (HOLD 800ms) ✅ ✅ ✅
-    const btnDeleteMode = document.getElementById("btnDeleteMode");
-    let holdTimer;
-    let deleteModeActive = false;
-
-    btnDeleteMode.addEventListener('mousedown', () => {
-        holdTimer = setTimeout(() => {
-            toggleDeleteMode();
-        }, 800);
-    });
-
-    btnDeleteMode.addEventListener('mouseup', () => { clearTimeout(holdTimer); });
-    btnDeleteMode.addEventListener('mouseleave', () => { clearTimeout(holdTimer); });
-
-    btnDeleteMode.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        holdTimer = setTimeout(() => { toggleDeleteMode(); }, 800);
-    });
-    btnDeleteMode.addEventListener('touchend', () => { clearTimeout(holdTimer); });
-
-    // Klik biasa tidak menutup modal, hanya keluar mode hapus jika aktif
-    btnDeleteMode.addEventListener('click', function() {
-        if (deleteModeActive) { 
-            toggleDeleteMode(); 
-        }
-    });
-    // ✅ ✅ ✅ SAMPAI DI SINI ✅ ✅ ✅
-
 });
 
 // ==============================================
@@ -2028,98 +1998,320 @@ function simpanDaftarWilayah() {
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
 }
 
+// ==============================================
+// >>> FUNGSI BACK / TUTUP <<<
+// ==============================================
 
-// ==============================================
-// >>> MENU TRANSAKSI (DRAG & DROP) <<<
-// ==============================================
+function backToPrabayar(){
+    document.getElementById("areaModal").classList.remove("show");
+    document.getElementById("prabayarModal").classList.add("show");
+}
+
+function backToArea(){
+    const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+    if(currentData !== originalWilayahData){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+            document.getElementById("wilayahModal").classList.remove("show");
+            openAreaModal();
+        }, "Ya, Keluar");
+    } else {
+        document.getElementById("wilayahModal").classList.remove("show");
+        openAreaModal();
+    }
+}
+
+
 let menuData = [];
 let categoryData = [];
-let draggedItem = null;
+let currentItemId = 0;
 
-function openMenuTransaksi(){
-    document.getElementById("transaksiModal").classList.add("show");
-    renderMenuList();
+// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+function addMenu(){
+    const newItem = {
+        id: ++currentItemId,
+        name: "", // Nama kosong
+        icon: "layout-grid",
+        active: false, // ❌ Default OFF
+        type: "menu"
+    };
+    menuData.push(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
 }
 
-function renderMenuList(){
+// >>> FUNGSI TAMBAH KATEGORI <<<
+function addKategori(){
+    const newItem = {
+        id: ++currentItemId,
+        name: "", // Nama kosong
+        icon: "folder",
+        active: false, // ❌ Default OFF
+        type: "category"
+    };
+    categoryData.push(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+
+// >>> RENDER SEMUA ITEM <<<
+function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
-    if(!container) return;
     container.innerHTML = "";
-    
-    menuData.forEach((menu, index) => {
-        const div = document.createElement("div");
-        div.className = "transaksi-item flex items-center gap-3 p-3 bg-white rounded-xl border mb-2";
-        div.draggable = true;
-        div.dataset.index = index;
-        
-        div.innerHTML = `
-            <i data-lucide="menu" class="w-5 h-5 text-gray-400 cursor-grab"></i>
-            <span class="flex-1 font-medium">${menu.nama}</span>
-            <i data-lucide="trash-2" class="w-5 h-5 text-red-500 cursor-pointer" onclick="hapusMenuTransaksi(${index})"></i>
-        `;
-        
-        div.addEventListener('dragstart', function(e){
-            draggedItem = this;
-            setTimeout(()=> this.classList.add('opacity-50'), 0);
-        });
-        
-        div.addEventListener('dragend', function(e){
-            draggedItem = null;
-            this.classList.remove('opacity-50');
-        });
-        
-        div.addEventListener('dragover', function(e){
-            e.preventDefault();
-        });
-        
-        div.addEventListener('drop', function(e){
-            e.preventDefault();
-            if(draggedItem !== this){
-                const fromIndex = parseInt(draggedItem.dataset.index);
-                const toIndex = parseInt(this.dataset.index);
-                const temp = menuData[fromIndex];
-                menuData.splice(fromIndex, 1);
-                menuData.splice(toIndex, 0, temp);
-                renderMenuList();
-                checkTransaksiChange();
-            }
-        });
-        
+
+    // Render Menu
+    menuData.forEach((item, index) => {
+        const div = createItemElement(item, index, 'menu');
         container.appendChild(div);
     });
-    
+
+    // Render Kategori
+    categoryData.forEach((item, index) => {
+        const div = createItemElement(item, index, 'category');
+        container.appendChild(div);
+    });
+
+    // Update Counter
+    document.getElementById("countMenu").innerText = menuData.length;
+    document.getElementById("countCategory").innerText = categoryData.length;
+
     lucide.createIcons();
+    setupItemInteractions();
+    initSortable();
 }
 
-function tambahMenuTransaksi(){
-    showConfirm("Tambah Menu", "Masukkan nama menu baru:", ()=>{
-        const nama = prompt("Nama Menu:");
-        if(nama && nama.trim() !== ""){
-            menuData.push({nama: nama.trim()});
-            renderMenuList();
-            checkTransaksiChange();
+function createItemElement(item, index, type){
+    const div = document.createElement("div");
+    div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
+    div.dataset.id = item.id;
+    div.dataset.type = type;
+    div.dataset.index = index;
+
+    // Khusus Menu, tambahkan input hidden untuk pilih gambar
+    const fileInput = type === 'menu' ? `<input type="file" id="fileInput_${item.id}" accept="image/*" style="display:none" onchange="handleImageUpload(this, ${item.id})">` : "";
+
+    div.innerHTML = `
+        <div class="item-content-wrapper">
+            
+            <!-- ICON AREA -->
+            <div class="item-icon-area" onclick="${type === 'menu' ? `document.getElementById('fileInput_${item.id}').click()` : 'openIconSelector(this)'}">
+                <i data-lucide="${item.icon}"></i>
+                ${fileInput} <!-- Masukkan input file disini -->
+            </div>
+
+            <!-- INPUT FIELD -->
+            <div class="item-body">
+                <input type="text" class="form-input-item" value="" 
+                       oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
+            </div>
+
+            <!-- TOGGLE / TOMBOL ON OFF (Default OFF) -->
+            <div class="toggle-switch ${item.active ? 'active' : ''}" onclick="toggleActive(this, ${item.id})">
+                <div class="toggle-knob"></div>
+            </div>
+
+            <!-- DRAG HANDLE -->
+            <div class="drag-handle">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </div>
+
+        </div>
+
+        <!-- TOMBOL HAPUS -->
+        <button class="btn-del-item" onclick="deleteItem(${item.id})">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+    `;
+    return div;
+}
+
+
+// >>> INTERAKSI ITEM: SWIPE TO DELETE <<<
+
+// >>> INTERAKSI ITEM: SWIPE TO DELETE DENGAN DELAY / TAHAN DULU <<<
+function setupItemInteractions(){
+    document.querySelectorAll('.menu-item-card, .category-item-card').forEach(card => {
+        let startX = 0;
+        let isDragging = false;
+        let isLongEnough = false; // Flag untuk cek apakah sudah ditekan cukup lama
+        let pressTimer = null;    // Timer untuk hitung waktu tekan
+
+        // --- VERSI MOUSE / PC ---
+        card.addEventListener('mousedown', (e) => {
+            isDragging = false; // Awalnya belum boleh geser
+            isLongEnough = false;
+            startX = e.clientX;
+            
+            // Set timer: setelah 500ms baru boleh geser
+            pressTimer = setTimeout(() => {
+                isLongEnough = true; // Waktu sudah terpenuhi
+            }, 500); // 500ms = 0.5 detik
+            
+            card.querySelector('.item-content-wrapper').style.transition = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            // Hanya jalan jika sudah ditekan cukup lama
+            if(!isLongEnough) return; 
+            
+            if(!isDragging) {
+                isDragging = true; // Baru mulai status dragging
+            }
+
+            let diffX = startX - e.clientX;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+
+            if(diffX > 30) { 
+                contentWrap.style.transform = `translateX(-50px)`;
+            } else if(diffX < -10) {
+                contentWrap.style.transform = `translateX(0)`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            clearTimeout(pressTimer); // Hentikan timer kalau dilepas dulu
+            isDragging = false;
+            isLongEnough = false;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            contentWrap.style.transition = `transform 0.2s ease`;
+        });
+
+
+        // --- VERSI TOUCH / HP ---
+        card.addEventListener('touchstart', (e) => {
+            isDragging = false;
+            isLongEnough = false;
+            startX = e.touches[0].clientX;
+            
+            // Set timer: setelah 500ms baru boleh geser
+            pressTimer = setTimeout(() => {
+                isLongEnough = true;
+            }, 500); 
+            
+            card.querySelector('.item-content-wrapper').style.transition = 'none';
+        });
+
+        card.addEventListener('touchmove', (e) => {
+            // Hanya jalan jika sudah ditekan cukup lama
+            if(!isLongEnough) return;
+
+            if(!isDragging) {
+                isDragging = true;
+            }
+
+            let diffX = startX - e.touches[0].clientX;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            
+            if(diffX > 20) { 
+                contentWrap.style.transform = `translateX(-50px)`;
+            } else if(diffX < -5) {
+                contentWrap.style.transform = `translateX(0)`;
+            }
+        });
+
+        card.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+            isDragging = false;
+            isLongEnough = false;
+            const contentWrap = card.querySelector('.item-content-wrapper');
+            contentWrap.style.transition = `transform 0.2s ease`;
+        });
+    });
+
+    // --- KLIK LUAR UNTUK SEMBUNYIKAN TOMBOL HAPUS ---
+    document.addEventListener('click', function(e){
+        if(!e.target.closest('.menu-item-card') && !e.target.closest('.category-item-card')){
+            document.querySelectorAll('.item-content-wrapper').forEach(wrap => {
+                wrap.style.transform = `translateX(0)`;
+            });
         }
-    }, "Tambah", ()=>{});
+    });
 }
 
-function hapusMenuTransaksi(index){
-    showConfirm("Hapus Menu", "Yakin hapus menu ini?", ()=>{
-        menuData.splice(index, 1);
-        renderMenuList();
-        checkTransaksiChange();
-    }, "Hapus");
+// >>> FUNGSI PENDUKUNG <<<
+function toggleActive(el, id){
+    el.classList.toggle('active');
+    const arr = el.parentElement.dataset.type === 'menu' ? menuData : categoryData;
+    const item = arr.find(i => i.id === id);
+    if(item) item.active = el.classList.contains('active');
+    enableButton("saveTransaksiBtn");
 }
 
-// ==============================================
-// >>> INISIALISASI AWAL <<<
-// ==============================================
-document.addEventListener('DOMContentLoaded', function(){
+function updateName(inputEl, id){
+    const parentCard = inputEl.closest('[data-type]');
+    const type = parentCard.dataset.type;
+    const arr = type === 'menu' ? menuData : categoryData;
+    const item = arr.find(i => i.id === id);
+    
+    if(item) {
+        item.name = inputEl.value;
+        enableButton("saveTransaksiBtn");
+    }
+}
+
+function deleteItem(id){
+    menuData = menuData.filter(i => i.id !== id);
+    categoryData = categoryData.filter(i => i.id !== id);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+function openIconSelector(el){
+    // Sementara ini demo, nanti bisa dikembangkan jadi popup pilihan icon
+    showConfirm("Ganti Icon", "Fitur pilih icon dari galeri akan segera tersedia! Saat ini pakai icon default dulu ya.", null, "Oke");
+}
+
+// >>> SORTABLE JS <<<
+function initSortable(){
+    if(sortableInstance) sortableInstance.destroy();
+    
+    const list = document.getElementById('transaksiList');
+    sortableInstance = new Sortable.create(list, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: function () {
+            enableButton("saveTransaksiBtn");
+        },
+    });
+}
+
+// >>> FUNGSI UPLOAD GAMBAR DARI GALERI KHUSUS MENU <<<
+function handleImageUpload(input, id){
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // Cari item menu berdasarkan ID
+            const menuItem = menuData.find(i => i.id === id);
+            if(menuItem) {
+                // Simpan URL gambar base64 ke data menu
+                menuItem.icon = e.target.result; 
+                
+                // Ubah tampilan icon jadi gambar
+                const iconArea = document.querySelector(`[data-id="${id}"] .item-icon-area`);
+                if(iconArea) {
+                    iconArea.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+                }
+                
+                enableButton("saveTransaksiBtn");
+                showConfirm("Berhasil", "Icon menu berhasil diganti!", null, "Oke");
+            }
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+
+// === INIT ===
+document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
     loadData();
-    checkServerChange();
-    checkCenterChange();
+    renderTransaksiList();
 });
-
 
 </script>
 </body>
