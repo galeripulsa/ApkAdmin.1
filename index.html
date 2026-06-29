@@ -2319,6 +2319,36 @@ document.addEventListener("DOMContentLoaded", ()=>{
     renderTransaksiList();
 });
 
+// ✅ Validasi Toggle: Jika nama kosong, toggle terkunci
+document.addEventListener('input', function(e) {
+    if(e.target.classList.contains('form-input-item')) {
+        const card = e.target.closest('[data-type]');
+        if(!card) return; // Tambahan biar aman
+        const toggle = card.querySelector('.toggle-switch');
+        const itemId = card.dataset.id;
+        
+        if(!e.target.value.trim()) {
+            toggle.style.opacity = '0.5';
+            toggle.style.cursor = 'not-allowed';
+            toggle.onclick = function() {
+                showConfirm('Peringatan', 'Nama item harus diisi terlebih dahulu!', null, 'Oke');
+            };
+            // Matikan otomatis jika nama dihapus
+            toggle.classList.remove('active');
+            const arr = card.dataset.type === 'menu' ? menuData : categoryData;
+            const item = arr.find(i => i.id == itemId);
+            if(item) item.active = false;
+            enableButton("saveTransaksiBtn");
+        } else {
+            toggle.style.opacity = '1';
+            toggle.style.cursor = 'pointer';
+            toggle.onclick = function() {
+                toggleActive(this, itemId);
+            };
+        }
+    }
+});
+
 
 // ==================================================
 // ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
