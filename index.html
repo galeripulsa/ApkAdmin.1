@@ -2040,23 +2040,23 @@ function backToArea(){
     }
 }
 
-
 let menuData = [];
 let categoryData = [];
 let currentItemId = 0;
 
-
 // >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
 function addMenu(){
-    // ✅ CARI ID TERTINGGI LALU TAMBAH 1
-    const newId = menuData.length > 0 ? Math.max(...menuData.map(item => item.id)) + 1 : 1;
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
     
     const newItem = {
         id: newId,
         name: "", // Nama kosong
         icon: "layout-grid",
         active: false, // ❌ Default OFF
-        type: "menu"
+        type: "menu",
+        order: undefined // Tandai baru
     };
     menuData.unshift(newItem); 
     renderTransaksiList();
@@ -2065,15 +2065,17 @@ function addMenu(){
 
 // >>> FUNGSI TAMBAH KATEGORI <<<
 function addKategori(){
-    // ✅ CARI ID TERTINGGI LALU TAMBAH 1
-    const newId = categoryData.length > 0 ? Math.max(...categoryData.map(item => item.id)) + 1 : 1;
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
     
     const newItem = {
         id: newId,
         name: "", // Nama kosong
         icon: "folder",
         active: false, // ❌ Default OFF
-        type: "category"
+        type: "category",
+        order: undefined // Tandai baru
     };
     categoryData.unshift(newItem);
     renderTransaksiList();
@@ -2090,28 +2092,29 @@ function renderTransaksiList(){
     const allItems = [];
     
     categoryData.forEach(item => {
-        allItems.push({ ...item, type: 'category' });
+        allItems.push({ ...item });
     });
     
     menuData.forEach(item => {
-        allItems.push({ ...item, type: 'menu' });
+        allItems.push({ ...item });
     });
 
     // ==============================================
-    // ✅ LOGIKA BARU: CEK APAKAH SUDAH PERNAH DIURUT
+    // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
     // ==============================================
     const everSorted = allItems.some(item => item.order !== undefined);
 
     if (!everSorted) {
-        // JIKA BELUM PERNAH DI-DRAG -> URUTKAN ID BESAR KE KECIL
-        // (Item baru selalu di atas)
+        // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
+        // (Item baru selalu di atas, campur bebas)
         allItems.sort((a, b) => b.id - a.id);
     } else {
         // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
         allItems.sort((a, b) => {
-            // Jika tidak ada order, taruh di paling atas (item baru)
+            // Item baru (tanpa order) masuk paling atas
             if (a.order === undefined) return -1;
             if (b.order === undefined) return 1;
+            // Urutkan sesuai posisi yang sudah disimpan
             return a.order - b.order;
         });
     }
@@ -2264,18 +2267,23 @@ function initSortable(){
                 }
 
                 if(dataItem) {
-                    // ✅ TAMBAH PROPERTY 'order' UNTUK KUNCI POSISI
+                    // ✅ SIMPAN POSISI BARU
                     dataItem.order = i; 
                     newOrder.push(dataItem);
                 }
             }
             
-            // Update data array
-            if(evt.item.dataset.type === 'menu') {
-                menuData = newOrder.filter(item => item.type === 'menu');
-            } else {
-                categoryData = newOrder.filter(item => item.type === 'category');
-            }
+            // ✅ PENTING: JANGAN DIPISAH LAGI, TAPI UPDATE URUTAN DI DATA ASLINYA
+            // Kita hanya update property 'order' saja di data asli, biar posisi terkunci
+            newOrder.forEach(item => {
+                if(item.type === 'menu') {
+                    let ori = menuData.find(d => d.id === item.id);
+                    if(ori) ori.order = item.order;
+                } else {
+                    let ori = categoryData.find(d => d.id === item.id);
+                    if(ori) ori.order = item.order;
+                }
+            });
             
             enableButton("saveTransaksiBtn");
         },
@@ -2327,7 +2335,7 @@ function toggleDeleteMode() {
             btn.style.display = 'none';
         });
         document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
-        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
+        document.getElementById('btnDeleteMode').classList.add('red-500');
     }
 }
 
