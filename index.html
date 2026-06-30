@@ -2131,6 +2131,13 @@ function renderTransaksiList(){
 
     lucide.createIcons();
     initSortable();
+    
+    // ✅ PERBAIKAN: JIKA MODE HAPUS AKTIF, PASTIKAN TOMBOL MUNCUL LAGI
+    if(deleteModeActive) {
+        document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
+            btn.style.display = 'flex';
+        });
+    }
 }
 
 
@@ -2168,7 +2175,7 @@ function createItemElement(item, index, type){
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
-            <!-- TOGGLE ON/OFF -->
+            <!-- ✅ PERBAIKAN: TOGGLE AKTIF / NONAKTIF -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" 
                  onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
                  style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
@@ -2180,9 +2187,9 @@ function createItemElement(item, index, type){
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </div>
 
-            <!-- TOMBOL HAPUS (AWALNYA HILANG) -->
+            <!-- TOMBOL HAPUS -->
             <button class="btn-del-item-inline" onclick="confirmDeleteItem(${item.id})" 
-                    style="width: 36px; height: 36px; display: none; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
+                    style="width: 36px; height: 36px; display: ${deleteModeActive ? 'flex' : 'none'}; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
 
@@ -2335,11 +2342,11 @@ function toggleDeleteMode() {
             btn.style.display = 'none';
         });
         document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
-        document.getElementById('btnDeleteMode').classList.add('red-500');
+        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
     }
 }
 
-// ✅ PERUBAHAN 3 & 4: TAMBAH TOMBOL TIDAK & JANGAN HIDE SEMUA
+// ✅ PERBAIKAN: SETELAH HAPUS ATAU BATAL, TOMBOL TETAP MUNCUL
 function confirmDeleteItem(id) {
     const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
     
@@ -2348,9 +2355,20 @@ function confirmDeleteItem(id) {
     showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
         ()=>{
             deleteItem(id);
+            // ✅ Setelah hapus, render ulang dan tombol tetap muncul
+            setTimeout(() => { // sedikit jeda biar animasi modal selesai
+                document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
+                    btn.style.display = 'flex';
+                });
+            }, 300);
         }, 
         "Ya, Hapus", 
-        "Tidak"
+        ()=>{
+            // ✅ Jika batal, pastikan tombol tetap muncul
+            document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
+                btn.style.display = 'flex';
+            });
+        }
     );
 }
 
