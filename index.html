@@ -2454,7 +2454,6 @@ document.addEventListener('input', function(e) {
     }
 });
 
-
 // ==================================================
 // ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
 // ==================================================
@@ -2472,12 +2471,10 @@ function markAsSaved() {
 
 // --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
 // ✅ BERLAKU UNIVERSAL: Semua halaman, semua form, semua input
-// Jalan otomatis meskipun halamannya baru dibuat nanti
 document.addEventListener('input', markAsChanged);
 document.addEventListener('change', markAsChanged);
 
 // --- 4. OVERRIDE FUNGSI enableButton ---
-// ✅ Setiap tombol diaktifkan berarti ada perubahan
 if (typeof enableButton !== 'undefined') {
     const originalEnableButton = enableButton;
     enableButton = function(id) {
@@ -2487,19 +2484,13 @@ if (typeof enableButton !== 'undefined') {
 }
 
 // --- 5. OVERRIDE SEMUA FUNGSI SIMPAN OTOMATIS ---
-// ✅ CARA KERJA: Sistem akan MEMBACA SEMUA fungsi di window
-// ✅ Jika nama fungsinya mengandung kata "save" atau "Simpan", otomatis terhubung!
-// ✅ Jadi menu baru nanti yang pakai nama fungsi saveXxx otomatis ke-detect.
-
+// ✅ DETEKSI OTOMATIS: Cari semua fungsi yang ada kata "save" atau "simpan"
 for (const key in window) {
     if (typeof window[key] === 'function') {
-        // Cek apakah nama fungsi ini adalah fungsi simpan
         if(key.toLowerCase().includes('save') || key.toLowerCase().includes('simpan')) {
             const originalFunction = window[key];
             window[key] = function() {
-                // Jalankan fungsi aslinya
                 const result = originalFunction.apply(this, arguments);
-                // Tandai sebagai sudah disimpan
                 markAsSaved();
                 return result;
             }
@@ -2507,21 +2498,22 @@ for (const key in window) {
     }
 }
 
-// --- 6. KHUSUS UNTUK TOMBOL BACK ---
+// --- 6. PENANGANAN TOMBOL BACK & MODAL ---
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
     history.go(1); // Tetap di halaman dulu
     
-    // Cek semua modal yang terbuka
-    const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
+    // ✅ CEK SEMUA JENIS MODAL YANG MUNGKIN TERBUKA
+    // Termasuk Modal Area, Wilayah, Submenu, dll
+    const modals = document.querySelectorAll('.modal.show, .submenu-modal.show, [class*="modal"].show');
     
     if (modals.length > 0) {
-        // Tutup modal dulu
+        // ✅ Tutup modal yang paling atas dulu
         modals[modals.length - 1].classList.remove('show');
-        history.pushState(null, null, location.href);
+        history.pushState(null, null, location.href); // Tambah history agar bisa back berkali-kali
         
     } else if (hasChanges) {
-        // ✅ JIKA ADA PERUBAHAN -> BLOKIR & MUNCULKAN POPUP
+        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
@@ -2536,7 +2528,7 @@ window.onpopstate = function () {
             "Batal"
         );
     } else {
-        // ✅ JIKA TIDAK ADA PERUBAHAN -> KELUAR NORMAL
+        // ✅ JIKA AMAN -> KELUAR NORMAL
         history.back();
     }
 };
