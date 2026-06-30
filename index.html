@@ -16,6 +16,16 @@ body{
     background:#f1f5f9;
 }
 
+/* === STYLE UNTUK ALAMAT KONTER === */
+#alamatKonter {
+    min-height: 120px; /* Tinggi awal pas untuk 5 baris */
+    max-height: 300px; /* Batas maksimal tinggi */
+    line-height: 1.5;
+    resize: none; /* Hilangkan garis tarik di pojok kanan bawah */
+    overflow-y: hidden; /* Sembunyikan scrollbar */
+}
+
+
 /* === STYLE MODAL AREA & WILAYAH === */
 #formAreaModal, #formWilayahModal {
     display: none;
@@ -2049,6 +2059,15 @@ function backToArea(){
         openAreaModal();
     }
 }
+
+
+function autoGrow(element) {
+    element.style.height = "auto";
+    const minHeight = parseInt(window.getComputedStyle(element).minHeight);
+    const newHeight = element.scrollHeight;
+    element.style.height = (newHeight > minHeight ? newHeight : minHeight) + "px";
+}
+
 
 let menuData = [];
 let categoryData = [];
