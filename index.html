@@ -2086,12 +2086,9 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ CARA BARU: GABUNGKAN DULU BARU DI-SORT
-    // Buat array kosong
+    // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
     const allItems = [];
-
-    // Masukkan SEMUA data (Menu DAN Kategori) ke dalam satu wadah
-    // Tanpa memisahkan kelompok
+    
     categoryData.forEach(item => {
         allItems.push({ ...item, type: 'category' });
     });
@@ -2101,12 +2098,13 @@ function renderTransaksiList(){
     });
 
     // ✅ URUTKAN BERDASARKAN ID DARI BESAR KE KECIL
-    // Ini kuncinya agar campur aduk sesuai urutan klik
+    // Ini akan membuat urutannya: 8, 7, 6, 5, 4, 3, 2, 1
     allItems.sort((a, b) => b.id - a.id);
 
-    // Tampilkan semuanya
+    // Tampilkan sesuai urutan yang sudah di-sort
     allItems.forEach((item) => {
         const div = createItemElement(item, 0, item.type);
+        div.dataset.index = allItems.indexOf(item); // Simpan index untuk referensi
         container.appendChild(div);
     });
 
@@ -2116,6 +2114,7 @@ function renderTransaksiList(){
     lucide.createIcons();
     initSortable();
 }
+
 
 function createItemElement(item, index, type){
     const div = document.createElement("div");
@@ -2231,11 +2230,36 @@ function initSortable(){
         handle: '.drag-handle',
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
-        onEnd: function () {
+        onEnd: function (evt) {
+            // ✅ SAAT SELESAI DI-DRAG, UPDATE URUTAN DATA ASLINYA
+            const items = list.children;
+            const newMenuOrder = [];
+            const newCategoryOrder = [];
+
+            // Baca urutan baru dari tampilan
+            for(let i = 0; i < items.length; i++) {
+                const itemEl = items[i];
+                const id = parseInt(itemEl.dataset.id);
+                const type = itemEl.dataset.type;
+
+                if(type === 'menu') {
+                    const data = menuData.find(d => d.id === id);
+                    if(data) newMenuOrder.push(data);
+                } else {
+                    const data = categoryData.find(d => d.id === id);
+                    if(data) newCategoryOrder.push(data);
+                }
+            }
+
+            // Ganti data lama dengan urutan baru
+            menuData = newMenuOrder;
+            categoryData = newCategoryOrder;
+            
             enableButton("saveTransaksiBtn");
         },
     });
 }
+
 
 // >>> FUNGSI UPLOAD GAMBAR <<<
 function handleImageUpload(input, id){
