@@ -2086,9 +2086,12 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ GABUNGKAN SEMUA DATA
+    // ✅ CARA BARU: GABUNGKAN DULU BARU DI-SORT
+    // Buat array kosong
     const allItems = [];
-    
+
+    // Masukkan SEMUA data (Menu DAN Kategori) ke dalam satu wadah
+    // Tanpa memisahkan kelompok
     categoryData.forEach(item => {
         allItems.push({ ...item, type: 'category' });
     });
@@ -2097,10 +2100,11 @@ function renderTransaksiList(){
         allItems.push({ ...item, type: 'menu' });
     });
 
-    // ✅ URUTKAN DARI ID TERBESAR KE TERKECIL (ITEM BARU DI ATAS)
+    // ✅ URUTKAN BERDASARKAN ID DARI BESAR KE KECIL
+    // Ini kuncinya agar campur aduk sesuai urutan klik
     allItems.sort((a, b) => b.id - a.id);
 
-    // Tampilkan
+    // Tampilkan semuanya
     allItems.forEach((item) => {
         const div = createItemElement(item, 0, item.type);
         container.appendChild(div);
@@ -2112,7 +2116,6 @@ function renderTransaksiList(){
     lucide.createIcons();
     initSortable();
 }
-
 
 function createItemElement(item, index, type){
     const div = document.createElement("div");
