@@ -2097,14 +2097,29 @@ function renderTransaksiList(){
         allItems.push({ ...item, type: 'menu' });
     });
 
-    // ✅ URUTKAN BERDASARKAN ID DARI BESAR KE KECIL
-    // Ini akan membuat urutannya: 8, 7, 6, 5, 4, 3, 2, 1
-    allItems.sort((a, b) => b.id - a.id);
+    // ==============================================
+    // ✅ LOGIKA BARU: CEK APAKAH SUDAH PERNAH DIURUT
+    // ==============================================
+    const everSorted = allItems.some(item => item.order !== undefined);
 
-    // Tampilkan sesuai urutan yang sudah di-sort
-    allItems.forEach((item) => {
-        const div = createItemElement(item, 0, item.type);
-        div.dataset.index = allItems.indexOf(item); // Simpan index untuk referensi
+    if (!everSorted) {
+        // JIKA BELUM PERNAH DI-DRAG -> URUTKAN ID BESAR KE KECIL
+        // (Item baru selalu di atas)
+        allItems.sort((a, b) => b.id - a.id);
+    } else {
+        // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
+        allItems.sort((a, b) => {
+            // Jika tidak ada order, taruh di paling atas (item baru)
+            if (a.order === undefined) return -1;
+            if (b.order === undefined) return 1;
+            return a.order - b.order;
+        });
+    }
+
+    // Tampilkan item
+    allItems.forEach((item, index) => {
+        const div = createItemElement(item, index, item.type);
+        div.dataset.index = index;
         container.appendChild(div);
     });
 
@@ -2114,6 +2129,7 @@ function renderTransaksiList(){
     lucide.createIcons();
     initSortable();
 }
+
 
 
 function createItemElement(item, index, type){
@@ -2231,29 +2247,35 @@ function initSortable(){
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
         onEnd: function (evt) {
-            // ✅ SAAT SELESAI DI-DRAG, UPDATE URUTAN DATA ASLINYA
             const items = list.children;
-            const newMenuOrder = [];
-            const newCategoryOrder = [];
+            const newOrder = [];
 
             // Baca urutan baru dari tampilan
             for(let i = 0; i < items.length; i++) {
                 const itemEl = items[i];
                 const id = parseInt(itemEl.dataset.id);
                 const type = itemEl.dataset.type;
-
+                
+                let dataItem = null;
                 if(type === 'menu') {
-                    const data = menuData.find(d => d.id === id);
-                    if(data) newMenuOrder.push(data);
+                    dataItem = menuData.find(d => d.id === id);
                 } else {
-                    const data = categoryData.find(d => d.id === id);
-                    if(data) newCategoryOrder.push(data);
+                    dataItem = categoryData.find(d => d.id === id);
+                }
+
+                if(dataItem) {
+                    // ✅ TAMBAH PROPERTY 'order' UNTUK KUNCI POSISI
+                    dataItem.order = i; 
+                    newOrder.push(dataItem);
                 }
             }
-
-            // Ganti data lama dengan urutan baru
-            menuData = newMenuOrder;
-            categoryData = newCategoryOrder;
+            
+            // Update data array
+            if(evt.item.dataset.type === 'menu') {
+                menuData = newOrder.filter(item => item.type === 'menu');
+            } else {
+                categoryData = newOrder.filter(item => item.type === 'category');
+            }
             
             enableButton("saveTransaksiBtn");
         },
