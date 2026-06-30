@@ -2046,16 +2046,18 @@ let categoryData = [];
 let currentItemId = 0;
 
 
-// >>> Ⓜ️Ⓜ️Ⓜ️FUNGSI TAMBAH MENUⓂ️Ⓜ️Ⓜ️ <<<
+// >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
 function addMenu(){
+    // ✅ CARI ID TERTINGGI LALU TAMBAH 1
+    const newId = menuData.length > 0 ? Math.max(...menuData.map(item => item.id)) + 1 : 1;
+    
     const newItem = {
-        id: ++currentItemId,
+        id: newId,
         name: "", // Nama kosong
         icon: "layout-grid",
         active: false, // ❌ Default OFF
         type: "menu"
     };
-    // ✅ TAMBAH DI AWAL (PALING ATAS)
     menuData.unshift(newItem); 
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
@@ -2063,14 +2065,16 @@ function addMenu(){
 
 // >>> FUNGSI TAMBAH KATEGORI <<<
 function addKategori(){
+    // ✅ CARI ID TERTINGGI LALU TAMBAH 1
+    const newId = categoryData.length > 0 ? Math.max(...categoryData.map(item => item.id)) + 1 : 1;
+    
     const newItem = {
-        id: ++currentItemId,
+        id: newId,
         name: "", // Nama kosong
         icon: "folder",
         active: false, // ❌ Default OFF
         type: "category"
     };
-    // ✅ TAMBAH DI AWAL (PALING ATAS)
     categoryData.unshift(newItem);
     renderTransaksiList();
     enableButton("saveTransaksiBtn");
@@ -2082,23 +2086,21 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ GABUNGKAN DAN URUTKAN BERDASARKAN ID (WAKTU DIBUAT)
+    // ✅ GABUNGKAN SEMUA DATA
     const allItems = [];
     
-    // Masukkan semua kategori
     categoryData.forEach(item => {
         allItems.push({ ...item, type: 'category' });
     });
     
-    // Masukkan semua menu
     menuData.forEach(item => {
         allItems.push({ ...item, type: 'menu' });
     });
 
-    // ✅ PENTING: Urutkan berdasarkan ID (karena ID naik terus sesuai urutan tambah)
-    allItems.sort((a, b) => a.id - b.id);
+    // ✅ URUTKAN DARI ID TERBESAR KE TERKECIL (ITEM BARU DI ATAS)
+    allItems.sort((a, b) => b.id - a.id);
 
-    // Tampilkan sesuai urutan yang sudah di-sort
+    // Tampilkan
     allItems.forEach((item) => {
         const div = createItemElement(item, 0, item.type);
         container.appendChild(div);
@@ -2146,7 +2148,6 @@ function createItemElement(item, index, type){
             </div>
 
             <!-- TOGGLE ON/OFF -->
-            <!-- ✅ PERUBAHAN 2: TAMBAH CEK KONDISI NAMA KOSONG -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" 
                  onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
                  style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
@@ -2287,17 +2288,12 @@ function confirmDeleteItem(id) {
     
     if(!item) return;
 
-    // ✅ PERUBAHAN 3: PANGGIL showConfirm dengan 2 tombol
     showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
         ()=>{
-            // Klik YA
             deleteItem(id);
-            // ✅ PERUBAHAN 4: TIDAK PERLU MATIKAN MODE, TOMBOL TETAP MUNCUL
-            // deleteModeActive = true; 
-            // toggleDeleteMode(); 
         }, 
         "Ya, Hapus", 
-        "Tidak" // ✅ TOMBOL TIDAK
+        "Tidak"
     );
 }
 
@@ -2324,6 +2320,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
     loadData();
     renderTransaksiList();
 });
+
+
 
 // ✅ Validasi Toggle: Jika nama kosong, toggle terkunci
 document.addEventListener('input', function(e) {
