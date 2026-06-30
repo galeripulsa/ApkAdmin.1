@@ -2463,7 +2463,6 @@ let hasChanges = false;
 // --- 1. TANDAI ADA PERUBAHAN ---
 function markAsChanged() {
     hasChanges = true;
-    // console.log("Terjadi perubahan..."); // Bisa di-uncomment buat debug
 }
 
 // --- 2. TANDAI SUDAH DISIMPAN ---
@@ -2472,39 +2471,43 @@ function markAsSaved() {
 }
 
 // --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
-// Ini jalan di SEMUA input, select, textarea di aplikasi
+// ✅ BERLAKU UNIVERSAL: Semua halaman, semua form, semua input
+// Jalan otomatis meskipun halamannya baru dibuat nanti
 document.addEventListener('input', markAsChanged);
 document.addEventListener('change', markAsChanged);
 
-// --- 4. OVERRIDE FUNGSI enableButton AGAR TAHU KALO ADA YANG BERUBAH ---
-const originalEnableButton = enableButton;
-enableButton = function(id) {
-    originalEnableButton(id);
-    markAsChanged(); // Setiap tombol aktifkan berarti ada perubahan
+// --- 4. OVERRIDE FUNGSI enableButton ---
+// ✅ Setiap tombol diaktifkan berarti ada perubahan
+if (typeof enableButton !== 'undefined') {
+    const originalEnableButton = enableButton;
+    enableButton = function(id) {
+        originalEnableButton(id);
+        markAsChanged();
+    }
 }
 
-// --- 5. OVERRIDE FUNGSI SIMPAN AGAR RESET STATUS ---
-const originalSaveFunctions = [
-    confirmSaveTransaksi, 
-    // Tambah nama fungsi simpan lain kalau ada, misal:
-    // savePrabayar, 
-    // savePascabayar
-];
+// --- 5. OVERRIDE SEMUA FUNGSI SIMPAN OTOMATIS ---
+// ✅ CARA KERJA: Sistem akan MEMBACA SEMUA fungsi di window
+// ✅ Jika nama fungsinya mengandung kata "save" atau "Simpan", otomatis terhubung!
+// ✅ Jadi menu baru nanti yang pakai nama fungsi saveXxx otomatis ke-detect.
 
-// Kita modifikasi fungsi confirmSaveTransaksi yang utama
-window.confirmSaveTransaksi = function() {
-    showConfirm("Simpan Data", "Yakin simpan perubahan?", ()=>{ 
-        saveData(); 
-        saveOriginalTransaksiData(); 
-        disableButton("saveTransaksiBtn");
-        markAsSaved(); // ✅ Reset status
-        toast("Berhasil Disimpan"); 
-    }, "Ya, Simpan");
+for (const key in window) {
+    if (typeof window[key] === 'function') {
+        // Cek apakah nama fungsi ini adalah fungsi simpan
+        if(key.toLowerCase().includes('save') || key.toLowerCase().includes('simpan')) {
+            const originalFunction = window[key];
+            window[key] = function() {
+                // Jalankan fungsi aslinya
+                const result = originalFunction.apply(this, arguments);
+                // Tandai sebagai sudah disimpan
+                markAsSaved();
+                return result;
+            }
+        }
+    }
 }
 
-
-// ✅ BLOKIR TOMBOL BACK HP - VERSI PERBAIKI
-
+// --- 6. KHUSUS UNTUK TOMBOL BACK ---
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
     history.go(1); // Tetap di halaman dulu
@@ -2513,14 +2516,12 @@ window.onpopstate = function () {
     const modals = document.querySelectorAll('.modal.show, .submenu-modal.show');
     
     if (modals.length > 0) {
-        // ✅ Tutup modal yang paling atas dulu
+        // Tutup modal dulu
         modals[modals.length - 1].classList.remove('show');
-        
-        // Tambah history lagi agar bisa back berkali-kali
         history.pushState(null, null, location.href);
         
     } else if (hasChanges) {
-        // ✅ JIKA ADA PERUBAHAN -> MUNCUL POP-UP
+        // ✅ JIKA ADA PERUBAHAN -> BLOKIR & MUNCULKAN POPUP
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
@@ -2531,10 +2532,11 @@ window.onpopstate = function () {
             "Ya, Keluar", 
             function() {
                 history.pushState(null, null, location.href);
-            }
+            },
+            "Batal"
         );
     } else {
-        // ✅ JIKA TIDAK ADA MODAL & TIDAK ADA PERUBAHAN -> KELUAR
+        // ✅ JIKA TIDAK ADA PERUBAHAN -> KELUAR NORMAL
         history.back();
     }
 };
