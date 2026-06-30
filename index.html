@@ -2082,19 +2082,25 @@ function renderTransaksiList(){
     const container = document.getElementById("transaksiList");
     container.innerHTML = "";
 
-    // ✅ Urutan: Kategori dulu, baru Menu (tetap urut sesuai input)
+    // ✅ GABUNGKAN DAN URUTKAN BERDASARKAN ID (WAKTU DIBUAT)
     const allItems = [];
     
+    // Masukkan semua kategori
     categoryData.forEach(item => {
         allItems.push({ ...item, type: 'category' });
     });
     
+    // Masukkan semua menu
     menuData.forEach(item => {
         allItems.push({ ...item, type: 'menu' });
     });
 
-    allItems.forEach((item, index) => {
-        const div = createItemElement(item, index, item.type);
+    // ✅ PENTING: Urutkan berdasarkan ID (karena ID naik terus sesuai urutan tambah)
+    allItems.sort((a, b) => a.id - b.id);
+
+    // Tampilkan sesuai urutan yang sudah di-sort
+    allItems.forEach((item) => {
+        const div = createItemElement(item, 0, item.type);
         container.appendChild(div);
     });
 
