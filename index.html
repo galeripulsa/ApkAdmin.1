@@ -1159,6 +1159,7 @@ document.addEventListener('DOMContentLoaded', function(){
 // ==============================================
 // >>> 🔰🔰🔰MODAL DAFTAR AREA PDAM🔰🔰🔰 <<<
 // ==============================================
+
 function openAreaModal(){
     document.getElementById("prabayarModal").classList.remove("show");
 
@@ -1171,7 +1172,12 @@ function openAreaModal(){
     const container = document.getElementById("areaListContainer");
     container.innerHTML = "";
 
-    Object.keys(prabayarData[currentMenuType]).forEach(areaName => {
+    // ✅ SORTING BERDASARKAN NAMA A-Z
+    const sortedAreas = Object.keys(prabayarData[currentMenuType]).sort((a, b) => {
+        return a.localeCompare(b, undefined, { sensitivity: 'base' });
+    });
+
+    sortedAreas.forEach(areaName => {
         const div = document.createElement("div");
         div.className = "area-item flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer";
         div.dataset.area = areaName; 
@@ -1182,10 +1188,9 @@ function openAreaModal(){
                 <i class="icon-delete text-red-500 ml-1" data-name="${areaName}" data-lucide="trash-2" stroke-width="1.5" style="display: none;"></i>
             </div>
         `;
-        // KLIK NAMA AREA BUKA WILAYAH
         div.onclick = function(e){
             if(!e.target.classList.contains('icon-edit') && !e.target.classList.contains('icon-delete')){
-                hideAllDeleteIcons(); // ✅ Sembunyikan icon hapus sebelum buka baru
+                hideAllDeleteIcons();
                 openWilayahModal(this.dataset.area);
             }
         };
@@ -1196,10 +1201,10 @@ function openAreaModal(){
     setTimeout(() => { 
         lucide.createIcons(); 
         setupHoldToDelete();
-        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul, jadi tombol tetap nyala
         checkAreaChange(); 
     }, 50);
 }
+
 
 
 // === FORM AREA SEKARANG JADI POPUP ===
@@ -1269,7 +1274,12 @@ function openWilayahModal(areaName){
     document.getElementById("namaAreaTitle").innerText = areaName;
     container.innerHTML = "";
 
-    const listWilayah = (prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]) ? prabayarData[currentMenuType][currentAreaName].wilayah : [];
+    let listWilayah = (prabayarData[currentMenuType] && prabayarData[currentMenuType][currentAreaName]) ? prabayarData[currentMenuType][currentAreaName].wilayah : [];
+    
+    // ✅ SORTING BERDASARKAN NAMA A-Z
+    listWilayah = listWilayah.sort((a, b) => {
+        return a.nama.localeCompare(b.nama, undefined, { sensitivity: 'base' });
+    });
     
     listWilayah.forEach((wil, idx) => {
         const div = document.createElement("div");
@@ -1294,10 +1304,10 @@ function openWilayahModal(areaName){
     setTimeout(() => { 
         lucide.createIcons();
         setupHoldToDelete();
-        // ✅ PERBAIKAN: Cek perubahan SETELAH tampilan muncul
         checkWilayahChange();
     }, 50);
 }
+
 
 
 // === FORM WILAYAH JADI POPUP ===
