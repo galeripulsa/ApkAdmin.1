@@ -2131,13 +2131,6 @@ function renderTransaksiList(){
 
     lucide.createIcons();
     initSortable();
-    
-    // ✅ PERBAIKAN: JIKA MODE HAPUS AKTIF, PASTIKAN TOMBOL MUNCUL LAGI
-    if(deleteModeActive) {
-        document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
-            btn.style.display = 'flex';
-        });
-    }
 }
 
 
@@ -2175,7 +2168,7 @@ function createItemElement(item, index, type){
                        oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
             </div>
 
-            <!-- ✅ PERBAIKAN: TOGGLE AKTIF / NONAKTIF -->
+            <!-- ✅ PERBAIKAN: TOGGLE AKTIF / NONAKTIF - PASTIKAN CLASS AKTIF TERBACA -->
             <div class="toggle-switch ${item.active ? 'active' : ''}" 
                  onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
                  style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
@@ -2189,7 +2182,7 @@ function createItemElement(item, index, type){
 
             <!-- TOMBOL HAPUS -->
             <button class="btn-del-item-inline" onclick="confirmDeleteItem(${item.id})" 
-                    style="width: 36px; height: 36px; display: ${deleteModeActive ? 'flex' : 'none'}; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
+                    style="width: 36px; height: 36px; display: none; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
 
@@ -2207,10 +2200,17 @@ function setupItemInteractions(){
 
 // >>> FUNGSI PENDUKUNG <<<
 function toggleActive(el, id){
+    // ✅ Toggle class dulu
     el.classList.toggle('active');
-    const arr = el.parentElement.dataset.type === 'menu' ? menuData : categoryData;
-    const item = arr.find(i => i.id === id);
-    if(item) item.active = el.classList.contains('active');
+    
+    // ✅ Cari data di SEMUA array (karena data campur)
+    let item = menuData.find(i => i.id === id);
+    if(!item) item = categoryData.find(i => i.id === id);
+    
+    if(item) {
+        // ✅ Update status di data asli
+        item.active = el.classList.contains('active');
+    }
     enableButton("saveTransaksiBtn");
 }
 
@@ -2323,30 +2323,44 @@ function handleImageUpload(input, id){
 }
 
 // ==================================================
-// ✅ FUNGSI: MODE HAPUS & KONFIRMASI
+// ✅ FUNGSI: MODE HAPUS & KONFIRMASI - VERSI PERBAIKI
 // ==================================================
 let deleteModeActive = false;
 
 function toggleDeleteMode() {
     deleteModeActive = !deleteModeActive;
     const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+    const btnMain = document.getElementById('btnDeleteMode');
     
     if(deleteModeActive) {
         deleteButtons.forEach(btn => {
             btn.style.display = 'flex';
         });
-        document.getElementById('btnDeleteMode').classList.remove('bg-red-500');
-        document.getElementById('btnDeleteMode').classList.add('bg-green-500');
+        btnMain.classList.remove('bg-red-500');
+        btnMain.classList.add('bg-green-500');
     } else {
         deleteButtons.forEach(btn => {
             btn.style.display = 'none';
         });
-        document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
-        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
+        btnMain.classList.remove('bg-green-500');
+        btnMain.classList.add('bg-red-500');
     }
 }
 
-// ✅ PERBAIKAN: SETELAH HAPUS ATAU BATAL, TOMBOL TETAP MUNCUL
+// ✅ Fungsi untuk MATIKAN mode hapus secara paksa
+function forceCloseDeleteMode(){
+    deleteModeActive = false;
+    const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+    const btnMain = document.getElementById('btnDeleteMode');
+    
+    deleteButtons.forEach(btn => {
+        btn.style.display = 'none';
+    });
+    btnMain.classList.remove('bg-green-500');
+    btnMain.classList.add('bg-red-500');
+}
+
+// ✅ PERBAIKAN: SETELAH HAPUS ATAU BATAL
 function confirmDeleteItem(id) {
     const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
     
@@ -2355,36 +2369,39 @@ function confirmDeleteItem(id) {
     showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
         ()=>{
             deleteItem(id);
-            // ✅ Setelah hapus, render ulang dan tombol tetap muncul
-            setTimeout(() => { // sedikit jeda biar animasi modal selesai
-                document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
-                    btn.style.display = 'flex';
-                });
-            }, 300);
+            // ✅ Setelah hapus BERHASIL, TUTUP mode hapus
+            forceCloseDeleteMode();
         }, 
         "Ya, Hapus", 
         ()=>{
-            // ✅ Jika batal, pastikan tombol tetap muncul
-            document.querySelectorAll('.btn-del-item-inline').forEach(btn => {
-                btn.style.display = 'flex';
-            });
+            // ✅ Jika BATAL, TUTUP mode hapus juga
+            forceCloseDeleteMode();
         }
     );
 }
 
-// ✅ FUNGSI: KLIK LUAR -> HIDE TOMBOL
+// ✅ ATURAN KLIK: HILANGKAN JIKA BUKAN DI TOMBOL
 document.addEventListener('click', function(e){
-    if(!e.target.closest('.btn-del-item-inline') && 
-       !e.target.closest('#btnDeleteMode') && 
-       deleteModeActive) {
-        
-        const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
-        deleteButtons.forEach(btn => {
-            btn.style.display = 'none';
-        });
-        document.getElementById('btnDeleteMode').classList.remove('bg-green-500');
-        document.getElementById('btnDeleteMode').classList.add('bg-red-500');
-        deleteModeActive = false;
+    // Cek apa yang diklik
+    const isDeleteButton = e.target.closest('.btn-del-item-inline');
+    const isMainButton = e.target.closest('#btnDeleteMode');
+
+    // Jika klik di luar TOMBOL HAPUS -> LANGSUNG HILANG
+    if(!isDeleteButton && !isMainButton && deleteModeActive) {
+        forceCloseDeleteMode();
+    }
+});
+
+// ✅ TAMBAHAN KHUSUS: Pastikan hilang juga saat klik input/drag/toggle
+document.addEventListener('mousedown', function(e){
+    const isInput = e.target.closest('.form-input-item');
+    const isDrag = e.target.closest('.drag-handle');
+    const isToggle = e.target.closest('.toggle-switch');
+    const isIcon = e.target.closest('.item-icon-area');
+
+    if((isInput || isDrag || isToggle || isIcon) && deleteModeActive) {
+        // Pakai sedikit delay biar event kliknya jalan dulu baru hilang
+        setTimeout(() => forceCloseDeleteMode(), 10);
     }
 });
 
@@ -2424,6 +2441,15 @@ document.addEventListener('input', function(e) {
             toggle.onclick = function() {
                 toggleActive(this, itemId);
             };
+
+            // ✅ PERBAIKAN: KEMBALIKAN STATUS ON/OFF SESUAI DATA
+            const arr = card.dataset.type === 'menu' ? menuData : categoryData;
+            const item = arr.find(i => i.id == itemId);
+            if(item && item.active) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
         }
     }
 });
