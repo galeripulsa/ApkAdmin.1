@@ -1928,14 +1928,19 @@ function disableButton(id){
 function confirmSaveServer(){
     showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ 
         saveData(); 
-        checkServerChange(); // ✅ TAMBAH INI BIAR TOMBOL MATI
+        checkServerChange(); 
+        disableButton("saveServerBtn"); // ✅ Tombol jadi abu-abu
+        markAsSaved();                  // ✅ Reset status perubahan
         toast("Data Server Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
+
 function confirmSaveCenter(){
     showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
         saveData(); 
-        checkCenterChange(); // ✅ TAMBAH INI BIAR TOMBOL MATI
+        checkCenterChange(); 
+        disableButton("saveCenterBtn"); // ✅ Tombol jadi abu-abu
+        markAsSaved();                  // ✅ Reset status perubahan
         toast("Data Center Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
@@ -1944,10 +1949,12 @@ function confirmSaveTransaksi(){
     showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
         saveData(); 
         saveOriginalTransaksiData(); 
-        disableButton("saveTransaksiBtn"); // ✅ Tambah ini biar tombol mati
+        disableButton("saveTransaksiBtn"); // ✅ Tombol jadi abu-abu
+        markAsSaved();                    // ✅ Reset status perubahan
         toast("Menu Transaksi Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
+
 
 
 function checkCloseServer(){ checkClose("server"); }
