@@ -916,8 +916,6 @@ body{
 </div>
 
 <script>
-
-
 window.onerror = function(message, source, line, column){
     console.error("ERROR:", message, "Baris:", line);
 };
@@ -1071,7 +1069,6 @@ function closeCenter(){
 function openTransaksi(){
     document.getElementById("transaksiModal").classList.add("show");
     saveOriginalTransaksiData();
-    renderTransaksiList();
 }
 function closeTransaksi(){
     document.getElementById("transaksiModal").classList.remove("show");
@@ -1092,7 +1089,7 @@ function saveOriginalCenterData(){
     });
 }
 function saveOriginalTransaksiData(){
-    originalTransaksiData = JSON.stringify({menu: menuData, category: categoryData});
+    originalTransaksiData = document.getElementById("transaksiList").innerHTML;
 }
 
 // === CEK PERUBAHAN ===
@@ -1109,8 +1106,8 @@ function checkCenterChange(){
     currentData !== originalCenterData ? enableButton("saveCenterBtn") : disableButton("saveCenterBtn");
 }
 function checkTransaksiChange(){
-    const currentData = JSON.stringify({menu: menuData, category: categoryData});
-    currentData !== originalTransaksiData ? enableButton("saveTransaksiBtn") : disableButton("saveTransaksiBtn");
+    const currentHtml = document.getElementById("transaksiList").innerHTML;
+    currentHtml !== originalTransaksiData ? enableButton("saveTransaksiBtn") : disableButton("saveTransaksiBtn");
 }
 
 // === 🔴🔴🔴🔴🔴PASANG EVENT LISTENER ===
@@ -2042,73 +2039,530 @@ function simpanDaftarWilayah() {
 }
 
 // ==============================================
-// >>> FUNGSI TAMBAHAN UNTUK MENU TRANSAKSI <<<
+// >>> FUNGSI BACK / TUTUP <<<
 // ==============================================
-// Pastikan variabel ini dideklarasikan di awal jika belum ada:
-// let menuData = {};
-// let categoryData = {};
 
-function renderTransaksiList(){
-    const container = document.getElementById("transaksiListContainer");
-    if(!container) return;
-    container.innerHTML = "";
-    
-    // Contoh sederhana, sesuaikan dengan struktur data Anda
-    const allMenus = [...Object.keys(menuData || {})];
-    
-    allMenus.forEach(menu => {
-        const div = document.createElement("div");
-        div.className = "p-3 border rounded-lg mb-2 flex justify-between items-center";
-        div.innerHTML = `
-            <span>${menu}</span>
-            <i data-lucide="edit-3" class="text-blue-500 cursor-pointer" onclick="editTransaksi('${menu}')"></i>
-        `;
-        container.appendChild(div);
-    });
-    lucide.createIcons();
+function backToPrabayar(){
+    document.getElementById("areaModal").classList.remove("show");
+    document.getElementById("prabayarModal").classList.add("show");
 }
 
-function editTransaksi(nama){
-    // Logika edit menu transaksi
-    console.log("Edit menu:", nama);
-}
-
-// ==============================================
-// >>> INISIALISASI AWAL <<<
-// ==============================================
-document.addEventListener('DOMContentLoaded', function(){
-    renderMenus();
-    loadData();
-    saveOriginalServerData();
-    saveOriginalCenterData();
-    saveOriginalTransaksiData();
-});
-
-// ==============================================
-// >>> PERBAIKAN BAGIAN TOMBOL HAPUS MODE <<<
-// ==============================================
-function toggleDeleteMode(){
-    const btn = document.getElementById("btnDeleteMode");
-    deleteModeActive = !deleteModeActive;
-    
-    if(deleteModeActive){
-        btn.classList.add("bg-red-600", "text-white");
-        btn.classList.remove("bg-gray-200");
-        document.querySelectorAll(".icon-delete").forEach(el => el.style.display = "inline");
-        document.querySelectorAll(".icon-edit").forEach(el => el.style.display = "none");
+function backToArea(){
+    const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+    if(currentData !== originalWilayahData){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+            document.getElementById("wilayahModal").classList.remove("show");
+            openAreaModal();
+        }, "Ya, Keluar");
     } else {
-        btn.classList.remove("bg-red-600", "text-white");
-        btn.classList.add("bg-gray-200");
-        hideAllDeleteIcons();
+        document.getElementById("wilayahModal").classList.remove("show");
+        openAreaModal();
     }
 }
 
-// ==============================================
-// >>> PENUTUP SCRIPT <<<
-// ==============================================
-console.log("✅ Script Loaded & Fixed Successfully");
-</script>
 
+function autoGrow(element) {
+    element.style.height = "auto";
+    const minHeight = parseInt(window.getComputedStyle(element).minHeight);
+    const newHeight = element.scrollHeight;
+    element.style.height = (newHeight > minHeight ? newHeight : minHeight) + "px";
+}
+
+
+let menuData = [];
+let categoryData = [];
+let currentItemId = 0;
+
+// >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
+function addMenu(){
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+    
+    const newItem = {
+        id: newId,
+        name: "", // Nama kosong
+        icon: "layout-grid",
+        active: false, // ❌ Default OFF
+        type: "menu",
+        order: undefined // Tandai baru
+    };
+    menuData.unshift(newItem); 
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+// >>> FUNGSI TAMBAH KATEGORI <<<
+function addKategori(){
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+    
+    const newItem = {
+        id: newId,
+        name: "", // Nama kosong
+        icon: "folder",
+        active: false, // ❌ Default OFF
+        type: "category",
+        order: undefined // Tandai baru
+    };
+    categoryData.unshift(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+
+// >>> RENDER SEMUA ITEM <<<
+function renderTransaksiList(){
+    const container = document.getElementById("transaksiList");
+    container.innerHTML = "";
+
+    // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
+    const allItems = [];
+    
+    categoryData.forEach(item => {
+        allItems.push({ ...item });
+    });
+    
+    menuData.forEach(item => {
+        allItems.push({ ...item });
+    });
+
+    // ==============================================
+    // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
+    // ==============================================
+    const everSorted = allItems.some(item => item.order !== undefined);
+
+    if (!everSorted) {
+        // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
+        // (Item baru selalu di atas, campur bebas)
+        allItems.sort((a, b) => b.id - a.id);
+    } else {
+        // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
+        allItems.sort((a, b) => {
+            // Item baru (tanpa order) masuk paling atas
+            if (a.order === undefined) return -1;
+            if (b.order === undefined) return 1;
+            // Urutkan sesuai posisi yang sudah disimpan
+            return a.order - b.order;
+        });
+    }
+
+    // Tampilkan item
+    allItems.forEach((item, index) => {
+        const div = createItemElement(item, index, item.type);
+        div.dataset.index = index;
+        container.appendChild(div);
+    });
+
+    document.getElementById("countMenu").innerText = menuData.length;
+    document.getElementById("countCategory").innerText = categoryData.length;
+
+    lucide.createIcons();
+    initSortable();
+}
+
+
+
+function createItemElement(item, index, type){
+    const div = document.createElement("div");
+    div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
+    div.dataset.id = item.id;
+    div.dataset.type = type;
+    div.dataset.index = index;
+
+    // === CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
+    let iconHtml = '';
+    if (item.icon && item.icon.startsWith('data:image')) {
+        iconHtml = `<img src="${item.icon}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+    } else {
+        iconHtml = `<i data-lucide="${item.icon || 'help-circle'}"></i>`;
+    }
+
+    // Khusus Menu, tambahkan input hidden untuk pilih gambar
+    const fileInput = type === 'menu' ? `<input type="file" id="fileInput_${item.id}" accept="image/*" style="display:none" onchange="handleImageUpload(this, ${item.id})">` : "";
+
+    div.innerHTML = `
+        <div class="item-content-wrapper">
+            
+            <!-- ICON AREA -->
+            <div class="item-icon-area" onclick="${type === 'menu' ? `document.getElementById('fileInput_${item.id}').click()` : 'openIconSelector(this)'}">
+                ${iconHtml}
+                ${fileInput}
+            </div>
+
+            <!-- INPUT NAMA -->
+            <div class="item-body">
+                <input type="text" class="form-input-item" value="${item.name || ''}" 
+                       oninput="updateName(this, ${item.id})" placeholder="${type === 'menu' ? 'Tulis nama menu...' : 'Tulis nama kategori...'}">
+            </div>
+
+            <!-- ✅ PERBAIKAN: TOGGLE AKTIF / NONAKTIF - PASTIKAN CLASS AKTIF TERBACA -->
+            <div class="toggle-switch ${item.active ? 'active' : ''}" 
+                 onclick="${item.name && item.name.trim() !== '' ? `toggleActive(this, ${item.id})` : 'showConfirm(\'Peringatan\', \'Nama item harus diisi terlebih dahulu!\', null, \'Oke\')'}"
+                 style="${(!item.name || item.name.trim() === '') ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                <div class="toggle-knob"></div>
+            </div>
+
+            <!-- DRAG HANDLE -->
+            <div class="drag-handle">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </div>
+
+            <!-- TOMBOL HAPUS -->
+            <button class="btn-del-item-inline" onclick="confirmDeleteItem(${item.id})" 
+                    style="width: 36px; height: 36px; display: none; align-items: center; justify-content: center; background: #fee2e2; color: #dc2626; border: none; border-radius: 10px; cursor: pointer; margin-left: 5px;">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+
+        </div>
+    `;
+    return div;
+}
+
+
+// >>> ❌ FUNGSI SWIPE DIHAPUS TOTAL <<<
+function setupItemInteractions(){
+    // Dinonaktifkan
+}
+
+
+// >>> FUNGSI PENDUKUNG <<<
+function toggleActive(el, id){
+    // ✅ Toggle class dulu
+    el.classList.toggle('active');
+    
+    // ✅ Cari data di SEMUA array (karena data campur)
+    let item = menuData.find(i => i.id === id);
+    if(!item) item = categoryData.find(i => i.id === id);
+    
+    if(item) {
+        // ✅ Update status di data asli
+        item.active = el.classList.contains('active');
+    }
+    enableButton("saveTransaksiBtn");
+}
+
+function updateName(inputEl, id){
+    const parentCard = inputEl.closest('[data-type]');
+    const type = parentCard.dataset.type;
+    const arr = type === 'menu' ? menuData : categoryData;
+    const item = arr.find(i => i.id === id);
+    
+    if(item) {
+        item.name = inputEl.value;
+        enableButton("saveTransaksiBtn");
+    }
+}
+
+// ✅ BUG FIX 1: HAPUS BERDASARKAN TYPE AGAR TIDAK SALING HAPUS
+function deleteItem(id){
+    // Cari dulu itemnya untuk tahu typenya
+    const menuItem = menuData.find(i => i.id === id);
+    const categoryItem = categoryData.find(i => i.id === id);
+
+    if(menuItem) {
+        menuData = menuData.filter(i => i.id !== id);
+    } else if(categoryItem) {
+        categoryData = categoryData.filter(i => i.id !== id);
+    }
+    
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+function openIconSelector(el){
+    showConfirm("Ganti Icon", "Ganti icon kategori belum tersedia.", null, "Oke");
+}
+
+// >>> SORTABLE JS <<<
+function initSortable(){
+    if(sortableInstance) sortableInstance.destroy();
+    
+    const list = document.getElementById("transaksiList");
+    sortableInstance = new Sortable.create(list, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: function (evt) {
+            const items = list.children;
+            const newOrder = [];
+
+            // Baca urutan baru dari tampilan
+            for(let i = 0; i < items.length; i++) {
+                const itemEl = items[i];
+                const id = parseInt(itemEl.dataset.id);
+                const type = itemEl.dataset.type;
+                
+                let dataItem = null;
+                if(type === 'menu') {
+                    dataItem = menuData.find(d => d.id === id);
+                } else {
+                    dataItem = categoryData.find(d => d.id === id);
+                }
+
+                if(dataItem) {
+                    // ✅ SIMPAN POSISI BARU
+                    dataItem.order = i; 
+                    newOrder.push(dataItem);
+                }
+            }
+            
+            // ✅ PENTING: JANGAN DIPISAH LAGI, TAPI UPDATE URUTAN DI DATA ASLINYA
+            // Kita hanya update property 'order' saja di data asli, biar posisi terkunci
+            newOrder.forEach(item => {
+                if(item.type === 'menu') {
+                    let ori = menuData.find(d => d.id === item.id);
+                    if(ori) ori.order = item.order;
+                } else {
+                    let ori = categoryData.find(d => d.id === item.id);
+                    if(ori) ori.order = item.order;
+                }
+            });
+            
+            enableButton("saveTransaksiBtn");
+        },
+    });
+}
+
+
+// >>> FUNGSI UPLOAD GAMBAR <<<
+function handleImageUpload(input, id){
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const menuItem = menuData.find(i => i.id === id);
+            if(menuItem) {
+                menuItem.icon = e.target.result; 
+                
+                const iconArea = document.querySelector(`[data-id="${id}"] .item-icon-area`);
+                if(iconArea) {
+                    iconArea.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
+                }
+                
+                enableButton("saveTransaksiBtn");
+                showConfirm("Berhasil", "Icon menu berhasil diganti!", null, "Oke");
+            }
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// ==================================================
+// ✅ FUNGSI: MODE HAPUS & KONFIRMASI - VERSI PERBAIKI
+// ==================================================
+let deleteModeActive = false;
+
+function toggleDeleteMode() {
+    deleteModeActive = !deleteModeActive;
+    const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+    const btnMain = document.getElementById('btnDeleteMode');
+    
+    if(deleteModeActive) {
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'flex';
+        });
+        btnMain.classList.remove('bg-red-500');
+        btnMain.classList.add('bg-green-500');
+    } else {
+        deleteButtons.forEach(btn => {
+            btn.style.display = 'none';
+        });
+        btnMain.classList.remove('bg-green-500');
+        btnMain.classList.add('bg-red-500');
+    }
+}
+
+// ✅ Fungsi untuk MATIKAN mode hapus secara paksa
+function forceCloseDeleteMode(){
+    deleteModeActive = false;
+    const deleteButtons = document.querySelectorAll('.btn-del-item-inline');
+    const btnMain = document.getElementById('btnDeleteMode');
+    
+    deleteButtons.forEach(btn => {
+        btn.style.display = 'none';
+    });
+    btnMain.classList.remove('bg-green-500');
+    btnMain.classList.add('bg-red-500');
+}
+
+// ✅ PERBAIKAN: SETELAH HAPUS ATAU BATAL
+function confirmDeleteItem(id) {
+    const item = menuData.find(i => i.id === id) || categoryData.find(i => i.id === id);
+    
+    if(!item) return;
+
+    showConfirm("Hapus Item", `Yakin hapus "${item.name || 'Item tanpa nama'}"?`, 
+        ()=>{
+            deleteItem(id);
+            // ✅ Setelah hapus BERHASIL, TUTUP mode hapus
+            forceCloseDeleteMode();
+        }, 
+        "Ya, Hapus", 
+        ()=>{
+            // ✅ Jika BATAL, TUTUP mode hapus juga
+            forceCloseDeleteMode();
+        }
+    );
+}
+
+// ✅ ATURAN KLIK: HILANGKAN JIKA BUKAN DI TOMBOL
+document.addEventListener('click', function(e){
+    // Cek apa yang diklik
+    const isDeleteButton = e.target.closest('.btn-del-item-inline');
+    const isMainButton = e.target.closest('#btnDeleteMode');
+
+    // Jika klik di luar TOMBOL HAPUS -> LANGSUNG HILANG
+    if(!isDeleteButton && !isMainButton && deleteModeActive) {
+        forceCloseDeleteMode();
+    }
+});
+
+// ✅ TAMBAHAN KHUSUS: Pastikan hilang juga saat klik input/drag/toggle
+document.addEventListener('mousedown', function(e){
+    const isInput = e.target.closest('.form-input-item');
+    const isDrag = e.target.closest('.drag-handle');
+    const isToggle = e.target.closest('.toggle-switch');
+    const isIcon = e.target.closest('.item-icon-area');
+
+    if((isInput || isDrag || isToggle || isIcon) && deleteModeActive) {
+        // Pakai sedikit delay biar event kliknya jalan dulu baru hilang
+        setTimeout(() => forceCloseDeleteMode(), 10);
+    }
+});
+
+
+// === INIT ===
+document.addEventListener("DOMContentLoaded", ()=>{
+    renderMenus();
+    loadData();
+    renderTransaksiList();
+});
+
+
+
+// ✅ Validasi Toggle: Jika nama kosong, toggle terkunci
+document.addEventListener('input', function(e) {
+    if(e.target.classList.contains('form-input-item')) {
+        const card = e.target.closest('[data-type]');
+        if(!card) return; // Tambahan biar aman
+        const toggle = card.querySelector('.toggle-switch');
+        const itemId = card.dataset.id;
+        
+        if(!e.target.value.trim()) {
+            toggle.style.opacity = '0.5';
+            toggle.style.cursor = 'not-allowed';
+            toggle.onclick = function() {
+                showConfirm('Peringatan', 'Nama item harus diisi terlebih dahulu!', null, 'Oke');
+            };
+            // Matikan otomatis jika nama dihapus
+            toggle.classList.remove('active');
+            const arr = card.dataset.type === 'menu' ? menuData : categoryData;
+            const item = arr.find(i => i.id == itemId);
+            if(item) item.active = false;
+            enableButton("saveTransaksiBtn");
+        } else {
+            toggle.style.opacity = '1';
+            toggle.style.cursor = 'pointer';
+            toggle.onclick = function() {
+                toggleActive(this, itemId);
+            };
+
+            // ✅ PERBAIKAN: KEMBALIKAN STATUS ON/OFF SESUAI DATA
+            const arr = card.dataset.type === 'menu' ? menuData : categoryData;
+            const item = arr.find(i => i.id == itemId);
+            if(item && item.active) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+    }
+});
+
+// ==================================================
+// ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
+// ==================================================
+let hasChanges = false;
+
+// --- 1. TANDAI ADA PERUBAHAN ---
+function markAsChanged() {
+    hasChanges = true;
+}
+
+// --- 2. TANDAI SUDAH DISIMPAN ---
+function markAsSaved() {
+    hasChanges = false;
+}
+
+// --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
+// ✅ BERLAKU UNIVERSAL: Semua halaman, semua form, semua input
+document.addEventListener('input', markAsChanged);
+document.addEventListener('change', markAsChanged);
+
+// --- 4. OVERRIDE FUNGSI enableButton ---
+if (typeof enableButton !== 'undefined') {
+    const originalEnableButton = enableButton;
+    enableButton = function(id) {
+        originalEnableButton(id);
+        markAsChanged();
+    }
+}
+
+// --- 5. OVERRIDE SEMUA FUNGSI SIMPAN OTOMATIS ---
+// ✅ DETEKSI OTOMATIS: Cari semua fungsi yang ada kata "save" atau "simpan"
+for (const key in window) {
+    if (typeof window[key] === 'function') {
+        if(key.toLowerCase().includes('save') || key.toLowerCase().includes('simpan')) {
+            const originalFunction = window[key];
+            window[key] = function() {
+                const result = originalFunction.apply(this, arguments);
+                markAsSaved();
+                return result;
+            }
+        }
+    }
+}
+
+// --- 6. PENANGANAN TOMBOL BACK & MODAL ---
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+    history.go(1); // Tetap di halaman dulu
+    
+    // ✅ CEK SEMUA JENIS MODAL YANG MUNGKIN TERBUKA
+    // Termasuk Modal Area, Wilayah, Submenu, dll
+    const modals = document.querySelectorAll('.modal.show, .submenu-modal.show, [class*="modal"].show');
+    
+    if (modals.length > 0) {
+        // ✅ Tutup modal yang paling atas dulu
+        modals[modals.length - 1].classList.remove('show');
+        history.pushState(null, null, location.href); // Tambah history agar bisa back berkali-kali
+        
+    } else if (hasChanges) {
+        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP
+        showConfirm(
+            "Perubahan Terdeteksi", 
+            "Ada data yang belum disimpan. Yakin ingin keluar?", 
+            function() {
+                markAsSaved();
+                history.back();
+            }, 
+            "Ya, Keluar", 
+            function() {
+                history.pushState(null, null, location.href);
+            },
+            "Batal"
+        );
+    } else {
+        // ✅ JIKA AMAN -> KELUAR NORMAL
+        history.back();
+    }
+};
+
+</script>
 
 
 </body>
