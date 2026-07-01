@@ -1924,16 +1924,61 @@ function disableButton(id){
     if(btn) { btn.disabled = true; btn.classList.add("bg-gray-400", "cursor-not-allowed", "opacity-50"); btn.classList.remove("bg-cyan-600"); }
 }
 
-// ✅ PERBAIKAN: Hapus perintah close biar modal gak hilang, DAN panggil check biar tombol mati
+// >>> SIMPAN DATA SERVER <<<
 function confirmSaveServer(){
     showConfirm("Simpan Data", "Yakin simpan data server?", ()=>{ 
         saveData(); 
-        checkServerChange(); 
-        disableButton("saveServerBtn"); // ✅ Tombol jadi abu-abu
-        markAsSaved();                  // ✅ Reset status perubahan
+        checkServerChange();
+        
+        // ✅ PASTIKAN TOMBOL MATI
+        const btnServer = document.getElementById("saveServerBtn");
+        if(btnServer){
+            btnServer.disabled = true;
+            btnServer.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        markAsSaved();
         toast("Data Server Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
+
+// >>> SIMPAN DATA CENTER <<<
+function confirmSaveCenter(){
+    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
+        saveData(); 
+        checkCenterChange();
+        
+        // ✅ PASTIKAN TOMBOL MATI
+        const btnCenter = document.getElementById("saveCenterBtn");
+        if(btnCenter){
+            btnCenter.disabled = true;
+            btnCenter.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        markAsSaved(); // ✅ Reset status perubahan
+        toast("Data Center Berhasil Disimpan"); // ✅ Munculkan notif
+    }, "Ya, Simpan");
+}
+        
+
+// >>> SIMPAN MENU TRANSAKSI <<<
+function confirmSaveTransaksi(){
+    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
+        saveData(); 
+        saveOriginalTransaksiData(); 
+        
+        // ✅ PASTIKAN TOMBOL MATI
+        const btnTransaksi = document.getElementById("saveTransaksiBtn");
+        if(btnTransaksi){
+            btnTransaksi.disabled = true;
+            btnTransaksi.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        markAsSaved();
+        toast("Menu Transaksi Berhasil Disimpan"); 
+    }, "Ya, Simpan");
+}
+
 
 function confirmSaveCenter(){
     showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
