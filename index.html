@@ -1980,28 +1980,6 @@ function confirmSaveTransaksi(){
 }
 
 
-function confirmSaveCenter(){
-    showConfirm("Simpan Data", "Yakin simpan data center?", ()=>{ 
-        saveData(); 
-        checkCenterChange(); 
-        disableButton("saveCenterBtn"); // ✅ Tombol jadi abu-abu
-        markAsSaved();                  // ✅ Reset status perubahan
-        toast("Data Center Berhasil Disimpan"); 
-    }, "Ya, Simpan");
-}
-
-function confirmSaveTransaksi(){
-    showConfirm("Simpan Data", "Yakin simpan menu transaksi?", ()=>{ 
-        saveData(); 
-        saveOriginalTransaksiData(); 
-        disableButton("saveTransaksiBtn"); // ✅ Tombol jadi abu-abu
-        markAsSaved();                    // ✅ Reset status perubahan
-        toast("Menu Transaksi Berhasil Disimpan"); 
-    }, "Ya, Simpan");
-}
-
-
-
 function checkCloseServer(){ checkClose("server"); }
 function checkCloseCenter(){ checkClose("center"); }
 function checkClose(type){
