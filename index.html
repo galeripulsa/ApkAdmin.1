@@ -2079,106 +2079,93 @@ function escapeHtml(text) {
 
 
 let menuData = [];
-let categoryData = [];
-let currentItemId = 0;
-
-// >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
-function addMenu(){
-    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
-    const allIds = [...menuData, ...categoryData].map(item => item.id);
-    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
-    
-    const newItem = {
-        id: newId,
-        name: "", // Nama kosong
-        icon: "layout-grid",
-        active: false, // ❌ Default OFF
-        type: "menu",
-        order: undefined // Tandai baru
-    };
-    menuData.unshift(newItem); 
-    renderTransaksiList();
-    enableButton("saveTransaksiBtn");
-}
-
-// >>> FUNGSI TAMBAH KATEGORI <<<
-function addKategori(){
-    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
-    const allIds = [...menuData, ...categoryData].map(item => item.id);
-    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
-    
-    const newItem = {
-        id: newId,
-        name: "", // Nama kosong
-        icon: "folder",
-        active: false, // ❌ Default OFF
-        type: "category",
-        order: undefined // Tandai baru
-    };
-    categoryData.unshift(newItem);
-    renderTransaksiList();
-    enableButton("saveTransaksiBtn");
-}
-
-
-// >>> RENDER SEMUA ITEM <<<
-function renderTransaksiList(){
-    const container = document.getElementById("transaksiList");
-    container.innerHTML = "";
-
-    // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
-    const allItems = [];
-    
-    categoryData.forEach(item => {
-        allItems.push({ ...item });
-    });
-    
-    menuData.forEach(item => {
-        allItems.push({ ...item });
-    });
-
-    // ==============================================
-    // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
-    // ==============================================
-    const everSorted = allItems.some(item => item.order !== undefined);
-
-    if (!everSorted) {
-        // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
-        // (Item baru selalu di atas, campur bebas)
-        allItems.sort((a, b) => b.id - a.id);
-    } else {
-        // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
-        allItems.sort((a, b) => {
-            // Item baru (tanpa order) masuk paling atas
-            if (a.order === undefined) return -1;
-            if (b.order === undefined) return 1;
-            // Urutkan sesuai posisi yang sudah disimpan
-            return a.order - b.order;
-        });
-    }
-
-    // Tampilkan item
-    allItems.forEach((item, index) => {
-        const div = createItemElement(item, index, item.type);
-        div.dataset.index = index;
-        container.appendChild(div);
-    });
-
-    document.getElementById("countMenu").innerText = menuData.length;
-    document.getElementById("countCategory").innerText = categoryData.length;
-
-    lucide.createIcons();
-    initSortable();
-}
-
-
-
-function createItemElement(item, index, type){
-    const div = document.createElement("div");
-    div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
-    div.dataset.id = item.id;
-    div.dataset.type = type;
-    div.dataset.index = index;
+ let categoryData = [];
+ let currentItemId = 0;
+ // >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
+ function addMenu(){
+     // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+     const allIds = [...menuData, ...categoryData].map(item => item.id);
+     const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+     
+     const newItem = {
+         id: newId,
+         name: "", // Nama kosong
+         icon: "layout-grid",
+         active: false, // ❌ Default OFF
+         type: "menu",
+         order: undefined // Tandai baru
+     };
+     menuData.unshift(newItem); 
+     renderTransaksiList();
+     enableButton("saveTransaksiBtn");
+ }
+ // >>> FUNGSI TAMBAH KATEGORI <<<
+ function addKategori(){
+     // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+     const allIds = [...menuData, ...categoryData].map(item => item.id);
+     const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+     
+     const newItem = {
+         id: newId,
+         name: "", // Nama kosong
+         icon: "folder",
+         active: false, // ❌ Default OFF
+         type: "category",
+         order: undefined // Tandai baru
+     };
+     categoryData.unshift(newItem);
+     renderTransaksiList();
+     enableButton("saveTransaksiBtn");
+ }
+ // >>> RENDER SEMUA ITEM <<<
+ function renderTransaksiList(){
+     const container = document.getElementById("transaksiList");
+     container.innerHTML = "";
+     // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
+     const allItems = [];
+     
+     categoryData.forEach(item => {
+         allItems.push({ ...item });
+     });
+     
+     menuData.forEach(item => {
+         allItems.push({ ...item });
+     });
+     // ==============================================
+     // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
+     // ==============================================
+     const everSorted = allItems.some(item => item.order !== undefined);
+     if (!everSorted) {
+         // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
+         // (Item baru selalu di atas, campur bebas)
+         allItems.sort((a, b) => b.id - a.id);
+     } else {
+         // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
+         allItems.sort((a, b) => {
+             // Item baru (tanpa order) masuk paling atas
+             if (a.order === undefined) return -1;
+             if (b.order === undefined) return 1;
+             // Urutkan sesuai posisi yang sudah disimpan
+             return a.order - b.order;
+         });
+     }
+     // Tampilkan item
+     allItems.forEach((item, index) => {
+         const div = createItemElement(item, index, item.type);
+         div.dataset.index = index;
+         container.appendChild(div);
+     });
+     document.getElementById("countMenu").innerText = menuData.length;
+     document.getElementById("countCategory").innerText = categoryData.length;
+     lucide.createIcons();
+     initSortable();
+ }
+ function createItemElement(item, index, type){
+     const div = document.createElement("div");
+     div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
+     div.dataset.id = item.id;
+     div.dataset.type = type;
+     div.dataset.index = index;
 
     // === CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
     let iconHtml = '';
