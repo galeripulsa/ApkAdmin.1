@@ -2484,7 +2484,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ==================================================
-// ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
+// ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTRON
 // ==================================================
 let hasChanges = false;
 
@@ -2546,21 +2546,22 @@ window.onpopstate = function () {
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
-            function() {
+            function() { // Fungsi JIKA YA
                 markAsSaved();
                 history.back();
             }, 
-            "Ya, Keluar", 
-            function() {
+            "Ya, Keluar",  // Teks Tombol YA
+            function() {    // Fungsi JIKA TIDAK / BATAL
                 history.pushState(null, null, location.href);
-            },
-            "Batal"
+            }
+            // Parameter terakhir "Batal" otomatis terisi oleh fungsi
         );
     } else {
         // ✅ JIKA AMAN -> KELUAR NORMAL
         history.back();
     }
 };
+
 
 </script>
 
