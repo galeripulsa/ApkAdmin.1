@@ -2108,13 +2108,18 @@ function autoGrow(element) {
      renderTransaksiList();
      enableButton("saveTransaksiBtn");
  }
+
+
  // >>> RENDER SEMUA ITEM <<<
  function renderTransaksiList(){
      const container = document.getElementById("transaksiList");
      container.innerHTML = "";
-     // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
-     const allItems = [];
      
+     // ✅ CARA BARU: GABUNG LANGSUNG JADI 1 ARRAY
+     // Biar urutannya campur dari awal, nggak kelompok
+     let allItems = [];
+     
+     // Masukkan semua data ke array yang sama
      categoryData.forEach(item => {
          allItems.push({ ...item });
      });
@@ -2122,16 +2127,18 @@ function autoGrow(element) {
      menuData.forEach(item => {
          allItems.push({ ...item });
      });
+
      // ==============================================
-     // ✅ LOGIKA URUTAN BARU: TAMBAHAN BARU SELALU DI ATAS
+     // ✅ LOGIKA URUTAN: CAMPUR BEBAS & BARU DI ATAS
      // ==============================================
      allItems.sort((a, b) => {
          
          // 👉 JIKA ITEM BARU (BELUM PUNYA ORDER) -> NAIK KE PALING ATAS
-         if (a.order === undefined && b.order !== undefined) return -1; // a di atas b
-         if (b.order === undefined && a.order !== undefined) return 1;  // b di atas a
+         if (a.order === undefined && b.order !== undefined) return -1;
+         if (b.order === undefined && a.order !== undefined) return 1;
 
          // 👉 JIKA KEDUANYA BARU -> URUTKAN ID BESAR KE KECIL
+         // (Ini kuncinya! Jadi Menu & Kategori baru campur sesuai waktu buat)
          if (a.order === undefined && b.order === undefined) {
              return b.id - a.id; 
          }
@@ -2146,6 +2153,7 @@ function autoGrow(element) {
          div.dataset.index = index;
          container.appendChild(div);
      });
+     
      document.getElementById("countMenu").innerText = menuData.length;
      document.getElementById("countCategory").innerText = categoryData.length;
      lucide.createIcons();
