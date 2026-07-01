@@ -2123,26 +2123,22 @@ function autoGrow(element) {
          allItems.push({ ...item });
      });
      // ==============================================
-     // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
+     // ✅ LOGIKA URUTAN BARU: TAMBAHAN BARU SELALU DI ATAS
      // ==============================================
-     // Cek apakah ada item yang sudah punya nomor urut (order)
-     const hasOrder = allItems.some(item => item.order !== undefined);
-
-     if (!hasOrder) {
-         // 👉 BELUM PERNAH DI-SORT: Urutkan ID BESAR KE KECIL
-         // (Item Terbaru = Paling Atas)
-         allItems.sort((a, b) => b.id - a.id);
+     allItems.sort((a, b) => {
          
-         // Beri nomor urut awal
-         allItems.forEach((item, idx) => {
-             item.order = idx;
-         });
+         // 👉 JIKA ITEM BARU (BELUM PUNYA ORDER) -> NAIK KE PALING ATAS
+         if (a.order === undefined && b.order !== undefined) return -1; // a di atas b
+         if (b.order === undefined && a.order !== undefined) return 1;  // b di atas a
 
-     } else {
-         // 👉 SUDAH PERNAH DI-SORT / DRAG: Urutkan berdasarkan ORDER
-         // (Posisi TETAP sesuai terakhir di geser)
-         allItems.sort((a, b) => a.order - b.order);
-     }
+         // 👉 JIKA KEDUANYA BARU -> URUTKAN ID BESAR KE KECIL
+         if (a.order === undefined && b.order === undefined) {
+             return b.id - a.id; 
+         }
+
+         // 👉 JIKA KEDUANYA SUDAH ADA ORDER -> URUTKAN SESUAI NOMOR ORDER
+         return a.order - b.order;
+     });
 
      // Tampilkan item
      allItems.forEach((item, index) => {
@@ -2155,6 +2151,9 @@ function autoGrow(element) {
      lucide.createIcons();
      initSortable();
  }
+
+
+
  function createItemElement(item, index, type){
      const div = document.createElement("div");
      div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
