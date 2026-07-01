@@ -2069,7 +2069,7 @@ function autoGrow(element) {
 }
 
 
-let menuData = [];
+ let menuData = [];
  let categoryData = [];
  let currentItemId = 0;
  // >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
@@ -2125,21 +2125,25 @@ let menuData = [];
      // ==============================================
      // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
      // ==============================================
-     const everSorted = allItems.some(item => item.order !== undefined);
-     if (!everSorted) {
-         // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
-         // (Item baru selalu di atas, campur bebas)
+     // Cek apakah ada item yang sudah punya nomor urut (order)
+     const hasOrder = allItems.some(item => item.order !== undefined);
+
+     if (!hasOrder) {
+         // 👉 BELUM PERNAH DI-SORT: Urutkan ID BESAR KE KECIL
+         // (Item Terbaru = Paling Atas)
          allItems.sort((a, b) => b.id - a.id);
-     } else {
-         // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
-         allItems.sort((a, b) => {
-             // Item baru (tanpa order) masuk paling atas
-             if (a.order === undefined) return -1;
-             if (b.order === undefined) return 1;
-             // Urutkan sesuai posisi yang sudah disimpan
-             return a.order - b.order;
+         
+         // Beri nomor urut awal
+         allItems.forEach((item, idx) => {
+             item.order = idx;
          });
+
+     } else {
+         // 👉 SUDAH PERNAH DI-SORT / DRAG: Urutkan berdasarkan ORDER
+         // (Posisi TETAP sesuai terakhir di geser)
+         allItems.sort((a, b) => a.order - b.order);
      }
+
      // Tampilkan item
      allItems.forEach((item, index) => {
          const div = createItemElement(item, index, item.type);
@@ -2257,8 +2261,9 @@ let menuData = [];
          chosenClass: 'sortable-chosen',
          onEnd: function (evt) {
              const items = list.children;
-             const newOrder = [];
-             // Baca urutan baru dari tampilan
+             const allItems = [];
+
+             // Baca urutan baru dari tampilan & masukkan ke array sementara
              for(let i = 0; i < items.length; i++) {
                  const itemEl = items[i];
                  const id = parseInt(itemEl.dataset.id);
@@ -2271,15 +2276,14 @@ let menuData = [];
                      dataItem = categoryData.find(d => d.id === id);
                  }
                  if(dataItem) {
-                     // ✅ SIMPAN POSISI BARU
+                     // ✅ UPDATE POSISI BARU
                      dataItem.order = i; 
-                     newOrder.push(dataItem);
+                     allItems.push(dataItem);
                  }
              }
              
-             // ✅ PENTING: JANGAN DIPISAH LAGI, TAPI UPDATE URUTAN DI DATA ASLINYA
-             // Kita hanya update property 'order' saja di data asli, biar posisi terkunci
-             newOrder.forEach(item => {
+             // ✅ Update data asli agar tersimpan permanen
+             allItems.forEach(item => {
                  if(item.type === 'menu') {
                      let ori = menuData.find(d => d.id === item.id);
                      if(ori) ori.order = item.order;
@@ -2433,6 +2437,7 @@ let menuData = [];
          }
      }
  });
+
 
 
  // ==================================================
