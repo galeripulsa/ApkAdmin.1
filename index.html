@@ -611,21 +611,21 @@ body{
     background: #10b981;
 }
 
-..toggle-knob {
-  width: 17px !important;
-  height: 17px !important;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 2.5px;
-  left: 2.5px;
-  transition: 0.3s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-}
-.toggle-switch.active .toggle-knob {
-  left: 20.5px !important;
+.toggle-knob {
+    width: 17px !important;
+    height: 17px !important;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2.2px;
+    left: 2.5px;
+    transition: 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
+.toggle-switch.active .toggle-knob {
+    left: 20px !important;
+}
 
 /* TOMBOL HAPUS DI BELAKANG */
 .btn-del-item {
@@ -2068,104 +2068,108 @@ function autoGrow(element) {
     element.style.height = (newHeight > minHeight ? newHeight : minHeight) + "px";
 }
 
-function escapeHtml(text) {
-    if(!text) return "";
-    return text.replace(/&/g, "&amp;")
-               .replace(/</g, "&lt;")
-               .replace(/>/g, "&gt;")
-               .replace(/"/g, "&quot;")
-               .replace(/'/g, "&#039;");
+
+let menuData = [];
+let categoryData = [];
+let currentItemId = 0;
+
+// >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
+function addMenu(){
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+    
+    const newItem = {
+        id: newId,
+        name: "", // Nama kosong
+        icon: "layout-grid",
+        active: false, // ❌ Default OFF
+        type: "menu",
+        order: undefined // Tandai baru
+    };
+    menuData.unshift(newItem); 
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
+}
+
+// >>> FUNGSI TAMBAH KATEGORI <<<
+function addKategori(){
+    // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
+    const allIds = [...menuData, ...categoryData].map(item => item.id);
+    const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
+    
+    const newItem = {
+        id: newId,
+        name: "", // Nama kosong
+        icon: "folder",
+        active: false, // ❌ Default OFF
+        type: "category",
+        order: undefined // Tandai baru
+    };
+    categoryData.unshift(newItem);
+    renderTransaksiList();
+    enableButton("saveTransaksiBtn");
 }
 
 
-let menuData = [];
- let categoryData = [];
- let currentItemId = 0;
- // >>> Ⓜ️Ⓜ️Ⓜ️ FUNGSI TAMBAH MENU Ⓜ️Ⓜ️Ⓜ️ <<<
- function addMenu(){
-     // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
-     const allIds = [...menuData, ...categoryData].map(item => item.id);
-     const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
-     
-     const newItem = {
-         id: newId,
-         name: "", // Nama kosong
-         icon: "layout-grid",
-         active: false, // ❌ Default OFF
-         type: "menu",
-         order: undefined // Tandai baru
-     };
-     menuData.unshift(newItem); 
-     renderTransaksiList();
-     enableButton("saveTransaksiBtn");
- }
- // >>> FUNGSI TAMBAH KATEGORI <<<
- function addKategori(){
-     // ✅ AMBIL ID TERTINGGI DARI SEMUA ITEM (MENU + KATEGORI)
-     const allIds = [...menuData, ...categoryData].map(item => item.id);
-     const newId = allIds.length > 0 ? Math.max(...allIds) + 1 : 1;
-     
-     const newItem = {
-         id: newId,
-         name: "", // Nama kosong
-         icon: "folder",
-         active: false, // ❌ Default OFF
-         type: "category",
-         order: undefined // Tandai baru
-     };
-     categoryData.unshift(newItem);
-     renderTransaksiList();
-     enableButton("saveTransaksiBtn");
- }
- // >>> RENDER SEMUA ITEM <<<
- function renderTransaksiList(){
-     const container = document.getElementById("transaksiList");
-     container.innerHTML = "";
-     // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
-     const allItems = [];
-     
-     categoryData.forEach(item => {
-         allItems.push({ ...item });
-     });
-     
-     menuData.forEach(item => {
-         allItems.push({ ...item });
-     });
-     // ==============================================
-     // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
-     // ==============================================
-     const everSorted = allItems.some(item => item.order !== undefined);
-     if (!everSorted) {
-         // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
-         // (Item baru selalu di atas, campur bebas)
-         allItems.sort((a, b) => b.id - a.id);
-     } else {
-         // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
-         allItems.sort((a, b) => {
-             // Item baru (tanpa order) masuk paling atas
-             if (a.order === undefined) return -1;
-             if (b.order === undefined) return 1;
-             // Urutkan sesuai posisi yang sudah disimpan
-             return a.order - b.order;
-         });
-     }
-     // Tampilkan item
-     allItems.forEach((item, index) => {
-         const div = createItemElement(item, index, item.type);
-         div.dataset.index = index;
-         container.appendChild(div);
-     });
-     document.getElementById("countMenu").innerText = menuData.length;
-     document.getElementById("countCategory").innerText = categoryData.length;
-     lucide.createIcons();
-     initSortable();
- }
- function createItemElement(item, index, type){
-     const div = document.createElement("div");
-     div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
-     div.dataset.id = item.id;
-     div.dataset.type = type;
-     div.dataset.index = index;
+// >>> RENDER SEMUA ITEM <<<
+function renderTransaksiList(){
+    const container = document.getElementById("transaksiList");
+    container.innerHTML = "";
+
+    // ✅ GABUNGKAN SEMUA DATA KE SATU ARRAY
+    const allItems = [];
+    
+    categoryData.forEach(item => {
+        allItems.push({ ...item });
+    });
+    
+    menuData.forEach(item => {
+        allItems.push({ ...item });
+    });
+
+    // ==============================================
+    // ✅ LOGIKA URUTAN: TIDAK BERKELOMPOK
+    // ==============================================
+    const everSorted = allItems.some(item => item.order !== undefined);
+
+    if (!everSorted) {
+        // JIKA BARU DITAMBAH / BELUM DIATUR -> URUTKAN ID BESAR KE KECIL
+        // (Item baru selalu di atas, campur bebas)
+        allItems.sort((a, b) => b.id - a.id);
+    } else {
+        // JIKA SUDAH PERNAH DI-DRAG -> GUNAKAN URUTAN YANG DISIMPAN
+        allItems.sort((a, b) => {
+            // Item baru (tanpa order) masuk paling atas
+            if (a.order === undefined) return -1;
+            if (b.order === undefined) return 1;
+            // Urutkan sesuai posisi yang sudah disimpan
+            return a.order - b.order;
+        });
+    }
+
+    // Tampilkan item
+    allItems.forEach((item, index) => {
+        const div = createItemElement(item, index, item.type);
+        div.dataset.index = index;
+        container.appendChild(div);
+    });
+
+    document.getElementById("countMenu").innerText = menuData.length;
+    document.getElementById("countCategory").innerText = categoryData.length;
+
+    lucide.createIcons();
+    initSortable();
+}
+
+
+
+function createItemElement(item, index, type){
+    const div = document.createElement("div");
+    div.className = type === 'menu' ? 'menu-item-card' : 'category-item-card';
+    div.dataset.id = item.id;
+    div.dataset.type = type;
+    div.dataset.index = index;
 
     // === CEK APAKAH ICON ITU GAMBAR ATAU LUCIDE ===
     let iconHtml = '';
@@ -2350,7 +2354,7 @@ function handleImageUpload(input, id){
 // ==================================================
 // ✅ FUNGSI: MODE HAPUS & KONFIRMASI - VERSI PERBAIKI
 // ==================================================
-
+let deleteModeActive = false;
 
 function toggleDeleteMode() {
     deleteModeActive = !deleteModeActive;
@@ -2523,58 +2527,38 @@ for (const key in window) {
     }
 }
 
-// --- 6. PENANGANAN TOMBOL BACK & MODAL - VERSI PERBAIKI LENGKAP ---
+// --- 6. PENANGANAN TOMBOL BACK & MODAL ---
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
-    history.go(1); // Blokir keluar langsung
-
-    // ✅ DAFTAR SEMUA JENIS MODAL YANG ADA DI APLIKASI
-    const allModals = document.querySelectorAll(`
-        .modal.show, 
-        .submenu-modal.show, 
-        #serverModal.show,
-        #centerModal.show,
-        #transaksiModal.show,
-        #prabayarModal.show,
-        #areaModal.show,
-        #wilayahModal.show,
-        #operatorListModal.show,
-        #confirmModal:not(.hidden) // Popup konfirmasi
-    `);
-
-    // Ambil yang paling atas (terakhir terbuka)
-    const topModal = allModals[allModals.length - 1];
-
-    if (topModal) {
-        // 1. Kalau ada modal terbuka -> TUTUP DULU
-        topModal.classList.remove('show');
+    history.go(1); // Tetap di halaman dulu
+    
+    // ✅ CEK SEMUA JENIS MODAL YANG MUNGKIN TERBUKA
+    // Termasuk Modal Area, Wilayah, Submenu, dll
+    const modals = document.querySelectorAll('.modal.show, .submenu-modal.show, [class*="modal"].show');
+    
+    if (modals.length > 0) {
+        // ✅ Tutup modal yang paling atas dulu
+        modals[modals.length - 1].classList.remove('show');
+        history.pushState(null, null, location.href); // Tambah history agar bisa back berkali-kali
         
-        // Khusus popup konfirmasi, tambah class hidden lagi
-        if(topModal.id === 'confirmModal') {
-            topModal.classList.add('hidden');
-        }
-        
-        history.pushState(null, null, location.href); // Reset history
-    } 
-    else if (hasChanges) {
-        // 2. Kalau tidak ada modal, tapi ada data belum simpan -> TANYA KONFIRMASI
+    } else if (hasChanges) {
+        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
-            function() { 
-                markAsSaved(); 
-                history.back(); 
+            function() {
+                markAsSaved();
+                history.back();
             }, 
             "Ya, Keluar", 
-            function() { 
-                history.pushState(null, null, location.href); 
-            }, 
+            function() {
+                history.pushState(null, null, location.href);
+            },
             "Batal"
         );
-    } 
-    else {
-        // 3. Kalau sudah aman -> BARU KEMBALI KE MENU UTAMA
-        // (Kosongkan saja, biar browser yang handle)
+    } else {
+        // ✅ JIKA AMAN -> KELUAR NORMAL
+        history.back();
     }
 };
 
