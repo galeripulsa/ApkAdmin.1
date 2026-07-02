@@ -1989,12 +1989,12 @@ function confirmSaveTransaksi(){
     }, "Ya, Simpan");
 }
 
-
 function checkCloseServer(){ checkClose("server"); }
 function checkCloseCenter(){ checkClose("center"); }
 function checkClose(type){
     const d = JSON.parse(localStorage.getItem("gs_data") || "{}");
     let changed = false;
+    
     if(type==="server"){
         if(namaKonter.value != (d.server?.nama||"") || alamatKonter.value != (d.server?.alamat||"")) changed=true;
     } else {
@@ -2002,17 +2002,43 @@ function checkClose(type){
         if(jabberNama.value != (d.center?.jabberNama||"") || jabberServer.value != (d.center?.jabberServer||"") || jabberHost.value != (d.center?.jabberHost||"")) changed=true;
         if(waCenter.value != (d.center?.wa||"") || smsCenter.value != (d.center?.sms||"")) changed=true;
     }
+    
     if(changed){
         showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ 
+            // JIKA PILIH SIMPAN
             saveData(); 
-            markAsSaved(); // ✅ Tandai sudah disimpan
+            markAsSaved();
             if(type==="server") closeServer(); else closeCenter(); 
             toast("Data Berhasil Disimpan"); 
-        }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
+        }, "Simpan", ()=>{ 
+            // ✅ JIKA PILIH TIDAK / BATAL -> RESET DATA!
+            if(type==="server"){
+                // Kembalikan nilai input ke data yang ada di LocalStorage
+                namaKonter.value = d.server?.nama || "";
+                alamatKonter.value = d.server?.alamat || "";
+                saveOriginalServerData(); // Update data pembanding juga
+                checkServerChange(); // Update status tombol
+            } else {
+                // Kembalikan nilai input ke data yang ada di LocalStorage
+                ipNama.value = d.center?.ipNama || "";
+                ipServer.value = d.center?.ipServer || "";
+                ipHost.value = d.center?.ipHost || "";
+                jabberNama.value = d.center?.jabberNama || "";
+                jabberServer.value = d.center?.jabberServer || "";
+                jabberHost.value = d.center?.jabberHost || "";
+                waCenter.value = d.center?.wa || "";
+                smsCenter.value = d.center?.sms || "";
+                saveOriginalCenterData(); // Update data pembanding juga
+                checkCenterChange(); // Update status tombol
+            }
+            markAsSaved(); // Tandai tidak ada perubahan
+            if(type==="server") closeServer(); else closeCenter(); 
+        });
     } else { 
         if(type==="server") closeServer(); else closeCenter(); 
     }
 }
+
 
 function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
     document.getElementById("confirmTitle").innerText = title;
