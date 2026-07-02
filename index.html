@@ -1930,11 +1930,12 @@ function confirmSaveServer(){
         saveData(); 
         checkServerChange();
         
-        // ✅ PASTIKAN TOMBOL MATI
+        // ✅ PASTIKAN TOMBOL MATI TOTAL & WARNA ABU-ABU
         const btnServer = document.getElementById("saveServerBtn");
         if(btnServer){
             btnServer.disabled = true;
-            btnServer.classList.add('opacity-50', 'cursor-not-allowed');
+            btnServer.classList.remove("bg-cyan-600");
+            btnServer.classList.add("bg-gray-400", "opacity-50", "cursor-not-allowed");
         }
         
         markAsSaved();
@@ -1948,18 +1949,18 @@ function confirmSaveCenter(){
         saveData(); 
         checkCenterChange();
         
-        // ✅ PASTIKAN TOMBOL MATI
+        // ✅ PASTIKAN TOMBOL MATI TOTAL & WARNA ABU-ABU
         const btnCenter = document.getElementById("saveCenterBtn");
         if(btnCenter){
             btnCenter.disabled = true;
-            btnCenter.classList.add('opacity-50', 'cursor-not-allowed');
+            btnCenter.classList.remove("bg-cyan-600");
+            btnCenter.classList.add("bg-gray-400", "opacity-50", "cursor-not-allowed");
         }
         
         markAsSaved(); // ✅ Reset status perubahan
         toast("Data Center Berhasil Disimpan"); // ✅ Munculkan notif
     }, "Ya, Simpan");
 }
-        
 
 // >>> SIMPAN MENU TRANSAKSI <<<
 function confirmSaveTransaksi(){
@@ -1967,11 +1968,12 @@ function confirmSaveTransaksi(){
         saveData(); 
         saveOriginalTransaksiData(); 
         
-        // ✅ PASTIKAN TOMBOL MATI
+        // ✅ PASTIKAN TOMBOL MATI TOTAL & WARNA ABU-ABU
         const btnTransaksi = document.getElementById("saveTransaksiBtn");
         if(btnTransaksi){
             btnTransaksi.disabled = true;
-            btnTransaksi.classList.add('opacity-50', 'cursor-not-allowed');
+            btnTransaksi.classList.remove("bg-cyan-600");
+            btnTransaksi.classList.add("bg-gray-400", "opacity-50", "cursor-not-allowed");
         }
         
         markAsSaved();
@@ -2506,20 +2508,6 @@ if (typeof enableButton !== 'undefined') {
     }
 }
 
-// --- 5. OVERRIDE SEMUA FUNGSI SIMPAN OTOMATIS ---
-// ✅ DETEKSI OTOMATIS: Cari semua fungsi yang ada kata "save" atau "simpan"
-for (const key in window) {
-    if (typeof window[key] === 'function') {
-        if(key.toLowerCase().includes('save') || key.toLowerCase().includes('simpan')) {
-            const originalFunction = window[key];
-            window[key] = function() {
-                const result = originalFunction.apply(this, arguments);
-                markAsSaved();
-                return result;
-            }
-        }
-    }
-}
 
 // --- 6. PENANGANAN TOMBOL BACK & MODAL ---
 history.pushState(null, null, location.href);
