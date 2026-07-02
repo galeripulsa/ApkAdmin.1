@@ -2118,22 +2118,43 @@ function simpanDaftarWilayah() {
 // ==============================================
 
 function backToPrabayar(){
-    document.getElementById("areaModal").classList.remove("show");
-    document.getElementById("prabayarModal").classList.add("show");
+    if(hasChanges){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin kembali?", ()=>{
+            markAsSaved();
+            document.getElementById("areaModal").classList.remove("show");
+            document.getElementById("prabayarModal").classList.add("show");
+        }, "Ya, Kembali", ()=>{
+            // Tidak jadi keluar
+        });
+    } else {
+        document.getElementById("areaModal").classList.remove("show");
+        document.getElementById("prabayarModal").classList.add("show");
+    }
 }
 
 function backToArea(){
-    const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
-    if(currentData !== originalWilayahData){
-        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+    if(hasChanges){
+        showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin kembali?", ()=>{
+            markAsSaved();
             document.getElementById("wilayahModal").classList.remove("show");
             openAreaModal();
-        }, "Ya, Keluar");
+        }, "Ya, Kembali", ()=>{
+            // Tidak jadi keluar
+        });
     } else {
-        document.getElementById("wilayahModal").classList.remove("show");
-        openAreaModal();
+        const currentData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+        if(currentData !== originalWilayahData){
+            showConfirm("Perubahan Belum Disimpan", "Apakah Anda yakin ingin keluar tanpa menyimpan?", ()=>{
+                document.getElementById("wilayahModal").classList.remove("show");
+                openAreaModal();
+            }, "Ya, Keluar");
+        } else {
+            document.getElementById("wilayahModal").classList.remove("show");
+            openAreaModal();
+        }
     }
 }
+
 
 function autoGrow(element) {
     element.style.height = "auto";
