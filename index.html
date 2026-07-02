@@ -1213,8 +1213,8 @@ function openAreaModal(){
         setupHoldToDelete();
         checkAreaChange(); 
     }, 50);
+    markAsSaved(); // ✅ Reset status saat buka modal
 }
-
 
 
 // === FORM AREA SEKARANG JADI POPUP ===
@@ -1224,6 +1224,7 @@ function showFormArea(){
     disableButton("btnSimpanArea");
     document.getElementById("formAreaModal").classList.add("show");
     setTimeout(() => { document.getElementById("inputNamaArea").focus(); }, 300);
+    markAsSaved(); // ✅ Reset status saat buka form
 }
 function hideFormArea(){
     document.getElementById("formAreaModal").classList.remove("show");
@@ -1316,8 +1317,8 @@ function openWilayahModal(areaName){
         setupHoldToDelete();
         checkWilayahChange();
     }, 50);
+    markAsSaved(); // ✅ Reset status saat buka modal
 }
-
 
 
 // === FORM WILAYAH JADI POPUP ===
@@ -1329,6 +1330,7 @@ function showFormWilayah(){
     disableButton("btnSimpanWilayah");
     document.getElementById("formWilayahModal").classList.add("show");
     setTimeout(() => { document.getElementById("inputNamaWilayah").focus(); }, 300);
+    markAsSaved(); // ✅ Reset status saat buka form
 }
 function hideFormWilayah(){
     document.getElementById("formWilayahModal").classList.remove("show");
@@ -1374,6 +1376,7 @@ function simpanWilayah(){
     }, 150);
     openWilayahModal(currentAreaName);
 }
+
 
 // ==============================================
 // >>>🖍🖍🖍 PERBAIKAN HOLD CLICK DELETE & EDIT 🖍🖍🖍<<<
@@ -1672,6 +1675,7 @@ function openOperatorList(title, actionType){
     setTimeout(() => { lucide.createIcons(); }, 50);
     disableButton("savePrabayarBtn");
     attachInputListeners();
+    markAsSaved(); // ✅ Reset status saat buka modal
 }
 
 // >>> ♾️♾️♾️♾️♾️♾️♾️♾️♾️ <<<
@@ -1739,7 +1743,9 @@ function openOperatorListPascabayar(title, actionType){
     setTimeout(() => { lucide.createIcons(); }, 50);
     disableButton("savePrabayarBtn");
     attachInputListeners();
+    markAsSaved(); // ✅ Reset status saat buka modal
 }
+
 
 function toggleOperator(el){ el.classList.toggle("open"); }
 function backToPrabayarFromList(){
@@ -1785,6 +1791,7 @@ function checkPrabayarChange(){
     }
 }
 
+
 function savePrabayarData(){
     document.querySelectorAll('.operator-wrapper').forEach(wrap => {
         const cekInput = wrap.querySelector('.input-cek-harga');
@@ -1821,6 +1828,7 @@ function savePrabayarData(){
     }
     
     changed = false; // Reset flag
+    markAsSaved();   // ✅ TAMBAHKAN INI SAJA
     toast("Data Produk Berhasil Disimpan");
 }
 
@@ -1938,7 +1946,7 @@ function confirmSaveServer(){
             btnServer.classList.add("bg-gray-400", "opacity-50", "cursor-not-allowed");
         }
         
-        markAsSaved();
+        markAsSaved(); // ✅ Reset status perubahan
         toast("Data Server Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
@@ -1958,7 +1966,7 @@ function confirmSaveCenter(){
         }
         
         markAsSaved(); // ✅ Reset status perubahan
-        toast("Data Center Berhasil Disimpan"); // ✅ Munculkan notif
+        toast("Data Center Berhasil Disimpan");
     }, "Ya, Simpan");
 }
 
@@ -1976,7 +1984,7 @@ function confirmSaveTransaksi(){
             btnTransaksi.classList.add("bg-gray-400", "opacity-50", "cursor-not-allowed");
         }
         
-        markAsSaved();
+        markAsSaved(); // ✅ Reset status perubahan
         toast("Menu Transaksi Berhasil Disimpan"); 
     }, "Ya, Simpan");
 }
@@ -1995,8 +2003,15 @@ function checkClose(type){
         if(waCenter.value != (d.center?.wa||"") || smsCenter.value != (d.center?.sms||"")) changed=true;
     }
     if(changed){
-        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ saveData(); if(type==="server") closeServer(); else closeCenter(); toast("Data Berhasil Disimpan"); }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
-    } else { if(type==="server") closeServer(); else closeCenter(); }
+        showConfirm("Perubahan Terdeteksi", "Ada perubahan belum disimpan. Simpan sekarang?", ()=>{ 
+            saveData(); 
+            markAsSaved(); // ✅ Tandai sudah disimpan
+            if(type==="server") closeServer(); else closeCenter(); 
+            toast("Data Berhasil Disimpan"); 
+        }, "Simpan", ()=>{ if(type==="server") closeServer(); else closeCenter(); });
+    } else { 
+        if(type==="server") closeServer(); else closeCenter(); 
+    }
 }
 
 function showConfirm(title, msg, yesFunc, yesText="Ya", noFunc=null){
@@ -2060,6 +2075,7 @@ function simpanDaftarArea() {
     disableButton("btnSimpanDaftarArea");
     // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
     originalAreaData = JSON.stringify(prabayarData[currentMenuType]);
+    markAsSaved(); // ✅ Reset status perubahan
 }
 
 function simpanDaftarWilayah() {
@@ -2068,6 +2084,7 @@ function simpanDaftarWilayah() {
     disableButton("btnSimpanDaftarWilayah");
     // ✅ PERBAIKAN: Update data asli agar dianggap tidak ada perubahan
     originalWilayahData = JSON.stringify(prabayarData[currentMenuType][currentAreaName].wilayah);
+    markAsSaved(); // ✅ Reset status perubahan
 }
 
 // ==============================================
@@ -2091,7 +2108,6 @@ function backToArea(){
         openAreaModal();
     }
 }
-
 
 function autoGrow(element) {
     element.style.height = "auto";
@@ -2494,19 +2510,28 @@ function markAsSaved() {
     hasChanges = false;
 }
 
-// --- 3. DETEKSI OTOMATIS SEMUA INPUT ---
-// ✅ BERLAKU UNIVERSAL: Semua halaman, semua form, semua input
-document.addEventListener('input', markAsChanged);
-document.addEventListener('change', markAsChanged);
-
-// --- 4. OVERRIDE FUNGSI enableButton ---
-if (typeof enableButton !== 'undefined') {
-    const originalEnableButton = enableButton;
-    enableButton = function(id) {
-        originalEnableButton(id);
+// --- 3. DETEKSI PERUBAHAN HANYA JIKA DARI USER (BUKAN DARI JS) ---
+document.addEventListener('input', function(e) {
+    // Hanya jalan jika event berasal dari interaksi user nyata
+    if (e.isTrusted) {
         markAsChanged();
     }
-}
+});
+
+document.addEventListener('change', function(e) {
+    if (e.isTrusted) {
+        markAsChanged();
+    }
+});
+
+// Tambahan khusus untuk Toggle Switch & Click Action
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.toggle-switch') || e.target.closest('.btn-click')) {
+        if (e.isTrusted) {
+            markAsChanged();
+        }
+    }
+});
 
 
 // --- 6. PENANGANAN TOMBOL BACK ANDROID ---
