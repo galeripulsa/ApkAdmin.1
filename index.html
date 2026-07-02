@@ -2640,6 +2640,15 @@ window.addEventListener('beforeunload', function (e) {
     }
 });
 
+// Matikan pesan "Perubahan mungkin tidak disimpan" dari browser
+window.addEventListener('beforeunload', function (e) {
+    // Batalkan event (cara standar)
+    e.preventDefault();
+    // Set pesan kosong (beberapa browser butuh ini)
+    e.returnValue = '';
+    // Jangan return apa-apa lagi
+});
+
 
 </script>
 
