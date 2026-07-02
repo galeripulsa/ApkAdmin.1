@@ -2509,40 +2509,49 @@ if (typeof enableButton !== 'undefined') {
 }
 
 
-// --- 6. PENANGANAN TOMBOL BACK & MODAL ---
+// --- 6. PENANGANAN TOMBOL BACK ANDROID ---
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
     history.go(1); // Tetap di halaman dulu
     
     // ✅ CEK SEMUA JENIS MODAL YANG MUNGKIN TERBUKA
-    // Termasuk Modal Area, Wilayah, Submenu, dll
     const modals = document.querySelectorAll('.modal.show, .submenu-modal.show, [class*="modal"].show');
     
     if (modals.length > 0) {
         // ✅ Tutup modal yang paling atas dulu
         modals[modals.length - 1].classList.remove('show');
-        history.pushState(null, null, location.href); // Tambah history agar bisa back berkali-kali
+        history.pushState(null, null, location.href); 
         
     } else if (hasChanges) {
-        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP
+        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP CUSTOM
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
-            function() { // Fungsi JIKA YA
+            function() { // JIKA KLIK "YA"
                 markAsSaved();
                 history.back();
             }, 
-            "Ya, Keluar",  // Teks Tombol YA
-            function() {    // Fungsi JIKA TIDAK / BATAL
+            "Ya, Keluar",  
+            function() {    // JIKA KLIK "BATAL"
                 history.pushState(null, null, location.href);
             }
-            // Parameter terakhir "Batal" otomatis terisi oleh fungsi
         );
     } else {
         // ✅ JIKA AMAN -> KELUAR NORMAL
         history.back();
     }
 };
+
+// --- 7. PENANGANAN TOMBOL TUTUP / CLOSE APP / NAVIGASI KELUAR ---
+// ✅ BERLAKU UNTUK: Close App, Tombol Home, atau Pindah Aplikasi
+window.addEventListener('beforeunload', function (e) {
+    // Hanya jalan JIKA ada perubahan belum disimpan
+    if (hasChanges) {
+        e.preventDefault();
+        e.returnValue = "Ada data yang belum disimpan.";
+        return e.returnValue;
+    }
+});
 
 
 </script>
