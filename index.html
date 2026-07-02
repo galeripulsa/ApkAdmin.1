@@ -2542,13 +2542,18 @@ window.onpopstate = function () {
     }
 };
 
-// --- 7. PENANGANAN TOMBOL TUTUP / CLOSE APP / NAVIGASI KELUAR ---
-// ✅ BERLAKU UNTUK: Close App, Tombol Home, atau Pindah Aplikasi
+// --- 7. PENANGANAN TOMBOL TUTUP / HOME / CLOSE APP ---
+// ✅ VERSI KUAT: Berlaku untuk Close App, Home Button, atau Refresh
 window.addEventListener('beforeunload', function (e) {
-    // Hanya jalan JIKA ada perubahan belum disimpan
-    if (hasChanges) {
+    // 🔴 PASTIKAN VARIABELNYA TERBACA
+    console.log("Cek status: " + hasChanges); // Bisa dicek di Inspect Element > Console
+    
+    if (hasChanges === true) {
+        // Batalkan kejadian default
         e.preventDefault();
-        e.returnValue = "Ada data yang belum disimpan.";
+        // Wajib isi returnValue biar browser nampilin pesan
+        e.returnValue = "Ada perubahan data yang belum disimpan.";
+        // Kembalikan nilai untuk kompatibilitas browser lama
         return e.returnValue;
     }
 });
