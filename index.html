@@ -2193,7 +2193,7 @@ function autoGrow(element) {
 let menuData = [];
 let categoryData = [];
 let currentItemId = 0;
-// ✅ TAMBAHAN: Variabel untuk simpan data ASLI (PENTING!)
+// ✅ VARIABEL PENTING: Simpan data ASLI saat halaman buka
 let originalMenuData = [];
 let originalCategoryData = [];
 
@@ -2212,7 +2212,7 @@ function addMenu(){
     };
     menuData.unshift(newItem); 
     renderTransaksiList();
-    updateStatusTombolSimpan(); // ✅ GANTI DISINI
+    cekDanUpdateTombol(); // ✅ PASTI KERJA
 }
 
 // >>> FUNGSI TAMBAH KATEGORI <<<
@@ -2230,21 +2230,23 @@ function addKategori(){
     };
     categoryData.unshift(newItem);
     renderTransaksiList();
-    updateStatusTombolSimpan(); // ✅ GANTI DISINI
+    cekDanUpdateTombol(); // ✅ PASTI KERJA
 }
 
-// >>> ✅ FUNGSI BARU: CEK & UPDATE STATUS TOMBOL <<<
-function cekAdaPerubahan() {
-    // Bandingkan data sekarang dengan data asli
-    return JSON.stringify(menuData) !== JSON.stringify(originalMenuData) ||
-           JSON.stringify(categoryData) !== JSON.stringify(originalCategoryData);
-}
+// ==============================================
+// ✅✅✅ KUNCI UTAMA: LOGIKA CEK PERUBAHAN
+// ==============================================
+function cekDanUpdateTombol() {
+    // Bandingkan data sekarang dengan data awal
+    const dataSekarang = JSON.stringify({menu: menuData, category: categoryData});
+    const dataAwal = JSON.stringify({menu: originalMenuData, category: originalCategoryData});
 
-function updateStatusTombolSimpan() {
-    if (cekAdaPerubahan()) {
-        enableButton("saveTransaksiBtn"); // Ada beda -> NYALAKAN
+    if (dataSekarang !== dataAwal) {
+        // ✅ ADA PERUBAHAN: NYALAKAN
+        enableButton("saveTransaksiBtn");
     } else {
-        disableButton("saveTransaksiBtn"); // Sama persis -> MATIKAN
+        // ✅ SAMA DENGAN AWAL: MATIKAN
+        disableButton("saveTransaksiBtn");
     }
 }
 
@@ -2326,7 +2328,7 @@ function toggleActive(el, id){
     if(item) {
         item.active = el.classList.contains('active');
     }
-    updateStatusTombolSimpan(); // ✅ GANTI DISINI
+    cekDanUpdateTombol(); // ✅ GANTI DISINI
 }
 
 function updateName(inputEl, id){
@@ -2337,7 +2339,7 @@ function updateName(inputEl, id){
     
     if(item) {
         item.name = inputEl.value;
-        updateStatusTombolSimpan(); // ✅ GANTI DISINI
+        cekDanUpdateTombol(); // ✅ GANTI DISINI
     }
 }
 
@@ -2350,7 +2352,7 @@ function deleteItem(id){
         categoryData = categoryData.filter(i => i.id !== id);
     }
     renderTransaksiList();
-    updateStatusTombolSimpan(); // ✅ GANTI DISINI
+    cekDanUpdateTombol(); // ✅ GANTI DISINI
 }
 
 // >>> SORTABLE JS <<<
@@ -2392,7 +2394,7 @@ function initSortable(){
                 }
             });
             
-            updateStatusTombolSimpan(); // ✅ GANTI DISINI
+            cekDanUpdateTombol(); // ✅ GANTI DISINI
         },
     });
 }
@@ -2405,11 +2407,13 @@ function handleImageUpload(input, id){
             const menuItem = menuData.find(i => i.id === id);
             if(menuItem) {
                 menuItem.icon = e.target.result; 
+                
                 const iconArea = document.querySelector(`[data-id="${id}"] .item-icon-area`);
                 if(iconArea) {
                     iconArea.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`;
                 }
-                updateStatusTombolSimpan(); // ✅ GANTI DISINI
+                
+                cekDanUpdateTombol(); // ✅ GANTI DISINI
                 showConfirm("Berhasil", "Icon menu berhasil diganti!", null, "Oke");
             }
         }
@@ -2482,29 +2486,33 @@ document.addEventListener('mousedown', function(e){
 // === INIT & LOAD DATA ===
 document.addEventListener("DOMContentLoaded", ()=>{
     renderMenus();
-    loadData(); // Pastikan fungsi loadData memanggil simpanDataAsli()
+    loadDataAsli(); // ✅ PANGGIL INI DULU
     renderTransaksiList();
 });
 
-// ✅ FUNGSI INI WAJIB ADA DI DALAM loadData() KAMU
-function loadData() {
-    // ... kode load data dari localStorage atau database kamu yang lama ...
-    
-    // ✅ SETELAH DATA BERHASIL DIMUAT, SIMPAN SEBAGAI DATA ASLI
+// ✅ FUNGSI SIMPAN DATA AWAL
+function loadDataAsli() {
+    // Ambil data dari sumber kamu (localStorage/dll)
+    // Pastikan menuData dan categoryData TERISI dulu
+    if (typeof loadData === 'function') {
+        loadData(); // Jalankan fungsi load kamu
+    }
+
+    // ✅ SEKARANG SIMPAN SEBAGAI DATA ASLI
     originalMenuData = JSON.parse(JSON.stringify(menuData));
     originalCategoryData = JSON.parse(JSON.stringify(categoryData));
 }
 
-// ✅ JANGAN LUPA: KETIKA TOMBOL SIMPAN DIKLIK BERHASIL
+// ✅ SAAT SIMPAN BERHASIL
 function saveTransaksi(){
-    // ... proses simpan data ...
-    
-    // ✅ SETELAH SIMPAN BERHASIL, UPDATE DATA ASLI
+    // ... proses simpan data kamu ...
+
+    // ✅ SETELAH SIMPAN, UPDATE DATA ASLI
     originalMenuData = JSON.parse(JSON.stringify(menuData));
     originalCategoryData = JSON.parse(JSON.stringify(categoryData));
-    
-    // Sekarang tombol akan mati
-    updateStatusTombolSimpan();
+
+    // Tombol mati otomatis
+    cekDanUpdateTombol();
 }
 
 // ✅ Validasi Toggle
@@ -2525,7 +2533,7 @@ document.addEventListener('input', function(e) {
             const arr = card.dataset.type === 'menu' ? menuData : categoryData;
             const item = arr.find(i => i.id == itemId);
             if(item) item.active = false;
-            updateStatusTombolSimpan(); // ✅ Cek status
+            cekDanUpdateTombol(); // ✅ CEK DISINI
         } else {
             toggle.style.opacity = '1';
             toggle.style.cursor = 'pointer';
@@ -2537,12 +2545,10 @@ document.addEventListener('input', function(e) {
             } else {
                 toggle.classList.remove('active');
             }
-            updateStatusTombolSimpan(); // ✅ Cek status
+            cekDanUpdateTombol(); // ✅ CEK DISINI
         }
     }
 });
-
-
 
 
  // ==================================================
