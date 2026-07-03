@@ -648,18 +648,19 @@ body{
 /* === WARNA BORDER KHUSUS MENU & KATEGORI AKTIF === */
 
 /* Untuk MENU yang Aktif */
-.menu-item-card.active {
-    border-color: #2563eb !important; /* ✅ Border BIRU */
-    border-width: 1.5px !important;
+.menu-item-card.active,
+.menu-item-card:has(.toggle-switch.active) {
+    border: 1.5px solid #2563eb !important; /* ✅ Border BIRU */
     background-color: #eff6ff !important; /* Background biru muda */
 }
 
 /* Untuk KATEGORI yang Aktif */
-.category-item-card.active {
-    border-color: #dc2626 !important; /* ✅ Border MERAH */
-    border-width: 1.5px !important;
+.category-item-card.active,
+.category-item-card:has(.toggle-switch.active) {
+    border: 1.5px solid #dc2626 !important; /* ✅ Border MERAH */
     background-color: #fef2f2 !important; /* Background merah muda */
 }
+
 
 
 </style>
