@@ -659,7 +659,7 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* STYLE MODAL LOGO */
+/* 🎁🎁🎁STYLE MODAL LOGO */
 #modalLogo {
     display: none;
     position: fixed;
@@ -705,6 +705,60 @@ body{
     font-size: 12px;
     color: #333;
     font-weight: 500;
+}
+
+/* STYLE BARU UNTUK MENU KELOMPOK */
+.menu-group {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.menu-group:hover {
+    background: #e9ecef;
+}
+
+.sub-list {
+    display: none;
+}
+
+.back-btn {
+    background: #0d6efd;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.logo-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.logo-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 8px;
 }
 
 
@@ -982,7 +1036,7 @@ body{
 </div>
 
 
-<!-- MODAL DAFTAR LOGO PRODUK -->
+<!-- MODAL DAFTAR LOGO PRODUK - VERSI KELOMPOK -->
 <div id="modalLogo" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -990,79 +1044,109 @@ body{
             <span class="close-btn">&times;</span>
         </div>
         <div class="modal-body">
-            <div class="logo-grid">
-                <!-- Kategori Prabayar & Pascabayar -->
-                <div class="logo-item" data-type="pulsa">
-                    <img src="images/logo_telkomsel.png" alt="Telkomsel">
-                    <span>Telkomsel</span>
+            
+            <!-- LIST UTAMA -->
+            <div id="mainList">
+                <div class="menu-group" data-target="operator">
+                    <span>📱 Logo Operator Seluler</span>
+                    <span>></span>
                 </div>
-                <div class="logo-item" data-type="pulsa">
-                    <img src="images/logo_indosat.png" alt="Indosat">
-                    <span>Indosat</span>
+                <div class="menu-group" data-target="pascabayar">
+                    <span>⚡ Logo Pascabayar</span>
+                    <span>></span>
                 </div>
-                <div class="logo-item" data-type="pulsa">
-                    <img src="images/logo_tri.png" alt="Tri">
-                    <span>Tri</span>
+                <div class="menu-group" data-target="ewallet">
+                    <span>💰 Logo E-Wallet</span>
+                    <span>></span>
                 </div>
-                <div class="logo-item" data-type="pulsa">
-                    <img src="images/logo_xl.png" alt="XL">
-                    <span>XL</span>
+                <div class="menu-group" data-target="game">
+                    <span>🎮 Logo Game</span>
+                    <span>></span>
                 </div>
-                <div class="logo-item" data-type="pulsa">
-                    <img src="images/logo_smartfren.png" alt="Smartfren">
-                    <span>Smartfren</span>
+                <div class="menu-group" data-target="bank">
+                    <span>🏦 Logo Bank</span>
+                    <span>></span>
                 </div>
-
-                <!-- Kategori E-Wallet -->
-                <div class="logo-item" data-type="ewallet">
-                    <img src="images/logo_dana.png" alt="DANA">
-                    <span>DANA</span>
-                </div>
-                <div class="logo-item" data-type="ewallet">
-                    <img src="images/logo_ovo.png" alt="OVO">
-                    <span>OVO</span>
-                </div>
-                <div class="logo-item" data-type="ewallet">
-                    <img src="images/logo_gopay.png" alt="GoPay">
-                    <span>GoPay</span>
-                </div>
-                <div class="logo-item" data-type="ewallet">
-                    <img src="images/logo_shopeepay.png" alt="ShopeePay">
-                    <span>ShopeePay</span>
-                </div>
-
-                <!-- Kategori Game & Voucher -->
-                <div class="logo-item" data-type="game">
-                    <img src="images/logo_ml.png" alt="Mobile Legends">
-                    <span>Mobile Legends</span>
-                </div>
-                <div class="logo-item" data-type="game">
-                    <img src="images/logo_ff.png" alt="Free Fire">
-                    <span>Free Fire</span>
-                </div>
-                <div class="logo-item" data-type="game">
-                    <img src="images/logo_pubg.png" alt="PUBG">
-                    <span>PUBG</span>
-                </div>
-                <div class="logo-item" data-type="game">
-                    <img src="images/logo_steam.png" alt="Steam">
-                    <span>Steam</span>
-                </div>
-
-                <!-- Kategori Pascabayar -->
-                <div class="logo-item" data-type="pascabayar">
-                    <img src="images/logo_pln.png" alt="PLN">
-                    <span>PLN</span>
-                </div>
-                <div class="logo-item" data-type="pascabayar">
-                    <img src="images/logo_pdam.png" alt="PDAM">
-                    <span>PDAM</span>
-                </div>
-                <div class="logo-item" data-type="pascabayar">
-                    <img src="images/logo_tv.png" alt="TV Kabel">
-                    <span>TV Kabel</span>
+                <div class="menu-group" data-target="pln">
+                    <span>🔌 Logo PLN Prabayar</span>
+                    <span>></span>
                 </div>
             </div>
+
+            <!-- LIST DETAIL OPERATOR -->
+            <div id="operator" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_telkomsel.png" alt=""><span>Telkomsel</span></div>
+                    <div class="logo-item"><img src="images/logo_indosat.png" alt=""><span>Indosat</span></div>
+                    <div class="logo-item"><img src="images/logo_xl.png" alt=""><span>XL</span></div>
+                    <div class="logo-item"><img src="images/logo_tri.png" alt=""><span>Tri</span></div>
+                    <div class="logo-item"><img src="images/logo_smartfren.png" alt=""><span>Smartfren</span></div>
+                    <div class="logo-item"><img src="images/logo_axis.png" alt=""><span>Axis</span></div>
+                </div>
+            </div>
+
+            <!-- LIST DETAIL PASCABAYAR -->
+            <div id="pascabayar" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_pln.png" alt=""><span>PLN</span></div>
+                    <div class="logo-item"><img src="images/logo_pdam.png" alt=""><span>PDAM</span></div>
+                    <div class="logo-item"><img src="images/logo_tv.png" alt=""><span>TV Kabel</span></div>
+                    <div class="logo-item"><img src="images/logo_internet.png" alt=""><span>Internet</span></div>
+                    <div class="logo-item"><img src="images/logo_pbb.png" alt=""><span>PBB</span></div>
+                    <div class="logo-item"><img src="images/logo_bpjs.png" alt=""><span>BPJS</span></div>
+                </div>
+            </div>
+
+            <!-- LIST DETAIL E-WALLET -->
+            <div id="ewallet" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_dana.png" alt=""><span>DANA</span></div>
+                    <div class="logo-item"><img src="images/logo_ovo.png" alt=""><span>OVO</span></div>
+                    <div class="logo-item"><img src="images/logo_gopay.png" alt=""><span>GoPay</span></div>
+                    <div class="logo-item"><img src="images/logo_shopeepay.png" alt=""><span>ShopeePay</span></div>
+                    <div class="logo-item"><img src="images/logo_linkaja.png" alt=""><span>LinkAja</span></div>
+                    <div class="logo-item"><img src="images/logo_jenius.png" alt=""><span>Jenius</span></div>
+                </div>
+            </div>
+
+            <!-- LIST DETAIL GAME -->
+            <div id="game" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_ml.png" alt=""><span>Mobile Legends</span></div>
+                    <div class="logo-item"><img src="images/logo_ff.png" alt=""><span>Free Fire</span></div>
+                    <div class="logo-item"><img src="images/logo_pubg.png" alt=""><span>PUBG Mobile</span></div>
+                    <div class="logo-item"><img src="images/logo_steam.png" alt=""><span>Steam</span></div>
+                    <div class="logo-item"><img src="images/logo_higgs.png" alt=""><span>Higgs Domino</span></div>
+                    <div class="logo-item"><img src="images/logo_valorant.png" alt=""><span>Valorant</span></div>
+                </div>
+            </div>
+
+            <!-- LIST DETAIL BANK -->
+            <div id="bank" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_bca.png" alt=""><span>BCA</span></div>
+                    <div class="logo-item"><img src="images/logo_mandiri.png" alt=""><span>Mandiri</span></div>
+                    <div class="logo-item"><img src="images/logo_bni.png" alt=""><span>BNI</span></div>
+                    <div class="logo-item"><img src="images/logo_bri.png" alt=""><span>BRI</span></div>
+                    <div class="logo-item"><img src="images/logo_cimb.png" alt=""><span>CIMB Niaga</span></div>
+                    <div class="logo-item"><img src="images/logo_permata.png" alt=""><span>Permata</span></div>
+                </div>
+            </div>
+
+            <!-- LIST DETAIL PLN PRABAYAR -->
+            <div id="pln" class="sub-list">
+                <div class="back-btn">&lt; Kembali</div>
+                <div class="logo-grid">
+                    <div class="logo-item"><img src="images/logo_pln.png" alt=""><span>Token PLN</span></div>
+                    <div class="logo-item"><img src="images/logo_pln_prabayar.png" alt=""><span>PLN Prabayar</span></div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -2685,28 +2769,56 @@ document.addEventListener('input', function(e) {
 });
 
 
-// --- 🎁🎁🎁🎁🎁FUNGSI MENU LOGO ---
+// ---  🎁🎁🎁🎁🎁🎁🎁 ---
 
+// --- FUNGSI MENU LOGO VERSI KELOMPOK ---
 document.addEventListener('click', function(e){
-    // Cek apakah yang diklik tulisan "Logo" atau area kotaknya
+    // BUKA MODAL KETIKA KLIK MENU LOGO
     if(e.target.textContent.trim() === 'Logo' || e.target.closest('[class*="logo"]')){
         document.getElementById('modalLogo').style.display = "block";
     }
-});
 
-// Tutup modal kalau klik tombol X
-document.querySelector('#modalLogo .close-btn').addEventListener('click', function(){
-    document.getElementById('modalLogo').style.display = "none";
-});
+    // KLIK KELOMPOK (Misal: Logo Operator Seluler)
+    const group = e.target.closest('.menu-group');
+    if(group){
+        const targetId = group.dataset.target;
+        
+        // Sembunyikan list utama, tampilkan sub list
+        document.getElementById('mainList').style.display = 'none';
+        document.getElementById(targetId).style.display = 'block';
+    }
 
-// Tutup modal kalau klik luar area modal
-window.addEventListener('click', function(e){
-    const modal = document.getElementById('modalLogo');
-    if(e.target == modal) {
-        modal.style.display = "none";
+    // KLIK TOMBOL KEMBALI
+    const back = e.target.closest('.back-btn');
+    if(back){
+        // Sembunyikan semua sub list
+        document.querySelectorAll('.sub-list').forEach(el => {
+            el.style.display = 'none';
+        });
+        // Tampilkan list utama lagi
+        document.getElementById('mainList').style.display = 'block';
+    }
+
+    // KLIK ITEM LOGO (Misal klik Telkomsel)
+    const item = e.target.closest('.logo-item');
+    if(item){
+        const nama = item.querySelector('span').textContent;
+        alert('Anda memilih: ' + nama);
+        // Bisa tambah aksi lain disini
+        document.getElementById('modalLogo').style.display = "none";
+    }
+
+    // TUTUP MODAL
+    if(e.target.closest('.close-btn') || e.target == document.getElementById('modalLogo')){
+        document.getElementById('modalLogo').style.display = "none';
+        
+        // Reset tampilan ke menu utama saat ditutup
+        setTimeout(() => {
+            document.querySelectorAll('.sub-list').forEach(el => el.style.display = 'none');
+            document.getElementById('mainList').style.display = 'block';
+        }, 300);
     }
 });
-
 
 
  // ==================================================
