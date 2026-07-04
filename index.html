@@ -659,6 +659,53 @@ body{
     background-color: #fffbeb !important;
 }
 
+/* STYLE MODAL LOGO */
+#modalLogo {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+.logo-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.logo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.logo-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.logo-item span {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+}
 
 
 </style>
@@ -933,6 +980,93 @@ body{
     <div id="operatorListContainer" class="px-2"></div>
 </div>
 </div>
+
+
+<!-- MODAL DAFTAR LOGO PRODUK -->
+<div id="modalLogo" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Daftar Logo Produk</h2>
+            <span class="close-btn">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="logo-grid">
+                <!-- Kategori Prabayar & Pascabayar -->
+                <div class="logo-item" data-type="pulsa">
+                    <img src="images/logo_telkomsel.png" alt="Telkomsel">
+                    <span>Telkomsel</span>
+                </div>
+                <div class="logo-item" data-type="pulsa">
+                    <img src="images/logo_indosat.png" alt="Indosat">
+                    <span>Indosat</span>
+                </div>
+                <div class="logo-item" data-type="pulsa">
+                    <img src="images/logo_tri.png" alt="Tri">
+                    <span>Tri</span>
+                </div>
+                <div class="logo-item" data-type="pulsa">
+                    <img src="images/logo_xl.png" alt="XL">
+                    <span>XL</span>
+                </div>
+                <div class="logo-item" data-type="pulsa">
+                    <img src="images/logo_smartfren.png" alt="Smartfren">
+                    <span>Smartfren</span>
+                </div>
+
+                <!-- Kategori E-Wallet -->
+                <div class="logo-item" data-type="ewallet">
+                    <img src="images/logo_dana.png" alt="DANA">
+                    <span>DANA</span>
+                </div>
+                <div class="logo-item" data-type="ewallet">
+                    <img src="images/logo_ovo.png" alt="OVO">
+                    <span>OVO</span>
+                </div>
+                <div class="logo-item" data-type="ewallet">
+                    <img src="images/logo_gopay.png" alt="GoPay">
+                    <span>GoPay</span>
+                </div>
+                <div class="logo-item" data-type="ewallet">
+                    <img src="images/logo_shopeepay.png" alt="ShopeePay">
+                    <span>ShopeePay</span>
+                </div>
+
+                <!-- Kategori Game & Voucher -->
+                <div class="logo-item" data-type="game">
+                    <img src="images/logo_ml.png" alt="Mobile Legends">
+                    <span>Mobile Legends</span>
+                </div>
+                <div class="logo-item" data-type="game">
+                    <img src="images/logo_ff.png" alt="Free Fire">
+                    <span>Free Fire</span>
+                </div>
+                <div class="logo-item" data-type="game">
+                    <img src="images/logo_pubg.png" alt="PUBG">
+                    <span>PUBG</span>
+                </div>
+                <div class="logo-item" data-type="game">
+                    <img src="images/logo_steam.png" alt="Steam">
+                    <span>Steam</span>
+                </div>
+
+                <!-- Kategori Pascabayar -->
+                <div class="logo-item" data-type="pascabayar">
+                    <img src="images/logo_pln.png" alt="PLN">
+                    <span>PLN</span>
+                </div>
+                <div class="logo-item" data-type="pascabayar">
+                    <img src="images/logo_pdam.png" alt="PDAM">
+                    <span>PDAM</span>
+                </div>
+                <div class="logo-item" data-type="pascabayar">
+                    <img src="images/logo_tv.png" alt="TV Kabel">
+                    <span>TV Kabel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
 window.onerror = function(message, source, line, column){
@@ -2548,6 +2682,45 @@ document.addEventListener('input', function(e) {
             cekDanUpdateTombol(); // ✅ CEK DISINI
         }
     }
+});
+
+
+// --- 🧬🧬🧬🧬🧬FUNGSI MENU LOGO ---
+document.addEventListener('click', function(e){
+    // Deteksi klik menu Logo
+    const logoMenu = e.target.closest('[data-id="logo"], .logo-menu, #menuLogo');
+    
+    if(logoMenu) {
+        // Tampilkan modal
+        document.getElementById('modalLogo').style.display = "block";
+    }
+});
+
+// Tutup modal kalau klik tombol X
+document.querySelector('#modalLogo .close-btn').addEventListener('click', function(){
+    document.getElementById('modalLogo').style.display = "none";
+});
+
+// Tutup modal kalau klik luar area modal
+window.addEventListener('click', function(e){
+    const modal = document.getElementById('modalLogo');
+    if(e.target == modal) {
+        modal.style.display = "none";
+    }
+});
+
+// --- OPSI TAMBAHAN: Kalau klik item logo bisa melakukan aksi ---
+document.querySelectorAll('.logo-item').forEach(item => {
+    item.addEventListener('click', function(){
+        const tipe = this.dataset.type;
+        const nama = this.querySelector('span').textContent;
+        
+        // Contoh: Bisa langsung arahkan ke halaman transaksi sesuai produk
+        // window.location.href = 'transaksi.html?produk='+nama;
+        
+        alert('Anda memilih: ' + nama + ' (' + tipe + ')');
+        document.getElementById('modalLogo').style.display = "none";
+    });
 });
 
 
