@@ -674,13 +674,16 @@ body{
 
 #modalLogo .modal-content {
     background-color: #fefefe;
-    margin: 0% auto;
+    margin: 0;
     padding: 20px;
-    border: 1px solid #888;
+    border: none;
     height: 100vh;
     width: 100%;
     max-width: 100%;
     border-radius: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 #modalLogo .modal-header {
@@ -731,6 +734,33 @@ body{
     display: inline-block;
 }
 
+/* 🎁 STYLE TOMBOL SUPPORT GIFT */
+.gift-btn {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.gift-btn:hover {
+    transform: scale(1.05);
+}
+
+/* HIDE INPUT FILE */
+#fileInput {
+    display: none;
+}
+
 /* GRID DAN ITEM */
 .logo-grid {
     display: grid;
@@ -778,6 +808,7 @@ body{
     font-weight: bold;
     color: white;
     font-size: 18px;
+    overflow: hidden;
 }
 
 /* WARNA OPERATOR */
@@ -814,6 +845,12 @@ body{
 .logo-box.pln { background: #009E5F; }
 .logo-box.pdam { background: #007BC7; }
 .logo-box.indihome { background: #005BAC; }
+.logo-box.firstmedia { background: #0088cc; }
+.logo-box.biznet { background: #000000; }
+.logo-box.mncvision { background: #003366; }
+.logo-box.kvision { background: #0066cc; }
+.logo-box.pbb { background: #8B4513; }
+.logo-box.bpjs { background: #00A94F; }
 
 
 </style>
@@ -1089,7 +1126,6 @@ body{
 </div>
 </div>
 
-
 <!-- 🎁🎁🎁🎁🎁 MODAL DAFTAR LOGO PRODUK -->
 <div id="modalLogo" class="modal">
     <div class="modal-content">
@@ -1130,6 +1166,15 @@ body{
             <!-- AREA TAMPILAN DETAIL (ISI OTOMATIS) -->
             <div id="detailView" class="sub-list">
                 <div class="back-btn">&lt; Kembali</div>
+                
+                <!-- ✅ TOMBOL SUPPORT GIFT -->
+                <button class="gift-btn" id="btnGift">
+                    🎁 Support Gift
+                </button>
+
+                <!-- ✅ INPUT UNTUK AMBIL GAMBAR DARI HP -->
+                <input type="file" id="fileInput" accept="image/*">
+
                 <div id="logoContainer" class="logo-grid">
                     <!-- Isi gambar & nama akan muncul otomatis disini -->
                 </div>
@@ -2779,6 +2824,9 @@ function getClassName(nama) {
     return nama.toLowerCase().replace(/\s+/g, '');
 }
 
+// --- VARIABEL PENAMPUNG ELEMEN YANG DIKLIK ---
+let currentElement = null;
+
 // --- FUNGSI TAMPILKAN ITEM ---
 function tampilkanDaftar(kategori) {
     const container = document.getElementById('logoContainer');
@@ -2789,16 +2837,48 @@ function tampilkanDaftar(kategori) {
         div.className = 'logo-item';
         const cls = getClassName(nama);
         
-        // ✅ LANGSUNG PAKAI BOX WARNA + INISIAL (PASTI MUNCUL)
+        // ✅ PAKAI BOX WARNA + INISIAL
         div.innerHTML = `
             <div class="logo-box ${cls}">${nama.substring(0, 2).toUpperCase()}</div>
             <span>${nama}</span>
         `;
+
+        // ✅ KLIK ITEM = BUKA GALERI
+        div.addEventListener('click', function() {
+            currentElement = this.querySelector('.logo-box'); // Simpan elemen yang akan diganti gambarnya
+            document.getElementById('fileInput').click(); // Buka file picker
+        });
+
         container.appendChild(div);
     });
 }
 
-// --- EVENT CLICK ---
+// --- ✅ JIKA USER MEMILIH GAMBAR DARI HP ---
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if(file && currentElement) {
+        // Buat URL sementara untuk gambar yang dipilih
+        const imageUrl = URL.createObjectURL(file);
+        
+        // Ganti isi kotak jadi GAMBAR
+        currentElement.innerHTML = `<img src="${imageUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+        
+        // Hapus class warna biar background gambar kelihatan
+        currentElement.className = "logo-box"; 
+    }
+    // Reset input biar bisa pilih file sama lagi
+    e.target.value = '';
+});
+
+// --- ✅ TOMBOL SUPPORT GIFT ---
+document.addEventListener('click', function(e){
+    if(e.target.closest('#btnGift')){
+        alert("🎁 Terima kasih atas supportnya!\nSilakan transfer atau kirim gift ke nomor/akun yang tertera.");
+        // Bisa tambah kode buka wa atau nomor rekening disini
+    }
+});
+
+// --- EVENT CLICK LAINNYA ---
 document.addEventListener('click', function(e){
     
     // BUKA MODAL
