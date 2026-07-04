@@ -2685,13 +2685,11 @@ document.addEventListener('input', function(e) {
 });
 
 
-// --- 🧬🧬🧬🧬🧬FUNGSI MENU LOGO ---
+// --- 🎁🎁🎁🎁🎁FUNGSI MENU LOGO ---
+
 document.addEventListener('click', function(e){
-    // Deteksi klik menu Logo
-    const logoMenu = e.target.closest('[data-id="logo"], .logo-menu, #menuLogo');
-    
-    if(logoMenu) {
-        // Tampilkan modal
+    // Cek apakah yang diklik tulisan "Logo" atau area kotaknya
+    if(e.target.textContent.trim() === 'Logo' || e.target.closest('[class*="logo"]')){
         document.getElementById('modalLogo').style.display = "block";
     }
 });
@@ -2709,19 +2707,6 @@ window.addEventListener('click', function(e){
     }
 });
 
-// --- OPSI TAMBAHAN: Kalau klik item logo bisa melakukan aksi ---
-document.querySelectorAll('.logo-item').forEach(item => {
-    item.addEventListener('click', function(){
-        const tipe = this.dataset.type;
-        const nama = this.querySelector('span').textContent;
-        
-        // Contoh: Bisa langsung arahkan ke halaman transaksi sesuai produk
-        // window.location.href = 'transaksi.html?produk='+nama;
-        
-        alert('Anda memilih: ' + nama + ' (' + tipe + ')');
-        document.getElementById('modalLogo').style.display = "none";
-    });
-});
 
 
  // ==================================================
