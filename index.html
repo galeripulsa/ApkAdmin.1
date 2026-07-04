@@ -2568,7 +2568,6 @@ function markAsSaved() {
 
 // --- 3. DETEKSI PERUBAHAN HANYA JIKA DARI USER (BUKAN DARI JS) ---
 document.addEventListener('input', function(e) {
-    // Hanya jalan jika event berasal dari interaksi user nyata
     if (e.isTrusted) {
         markAsChanged();
     }
@@ -2580,7 +2579,6 @@ document.addEventListener('change', function(e) {
     }
 });
 
-// Tambahan khusus untuk Toggle Switch & Click Action
 document.addEventListener('click', function(e) {
     if (e.target.closest('.toggle-switch') || e.target.closest('.btn-click')) {
         if (e.isTrusted) {
@@ -2589,64 +2587,47 @@ document.addEventListener('click', function(e) {
     }
 });
 
-
 // --- 6. PENANGANAN TOMBOL BACK ANDROID ---
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
-    history.go(1); // Tetap di halaman dulu
+    history.go(1);
     
-    // ✅ CEK SEMUA JENIS MODAL YANG MUNGKIN TERBUKA
     const modals = document.querySelectorAll('.modal.show, .submenu-modal.show, [class*="modal"].show');
     
     if (modals.length > 0) {
-        // ✅ Tutup modal yang paling atas dulu
         modals[modals.length - 1].classList.remove('show');
         history.pushState(null, null, location.href); 
         
     } else if (hasChanges) {
-        // ✅ JIKA ADA PERUBAHAN DATA -> MUNCULKAN POPUP CUSTOM
         showConfirm(
             "Perubahan Terdeteksi", 
             "Ada data yang belum disimpan. Yakin ingin keluar?", 
-            function() { // JIKA KLIK "YA"
+            function() {
                 markAsSaved();
                 history.back();
             }, 
             "Ya, Keluar",  
-            function() {    // JIKA KLIK "BATAL"
+            function() {
                 history.pushState(null, null, location.href);
             }
         );
     } else {
-        // ✅ JIKA AMAN -> KELUAR NORMAL
         history.back();
     }
 };
 
 // --- 7. PENANGANAN TOMBOL TUTUP / HOME / CLOSE APP ---
-// ✅ VERSI KUAT: Berlaku untuk Close App, Home Button, atau Refresh
 window.addEventListener('beforeunload', function (e) {
-    // 🔴 PASTIKAN VARIABELNYA TERBACA
-    console.log("Cek status: " + hasChanges); // Bisa dicek di Inspect Element > Console
+    console.log("Cek status: " + hasChanges);
     
     if (hasChanges === true) {
-        // Batalkan kejadian default
         e.preventDefault();
-        // Wajib isi returnValue biar browser nampilin pesan
         e.returnValue = "Ada perubahan data yang belum disimpan.";
-        // Kembalikan nilai untuk kompatibilitas browser lama
         return e.returnValue;
     }
 });
 
-// Matikan pesan "Perubahan mungkin tidak disimpan" dari browser
-window.addEventListener('beforeunload', function (e) {
-    // Batalkan event (cara standar)
-    e.preventDefault();
-    // Set pesan kosong (beberapa browser butuh ini)
-    e.returnValue = '';
-    // Jangan return apa-apa lagi
-});
+// ✅ SELESAI, TIDAK ADA KODE BERANTEM LAGI
 
 
 </script>
