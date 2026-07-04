@@ -659,7 +659,7 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* 🎁🎁🎁STYLE MODAL LOGO🎁🎁🎁 */
+/* 🎁🎁🎁 STYLE MODAL LOGO 🎁🎁🎁 */
 #modalLogo {
     display: none;
     position: fixed;
@@ -672,42 +672,33 @@ body{
     background-color: rgba(0,0,0,0.4);
 }
 
-.logo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 15px;
-    padding: 10px;
+#modalLogo .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
 }
 
-.logo-item {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px 10px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+#modalLogo .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+#modalLogo .close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.logo-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-}
-
-.logo-item img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    margin-bottom: 8px;
-}
-
-.logo-item span {
-    font-size: 12px;
-    color: #333;
-    font-weight: 500;
-}
-
-/* STYLE BARU UNTUK MENU KELOMPOK */
+/* STYLE MENU KELOMPOK */
 .menu-group {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -739,10 +730,12 @@ body{
     display: inline-block;
 }
 
+/* GRID DAN ITEM */
 .logo-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
+    padding: 5px;
 }
 
 .logo-item {
@@ -752,14 +745,74 @@ body{
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     cursor: pointer;
+    transition: transform 0.2s;
 }
 
-.logo-item img {
+.logo-item:hover {
+    transform: translateY(-3px);
+}
+
+/* GAMBAR DAN TEKS */
+.logo-item img,
+.logo-item .logo-box {
     width: 50px;
     height: 50px;
     object-fit: contain;
-    margin-bottom: 8px;
+    margin: 0 auto 8px auto;
+    display: block;
 }
+
+.logo-item span {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 🎨 STYLE BOX LOGO (INISIAL) */
+.logo-box {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 18px;
+}
+
+/* WARNA OPERATOR */
+.logo-box.telkomsel { background: #D32D2D; }
+.logo-box.indosat { background: #FF7900; }
+.logo-box.xl { background: #000000; }
+.logo-box.tri { background: #EA0A8E; }
+.logo-box.smartfren { background: #F7B500; color: black; }
+.logo-box.axis { background: #0078D7; }
+
+/* WARNA E-WALLET */
+.logo-box.dana { background: #00AEE6; }
+.logo-box.ovo { background: #4C2B83; }
+.logo-box.gopay { background: #00B140; }
+.logo-box.shopeepay { background: #EE4D2D; }
+.logo-box.linkaja { background: #CC0000; }
+
+/* WARNA BANK */
+.logo-box.bca { background: #0161AF; }
+.logo-box.mandiri { background: #003B70; }
+.logo-box.bni { background: #0066B3; }
+.logo-box.bri { background: #004A99; }
+
+/* WARNA GAME */
+.logo-box.mobilelegends { background: #FF4646; }
+.logo-box.freefire { background: #E60000; }
+.logo-box.pubgmobile { background: #F79E1B; }
+.logo-box.higgsdomino { background: #00A651; }
+.logo-box.steam { background: #1B2838; }
+.logo-box.roblox { background: #00A2FF; }
+.logo-box.minecraft { background: #62C462; }
+
+/* WARNA LAINNYA */
+.logo-box.pln { background: #009E5F; }
+.logo-box.pdam { background: #007BC7; }
+.logo-box.indihome { background: #005BAC; }
 
 
 </style>
@@ -1036,7 +1089,7 @@ body{
 </div>
 
 
-<!-- MODAL DAFTAR LOGO PRODUK - VERSI OTOMATIS -->
+<!-- 🎁🎁🎁🎁🎁 MODAL DAFTAR LOGO PRODUK -->
 <div id="modalLogo" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -2720,55 +2773,9 @@ const dataProduk = {
     pln: ["Token PLN", "PLN Prabayar"]
 };
 
-// --- ✅ FUNGSI AMBIL GAMBAR LANGSUNG DARI INTERNET ---
-function getLogoUrl(nama) {
-    // Kita pakai sumber gambar dari Wikipedia atau LogoAPI
-    let url = "";
-    
-    switch(nama.toLowerCase()){
-        // OPERATOR
-        case "telkomsel": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/04/Telkomsel_2021_logo.svg/1200px-Telkomsel_2021_logo.svg.png"; break;
-        case "indosat": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/8a/Indosat_Ooredoo.svg/1200px-Indosat_Ooredoo.svg.png"; break;
-        case "xl": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/8a/XL_Axiata.svg/1200px-XL_Axiata.svg.png"; break;
-        case "tri": case "3": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/9e/Tri_Logo.svg/1200px-Tri_Logo.svg.png"; break;
-        case "smartfren": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/3a/Smartfren_Logo.svg/1200px-Smartfren_Logo.svg.png"; break;
-        case "axis": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/10/Axis_logo.svg/1200px-Axis_logo.svg.png"; break;
-        case "byu": case "by.u": url = "https://upload.wikimedia.org/wikipedia/id/thumb/5/5c/by.U_logo.svg/1200px-by.U_logo.svg.png"; break;
-
-        // E-WALLET
-        case "dana": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/37/DANA_Logo.svg/1200px-DANA_Logo.svg.png"; break;
-        case "ovo": url = "https://upload.wikimedia.org/wikipedia/id/thumb/2/21/OVO_Logo.svg/1200px-OVO_Logo.svg.png"; break;
-        case "gopay": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/35/GoPay_logo.svg/1200px-GoPay_logo.svg.png"; break;
-        case "shopeepay": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/80/ShopeePay_logo.svg/1200px-ShopeePay_logo.svg.png"; break;
-        case "linkaja": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/88/LinkAja_logo.svg/1200px-LinkAja_logo.svg.png"; break;
-        case "jenius": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/0d/Jenius_logo.svg/1200px-Jenius_logo.svg.png"; break;
-
-        // BANK
-        case "bca": url = "https://upload.wikimedia.org/wikipedia/id/thumb/5/5c/Bank_Central_Asia.svg/1200px-Bank_Central_Asia.svg.png"; break;
-        case "mandiri": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/11/Bank_Mandiri_logo.svg/1200px-Bank_Mandiri_logo.svg.png"; break;
-        case "bni": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/08/Bank_Negara_Indonesia.svg/1200px-Bank_Negara_Indonesia.svg.png"; break;
-        case "bri": url = "https://upload.wikimedia.org/wikipedia/id/thumb/6/68/Bank_Rakyat_Indonesia.svg/1200px-Bank_Rakyat_Indonesia.svg.png"; break;
-        case "cimb niaga": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/90/CIMB_Niaga_logo.svg/1200px-CIMB_Niaga_logo.svg.png"; break;
-        case "permata": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/80/Bank_Permata_logo.svg/1200px-Bank_Permata_logo.svg.png"; break;
-
-        // GAME
-        case "mobile legends": url = "https://upload.wikimedia.org/wikipedia/id/id/thumb/3/3b/Mobile_Legends_Bang_Bang_logo.svg/1200px-Mobile_Legends_Bang_Bang_logo.svg.png"; break;
-        case "free fire": url = "https://upload.wikimedia.org/wikipedia/id/id/thumb/3/39/Free_Fire_logo.png/1200px-Free_Fire_logo.png"; break;
-        case "pubg mobile": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/PUBG_Mobile_logo.png/1200px-PUBG_Mobile_logo.png"; break;
-        case "higgs domino": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/11/Higgs_Domino_logo.svg/1200px-Higgs_Domino_logo.svg.png"; break;
-        case "steam wallet": case "steam": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1200px-Steam_icon_logo.svg.png"; break;
-        case "google play": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_logo.svg/1200px-Google_Play_Store_logo.svg.png"; break;
-        case "roblox": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Roblox_logo.svg/1200px-Roblox_logo.svg.png"; break;
-        case "minecraft": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/35/Minecraft_Logo.svg/1200px-Minecraft_Logo.svg.png"; break;
-
-        // PASCABAYAR & LAINNYA
-        case "pln": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/31/Logo_PLN_2024.svg/1200px-Logo_PLN_2024.svg.png"; break;
-        case "pdam": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/94/Logo_PDAM.svg/1200px-Logo_PDAM.svg.png"; break;
-        case "indihome": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/12/IndiHome_logo.svg/1200px-IndiHome_logo.svg.png"; break;
-
-        default: url = ""; // Kalau tidak ada, nanti muncul inisial saja
-    }
-    return url;
+// --- ✅ FUNGSI BUAT NAMA CLASS CSS OTOMATIS ---
+function getClassName(nama) {
+    return nama.toLowerCase().replace(/\s+/g, '');
 }
 
 // --- FUNGSI TAMPILKAN ITEM ---
@@ -2779,11 +2786,11 @@ function tampilkanDaftar(kategori) {
     dataProduk[kategori].forEach(nama => {
         const div = document.createElement('div');
         div.className = 'logo-item';
+        const cls = getClassName(nama);
         
-        const imgUrl = getLogoUrl(nama);
-        
+        // ✅ LANGSUNG PAKAI BOX WARNA + INISIAL (PASTI MUNCUL)
         div.innerHTML = `
-            ${imgUrl ? `<img src="${imgUrl}" alt="${nama}" style="width:50px;height:50px;object-fit:contain;">` : `<div class="logo-box">${nama.substring(0,2)}</div>`}
+            <div class="logo-box ${cls}">${nama.substring(0, 2).toUpperCase()}</div>
             <span>${nama}</span>
         `;
         container.appendChild(div);
