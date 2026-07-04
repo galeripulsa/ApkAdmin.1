@@ -659,7 +659,7 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* 🎁🎁🎁STYLE MODAL LOGO */
+/* 🎁🎁🎁STYLE MODAL LOGO🎁🎁🎁 */
 #modalLogo {
     display: none;
     position: fixed;
@@ -2771,14 +2771,15 @@ document.addEventListener('input', function(e) {
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
 
-// --- FUNGSI MENU LOGO VERSI KELOMPOK ---
+// --- FUNGSI MENU LOGO VERSI KELOMPOK - SUDAH DIPERBAIKI ---
 document.addEventListener('click', function(e){
-    // BUKA MODAL KETIKA KLIK MENU LOGO
+    
+    // 1. BUKA MODAL KETIKA KLIK MENU LOGO
     if(e.target.textContent.trim() === 'Logo' || e.target.closest('[class*="logo"]')){
         document.getElementById('modalLogo').style.display = "block";
     }
 
-    // KLIK KELOMPOK (Misal: Logo Operator Seluler)
+    // 2. KLIK KELOMPOK (Misal: Logo Operator Seluler)
     const group = e.target.closest('.menu-group');
     if(group){
         const targetId = group.dataset.target;
@@ -2788,7 +2789,7 @@ document.addEventListener('click', function(e){
         document.getElementById(targetId).style.display = 'block';
     }
 
-    // KLIK TOMBOL KEMBALI
+    // 3. KLIK TOMBOL KEMBALI
     const back = e.target.closest('.back-btn');
     if(back){
         // Sembunyikan semua sub list
@@ -2799,18 +2800,24 @@ document.addEventListener('click', function(e){
         document.getElementById('mainList').style.display = 'block';
     }
 
-    // KLIK ITEM LOGO (Misal klik Telkomsel)
+    // 4. KLIK ITEM LOGO (Misal klik Telkomsel)
     const item = e.target.closest('.logo-item');
     if(item){
         const nama = item.querySelector('span').textContent;
         alert('Anda memilih: ' + nama);
         // Bisa tambah aksi lain disini
-        document.getElementById('modalLogo').style.display = "none";
+        document.getElementById('modalLogo').style.display = 'none';
+        
+        // Reset tampilan ke menu utama
+        setTimeout(() => {
+            document.querySelectorAll('.sub-list').forEach(el => el.style.display = 'none');
+            document.getElementById('mainList').style.display = 'block';
+        }, 300);
     }
 
-    // TUTUP MODAL
+    // 5. TUTUP MODAL
     if(e.target.closest('.close-btn') || e.target == document.getElementById('modalLogo')){
-        document.getElementById('modalLogo').style.display = "none';
+        document.getElementById('modalLogo').style.display = 'none'; // <-- DIPERBAIKI DISINI
         
         // Reset tampilan ke menu utama saat ditutup
         setTimeout(() => {
