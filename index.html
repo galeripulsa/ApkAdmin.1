@@ -1036,7 +1036,7 @@ body{
 </div>
 
 
-<!-- MODAL DAFTAR LOGO PRODUK - VERSI KELOMPOK -->
+<!-- MODAL DAFTAR LOGO PRODUK - VERSI OTOMATIS -->
 <div id="modalLogo" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1045,7 +1045,7 @@ body{
         </div>
         <div class="modal-body">
             
-            <!-- LIST UTAMA -->
+            <!-- LIST UTAMA (MENU KATEGORI) -->
             <div id="mainList">
                 <div class="menu-group" data-target="operator">
                     <span>📱 Logo Operator Seluler</span>
@@ -1073,77 +1073,11 @@ body{
                 </div>
             </div>
 
-            <!-- LIST DETAIL OPERATOR -->
-            <div id="operator" class="sub-list">
+            <!-- AREA TAMPILAN DETAIL (ISI OTOMATIS) -->
+            <div id="detailView" class="sub-list">
                 <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_telkomsel.png" alt=""><span>Telkomsel</span></div>
-                    <div class="logo-item"><img src="images/logo_indosat.png" alt=""><span>Indosat</span></div>
-                    <div class="logo-item"><img src="images/logo_xl.png" alt=""><span>XL</span></div>
-                    <div class="logo-item"><img src="images/logo_tri.png" alt=""><span>Tri</span></div>
-                    <div class="logo-item"><img src="images/logo_smartfren.png" alt=""><span>Smartfren</span></div>
-                    <div class="logo-item"><img src="images/logo_axis.png" alt=""><span>Axis</span></div>
-                </div>
-            </div>
-
-            <!-- LIST DETAIL PASCABAYAR -->
-            <div id="pascabayar" class="sub-list">
-                <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_pln.png" alt=""><span>PLN</span></div>
-                    <div class="logo-item"><img src="images/logo_pdam.png" alt=""><span>PDAM</span></div>
-                    <div class="logo-item"><img src="images/logo_tv.png" alt=""><span>TV Kabel</span></div>
-                    <div class="logo-item"><img src="images/logo_internet.png" alt=""><span>Internet</span></div>
-                    <div class="logo-item"><img src="images/logo_pbb.png" alt=""><span>PBB</span></div>
-                    <div class="logo-item"><img src="images/logo_bpjs.png" alt=""><span>BPJS</span></div>
-                </div>
-            </div>
-
-            <!-- LIST DETAIL E-WALLET -->
-            <div id="ewallet" class="sub-list">
-                <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_dana.png" alt=""><span>DANA</span></div>
-                    <div class="logo-item"><img src="images/logo_ovo.png" alt=""><span>OVO</span></div>
-                    <div class="logo-item"><img src="images/logo_gopay.png" alt=""><span>GoPay</span></div>
-                    <div class="logo-item"><img src="images/logo_shopeepay.png" alt=""><span>ShopeePay</span></div>
-                    <div class="logo-item"><img src="images/logo_linkaja.png" alt=""><span>LinkAja</span></div>
-                    <div class="logo-item"><img src="images/logo_jenius.png" alt=""><span>Jenius</span></div>
-                </div>
-            </div>
-
-            <!-- LIST DETAIL GAME -->
-            <div id="game" class="sub-list">
-                <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_ml.png" alt=""><span>Mobile Legends</span></div>
-                    <div class="logo-item"><img src="images/logo_ff.png" alt=""><span>Free Fire</span></div>
-                    <div class="logo-item"><img src="images/logo_pubg.png" alt=""><span>PUBG Mobile</span></div>
-                    <div class="logo-item"><img src="images/logo_steam.png" alt=""><span>Steam</span></div>
-                    <div class="logo-item"><img src="images/logo_higgs.png" alt=""><span>Higgs Domino</span></div>
-                    <div class="logo-item"><img src="images/logo_valorant.png" alt=""><span>Valorant</span></div>
-                </div>
-            </div>
-
-            <!-- LIST DETAIL BANK -->
-            <div id="bank" class="sub-list">
-                <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_bca.png" alt=""><span>BCA</span></div>
-                    <div class="logo-item"><img src="images/logo_mandiri.png" alt=""><span>Mandiri</span></div>
-                    <div class="logo-item"><img src="images/logo_bni.png" alt=""><span>BNI</span></div>
-                    <div class="logo-item"><img src="images/logo_bri.png" alt=""><span>BRI</span></div>
-                    <div class="logo-item"><img src="images/logo_cimb.png" alt=""><span>CIMB Niaga</span></div>
-                    <div class="logo-item"><img src="images/logo_permata.png" alt=""><span>Permata</span></div>
-                </div>
-            </div>
-
-            <!-- LIST DETAIL PLN PRABAYAR -->
-            <div id="pln" class="sub-list">
-                <div class="back-btn">&lt; Kembali</div>
-                <div class="logo-grid">
-                    <div class="logo-item"><img src="images/logo_pln.png" alt=""><span>Token PLN</span></div>
-                    <div class="logo-item"><img src="images/logo_pln_prabayar.png" alt=""><span>PLN Prabayar</span></div>
+                <div id="logoContainer" class="logo-grid">
+                    <!-- Isi gambar & nama akan muncul otomatis disini -->
                 </div>
             </div>
 
@@ -2771,59 +2705,117 @@ document.addEventListener('input', function(e) {
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
 
-// --- FUNGSI MENU LOGO VERSI KELOMPOK - SUDAH DIPERBAIKI ---
+// --- DATA SEMUA PRODUK & GAME LENGKAP ---
+const dataProduk = {
+    operator: ["Telkomsel", "Indosat", "XL", "Tri", "Smartfren", "Axis", "BYU"],
+    pascabayar: ["PLN", "PDAM", "Indihome", "First Media", "Biznet", "MNC Vision", "K Vision", "PBB", "BPJS"],
+    ewallet: ["DANA", "OVO", "GoPay", "ShopeePay", "LinkAja", "Jenius"],
+    game: [
+        "Mobile Legends", "Free Fire", "PUBG Mobile", "Genshin Impact", "Honor of Kings",
+        "Higgs Domino", "Steam Wallet", "Razer Gold", "Google Play", "Valorant",
+        "Point Blank", "Dragon Nest", "RF Online", "Metin2", "Call of Duty",
+        "Fortnite", "Apex Legends", "Roblox", "Minecraft", "Cookie Run", "Subway Surfers"
+    ],
+    bank: ["BCA", "Mandiri", "BNI", "BRI", "CIMB Niaga", "Permata", "BTN", "Danamon"],
+    pln: ["Token PLN", "PLN Prabayar"]
+};
+
+// --- ✅ FUNGSI AMBIL GAMBAR LANGSUNG DARI INTERNET ---
+function getLogoUrl(nama) {
+    // Kita pakai sumber gambar dari Wikipedia atau LogoAPI
+    let url = "";
+    
+    switch(nama.toLowerCase()){
+        // OPERATOR
+        case "telkomsel": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/04/Telkomsel_2021_logo.svg/1200px-Telkomsel_2021_logo.svg.png"; break;
+        case "indosat": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/8a/Indosat_Ooredoo.svg/1200px-Indosat_Ooredoo.svg.png"; break;
+        case "xl": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/8a/XL_Axiata.svg/1200px-XL_Axiata.svg.png"; break;
+        case "tri": case "3": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/9e/Tri_Logo.svg/1200px-Tri_Logo.svg.png"; break;
+        case "smartfren": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/3a/Smartfren_Logo.svg/1200px-Smartfren_Logo.svg.png"; break;
+        case "axis": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/10/Axis_logo.svg/1200px-Axis_logo.svg.png"; break;
+        case "byu": case "by.u": url = "https://upload.wikimedia.org/wikipedia/id/thumb/5/5c/by.U_logo.svg/1200px-by.U_logo.svg.png"; break;
+
+        // E-WALLET
+        case "dana": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/37/DANA_Logo.svg/1200px-DANA_Logo.svg.png"; break;
+        case "ovo": url = "https://upload.wikimedia.org/wikipedia/id/thumb/2/21/OVO_Logo.svg/1200px-OVO_Logo.svg.png"; break;
+        case "gopay": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/35/GoPay_logo.svg/1200px-GoPay_logo.svg.png"; break;
+        case "shopeepay": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/80/ShopeePay_logo.svg/1200px-ShopeePay_logo.svg.png"; break;
+        case "linkaja": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/88/LinkAja_logo.svg/1200px-LinkAja_logo.svg.png"; break;
+        case "jenius": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/0d/Jenius_logo.svg/1200px-Jenius_logo.svg.png"; break;
+
+        // BANK
+        case "bca": url = "https://upload.wikimedia.org/wikipedia/id/thumb/5/5c/Bank_Central_Asia.svg/1200px-Bank_Central_Asia.svg.png"; break;
+        case "mandiri": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/11/Bank_Mandiri_logo.svg/1200px-Bank_Mandiri_logo.svg.png"; break;
+        case "bni": url = "https://upload.wikimedia.org/wikipedia/id/thumb/0/08/Bank_Negara_Indonesia.svg/1200px-Bank_Negara_Indonesia.svg.png"; break;
+        case "bri": url = "https://upload.wikimedia.org/wikipedia/id/thumb/6/68/Bank_Rakyat_Indonesia.svg/1200px-Bank_Rakyat_Indonesia.svg.png"; break;
+        case "cimb niaga": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/90/CIMB_Niaga_logo.svg/1200px-CIMB_Niaga_logo.svg.png"; break;
+        case "permata": url = "https://upload.wikimedia.org/wikipedia/id/thumb/8/80/Bank_Permata_logo.svg/1200px-Bank_Permata_logo.svg.png"; break;
+
+        // GAME
+        case "mobile legends": url = "https://upload.wikimedia.org/wikipedia/id/id/thumb/3/3b/Mobile_Legends_Bang_Bang_logo.svg/1200px-Mobile_Legends_Bang_Bang_logo.svg.png"; break;
+        case "free fire": url = "https://upload.wikimedia.org/wikipedia/id/id/thumb/3/39/Free_Fire_logo.png/1200px-Free_Fire_logo.png"; break;
+        case "pubg mobile": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/PUBG_Mobile_logo.png/1200px-PUBG_Mobile_logo.png"; break;
+        case "higgs domino": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/11/Higgs_Domino_logo.svg/1200px-Higgs_Domino_logo.svg.png"; break;
+        case "steam wallet": case "steam": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1200px-Steam_icon_logo.svg.png"; break;
+        case "google play": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_logo.svg/1200px-Google_Play_Store_logo.svg.png"; break;
+        case "roblox": url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Roblox_logo.svg/1200px-Roblox_logo.svg.png"; break;
+        case "minecraft": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/35/Minecraft_Logo.svg/1200px-Minecraft_Logo.svg.png"; break;
+
+        // PASCABAYAR & LAINNYA
+        case "pln": url = "https://upload.wikimedia.org/wikipedia/id/thumb/3/31/Logo_PLN_2024.svg/1200px-Logo_PLN_2024.svg.png"; break;
+        case "pdam": url = "https://upload.wikimedia.org/wikipedia/id/thumb/9/94/Logo_PDAM.svg/1200px-Logo_PDAM.svg.png"; break;
+        case "indihome": url = "https://upload.wikimedia.org/wikipedia/id/thumb/1/12/IndiHome_logo.svg/1200px-IndiHome_logo.svg.png"; break;
+
+        default: url = ""; // Kalau tidak ada, nanti muncul inisial saja
+    }
+    return url;
+}
+
+// --- FUNGSI TAMPILKAN ITEM ---
+function tampilkanDaftar(kategori) {
+    const container = document.getElementById('logoContainer');
+    container.innerHTML = "";
+
+    dataProduk[kategori].forEach(nama => {
+        const div = document.createElement('div');
+        div.className = 'logo-item';
+        
+        const imgUrl = getLogoUrl(nama);
+        
+        div.innerHTML = `
+            ${imgUrl ? `<img src="${imgUrl}" alt="${nama}" style="width:50px;height:50px;object-fit:contain;">` : `<div class="logo-box">${nama.substring(0,2)}</div>`}
+            <span>${nama}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// --- EVENT CLICK ---
 document.addEventListener('click', function(e){
     
-    // 1. BUKA MODAL KETIKA KLIK MENU LOGO
+    // BUKA MODAL
     if(e.target.textContent.trim() === 'Logo' || e.target.closest('[class*="logo"]')){
         document.getElementById('modalLogo').style.display = "block";
     }
 
-    // 2. KLIK KELOMPOK (Misal: Logo Operator Seluler)
+    // KLIK KELOMPOK
     const group = e.target.closest('.menu-group');
     if(group){
-        const targetId = group.dataset.target;
-        
-        // Sembunyikan list utama, tampilkan sub list
+        const target = group.dataset.target;
         document.getElementById('mainList').style.display = 'none';
-        document.getElementById(targetId).style.display = 'block';
+        document.getElementById('detailView').style.display = 'block';
+        tampilkanDaftar(target);
     }
 
-    // 3. KLIK TOMBOL KEMBALI
-    const back = e.target.closest('.back-btn');
-    if(back){
-        // Sembunyikan semua sub list
-        document.querySelectorAll('.sub-list').forEach(el => {
-            el.style.display = 'none';
-        });
-        // Tampilkan list utama lagi
+    // KLIK KEMBALI
+    if(e.target.closest('.back-btn')){
+        document.querySelectorAll('.sub-list').forEach(el => el.style.display = 'none');
         document.getElementById('mainList').style.display = 'block';
     }
 
-    // 4. KLIK ITEM LOGO (Misal klik Telkomsel)
-    const item = e.target.closest('.logo-item');
-    if(item){
-        const nama = item.querySelector('span').textContent;
-        alert('Anda memilih: ' + nama);
-        // Bisa tambah aksi lain disini
-        document.getElementById('modalLogo').style.display = 'none';
-        
-        // Reset tampilan ke menu utama
-        setTimeout(() => {
-            document.querySelectorAll('.sub-list').forEach(el => el.style.display = 'none');
-            document.getElementById('mainList').style.display = 'block';
-        }, 300);
-    }
-
-    // 5. TUTUP MODAL
+    // TUTUP MODAL
     if(e.target.closest('.close-btn') || e.target == document.getElementById('modalLogo')){
-        document.getElementById('modalLogo').style.display = 'none'; // <-- DIPERBAIKI DISINI
-        
-        // Reset tampilan ke menu utama saat ditutup
-        setTimeout(() => {
-            document.querySelectorAll('.sub-list').forEach(el => el.style.display = 'none');
-            document.getElementById('mainList').style.display = 'block';
-        }, 300);
+        document.getElementById('modalLogo').style.display = 'none';
     }
 });
 
