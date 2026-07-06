@@ -2807,7 +2807,7 @@ function getClassName(nama) {
 
 // --- VARIABEL PENAMPUNG ELEMEN YANG DIKLIK ---
 let currentElement = null;
-let currentImageUrl = null; // ✅ Variabel baru buat simpan URL gambar sementara
+let currentImageUrl = null;
 
 // --- FUNGSI TAMPILKAN ITEM ---
 function tampilkanDaftar(kategori) {
@@ -2819,73 +2819,70 @@ function tampilkanDaftar(kategori) {
         div.className = 'logo-item';
         const cls = getClassName(nama);
         
-        // ✅ PAKAI BOX WARNA + INISIAL
         div.innerHTML = `
             <div class="logo-box ${cls}">${nama.substring(0, 2).toUpperCase()}</div>
             <span>${nama}</span>
         `;
 
-        // ✅ KLIK ITEM = BUKA GALERI
+        // KLIK ITEM = BUKA FILE PICKER
         div.addEventListener('click', function() {
-            currentElement = this.querySelector('.logo-box'); // Simpan elemen yang akan diganti gambarnya
-            document.getElementById('fileInput').click(); // Buka file picker
+            currentElement = this.querySelector('.logo-box');
+            document.getElementById('fileInput').click();
         });
 
         container.appendChild(div);
     });
 }
 
-// --- ✅ JIKA USER MEMILIH GAMBAR DARI HP ---
+// --- ✅ JIKA USER MEMILIH GAMBAR ---
 document.getElementById('fileInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if(file && currentElement) {
-        // Buat URL sementara untuk gambar yang dipilih
         currentImageUrl = URL.createObjectURL(file);
-        
-        // Tampilkan preview di modal (opsional) atau langsung siap simpan
-        // Disini kita simpan dulu di variabel, nanti ditekan tombol simpan baru dipasang
-        // Atau kalau mau langsung tampil pas dipilih:
-        // currentElement.innerHTML = `<img src="${currentImageUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-        // currentElement.className = "logo-box"; 
-
-        // ✅ Buka modal setelah pilih gambar
+        // Tampilkan modal konfirmasi setelah gambar dipilih
         document.getElementById('modalLogo').style.display = "block";
     }
-    // Reset input biar bisa pilih file sama lagi
     e.target.value = '';
 });
 
 // --- ✅ FUNGSI TOMBOL SIMPAN ---
 document.addEventListener('click', function(e){
-    if(e.target.closest('#btnSaveLogo')){ // ✅ Deteksi klik tombol Simpan
+    if(e.target.closest('#btnSaveLogo')){
         if(currentElement && currentImageUrl) {
-            // ✅ Pasang gambarnya permanen
             currentElement.innerHTML = `<img src="${currentImageUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-            currentElement.className = "logo-box"; // Hapus background warna
+            currentElement.className = "logo-box";
             
             alert("✅ Logo berhasil disimpan!");
             
-            // Tutup modal
             document.getElementById('modalLogo').style.display = 'none';
-            currentImageUrl = null; // Reset
+            currentImageUrl = null;
         } else {
             alert("⚠️ Silakan pilih gambar terlebih dahulu!");
         }
     }
 });
 
-// --- EVENT CLICK LAINNYA ---
+// --- EVENT CLICK UTAMA ---
 document.addEventListener('click', function(e){
     
-    // BUKA MODAL (Jika klik area logo)
-    if(e.target.textContent.trim() === 'Logo' || e.target.closest('[class*="logo"]')){
-        // Hanya buka modal jika belum ada gambar yang dipilih
-        // document.getElementById('modalLogo').style.display = "block";
+    // --- ✅ PERBAIKAN: BUKA MODAL KETIKA KLIK MENU LOGO ---
+    // Cari elemen dengan class 'menu-group' dan target 'logo'
+    const menuLogo = e.target.closest('.menu-group[data-target="logo"]');
+    if(menuLogo) {
+        // Tampilkan halaman daftar logo
+        document.getElementById('mainList').style.display = 'none';
+        document.getElementById('detailView').style.display = 'block';
+        tampilkanDaftar('logo'); // Pastikan 'logo' ada di dataProduk, atau ganti sesuai nama key kamu
     }
 
-    // KLIK KELOMPOK
+    // ATAU: Jika ingin klik tulisan "Logo" langsung buka modal
+    if(e.target.textContent.trim() === 'Logo') {
+        document.getElementById('modalLogo').style.display = "block";
+    }
+
+    // KLIK KELOMPOK LAINNYA
     const group = e.target.closest('.menu-group');
-    if(group){
+    if(group && !group.dataset.target.includes('logo')){
         const target = group.dataset.target;
         document.getElementById('mainList').style.display = 'none';
         document.getElementById('detailView').style.display = 'block';
@@ -2903,6 +2900,7 @@ document.addEventListener('click', function(e){
         document.getElementById('modalLogo').style.display = 'none';
     }
 });
+
 
 
  // ==================================================
