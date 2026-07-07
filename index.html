@@ -659,7 +659,9 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* 🎁🎁🎁 STYLE MODAL LOGO 🎁🎁🎁 */
+/* ============================================
+   🎁 STYLE MODAL UPLOAD LOGO
+   ============================================ */
 #modalLogo {
     display: none;
     position: fixed;
@@ -674,16 +676,15 @@ body{
 
 #modalLogo .modal-content {
     background-color: #fefefe;
-    margin: 0;
+    margin: auto;
     padding: 20px;
     border: none;
-    height: 100vh;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0px;
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 #modalLogo .modal-header {
@@ -700,9 +701,20 @@ body{
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    background: none;
+    border: none;
 }
 
-/* STYLE MENU KELOMPOK */
+#modalLogo .close-btn:hover,
+#modalLogo .close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* ============================================
+   📋 STYLE MENU KELOMPOK
+   ============================================ */
 .menu-group {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -734,7 +746,9 @@ body{
     display: inline-block;
 }
 
-/* 🎁 STYLE TOMBOL SUPPORT GIFT */
+/* ============================================
+   🎁 STYLE TOMBOL SUPPORT GIFT
+   ============================================ */
 .gift-btn {
     background: linear-gradient(45deg, #FFD700, #FFA500);
     color: white;
@@ -756,12 +770,13 @@ body{
     transform: scale(1.05);
 }
 
-/* HIDE INPUT FILE */
+/* ============================================
+   📂 STYLE UPLOAD & GRID LOGO
+   ============================================ */
 #fileInput {
     display: none;
 }
 
-/* GRID DAN ITEM */
 .logo-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -783,7 +798,6 @@ body{
     transform: translateY(-3px);
 }
 
-/* GAMBAR DAN TEKS */
 .logo-item img,
 .logo-item .logo-box {
     width: 50px;
@@ -799,7 +813,9 @@ body{
     font-weight: 500;
 }
 
-/* 🎨 STYLE BOX LOGO (INISIAL) */
+/* ============================================
+   🎨 STYLE BOX LOGO (INISIAL & WARNA)
+   ============================================ */
 .logo-box {
     border-radius: 50%;
     display: flex;
@@ -811,7 +827,7 @@ body{
     overflow: hidden;
 }
 
-/* WARNA OPERATOR */
+/* --- WARNA OPERATOR --- */
 .logo-box.telkomsel { background: #D32D2D; }
 .logo-box.indosat { background: #FF7900; }
 .logo-box.xl { background: #000000; }
@@ -819,20 +835,20 @@ body{
 .logo-box.smartfren { background: #F7B500; color: black; }
 .logo-box.axis { background: #0078D7; }
 
-/* WARNA E-WALLET */
+/* --- WARNA E-WALLET --- */
 .logo-box.dana { background: #00AEE6; }
 .logo-box.ovo { background: #4C2B83; }
 .logo-box.gopay { background: #00B140; }
 .logo-box.shopeepay { background: #EE4D2D; }
 .logo-box.linkaja { background: #CC0000; }
 
-/* WARNA BANK */
+/* --- WARNA BANK --- */
 .logo-box.bca { background: #0161AF; }
 .logo-box.mandiri { background: #003B70; }
 .logo-box.bni { background: #0066B3; }
 .logo-box.bri { background: #004A99; }
 
-/* WARNA GAME */
+/* --- WARNA GAME --- */
 .logo-box.mobilelegends { background: #FF4646; }
 .logo-box.freefire { background: #E60000; }
 .logo-box.pubgmobile { background: #F79E1B; }
@@ -841,7 +857,7 @@ body{
 .logo-box.roblox { background: #00A2FF; }
 .logo-box.minecraft { background: #62C462; }
 
-/* WARNA LAINNYA */
+/* --- WARNA LAINNYA --- */
 .logo-box.pln { background: #009E5F; }
 .logo-box.pdam { background: #007BC7; }
 .logo-box.indihome { background: #005BAC; }
@@ -1163,6 +1179,13 @@ body{
     </div>
   </div>
 </div>
+
+<!-- ====== TAMBAHKAN KODE INI DI BAGIAN LOGO MENU KAMU ====== -->
+<a href="javascript:void(0)" data-toggle="modal" data-target="#modalLogo">
+    <!-- TARUH GAMBAR LOGO KAMU DISINI -->
+    <img src="assets/img/logo.png" alt="Logo">
+</a>
+
 
 
 
@@ -2788,7 +2811,7 @@ document.addEventListener('input', function(e) {
 // --- DATA SEMUA PRODUK & GAME LENGKAP ---
 const dataProduk = {
     operator: ["Telkomsel", "Indosat", "XL", "Tri", "Smartfren", "Axis", "BYU"],
-    pascabayar: ["PLN", "PDAM", "Indihome", "First Media", "Biznet", "MNC Vision", "K Vision", "PBB", "BPJS"],
+    pascabayar: ["PLN", "PDAM", "Indihome", "First Media", "Biznet", "MNC Vision", "PBB", "BPJS"],
     ewallet: ["DANA", "OVO", "GoPay", "ShopeePay", "LinkAja", "Jenius"],
     game: [
         "Mobile Legends", "Free Fire", "PUBG Mobile", "Genshin Impact", "Honor of Kings",
@@ -2812,6 +2835,7 @@ let currentImageUrl = null;
 // --- FUNGSI TAMPILKAN ITEM ---
 function tampilkanDaftar(kategori) {
     const container = document.getElementById('logoContainer');
+    if(!container) return; // Proteksi kalau element tidak ada
     container.innerHTML = "";
 
     dataProduk[kategori].forEach(nama => {
@@ -2840,7 +2864,7 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
     if(file && currentElement) {
         currentImageUrl = URL.createObjectURL(file);
         // Tampilkan modal konfirmasi setelah gambar dipilih
-        document.getElementById('modalLogo').style.display = "block";
+        $('#modalLogo').modal('show'); // Pakai cara Bootstrap agar animasi jalan
     }
     e.target.value = '';
 });
@@ -2854,7 +2878,7 @@ document.addEventListener('click', function(e){
             
             alert("✅ Logo berhasil disimpan!");
             
-            document.getElementById('modalLogo').style.display = 'none';
+            $('#modalLogo').modal('hide'); // Tutup modal pakai Bootstrap
             currentImageUrl = null;
         } else {
             alert("⚠️ Silakan pilih gambar terlebih dahulu!");
@@ -2866,23 +2890,17 @@ document.addEventListener('click', function(e){
 document.addEventListener('click', function(e){
     
     // --- ✅ PERBAIKAN: BUKA MODAL KETIKA KLIK MENU LOGO ---
-    // Cari elemen dengan class 'menu-group' dan target 'logo'
     const menuLogo = e.target.closest('.menu-group[data-target="logo"]');
     if(menuLogo) {
-        // Tampilkan halaman daftar logo
-        document.getElementById('mainList').style.display = 'none';
-        document.getElementById('detailView').style.display = 'block';
-        tampilkanDaftar('logo'); // Pastikan 'logo' ada di dataProduk, atau ganti sesuai nama key kamu
-    }
-
-    // ATAU: Jika ingin klik tulisan "Logo" langsung buka modal
-    if(e.target.textContent.trim() === 'Logo') {
+        // 👇 INI YANG DIPERBAIKI: Langsung buka modal, jangan panggil tampilkanDaftar('logo')
+        e.preventDefault();
         document.getElementById('modalLogo').style.display = "block";
+        // Atau pakai cara Bootstrap: $('#modalLogo').modal('show');
     }
 
     // KLIK KELOMPOK LAINNYA
     const group = e.target.closest('.menu-group');
-    if(group && !group.dataset.target.includes('logo')){
+    if(group && group.dataset.target !== 'logo'){
         const target = group.dataset.target;
         document.getElementById('mainList').style.display = 'none';
         document.getElementById('detailView').style.display = 'block';
@@ -2896,10 +2914,11 @@ document.addEventListener('click', function(e){
     }
 
     // TUTUP MODAL
-    if(e.target.closest('.close-btn') || e.target == document.getElementById('modalLogo')){
-        document.getElementById('modalLogo').style.display = 'none';
+    if(e.target.closest('.close') || e.target.closest('.btn-secondary')){
+        $('#modalLogo').modal('hide');
     }
 });
+
 
 
 
