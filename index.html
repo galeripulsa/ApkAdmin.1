@@ -663,50 +663,53 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* ============================================
-   GAYA KHUSUS MODAL LOGO (PENDUKUNG TAILWIND)
-   ============================================ */
-/* Pastikan transisi & perilaku modal berjalan mulus */
-#logoModal {
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-}
-
-#logoModal.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-
-#logoModal:not(.hidden) {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Gaya pratinjau logo */
-#previewLogo {
-  transition: all 0.2s ease;
-}
-
-#previewLogo:hover {
-  transform: scale(1.03);
-}
-
-/* Gaya logo di header */
-#currentDisplayLogo {
-  transition: transform 0.2s ease;
-}
-
-#openLogoModal:hover #currentDisplayLogo {
-  transform: scale(1.1);
-}
-
-/* ============================================
-   HAPUS SEMUA GAYA TIDAK TERPAKAI:
-   - Gaya modal lama #modalLogo
-   - Gaya menu kelompok, sub-list, back-btn lama
-   - Gaya tombol support gift / gift-btn
-   - Gaya grid logo, logo-item, logo-box beserta warna kode produk
-   ============================================ */
-
+/* === DASAR & TAMPILAN UMUM MENU LOGO === */
+     * {
+       box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+     }
+     body {
+       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       background-color: #f3f4f6;
+       min-height: 100vh;
+       padding-bottom: 2rem;
+     }
+     /* === ANIMASI & TRANSISI MODAL === */
+     .modal-transition {
+       transition: opacity 0.25s ease, transform 0.25s ease;
+     }
+     .modal-hidden {
+       opacity: 0;
+       visibility: hidden;
+       transform: scale(0.95) translateY(10px);
+     }
+     .modal-show {
+       opacity: 1;
+       visibility: visible;
+       transform: scale(1) translateY(0);
+     }
+     /* === SCROLLBAR CUSTOM === */
+     .scrollbar-thin::-webkit-scrollbar {
+       width: 4px;
+     }
+     .scrollbar-thin::-webkit-scrollbar-track {
+       background: transparent;
+     }
+     .scrollbar-thin::-webkit-scrollbar-thumb {
+       background: #d1d5db;
+       border-radius: 4px;
+     }
+     /* === EFEK ITEM LOGO === */
+     .item-logo {
+       transition: all 0.2s ease;
+       will-change: transform, box-shadow;
+     }
+     .item-logo:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+     }
+   
 
 </style>
 
@@ -983,78 +986,62 @@ body{
 
 <!-- 🎁🎁🎁🎁🎁 -->
 
-<!-- Bagian Header / Menu Logo -->
- <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40">
-   <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-     <!-- Tombol Buka Modal Logo -->
-     <button 
-       id="openLogoModal" 
-       class="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-3 py-2 transition-colors"
-       type="button"
-     >
-       <img 
-         id="currentDisplayLogo" 
-         src="/assets/default-logo.png" 
-         alt="Logo Aplikasi" 
-         class="h-8 w-8 object-contain rounded"
-       >
-       <span class="font-semibold text-gray-800 dark:text-white">Admin Panel</span>
-       <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
-     </button>
-     <!-- Navigasi Utama -->
-     <nav class="hidden md:flex items-center gap-4">
-       <a href="#dashboard" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium">Dashboard</a>
-       <a href="#settings" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium">Pengaturan</a>
-     </nav>
-   </div>
- </header>
- <!-- Modal Ubah Logo -->
- <div id="logoModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 relative">
-     <!-- Tombol Tutup -->
-     <button 
-       id="closeLogoModal" 
-       class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-       type="button"
-     >
-       <i data-lucide="x" class="w-5 h-5"></i>
-     </button>
-     <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Ubah Logo Aplikasi</h3>
-     <!-- Area Pratinjau & Unggah -->
-     <div class="space-y-4">
-       <div class="flex flex-col items-center gap-3">
-         <img 
-           id="previewLogo" 
-           src="/assets/default-logo.png" 
-           alt="Pratinjau Logo" 
-           class="h-20 w-20 object-contain rounded-lg border border-gray-200 dark:border-gray-700 p-2"
-         >
-         <label class="cursor-pointer text-sm text-blue-600 dark:text-blue-400 hover:underline">
-           <input type="file" id="logoFileInput" accept="image/*" class="hidden">
-           Pilih gambar dari perangkat
-         </label>
-         <p class="text-xs text-gray-500 dark:text-gray-400">Format: PNG, JPG, SVG | Ukuran maks: 2MB</p>
+<!-- MODAL DAFTAR LOGO SEMUA KATEGORI -->
+ <div id="logoListModal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 modal-transition modal-hidden">
+   <div class="bg-white w-full sm:max-w-2xl sm:rounded-2xl rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col">
+     <!-- HEADER MODAL -->
+     <div class="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+       <h3 class="text-xl font-bold text-gray-800">Pengaturan Logo</h3>
+       <button id="closeLogoListModal" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+         <i data-lucide="x" class="w-5 h-5 text-gray-600"></i>
+       </button>
+     </div>
+     <!-- ISI MODAL: DAFTAR KATEGORI & ITEM -->
+     <div class="flex-1 overflow-y-auto p-5 scrollbar-thin space-y-6">
+       <!-- KATEGORI OPERATOR -->
+       <div class="space-y-3">
+         <h4 class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Operator Prabayar</h4>
+         <div id="listOperator" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
        </div>
-       <!-- Tombol Aksi -->
-       <div class="flex gap-3 pt-2">
-         <button 
-           id="cancelLogoBtn" 
-           class="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-           type="button"
-         >
-           Batal
-         </button>
-         <button 
-           id="saveLogoBtn" 
-           class="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-           type="button"
-         >
-           Simpan Logo
-         </button>
+       <!-- KATEGORI PASCABAYAR -->
+       <div class="space-y-3">
+         <h4 class="text-sm font-semibold text-orange-600 uppercase tracking-wider">Pascabayar & Tagihan</h4>
+         <div id="listPascabayar" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
+       </div>
+       <!-- KATEGORI E-WALLET -->
+       <div class="space-y-3">
+         <h4 class="text-sm font-semibold text-green-600 uppercase tracking-wider">E-Wallet</h4>
+         <div id="listEwallet" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
+       </div>
+       <!-- KATEGORI GAME -->
+       <div class="space-y-3">
+         <h4 class="text-sm font-semibold text-red-600 uppercase tracking-wider">Game & Hiburan</h4>
+         <div id="listGame" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
        </div>
      </div>
    </div>
  </div>
+ <!-- MODAL UBAH LOGO SATU ITEM -->
+ <div id="editSingleLogoModal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4">
+   <div class="bg-white rounded-xl w-full max-w-sm p-6 relative">
+     <button id="closeEditSingleModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+       <i data-lucide="x" class="w-5 h-5"></i>
+     </button>
+     <h4 id="editItemName" class="text-lg font-bold text-gray-800 mb-4">Ubah Logo</h4>
+     <div class="flex flex-col items-center gap-4">
+       <img id="editPreviewLogo" src="" alt="Pratinjau" class="w-20 h-20 object-contain rounded-lg border border-gray-200 p-2">
+       <label class="cursor-pointer text-sm text-blue-600 hover:underline">
+         <input type="file" id="editLogoInput" accept="image/*" class="hidden">
+         Pilih gambar baru
+       </label>
+     </div>
+     <div class="flex gap-3 mt-6">
+       <button id="cancelEditLogo" class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">Batal</button>
+       <button id="saveEditLogo" class="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Simpan</button>
+     </div>
+   </div>
+ </div>
+
 
 <script>
 window.onerror = function(message, source, line, column){
@@ -2674,131 +2661,127 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-
-// ===== INISIALISASI ELEMEN DOM (HANYA DIPANGGIL SEKALI) =====
-const el = {
-  // Tombol & Tampilan Header
-  btnBukaModal: document.getElementById('openLogoModal'),
-  logoTampilanUtama: document.getElementById('currentDisplayLogo'),
-
-  // Elemen Modal
-  modalLogo: document.getElementById('logoModal'),
-  btnTutupModal: document.getElementById('closeLogoModal'),
-  btnBatal: document.getElementById('cancelLogoBtn'),
-  btnSimpan: document.getElementById('saveLogoBtn'),
-  inputFileLogo: document.getElementById('logoFileInput'),
-  logoPratinjau: document.getElementById('previewLogo')
-};
-
-// ===== FUNGSI BANTUAN: TUTUP MODAL =====
-function tutupModalLogo() {
-  el.modalLogo.classList.add('hidden');
-  el.modalLogo.classList.remove('flex');
-  // Reset status tombol & input setelah tutup
-  el.btnSimpan.disabled = false;
-  el.btnSimpan.innerHTML = 'Simpan Logo';
-  el.inputFileLogo.value = ''; // Kosongkan input file
-}
-
-// ===== FUNGSI BANTUAN: VALIDASI FILE =====
-function validasiFileLogo(file) {
-  const tipeValid = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
-  const ukuranMaks = 2 * 1024 * 1024; // 2MB
-
-  if (!tipeValid.includes(file.type)) {
-    alert('Format tidak didukung! Gunakan: PNG, JPG, SVG, atau WebP');
-    return false;
-  }
-  if (file.size > ukuranMaks) {
-    alert('Ukuran terlalu besar! Maksimal 2MB');
-    return false;
-  }
-  return true;
-}
-
-// ===== FUNGSI: PRATINJAU GAMBAR =====
-el.inputFileLogo.addEventListener('change', function(e) {
-  const fileTerpilih = e.target.files[0];
-  if (!fileTerpilih) return;
-
-  if (!validasiFileLogo(fileTerpilih)) return;
-
-  // Tampilkan pratinjau
-  const pembaca = new FileReader();
-  pembaca.onload = function(hasil) {
-    el.logoPratinjau.src = hasil.target.result;
-  };
-  pembaca.readAsDataURL(fileTerpilih);
-});
-
-// ===== FUNGSI: BUKA MODAL =====
-el.btnBukaModal.addEventListener('click', function() {
-  el.modalLogo.classList.remove('hidden');
-  el.modalLogo.classList.add('flex');
-  el.logoPratinjau.src = el.logoTampilanUtama.src; // Sinkronisasi logo awal
-});
-
-// ===== FUNGSI: TUTUP MODAL DARI BERBAGAI CARA =====
-el.btnTutupModal.addEventListener('click', tutupModalLogo);
-el.btnBatal.addEventListener('click', tutupModalLogo);
-el.modalLogo.addEventListener('click', function(e) {
-  // Tutup jika klik di latar belakang gelap saja
-  if (e.target === el.modalLogo) tutupModalLogo();
-});
-
-// ===== FUNGSI: SIMPAN LOGO =====
-el.btnSimpan.addEventListener('click', async function() {
-  const sumberLogoBaru = el.logoPratinjau.src;
-
-  // Cek apakah ada perubahan
-  if (sumberLogoBaru === el.logoTampilanUtama.src) {
-    alert('Belum ada perubahan pada logo');
-    return;
-  }
-
-  // Ubah status tombol saat proses
-  el.btnSimpan.disabled = true;
-  el.btnSimpan.innerHTML = `
-    <div class="flex items-center justify-center gap-2">
-      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-      Menyimpan...
-    </div>
-  `;
-
-  try {
-    // === JIKA INGIN SIMPAN KE BACKEND, GANTI BAGIAN INI: ===
-    /*
-    const formData = new FormData();
-    formData.append('logo', el.inputFileLogo.files[0]);
-
-    const res = await fetch('/api/pengaturan/simpan-logo', {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.pesan || 'Gagal menyimpan');
-    el.logoTampilanUtama.src = data.urlLogo;
-    */
-
-    // === SIMULASI (HAPUS BARIS DI BAWAH JIKA PAKAI API DI ATAS) ===
-    await new Promise(res => setTimeout(res, 1200));
-    el.logoTampilanUtama.src = sumberLogoBaru;
-
-    // Berhasil
-    el.btnSimpan.innerHTML = '✓ Berhasil Disimpan';
-    setTimeout(tutupModalLogo, 900);
-
-  } catch (error) {
-    // Gagal
-    el.btnSimpan.disabled = false;
-    el.btnSimpan.innerHTML = 'Coba Lagi';
-    alert(`Gagal menyimpan: ${error.message}`);
-  }
-});
-
-// Inisialisasi ikon Lucide (jika belum ada di tempat lain)
-if (typeof lucide !== 'undefined') lucide.createIcons();
-
+lucide.createIcons();
+   // DATA KATEGORI & ITEM LENGKAP
+   const dataKategori = {
+     operator: [
+       { nama: "Telkomsel", logo: "https://via.placeholder.com/80/DC2626/FFFFFF?text=TEL" },
+       { nama: "Indosat", logo: "https://via.placeholder.com/80/F97316/FFFFFF?text=IND" },
+       { nama: "XL", logo: "https://via.placeholder.com/80/000000/FFFFFF?text=XL" },
+       { nama: "Tri", logo: "https://via.placeholder.com/80/EC4899/FFFFFF?text=TRI" },
+       { nama: "Smartfren", logo: "https://via.placeholder.com/80/FBBF24/000000?text=SF" },
+       { nama: "Axis", logo: "https://via.placeholder.com/80/0284C7/FFFFFF?text=AXI" },
+       { nama: "By.U", logo: "https://via.placeholder.com/80/7C3AED/FFFFFF?text=BYU" }
+     ],
+     pascabayar: [
+       { nama: "PLN", logo: "https://via.placeholder.com/80/059669/FFFFFF?text=PLN" },
+       { nama: "PDAM", logo: "https://via.placeholder.com/80/0284C7/FFFFFF?text=PDAM" },
+       { nama: "Indihome", logo: "https://via.placeholder.com/80/1D4ED8/FFFFFF?text=IH" },
+       { nama: "BPJS", logo: "https://via.placeholder.com/80/16A34A/FFFFFF?text=BPJS" },
+       { nama: "PBB", logo: "https://via.placeholder.com/80/92400E/FFFFFF?text=PBB" }
+     ],
+     ewallet: [
+       { nama: "DANA", logo: "https://via.placeholder.com/80/00AEE6/FFFFFF?text=DNA" },
+       { nama: "OVO", logo: "https://via.placeholder.com/80/4C2B83/FFFFFF?text=OVO" },
+       { nama: "GoPay", logo: "https://via.placeholder.com/80/00B140/FFFFFF?text=GOP" },
+       { nama: "ShopeePay", logo: "https://via.placeholder.com/80/EE4D2D/FFFFFF?text=SP" },
+       { nama: "LinkAja", logo: "https://via.placeholder.com/80/CC0000/FFFFFF?text=LA" }
+     ],
+     game: [
+       { nama: "Mobile Legends", logo: "https://via.placeholder.com/80/FF4646/FFFFFF?text=ML" },
+       { nama: "Free Fire", logo: "https://via.placeholder.com/80/E60000/FFFFFF?text=FF" },
+       { nama: "PUBG Mobile", logo: "https://via.placeholder.com/80/F79E1B/FFFFFF?text=PUBG" },
+       { nama: "Genshin Impact", logo: "https://via.placeholder.com/80/6366F1/FFFFFF?text=GI" },
+       { nama: "Higgs Domino", logo: "https://via.placeholder.com/80/00A651/FFFFFF?text=HD" },
+       { nama: "Steam", logo: "https://via.placeholder.com/80/1B2838/FFFFFF?text=STM" },
+       { nama: "Roblox", logo: "https://via.placeholder.com/80/00A2FF/FFFFFF?text=RBX" },
+       { nama: "Minecraft", logo: "https://via.placeholder.com/80/62C462/FFFFFF?text=MC" }
+     ]
+   };
+   // ELEMEN DOM
+   const el = {
+     btnBukaModal: document.getElementById('openLogoListModal'),
+     modalDaftar: document.getElementById('logoListModal'),
+     btnTutupDaftar: document.getElementById('closeLogoListModal'),
+     modalEdit: document.getElementById('editSingleLogoModal'),
+     namaItemEdit: document.getElementById('editItemName'),
+     pratinjauEdit: document.getElementById('editPreviewLogo'),
+     inputFileEdit: document.getElementById('editLogoInput'),
+     btnSimpanEdit: document.getElementById('saveEditLogo'),
+     btnBatalEdit: document.getElementById('cancelEditLogo'),
+     btnTutupEdit: document.getElementById('closeEditSingleModal')
+   };
+   let itemSedangDiedit = null;
+   // RENDER DAFTAR ITEM KE MODAL
+   function renderDaftarItem() {
+     const listOp = document.getElementById('listOperator');
+     listOp.innerHTML = '';
+     dataKategori.operator.forEach(item => buatItemLogo(item, listOp));
+     const listPasca = document.getElementById('listPascabayar');
+     listPasca.innerHTML = '';
+     dataKategori.pascabayar.forEach(item => buatItemLogo(item, listPasca));
+     const listEwal = document.getElementById('listEwallet');
+     listEwal.innerHTML = '';
+     dataKategori.ewallet.forEach(item => buatItemLogo(item, listEwal));
+     const listGame = document.getElementById('listGame');
+     listGame.innerHTML = '';
+     dataKategori.game.forEach(item => buatItemLogo(item, listGame));
+   }
+   function buatItemLogo(item, wadah) {
+     const div = document.createElement('div');
+     div.className = 'item-logo bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center gap-2 cursor-pointer';
+     div.innerHTML = `
+       <img src="${item.logo}" alt="${item.nama}" class="w-10 h-10 object-contain">
+       <span class="text-xs text-gray-700 font-medium text-center line-clamp-1">${item.nama}</span>
+     `;
+     div.addEventListener('click', () => bukaModalUbah(item));
+     wadah.appendChild(div);
+   }
+   function bukaModalDaftar() {
+     el.modalDaftar.classList.remove('modal-hidden');
+     el.modalDaftar.classList.add('modal-show');
+     renderDaftarItem();
+   }
+   function tutupModalDaftar() {
+     el.modalDaftar.classList.add('modal-hidden');
+     el.modalDaftar.classList.remove('modal-show');
+   }
+   function bukaModalUbah(item) {
+     itemSedangDiedit = item;
+     el.namaItemEdit.textContent = `Ubah Logo: ${item.nama}`;
+     el.pratinjauEdit.src = item.logo;
+     el.modalEdit.classList.remove('hidden');
+     el.modalEdit.classList.add('flex');
+   }
+   function tutupModalUbah() {
+     el.modalEdit.classList.add('hidden');
+     el.modalEdit.classList.remove('flex');
+     el.inputFileEdit.value = '';
+     itemSedangDiedit = null;
+   }
+   el.btnBukaModal.addEventListener('click', bukaModalDaftar);
+   el.btnTutupDaftar.addEventListener('click', tutupModalDaftar);
+   el.modalDaftar.addEventListener('click', e => {
+     if (e.target === el.modalDaftar) tutupModalDaftar();
+   });
+   el.btnTutupEdit.addEventListener('click', tutupModalUbah);
+   el.btnBatalEdit.addEventListener('click', tutupModalUbah);
+   el.inputFileEdit.addEventListener('change', e => {
+     const file = e.target.files[0];
+     if (!file) return;
+     const pembaca = new FileReader();
+     pembaca.onload = hasil => {
+       el.pratinjauEdit.src = hasil.target.result;
+     };
+     pembaca.readAsDataURL(file);
+   });
+   el.btnSimpanEdit.addEventListener('click', () => {
+     if (!itemSedangDiedit) return;
+     itemSedangDiedit.logo = el.pratinjauEdit.src;
+     renderDaftarItem();
+     alert(`✅ Logo ${itemSedangDiedit.nama} berhasil diperbarui!`);
+     tutupModalUbah();
+   });
 
 
  // ==================================================
