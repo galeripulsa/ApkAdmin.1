@@ -664,213 +664,48 @@ body{
 }
 
 /* ============================================
-   🎁 STYLE MODAL UPLOAD LOGO
+   GAYA KHUSUS MODAL LOGO (PENDUKUNG TAILWIND)
    ============================================ */
-#modalLogo {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+/* Pastikan transisi & perilaku modal berjalan mulus */
+#logoModal {
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-#modalLogo .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: none;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 15px;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+#logoModal.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
-#modalLogo .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+#logoModal:not(.hidden) {
+  opacity: 1;
+  visibility: visible;
 }
 
-#modalLogo .close-btn {
-    color: #aaa;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    background: none;
-    border: none;
+/* Gaya pratinjau logo */
+#previewLogo {
+  transition: all 0.2s ease;
 }
 
-#modalLogo .close-btn:hover,
-#modalLogo .close-btn:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+#previewLogo:hover {
+  transform: scale(1.03);
+}
+
+/* Gaya logo di header */
+#currentDisplayLogo {
+  transition: transform 0.2s ease;
+}
+
+#openLogoModal:hover #currentDisplayLogo {
+  transform: scale(1.1);
 }
 
 /* ============================================
-   📋 STYLE MENU KELOMPOK
+   HAPUS SEMUA GAYA TIDAK TERPAKAI:
+   - Gaya modal lama #modalLogo
+   - Gaya menu kelompok, sub-list, back-btn lama
+   - Gaya tombol support gift / gift-btn
+   - Gaya grid logo, logo-item, logo-box beserta warna kode produk
    ============================================ */
-.menu-group {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.menu-group:hover {
-    background: #e9ecef;
-}
-
-.sub-list {
-    display: none;
-}
-
-.back-btn {
-    background: #0d6efd;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    display: inline-block;
-}
-
-/* ============================================
-   🎁 STYLE TOMBOL SUPPORT GIFT
-   ============================================ */
-.gift-btn {
-    background: linear-gradient(45deg, #FFD700, #FFA500);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-}
-
-.gift-btn:hover {
-    transform: scale(1.05);
-}
-
-/* ============================================
-   📂 STYLE UPLOAD & GRID LOGO
-   ============================================ */
-#fileInput {
-    display: none;
-}
-
-.logo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 5px;
-}
-
-.logo-item {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px 10px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.logo-item:hover {
-    transform: translateY(-3px);
-}
-
-.logo-item img,
-.logo-item .logo-box {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    margin: 0 auto 8px auto;
-    display: block;
-}
-
-.logo-item span {
-    font-size: 12px;
-    color: #333;
-    font-weight: 500;
-}
-
-/* ============================================
-   🎨 STYLE BOX LOGO (INISIAL & WARNA)
-   ============================================ */
-.logo-box {
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    font-size: 18px;
-    overflow: hidden;
-}
-
-/* --- WARNA OPERATOR --- */
-.logo-box.telkomsel { background: #D32D2D; }
-.logo-box.indosat { background: #FF7900; }
-.logo-box.xl { background: #000000; }
-.logo-box.tri { background: #EA0A8E; }
-.logo-box.smartfren { background: #F7B500; color: black; }
-.logo-box.axis { background: #0078D7; }
-
-/* --- WARNA E-WALLET --- */
-.logo-box.dana { background: #00AEE6; }
-.logo-box.ovo { background: #4C2B83; }
-.logo-box.gopay { background: #00B140; }
-.logo-box.shopeepay { background: #EE4D2D; }
-.logo-box.linkaja { background: #CC0000; }
-
-/* --- WARNA BANK --- */
-.logo-box.bca { background: #0161AF; }
-.logo-box.mandiri { background: #003B70; }
-.logo-box.bni { background: #0066B3; }
-.logo-box.bri { background: #004A99; }
-
-/* --- WARNA GAME --- */
-.logo-box.mobilelegends { background: #FF4646; }
-.logo-box.freefire { background: #E60000; }
-.logo-box.pubgmobile { background: #F79E1B; }
-.logo-box.higgsdomino { background: #00A651; }
-.logo-box.steam { background: #1B2838; }
-.logo-box.roblox { background: #00A2FF; }
-.logo-box.minecraft { background: #62C462; }
-
-/* --- WARNA LAINNYA --- */
-.logo-box.pln { background: #009E5F; }
-.logo-box.pdam { background: #007BC7; }
-.logo-box.indihome { background: #005BAC; }
-.logo-box.firstmedia { background: #0088cc; }
-.logo-box.biznet { background: #000000; }
-.logo-box.mncvision { background: #003366; }
-.logo-box.kvision { background: #0066cc; }
-.logo-box.pbb { background: #8B4513; }
-.logo-box.bpjs { background: #00A94F; }
 
 
 </style>
