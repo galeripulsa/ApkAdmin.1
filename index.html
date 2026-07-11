@@ -663,152 +663,120 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* 🎁🎁🎁Menu Logo Admin Panel🎁🎁🎁 */
-.logo-section {
-    padding: 1.5rem;
-    background: #ffffff;
-    border-radius: 0.75rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    margin-bottom: 1.5rem;
-}
-
-.logo-section h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.logo-category {
-    margin-bottom: 1.5rem;
-}
-
-.logo-category h4 {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.75rem;
-}
-
-.logo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 1rem;
-}
-
-.logo-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border: 2px solid transparent;
+/* ===== TOMBOL MENU LOGO ===== */
+.btn-menu-logo {
+    padding: 0.75rem 1.25rem;
+    background: #2563eb;
+    color: white;
+    border: none;
     border-radius: 0.5rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    background: #f9fafb;
+    transition: background 0.2s;
+}
+.btn-menu-logo:hover {
+    background: #1d4ed8;
 }
 
-.logo-item:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-}
-
-.logo-item.selected {
-    border-color: #2563eb;
-    background: #dbeafe;
-}
-
-.logo-item img {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-    border-radius: 0.25rem;
-}
-
-.logo-item span {
-    font-size: 0.75rem;
-    color: #4b5563;
-    text-align: center;
-    word-break: break-word;
-}
-
-/* Modal Upload Logo */
-.logo-modal {
+/* ===== MODAL PILIH KATEGORI ===== */
+.modal-kategori {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.5);
-    z-index: 50;
+    z-index: 999;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
 }
-
-.logo-modal.active {
+.modal-kategori.active {
     display: flex;
 }
-
-.modal-content {
+.modal-box {
     background: white;
-    padding: 1.5rem;
     border-radius: 0.75rem;
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem;
 }
-
-.modal-content h4 {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
+.modal-box h3 {
+    margin: 0 0 1.25rem;
+    color: #1f2937;
+    font-size: 1.2rem;
 }
-
-.upload-area {
-    border: 2px dashed #d1d5db;
+.daftar-kategori {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.item-kategori {
+    padding: 0.875rem 1rem;
+    border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 1rem;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.upload-area:hover {
-    border-color: #3b82f6;
-    background: #f8fafc;
-}
-
-.preview-img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin: 0.5rem auto;
-    display: none;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    margin-top: 1rem;
-}
-
-.btn {
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
     font-weight: 500;
-}
-
-.btn-cancel {
-    background: #f3f4f6;
     color: #374151;
 }
+.item-kategori:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    padding-left: 1.25rem;
+}
+.tombol-tutup {
+    margin-top: 1.25rem;
+    padding: 0.6rem;
+    width: 100%;
+    border: none;
+    border-radius: 0.5rem;
+    background: #f3f4f6;
+    color: #4b5563;
+    cursor: pointer;
+}
 
-.btn-save {
-    background: #2563eb;
-    color: white;
+/* ===== DAFTAR LOGO (Tersembunyi Awal) ===== */
+.section-logo {
+    display: none;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: white;
+    border-radius: 0.75rem;
+}
+.section-logo h4 {
+    margin: 0 0 1rem;
+    color: #1f2937;
+}
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+}
+.logo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0.5rem;
+    border-radius: 0.5rem;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.logo-item:hover {
+    background: #eff6ff;
+}
+.logo-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+    background: #e2e8f0;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+.logo-item span {
+    font-size: 0.75rem;
+    color: #4b5563;
+    text-align: center;
 }
 
 </style>
@@ -1085,93 +1053,88 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- Menu Logo Panel Admin -->
-<div class="logo-section">
-    <h3>Pengaturan Logo Produk</h3>
+<!-- TOMBOL BUKA MENU LOGO -->
+<button class="btn-menu-logo" id="bukaMenuLogo">⚙️ Pengaturan Logo</button>
 
-    <!-- Kategori Operator -->
-    <div class="logo-category">
-        <h4>📡 Operator Seluler</h4>
-        <div class="logo-grid" id="operator-logos">
-            <div class="logo-item" data-id="telkomsel" data-category="operator">
-                <img src="assets/logos/telkomsel.png" alt="Telkomsel">
-                <span>Telkomsel</span>
-            </div>
-            <div class="logo-item" data-id="xl" data-category="operator">
-                <img src="assets/logos/xl.png" alt="XL">
-                <span>XL</span>
-            </div>
-            <div class="logo-item" data-id="indosat" data-category="operator">
-                <img src="assets/logos/indosat.png" alt="Indosat">
-                <span>Indosat</span>
-            </div>
-            <div class="logo-item add-new" data-category="operator">
-                <span style="font-size: 1.5rem;">+</span>
-                <span>Tambah Baru</span>
-            </div>
+<!-- MODAL PILIH KATEGORI -->
+<div class="modal-kategori" id="modalPilihKategori">
+    <div class="modal-box">
+        <h3>Pilih Kategori Logo</h3>
+        <div class="daftar-kategori">
+            <div class="item-kategori" data-target="prabayar">➤ Logo Prabayar</div>
+            <div class="item-kategori" data-target="pascabayar">➤ Logo Pascabayar</div>
+            <div class="item-kategori" data-target="ewallet">➤ Logo E-Wallet</div>
+            <div class="item-kategori" data-target="game">➤ Logo Game</div>
         </div>
+        <button class="tombol-tutup" id="tutupModalKategori">Tutup</button>
     </div>
+</div>
 
-    <!-- Kategori E-Wallet -->
-    <div class="logo-category">
-        <h4>💳 E-Wallet</h4>
-        <div class="logo-grid" id="ewallet-logos">
-            <div class="logo-item" data-id="dana" data-category="ewallet">
-                <img src="assets/logos/dana.png" alt="DANA">
-                <span>DANA</span>
-            </div>
-            <div class="logo-item" data-id="ovo" data-category="ewallet">
-                <img src="assets/logos/ovo.png" alt="OVO">
-                <span>OVO</span>
-            </div>
-            <div class="logo-item" data-id="gopay" data-category="ewallet">
-                <img src="assets/logos/gopay.png" alt="GoPay">
-                <span>GoPay</span>
-            </div>
-            <div class="logo-item add-new" data-category="ewallet">
-                <span style="font-size: 1.5rem;">+</span>
-                <span>Tambah Baru</span>
-            </div>
+<!-- DAFTAR LOGO (Awalnya Tersembunyi) -->
+<div id="daftarLogoPrabayar" class="section-logo">
+    <h4>📡 Logo Prabayar</h4>
+    <div class="logo-grid">
+        <div class="logo-item">
+            <img src="logos/telkomsel.png" alt="Telkomsel" onerror="this.style.display='none'">
+            <span>Telkomsel</span>
         </div>
-    </div>
-
-    <!-- Kategori Game -->
-    <div class="logo-category">
-        <h4>🎮 Game & Voucher</h4>
-        <div class="logo-grid" id="game-logos">
-            <div class="logo-item" data-id="mlbb" data-category="game">
-                <img src="assets/logos/mlbb.png" alt="Mobile Legends">
-                <span>MLBB</span>
-            </div>
-            <div class="logo-item" data-id="ff" data-category="game">
-                <img src="assets/logos/ff.png" alt="Free Fire">
-                <span>Free Fire</span>
-            </div>
-            <div class="logo-item" data-id="pubg" data-category="game">
-                <img src="assets/logos/pubg.png" alt="PUBG Mobile">
-                <span>PUBG</span>
-            </div>
-            <div class="logo-item add-new" data-category="game">
-                <span style="font-size: 1.5rem;">+</span>
-                <span>Tambah Baru</span>
-            </div>
+        <div class="logo-item">
+            <img src="logos/xl.png" alt="XL" onerror="this.style.display='none'">
+            <span>XL</span>
+        </div>
+        <div class="logo-item">
+            <img src="logos/indosat.png" alt="Indosat" onerror="this.style.display='none'">
+            <span>Indosat</span>
         </div>
     </div>
 </div>
 
-<!-- Modal Upload Logo -->
-<div class="logo-modal" id="logo-upload-modal">
-    <div class="modal-content">
-        <h4 id="modal-title">Unggah Logo Baru</h4>
-        <input type="file" id="logo-file" accept="image/*" hidden>
-        <div class="upload-area" id="upload-trigger">
-            <p>Klik untuk pilih gambar atau seret file ke sini</p>
-            <p style="font-size: 0.8rem; color: #6b7280;">Format: PNG/JPG, Ukuran maks 2MB</p>
+<div id="daftarLogoPascabayar" class="section-logo">
+    <h4>📶 Logo Pascabayar</h4>
+    <div class="logo-grid">
+        <div class="logo-item">
+            <img src="logos/telkomsel-halo.png" alt="Telkomsel Halo" onerror="this.style.display='none'">
+            <span>Telkomsel Halo</span>
         </div>
-        <img src="" alt="Preview" class="preview-img" id="preview-logo">
-        <div class="modal-buttons">
-            <button class="btn btn-cancel" id="btn-cancel">Batal</button>
-            <button class="btn btn-save" id="btn-save">Simpan Logo</button>
+        <div class="logo-item">
+            <img src="logos/xl-prioritas.png" alt="XL Prioritas" onerror="this.style.display='none'">
+            <span>XL Prioritas</span>
+        </div>
+    </div>
+</div>
+
+<div id="daftarLogoEwallet" class="section-logo">
+    <h4>💳 Logo E-Wallet</h4>
+    <div class="logo-grid">
+        <div class="logo-item">
+            <img src="logos/dana.png" alt="DANA" onerror="this.style.display='none'">
+            <span>DANA</span>
+        </div>
+        <div class="logo-item">
+            <img src="logos/ovo.png" alt="OVO" onerror="this.style.display='none'">
+            <span>OVO</span>
+        </div>
+        <div class="logo-item">
+            <img src="logos/gopay.png" alt="GoPay" onerror="this.style.display='none'">
+            <span>GoPay</span>
+        </div>
+    </div>
+</div>
+
+<div id="daftarLogoGame" class="section-logo">
+    <h4>🎮 Logo Game</h4>
+    <div class="logo-grid">
+        <div class="logo-item">
+            <img src="logos/mlbb.png" alt="Mobile Legends" onerror="this.style.display='none'">
+            <span>MLBB</span>
+        </div>
+        <div class="logo-item">
+            <img src="logos/ff.png" alt="Free Fire" onerror="this.style.display='none'">
+            <span>Free Fire</span>
+        </div>
+        <div class="logo-item">
+            <img src="logos/pubg.png" alt="PUBG Mobile" onerror="this.style.display='none'">
+            <span>PUBG</span>
         </div>
     </div>
 </div>
@@ -2795,93 +2758,35 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// Menu Logo Admin Panel
-let activeCategory = '';
-let selectedFile = null;
+// Buka modal kategori saat tombol menu diklik
+document.getElementById('bukaMenuLogo').addEventListener('click', () => {
+    document.getElementById('modalPilihKategori').classList.add('active');
+});
 
-// Pilih item logo
-document.querySelectorAll('.logo-item:not(.add-new)').forEach(item => {
-    item.addEventListener('click', function() {
-        // Hapus seleksi lain
-        document.querySelectorAll('.logo-item').forEach(el => el.classList.remove('selected'));
-        // Tambah seleksi pada item ini
-        this.classList.add('selected');
-        console.log('Logo dipilih:', this.dataset.id, 'Kategori:', this.dataset.category);
+// Tutup modal kategori
+document.getElementById('tutupModalKategori').addEventListener('click', tutupModal);
+document.getElementById('modalPilihKategori').addEventListener('click', e => {
+    if (e.target.id === 'modalPilihKategori') tutupModal();
+});
+
+// Pilih kategori & tampilkan daftar logo
+document.querySelectorAll('.item-kategori').forEach(item => {
+    item.addEventListener('click', () => {
+        // Sembunyikan semua daftar logo dulu
+        document.querySelectorAll('.section-logo').forEach(el => el.style.display = 'none');
+        
+        // Tampilkan daftar yang dipilih
+        const target = item.dataset.target;
+        const elTarget = document.getElementById(`daftarLogo${target.charAt(0).toUpperCase() + target.slice(1)}`);
+        if (elTarget) elTarget.style.display = 'block';
+        
+        // Tutup modal kategori
+        tutupModal();
     });
 });
 
-// Buka modal tambah logo
-document.querySelectorAll('.add-new').forEach(btn => {
-    btn.addEventListener('click', function() {
-        activeCategory = this.dataset.category;
-        document.getElementById('modal-title').textContent = `Tambah Logo ${activeCategory.toUpperCase()}`;
-        document.getElementById('logo-upload-modal').classList.add('active');
-        resetModal();
-    });
-});
-
-// Buka pemilih file saat area upload diklik
-document.getElementById('upload-trigger').addEventListener('click', () => {
-    document.getElementById('logo-file').click();
-});
-
-// Tampilkan pratinjau gambar
-document.getElementById('logo-file').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        selectedFile = file;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById('preview-logo');
-            preview.src = e.target.result;
-            preview.style.display = 'block';
-            document.getElementById('upload-trigger').style.display = 'none';
-        }
-        reader.readAsDataURL(file);
-    }
-});
-
-// Tombol simpan logo
-document.getElementById('btn-save').addEventListener('click', function() {
-    if (!selectedFile) {
-        alert('Silakan pilih file logo terlebih dahulu!');
-        return;
-    }
-
-    // Simulasi proses simpan (ganti dengan API asli kamu)
-    const formData = new FormData();
-    formData.append('logo', selectedFile);
-    formData.append('category', activeCategory);
-
-    // Contoh kirim ke server
-    console.log('Menyimpan logo:', {
-        file: selectedFile.name,
-        kategori: activeCategory
-    });
-
-    alert('Logo berhasil disimpan!');
-    closeModal();
-});
-
-// Tombol batal
-document.getElementById('btn-cancel').addEventListener('click', closeModal);
-
-// Tutup modal saat klik luar area
-document.getElementById('logo-upload-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-});
-
-// Fungsi bantu
-function closeModal() {
-    document.getElementById('logo-upload-modal').classList.remove('active');
-    resetModal();
-}
-
-function resetModal() {
-    selectedFile = null;
-    document.getElementById('logo-file').value = '';
-    document.getElementById('preview-logo').style.display = 'none';
-    document.getElementById('upload-trigger').style.display = 'block';
+function tutupModal() {
+    document.getElementById('modalPilihKategori').classList.remove('active');
 }
 
 
