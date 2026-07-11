@@ -663,19 +663,14 @@ body{
     background-color: #fffbeb !important;
 }
 
-/* ===== TOMBOL MENU LOGO ===== */
-.btn-menu-logo {
-    padding: 0.75rem 1.25rem;
+/* ===== TOMBOL LOGO DI MENU UTAMA ===== */
+.menu-item.logo-btn {
     background: #2563eb;
     color: white;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
 }
-.btn-menu-logo:hover {
-    background: #1d4ed8;
+.menu-item.logo-btn .icon,
+.menu-item.logo-btn span {
+    color: white;
 }
 
 /* ===== MODAL PILIH KATEGORI ===== */
@@ -696,13 +691,15 @@ body{
     background: white;
     border-radius: 0.75rem;
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 .modal-box h3 {
     margin: 0 0 1.25rem;
     color: #1f2937;
     font-size: 1.2rem;
+    text-align: center;
 }
 .daftar-kategori {
     display: flex;
@@ -717,6 +714,7 @@ body{
     transition: all 0.2s;
     font-weight: 500;
     color: #374151;
+    background: #f9fafb;
 }
 .item-kategori:hover {
     border-color: #3b82f6;
@@ -725,16 +723,17 @@ body{
 }
 .tombol-tutup {
     margin-top: 1.25rem;
-    padding: 0.6rem;
+    padding: 0.7rem;
     width: 100%;
     border: none;
     border-radius: 0.5rem;
     background: #f3f4f6;
     color: #4b5563;
     cursor: pointer;
+    font-weight: 500;
 }
 
-/* ===== DAFTAR LOGO (Tersembunyi Awal) ===== */
+/* ===== DAFTAR LOGO ===== */
 .section-logo {
     display: none;
     margin-top: 1.5rem;
@@ -742,14 +741,35 @@ body{
     background: white;
     border-radius: 0.75rem;
 }
-.section-logo h4 {
-    margin: 0 0 1rem;
+.section-logo.tampil {
+    display: block;
+}
+.header-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+.header-logo h4 {
+    font-size: 1.05rem;
     color: #1f2937;
+}
+.btn-kembali {
+    padding: 0.5rem 0.8rem;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #4b5563;
 }
 .logo-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.85rem;
+    margin-top: 1rem;
 }
 .logo-item {
     display: flex;
@@ -1053,26 +1073,32 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- TOMBOL BUKA MENU LOGO -->
-<button class="btn-menu-logo" id="bukaMenuLogo">⚙️ Pengaturan Logo</button>
+<!-- TOMBOL LOGO DI MENU UTAMA -->
+<div class="menu-item logo-btn" id="tombolLogo">
+    <div class="icon">🖼️</div>
+    <span>Logo</span>
+</div>
 
 <!-- MODAL PILIH KATEGORI -->
 <div class="modal-kategori" id="modalPilihKategori">
     <div class="modal-box">
         <h3>Pilih Kategori Logo</h3>
         <div class="daftar-kategori">
-            <div class="item-kategori" data-target="prabayar">➤ Logo Prabayar</div>
-            <div class="item-kategori" data-target="pascabayar">➤ Logo Pascabayar</div>
-            <div class="item-kategori" data-target="ewallet">➤ Logo E-Wallet</div>
-            <div class="item-kategori" data-target="game">➤ Logo Game</div>
+            <div class="item-kategori" data-kategori="prabayar">➤ Logo Prabayar</div>
+            <div class="item-kategori" data-kategori="pascabayar">➤ Logo Pascabayar</div>
+            <div class="item-kategori" data-kategori="ewallet">➤ Logo E-Wallet</div>
+            <div class="item-kategori" data-kategori="game">➤ Logo Game & Voucher</div>
         </div>
         <button class="tombol-tutup" id="tutupModalKategori">Tutup</button>
     </div>
 </div>
 
-<!-- DAFTAR LOGO (Awalnya Tersembunyi) -->
-<div id="daftarLogoPrabayar" class="section-logo">
-    <h4>📡 Logo Prabayar</h4>
+<!-- DAFTAR LOGO PRABAYAR -->
+<div id="daftarPrabayar" class="section-logo">
+    <div class="header-logo">
+        <h4>📡 Logo Prabayar</h4>
+        <button class="btn-kembali" onclick="kembaliKeKategori()">← Kembali</button>
+    </div>
     <div class="logo-grid">
         <div class="logo-item">
             <img src="logos/telkomsel.png" alt="Telkomsel" onerror="this.style.display='none'">
@@ -1089,8 +1115,12 @@ body{
     </div>
 </div>
 
-<div id="daftarLogoPascabayar" class="section-logo">
-    <h4>📶 Logo Pascabayar</h4>
+<!-- DAFTAR LOGO PASCABAYAR -->
+<div id="daftarPascabayar" class="section-logo">
+    <div class="header-logo">
+        <h4>📶 Logo Pascabayar</h4>
+        <button class="btn-kembali" onclick="kembaliKeKategori()">← Kembali</button>
+    </div>
     <div class="logo-grid">
         <div class="logo-item">
             <img src="logos/telkomsel-halo.png" alt="Telkomsel Halo" onerror="this.style.display='none'">
@@ -1103,8 +1133,12 @@ body{
     </div>
 </div>
 
-<div id="daftarLogoEwallet" class="section-logo">
-    <h4>💳 Logo E-Wallet</h4>
+<!-- DAFTAR LOGO E-WALLET -->
+<div id="daftarEwallet" class="section-logo">
+    <div class="header-logo">
+        <h4>💳 Logo E-Wallet</h4>
+        <button class="btn-kembali" onclick="kembaliKeKategori()">← Kembali</button>
+    </div>
     <div class="logo-grid">
         <div class="logo-item">
             <img src="logos/dana.png" alt="DANA" onerror="this.style.display='none'">
@@ -1114,27 +1148,23 @@ body{
             <img src="logos/ovo.png" alt="OVO" onerror="this.style.display='none'">
             <span>OVO</span>
         </div>
-        <div class="logo-item">
-            <img src="logos/gopay.png" alt="GoPay" onerror="this.style.display='none'">
-            <span>GoPay</span>
-        </div>
     </div>
 </div>
 
-<div id="daftarLogoGame" class="section-logo">
-    <h4>🎮 Logo Game</h4>
+<!-- DAFTAR LOGO GAME -->
+<div id="daftarGame" class="section-logo">
+    <div class="header-logo">
+        <h4>🎮 Logo Game & Voucher</h4>
+        <button class="btn-kembali" onclick="kembaliKeKategori()">← Kembali</button>
+    </div>
     <div class="logo-grid">
         <div class="logo-item">
             <img src="logos/mlbb.png" alt="Mobile Legends" onerror="this.style.display='none'">
-            <span>MLBB</span>
+            <span>Mobile Legends</span>
         </div>
         <div class="logo-item">
             <img src="logos/ff.png" alt="Free Fire" onerror="this.style.display='none'">
             <span>Free Fire</span>
-        </div>
-        <div class="logo-item">
-            <img src="logos/pubg.png" alt="PUBG Mobile" onerror="this.style.display='none'">
-            <span>PUBG</span>
         </div>
     </div>
 </div>
@@ -2758,33 +2788,40 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// Buka modal kategori saat tombol menu diklik
-document.getElementById('bukaMenuLogo').addEventListener('click', () => {
+// BUKA MODAL SAAT TOMBOL LOGO DIKLIK
+document.getElementById('tombolLogo').addEventListener('click', () => {
     document.getElementById('modalPilihKategori').classList.add('active');
 });
 
-// Tutup modal kategori
+// TUTUP MODAL
 document.getElementById('tutupModalKategori').addEventListener('click', tutupModal);
 document.getElementById('modalPilihKategori').addEventListener('click', e => {
     if (e.target.id === 'modalPilihKategori') tutupModal();
 });
 
-// Pilih kategori & tampilkan daftar logo
+// PILIH KATEGORI & TAMPILKAN DAFTAR LOGO
 document.querySelectorAll('.item-kategori').forEach(item => {
     item.addEventListener('click', () => {
-        // Sembunyikan semua daftar logo dulu
-        document.querySelectorAll('.section-logo').forEach(el => el.style.display = 'none');
+        // SEMBUNYIKAN SEMUA DAFTAR LOGO
+        document.querySelectorAll('.section-logo').forEach(el => el.classList.remove('tampil'));
         
-        // Tampilkan daftar yang dipilih
-        const target = item.dataset.target;
-        const elTarget = document.getElementById(`daftarLogo${target.charAt(0).toUpperCase() + target.slice(1)}`);
-        if (elTarget) elTarget.style.display = 'block';
+        // TAMPILKAN KATEGORI YANG DIPILIH
+        const kategori = item.dataset.kategori;
+        const targetId = `daftar${kategori.charAt(0).toUpperCase() + kategori.slice(1)}`;
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) targetEl.classList.add('tampil');
         
-        // Tutup modal kategori
         tutupModal();
     });
 });
 
+// KEMBALI KE PILIHAN KATEGORI
+function kembaliKeKategori() {
+    document.querySelectorAll('.section-logo').forEach(el => el.classList.remove('tampil'));
+    document.getElementById('modalPilihKategori').classList.add('active');
+}
+
+// FUNGSI BANTU TUTUP MODAL
 function tutupModal() {
     document.getElementById('modalPilihKategori').classList.remove('active');
 }
