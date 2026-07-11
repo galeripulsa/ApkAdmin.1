@@ -663,6 +663,153 @@ body{
     background-color: #fffbeb !important;
 }
 
+/* 🎁🎁🎁Menu Logo Admin Panel🎁🎁🎁 */
+.logo-section {
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.logo-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-category {
+    margin-bottom: 1.5rem;
+}
+
+.logo-category h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 1rem;
+}
+
+.logo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f9fafb;
+}
+
+.logo-item:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.logo-item.selected {
+    border-color: #2563eb;
+    background: #dbeafe;
+}
+
+.logo-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 0.25rem;
+}
+
+.logo-item span {
+    font-size: 0.75rem;
+    color: #4b5563;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* Modal Upload Logo */
+.logo-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-content h4 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+.preview-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0.5rem auto;
+    display: none;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-save {
+    background: #2563eb;
+    color: white;
+}
 
 </style>
 
@@ -938,6 +1085,96 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
+<!-- Menu Logo Panel Admin -->
+<div class="logo-section">
+    <h3>Pengaturan Logo Produk</h3>
+
+    <!-- Kategori Operator -->
+    <div class="logo-category">
+        <h4>📡 Operator Seluler</h4>
+        <div class="logo-grid" id="operator-logos">
+            <div class="logo-item" data-id="telkomsel" data-category="operator">
+                <img src="assets/logos/telkomsel.png" alt="Telkomsel">
+                <span>Telkomsel</span>
+            </div>
+            <div class="logo-item" data-id="xl" data-category="operator">
+                <img src="assets/logos/xl.png" alt="XL">
+                <span>XL</span>
+            </div>
+            <div class="logo-item" data-id="indosat" data-category="operator">
+                <img src="assets/logos/indosat.png" alt="Indosat">
+                <span>Indosat</span>
+            </div>
+            <div class="logo-item add-new" data-category="operator">
+                <span style="font-size: 1.5rem;">+</span>
+                <span>Tambah Baru</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori E-Wallet -->
+    <div class="logo-category">
+        <h4>💳 E-Wallet</h4>
+        <div class="logo-grid" id="ewallet-logos">
+            <div class="logo-item" data-id="dana" data-category="ewallet">
+                <img src="assets/logos/dana.png" alt="DANA">
+                <span>DANA</span>
+            </div>
+            <div class="logo-item" data-id="ovo" data-category="ewallet">
+                <img src="assets/logos/ovo.png" alt="OVO">
+                <span>OVO</span>
+            </div>
+            <div class="logo-item" data-id="gopay" data-category="ewallet">
+                <img src="assets/logos/gopay.png" alt="GoPay">
+                <span>GoPay</span>
+            </div>
+            <div class="logo-item add-new" data-category="ewallet">
+                <span style="font-size: 1.5rem;">+</span>
+                <span>Tambah Baru</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Game -->
+    <div class="logo-category">
+        <h4>🎮 Game & Voucher</h4>
+        <div class="logo-grid" id="game-logos">
+            <div class="logo-item" data-id="mlbb" data-category="game">
+                <img src="assets/logos/mlbb.png" alt="Mobile Legends">
+                <span>MLBB</span>
+            </div>
+            <div class="logo-item" data-id="ff" data-category="game">
+                <img src="assets/logos/ff.png" alt="Free Fire">
+                <span>Free Fire</span>
+            </div>
+            <div class="logo-item" data-id="pubg" data-category="game">
+                <img src="assets/logos/pubg.png" alt="PUBG Mobile">
+                <span>PUBG</span>
+            </div>
+            <div class="logo-item add-new" data-category="game">
+                <span style="font-size: 1.5rem;">+</span>
+                <span>Tambah Baru</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Upload Logo -->
+<div class="logo-modal" id="logo-upload-modal">
+    <div class="modal-content">
+        <h4 id="modal-title">Unggah Logo Baru</h4>
+        <input type="file" id="logo-file" accept="image/*" hidden>
+        <div class="upload-area" id="upload-trigger">
+            <p>Klik untuk pilih gambar atau seret file ke sini</p>
+            <p style="font-size: 0.8rem; color: #6b7280;">Format: PNG/JPG, Ukuran maks 2MB</p>
+        </div>
+        <img src="" alt="Preview" class="preview-img" id="preview-logo">
+        <div class="modal-buttons">
+            <button class="btn btn-cancel" id="btn-cancel">Batal</button>
+            <button class="btn btn-save" id="btn-save">Simpan Logo</button>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -2558,6 +2795,95 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
+// Menu Logo Admin Panel
+let activeCategory = '';
+let selectedFile = null;
+
+// Pilih item logo
+document.querySelectorAll('.logo-item:not(.add-new)').forEach(item => {
+    item.addEventListener('click', function() {
+        // Hapus seleksi lain
+        document.querySelectorAll('.logo-item').forEach(el => el.classList.remove('selected'));
+        // Tambah seleksi pada item ini
+        this.classList.add('selected');
+        console.log('Logo dipilih:', this.dataset.id, 'Kategori:', this.dataset.category);
+    });
+});
+
+// Buka modal tambah logo
+document.querySelectorAll('.add-new').forEach(btn => {
+    btn.addEventListener('click', function() {
+        activeCategory = this.dataset.category;
+        document.getElementById('modal-title').textContent = `Tambah Logo ${activeCategory.toUpperCase()}`;
+        document.getElementById('logo-upload-modal').classList.add('active');
+        resetModal();
+    });
+});
+
+// Buka pemilih file saat area upload diklik
+document.getElementById('upload-trigger').addEventListener('click', () => {
+    document.getElementById('logo-file').click();
+});
+
+// Tampilkan pratinjau gambar
+document.getElementById('logo-file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('preview-logo');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            document.getElementById('upload-trigger').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Tombol simpan logo
+document.getElementById('btn-save').addEventListener('click', function() {
+    if (!selectedFile) {
+        alert('Silakan pilih file logo terlebih dahulu!');
+        return;
+    }
+
+    // Simulasi proses simpan (ganti dengan API asli kamu)
+    const formData = new FormData();
+    formData.append('logo', selectedFile);
+    formData.append('category', activeCategory);
+
+    // Contoh kirim ke server
+    console.log('Menyimpan logo:', {
+        file: selectedFile.name,
+        kategori: activeCategory
+    });
+
+    alert('Logo berhasil disimpan!');
+    closeModal();
+});
+
+// Tombol batal
+document.getElementById('btn-cancel').addEventListener('click', closeModal);
+
+// Tutup modal saat klik luar area
+document.getElementById('logo-upload-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+// Fungsi bantu
+function closeModal() {
+    document.getElementById('logo-upload-modal').classList.remove('active');
+    resetModal();
+}
+
+function resetModal() {
+    selectedFile = null;
+    document.getElementById('logo-file').value = '';
+    document.getElementById('preview-logo').style.display = 'none';
+    document.getElementById('upload-trigger').style.display = 'block';
+}
+
 
  // ==================================================
  // ✅ SISTEM DETEKSI PERUBAHAN GLOBAL & BACK BUTTON
