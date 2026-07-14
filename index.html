@@ -948,56 +948,90 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- Navigasi Menu -->
-<nav class="bg-white shadow-md rounded-lg p-3 mb-6">
-  <div class="flex flex-wrap gap-2">
-    <button class="menu-btn active px-4 py-2 rounded-md font-medium transition-all" data-target="dashboard">Dashboard</button>
-    <button class="menu-btn px-4 py-2 rounded-md font-medium transition-all" data-target="products">Produk</button>
-    <!-- Menu Logo AKTIF -->
-    <button class="menu-btn px-4 py-2 rounded-md font-medium transition-all" data-target="logo">Pengaturan Logo</button>
-    <button class="menu-btn px-4 py-2 rounded-md font-medium transition-all" data-target="settings">Pengaturan</button>
-  </div>
-</nav>
+<!-- BARIS TOMBOL MENU UTAMA -->
+<div class="grid grid-cols-2 gap-4 p-4">
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="setup-server">
+    <div class="text-3xl">🖥️</div>
+    <span class="font-medium">Setup Server</span>
+  </button>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="setup-center">
+    <div class="text-3xl">💾</div>
+    <span class="font-medium">Setup Center</span>
+  </button>
 
-<!-- Konten Menu Logo -->
-<section id="logo" class="menu-content hidden">
-  <div class="bg-white rounded-xl shadow-sm p-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-6">Pengaturan Logo Produk</h2>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="transaksi">
+    <div class="text-3xl">🔲</div>
+    <span class="font-medium">Menu Transaksi</span>
+  </button>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="prabayar">
+    <div class="text-3xl">📱</div>
+    <span class="font-medium">Prabayar</span>
+  </button>
 
-    <!-- Kategori Logo -->
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="pascabayar">
+    <div class="text-3xl">💳</div>
+    <span class="font-medium">Pascabayar</span>
+  </button>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="format">
+    <div class="text-3xl">📄</div>
+    <span class="font-medium">Format Request</span>
+  </button>
+
+  <!-- TOMBOL LOGO YANG DAPAT DIKLIK -->
+  <button class="menu-card bg-blue-500 text-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="open-logo">
+    <div class="text-3xl">🖼️</div>
+    <span class="font-medium">Logo</span>
+  </button>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="otp">
+    <div class="text-3xl">🔑</div>
+    <span class="font-medium">OTP</span>
+  </button>
+
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="poin">
+    <div class="text-3xl">⭐</div>
+    <span class="font-medium">Poin</span>
+  </button>
+  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="downline">
+    <div class="text-3xl">👥</div>
+    <span class="font-medium">Downline</span>
+  </button>
+</div>
+
+<!-- TOMBOL PENGATURAN LOGO DI BAWAH -->
+<div class="px-4 pb-6">
+  <button id="btnPengaturanLogo" class="w-full bg-blue-500 text-white rounded-xl p-4 flex items-center justify-center gap-2 font-medium">
+    ⚙️ Pengaturan Logo
+  </button>
+</div>
+
+<!-- MODAL PENGATURAN LOGO (SEMBUNYI AWALNYA) -->
+<div id="modalPengaturanLogo" class="fixed inset-0 bg-black/40 z-50 hidden flex items-end justify-center">
+  <div class="bg-white w-full max-w-2xl rounded-t-2xl p-6 max-h-[90vh] overflow-y-auto">
+    <!-- JUDUL & TOMBOL TUTUP -->
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold">Pengaturan Logo Produk</h2>
+      <button id="tutupModal" class="text-gray-500 text-2xl">&times;</button>
+    </div>
+
+    <!-- PILIH KATEGORI -->
     <div class="mb-6">
-      <h3 class="font-semibold text-gray-700 mb-3">Pilih Kategori</h3>
+      <p class="font-medium mb-3">Pilih Kategori</p>
       <div class="flex flex-wrap gap-2">
-        <button class="cat-btn active px-4 py-2 bg-blue-500 text-white rounded-md" data-category="operator">Operator</button>
-        <button class="cat-btn px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md" data-category="ewallet">E-Wallet</button>
-        <button class="cat-btn px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md" data-category="game">Game & Voucher</button>
+        <button class="kategori-btn px-4 py-2 rounded-lg border border-gray-200 bg-white hover:border-blue-500" data-kategori="operator">Operator</button>
+        <button class="kategori-btn px-4 py-2 rounded-lg border border-gray-200 bg-white hover:border-blue-500" data-kategori="ewallet">E-Wallet</button>
+        <button class="kategori-btn px-4 py-2 rounded-lg border border-blue-500 bg-blue-500 text-white" data-kategori="game">Game & Voucher</button>
       </div>
     </div>
 
-    <!-- Daftar Logo -->
-    <div id="logoList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-      <!-- Isi akan dimuat otomatis lewat JS -->
+    <!-- DAFTAR LOGO -->
+    <div id="daftarLogo" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+      <!-- ISI OTOMATIS DARI JS -->
     </div>
 
-    <!-- Tombol Simpan -->
-    <button id="saveLogo" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-medium transition-all">
-      Simpan Perubahan Logo
+    <!-- TOMBOL SIMPAN -->
+    <button id="simpanLogo" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-medium">
+      Simpan Pengaturan
     </button>
-  </div>
-</section>
-
-<!-- Modal Pilih/Unggah Logo -->
-<div id="logoModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-  <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
-    <h3 class="text-lg font-bold mb-4">Ubah Logo</h3>
-    <input type="file" id="logoUpload" accept="image/*" class="mb-4 w-full text-sm">
-    <div id="previewLogo" class="w-24 h-24 border rounded-lg mb-4 flex items-center justify-center overflow-hidden mx-auto">
-      <span class="text-gray-400">Pratinjau</span>
-    </div>
-    <div class="flex gap-2">
-      <button id="closeModal" class="flex-1 bg-gray-200 hover:bg-gray-300 py-2 rounded-md">Batal</button>
-      <button id="confirmLogo" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">Pilih</button>
-    </div>
   </div>
 </div>
 
@@ -2620,102 +2654,74 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// Data Daftar Logo per Kategori
-const logoData = {
+// DATA DAFTAR LOGO
+const dataLogo = {
   operator: ['Telkomsel', 'XL', 'Indosat', 'Tri', 'Smartfren'],
   ewallet: ['DANA', 'OVO', 'GoPay', 'LinkAja', 'ShopeePay'],
-  game: ['Mobile Legends', 'PUBG', 'Free Fire', 'Genshin', 'Steam']
+  game: ['Mobile Legends', 'PUBG Mobile', 'Free Fire', 'Genshin Impact', 'Steam']
 };
 
-let activeCategory = 'operator';
-let selectedItem = null;
+let kategoriAktif = 'game'; // SESUAI GAMBAR YANG TERBUKA AWAL
 
-// Aktifkan Menu Logo
-document.querySelectorAll('.menu-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Hapus status aktif semua menu
-    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active', 'bg-blue-500', 'text-white'));
-    document.querySelectorAll('.menu-content').forEach(c => c.classList.add('hidden'));
-    
-    // Aktifkan menu yang dipilih
-    btn.classList.add('active', 'bg-blue-500', 'text-white');
-    const target = btn.dataset.target;
-    document.getElementById(target).classList.remove('hidden');
+// PILIH SEMUA TOMBOL YANG MEMBUKA MODAL
+const tombolBukaModal = document.querySelectorAll('[data-action="open-logo"], #btnPengaturanLogo');
+const modal = document.getElementById('modalPengaturanLogo');
+const tombolTutup = document.getElementById('tutupModal');
 
-    // Jika menu Logo dibuka, muat datanya
-    if(target === 'logo') loadLogoList();
+// 🔑 FUNGSI UTAMA: BUKA MODAL SAAT TOMBOL DIKLIK
+tombolBukaModal.forEach(tombol => {
+  tombol.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    muatDaftarLogo(); // MUAT DATA SAAT BARU DIBUKA
   });
 });
 
-// Ganti Kategori Logo
-document.querySelectorAll('.cat-btn').forEach(btn => {
+// TUTUP MODAL
+tombolTutup.addEventListener('click', tutupModal);
+modal.addEventListener('click', (e) => {
+  if(e.target === modal) tutupModal(); // TUTUP JIKA KLIK LUAR AREA
+});
+
+function tutupModal() {
+  modal.classList.add('hidden');
+}
+
+// GANTI KATEGORI
+document.querySelectorAll('.kategori-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => {
-      b.classList.remove('active', 'bg-blue-500', 'text-white');
-      b.classList.add('bg-gray-100', 'hover:bg-gray-200');
+    document.querySelectorAll('.kategori-btn').forEach(b => {
+      b.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+      b.classList.add('bg-white', 'border-gray-200');
     });
-    btn.classList.add('active', 'bg-blue-500', 'text-white');
-    btn.classList.remove('bg-gray-100', 'hover:bg-gray-200');
-    activeCategory = btn.dataset.category;
-    loadLogoList();
+    btn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+    btn.classList.remove('bg-white', 'border-gray-200');
+    kategoriAktif = btn.dataset.kategori;
+    muatDaftarLogo();
   });
 });
 
-// Tampilkan Daftar Logo
-function loadLogoList() {
-  const list = document.getElementById('logoList');
-  list.innerHTML = '';
-  
-  logoData[activeCategory].forEach(name => {
-    const card = document.createElement('div');
-    card.className = 'border rounded-lg p-4 text-center hover:shadow-md cursor-pointer transition-all';
-    card.innerHTML = `
-      <div class="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-md flex items-center justify-center">
-        <span class="text-sm text-gray-500">${name}</span>
+// TAMPILKAN DAFTAR LOGO
+function muatDaftarLogo() {
+  const wadah = document.getElementById('daftarLogo');
+  wadah.innerHTML = '';
+
+  dataLogo[kategoriAktif].forEach(nama => {
+    const kartu = document.createElement('div');
+    kartu.className = 'border rounded-xl p-4 text-center hover:shadow-md cursor-pointer transition-all';
+    kartu.innerHTML = `
+      <div class="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+        <span class="text-sm text-gray-500">${nama}</span>
       </div>
-      <p class="text-sm font-medium">${name}</p>
+      <p class="text-sm font-medium">${nama}</p>
     `;
-    card.addEventListener('click', () => openModal(name));
-    list.appendChild(card);
+    wadah.appendChild(kartu);
   });
 }
 
-// Fungsi Modal
-function openModal(itemName) {
-  selectedItem = itemName;
-  document.getElementById('logoModal').classList.remove('hidden');
-  document.getElementById('logoModal').classList.add('flex');
-}
-
-document.getElementById('closeModal').addEventListener('click', () => {
-  document.getElementById('logoModal').classList.add('hidden');
-  document.getElementById('logoModal').classList.remove('flex');
-  selectedItem = null;
-});
-
-// Pratinjau Gambar
-document.getElementById('logoUpload').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if(file) {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      document.getElementById('previewLogo').innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-contain">`;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// Konfirmasi Pilihan
-document.getElementById('confirmLogo').addEventListener('click', () => {
-  alert(`Logo untuk ${selectedItem} berhasil diperbarui!`);
-  document.getElementById('logoModal').classList.add('hidden');
-  document.getElementById('logoModal').classList.remove('flex');
-  selectedItem = null;
-});
-
-// Simpan Semua Perubahan
-document.getElementById('saveLogo').addEventListener('click', () => {
-  alert('Semua pengaturan logo berhasil disimpan!');
+// FUNGSI SIMPAN
+document.getElementById('simpanLogo').addEventListener('click', () => {
+  alert('Pengaturan logo berhasil disimpan!');
+  tutupModal();
 });
 
 
