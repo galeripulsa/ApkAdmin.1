@@ -948,90 +948,88 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- BARIS TOMBOL MENU UTAMA -->
-<div class="grid grid-cols-2 gap-4 p-4">
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="setup-server">
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 mb-6 flex items-center gap-4 shadow-lg">
+  <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl text-blue-500">🛡️</div>
+  <div>
+    <h1 class="text-2xl font-bold text-white">Apk Admin</h1>
+    <p class="text-white/90 text-lg">Global Server (GS) V.01</p>
+  </div>
+</div>
+
+<!-- GRID MENU UTAMA -->
+<div class="grid grid-cols-2 gap-4">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">🖥️</div>
     <span class="font-medium">Setup Server</span>
   </button>
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="setup-center">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">💾</div>
     <span class="font-medium">Setup Center</span>
   </button>
 
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="transaksi">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">🔲</div>
     <span class="font-medium">Menu Transaksi</span>
   </button>
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="prabayar">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">📱</div>
     <span class="font-medium">Prabayar</span>
   </button>
 
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="pascabayar">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">💳</div>
     <span class="font-medium">Pascabayar</span>
   </button>
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="format">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">📄</div>
     <span class="font-medium">Format Request</span>
   </button>
 
-  <!-- TOMBOL LOGO YANG DAPAT DIKLIK -->
-  <button class="menu-card bg-blue-500 text-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="open-logo">
+  <!-- TOMBOL LOGO BIRU (YANG DAPAT DIKLIK) -->
+  <button id="btnLogo" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-md flex flex-col items-center gap-2">
     <div class="text-3xl">🖼️</div>
     <span class="font-medium">Logo</span>
   </button>
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="otp">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">🔑</div>
     <span class="font-medium">OTP</span>
   </button>
 
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="poin">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">⭐</div>
     <span class="font-medium">Poin</span>
   </button>
-  <button class="menu-card bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2" data-action="downline">
+  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
     <div class="text-3xl">👥</div>
     <span class="font-medium">Downline</span>
   </button>
 </div>
 
-<!-- TOMBOL PENGATURAN LOGO DI BAWAH -->
-<div class="px-4 pb-6">
-  <button id="btnPengaturanLogo" class="w-full bg-blue-500 text-white rounded-xl p-4 flex items-center justify-center gap-2 font-medium">
-    ⚙️ Pengaturan Logo
-  </button>
-</div>
-
-<!-- MODAL PENGATURAN LOGO (SEMBUNYI AWALNYA) -->
-<div id="modalPengaturanLogo" class="fixed inset-0 bg-black/40 z-50 hidden flex items-end justify-center">
-  <div class="bg-white w-full max-w-2xl rounded-t-2xl p-6 max-h-[90vh] overflow-y-auto">
+<!-- MODAL KATEGORI LOGO (SEMBUNYI AWALNYA) -->
+<div id="modalKategoriLogo" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
     <!-- JUDUL & TOMBOL TUTUP -->
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold">Pengaturan Logo Produk</h2>
-      <button id="tutupModal" class="text-gray-500 text-2xl">&times;</button>
+      <h2 class="text-xl font-bold text-gray-800">Pilih Kategori Logo</h2>
+      <button id="tutupModal" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
     </div>
 
-    <!-- PILIH KATEGORI -->
-    <div class="mb-6">
-      <p class="font-medium mb-3">Pilih Kategori</p>
-      <div class="flex flex-wrap gap-2">
-        <button class="kategori-btn px-4 py-2 rounded-lg border border-gray-200 bg-white hover:border-blue-500" data-kategori="operator">Operator</button>
-        <button class="kategori-btn px-4 py-2 rounded-lg border border-gray-200 bg-white hover:border-blue-500" data-kategori="ewallet">E-Wallet</button>
-        <button class="kategori-btn px-4 py-2 rounded-lg border border-blue-500 bg-blue-500 text-white" data-kategori="game">Game & Voucher</button>
-      </div>
+    <!-- DAFTAR KATEGORI -->
+    <div class="space-y-3">
+      <button class="kategori-item w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium text-gray-700">
+        📡 Prabayar
+      </button>
+      <button class="kategori-item w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium text-gray-700">
+        📞 Pascabayar
+      </button>
+      <button class="kategori-item w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium text-gray-700">
+        💳 E-Wallet
+      </button>
+      <button class="kategori-item w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium text-gray-700">
+        🎮 Voucher Game
+      </button>
     </div>
-
-    <!-- DAFTAR LOGO -->
-    <div id="daftarLogo" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
-      <!-- ISI OTOMATIS DARI JS -->
-    </div>
-
-    <!-- TOMBOL SIMPAN -->
-    <button id="simpanLogo" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-medium">
-      Simpan Pengaturan
-    </button>
   </div>
 </div>
 
@@ -2654,75 +2652,38 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// DATA DAFTAR LOGO
-const dataLogo = {
-  operator: ['Telkomsel', 'XL', 'Indosat', 'Tri', 'Smartfren'],
-  ewallet: ['DANA', 'OVO', 'GoPay', 'LinkAja', 'ShopeePay'],
-  game: ['Mobile Legends', 'PUBG Mobile', 'Free Fire', 'Genshin Impact', 'Steam']
-};
-
-let kategoriAktif = 'game'; // SESUAI GAMBAR YANG TERBUKA AWAL
-
-// PILIH SEMUA TOMBOL YANG MEMBUKA MODAL
-const tombolBukaModal = document.querySelectorAll('[data-action="open-logo"], #btnPengaturanLogo');
-const modal = document.getElementById('modalPengaturanLogo');
+// AMBIL ELEMEN
+const tombolLogo = document.getElementById('btnLogo');
+const modal = document.getElementById('modalKategoriLogo');
 const tombolTutup = document.getElementById('tutupModal');
+const daftarKategori = document.querySelectorAll('.kategori-item');
 
-// 🔑 FUNGSI UTAMA: BUKA MODAL SAAT TOMBOL DIKLIK
-tombolBukaModal.forEach(tombol => {
-  tombol.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    muatDaftarLogo(); // MUAT DATA SAAT BARU DIBUKA
-  });
+// BUKA MODAL SAAT TOMBOL LOGO BIRU DIKLIK
+tombolLogo.addEventListener('click', () => {
+  modal.classList.remove('hidden');
 });
 
-// TUTUP MODAL
+// TUTUP MODAL DENGAN TOMBOL X
 tombolTutup.addEventListener('click', tutupModal);
+
+// TUTUP MODAL JIKA KLIK AREA LUAR
 modal.addEventListener('click', (e) => {
-  if(e.target === modal) tutupModal(); // TUTUP JIKA KLIK LUAR AREA
+  if (e.target === modal) tutupModal();
 });
 
 function tutupModal() {
   modal.classList.add('hidden');
 }
 
-// GANTI KATEGORI
-document.querySelectorAll('.kategori-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.kategori-btn').forEach(b => {
-      b.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
-      b.classList.add('bg-white', 'border-gray-200');
-    });
-    btn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
-    btn.classList.remove('bg-white', 'border-gray-200');
-    kategoriAktif = btn.dataset.kategori;
-    muatDaftarLogo();
+// CONTOH FUNGSI KETIKA KATEGORI DIPILIH
+daftarKategori.forEach(item => {
+  item.addEventListener('click', () => {
+    const namaKategori = item.textContent.trim();
+    alert(`Anda memilih kategori: ${namaKategori}`);
+    tutupModal();
   });
 });
 
-// TAMPILKAN DAFTAR LOGO
-function muatDaftarLogo() {
-  const wadah = document.getElementById('daftarLogo');
-  wadah.innerHTML = '';
-
-  dataLogo[kategoriAktif].forEach(nama => {
-    const kartu = document.createElement('div');
-    kartu.className = 'border rounded-xl p-4 text-center hover:shadow-md cursor-pointer transition-all';
-    kartu.innerHTML = `
-      <div class="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
-        <span class="text-sm text-gray-500">${nama}</span>
-      </div>
-      <p class="text-sm font-medium">${nama}</p>
-    `;
-    wadah.appendChild(kartu);
-  });
-}
-
-// FUNGSI SIMPAN
-document.getElementById('simpanLogo').addEventListener('click', () => {
-  alert('Pengaturan logo berhasil disimpan!');
-  tutupModal();
-});
 
 
  // ==================================================
