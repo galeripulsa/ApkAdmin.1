@@ -947,36 +947,25 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- 1. Tombol Logo (yang dilingkari kuning) -->
-<div onclick="bukaMenuLogo()" class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition">
-    <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-    </svg>
-    <span class="text-gray-700 font-medium">Logo</span>
-</div>
 
-<!-- 2. Bagian Tombol Kategori Bawah (Hanya pilih kategori, TIDAK buka modal) -->
-<div class="mt-6 px-4">
+    <!-- Baris 4: TOMBOL LOGO UTAMA -->
+    <div onclick="bukaMenuLogo()" class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span>Logo</span>
+    </div>
+    <div class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+       
+
+<!-- HAPUS TOMBOL LOGO DUPLIKAT DI SINI -->
+
+<!-- Bagian Bawah: Logo Produk -->
+<div class="px-4 pb-6">
     <h4 class="text-gray-700 font-semibold mb-3">Logo Produk</h4>
     <div class="grid grid-cols-3 gap-3">
         <button onclick="pilihKategori('operator')" id="btn-operator" class="py-3 rounded-lg text-white font-medium bg-blue-500">Operator</button>
         <button onclick="pilihKategori('ewallet')" id="btn-ewallet" class="py-3 rounded-lg text-white font-medium bg-green-500">E-Wallet</button>
         <button onclick="pilihKategori('game')" id="btn-game" class="py-3 rounded-lg text-white font-medium bg-purple-500">Game</button>
-    </div>
-</div>
-
-<!-- 3. Modal Logo (Tetap sama seperti sebelumnya) -->
-<div id="logoModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden">
-        <div class="p-4 border-b flex justify-between items-center">
-            <h4 id="modalTitle" class="font-bold text-lg">Pilih Logo</h4>
-            <button onclick="tutupModalLogo()" class="text-gray-500 text-xl">&times;</button>
-        </div>
-        <div id="logoGrid" class="p-4 grid grid-cols-4 gap-3 overflow-y-auto max-h-[50vh]"></div>
-        <div class="p-4 border-t flex justify-end gap-2">
-            <button onclick="tutupModalLogo()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
-            <button onclick="simpanLogoTerpilih()" class="px-4 py-2 bg-blue-500 text-white rounded">Simpan</button>
-        </div>
     </div>
 </div>
 
