@@ -947,30 +947,39 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- Bagian Menu Logo -->
-<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-    <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Logo Produk</h3>
-    <div class="grid grid-cols-3 gap-2">
-        <button onclick="openLogoModal('operator')" class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Operator</button>
-        <button onclick="openLogoModal('ewallet')" class="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">E-Wallet</button>
-        <button onclick="openLogoModal('game')" class="p-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition">Game</button>
+<!-- 1. Tombol Logo (yang dilingkari kuning) -->
+<div onclick="bukaMenuLogo()" class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition">
+    <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    </svg>
+    <span class="text-gray-700 font-medium">Logo</span>
+</div>
+
+<!-- 2. Bagian Tombol Kategori Bawah (Hanya pilih kategori, TIDAK buka modal) -->
+<div class="mt-6 px-4">
+    <h4 class="text-gray-700 font-semibold mb-3">Logo Produk</h4>
+    <div class="grid grid-cols-3 gap-3">
+        <button onclick="pilihKategori('operator')" id="btn-operator" class="py-3 rounded-lg text-white font-medium bg-blue-500">Operator</button>
+        <button onclick="pilihKategori('ewallet')" id="btn-ewallet" class="py-3 rounded-lg text-white font-medium bg-green-500">E-Wallet</button>
+        <button onclick="pilihKategori('game')" id="btn-game" class="py-3 rounded-lg text-white font-medium bg-purple-500">Game</button>
     </div>
 </div>
 
-<!-- Modal Pilih Logo -->
+<!-- 3. Modal Logo (Tetap sama seperti sebelumnya) -->
 <div id="logoModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+    <div class="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden">
+        <div class="p-4 border-b flex justify-between items-center">
             <h4 id="modalTitle" class="font-bold text-lg">Pilih Logo</h4>
-            <button onclick="closeLogoModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl">&times;</button>
+            <button onclick="tutupModalLogo()" class="text-gray-500 text-xl">&times;</button>
         </div>
         <div id="logoGrid" class="p-4 grid grid-cols-4 gap-3 overflow-y-auto max-h-[50vh]"></div>
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-            <button onclick="closeLogoModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-400 dark:hover:bg-gray-600">Batal</button>
-            <button onclick="saveSelectedLogo()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Simpan</button>
+        <div class="p-4 border-t flex justify-end gap-2">
+            <button onclick="tutupModalLogo()" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+            <button onclick="simpanLogoTerpilih()" class="px-4 py-2 bg-blue-500 text-white rounded">Simpan</button>
         </div>
     </div>
 </div>
+
 
 
 <script>
@@ -2591,84 +2600,76 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// Data Logo Terstruktur
-const logoData = {
+// Data & Status
+const dataLogo = {
     operator: ['Telkomsel', 'Indosat', 'XL', 'Tri', 'Smartfren', 'By.U', 'Live.On', 'Smart'],
     ewallet: ['DANA', 'OVO', 'GoPay', 'ShopeePay', 'LinkAja', 'Jenius', 'Sakuku', 'Doku'],
     game: ['Mobile Legends', 'Free Fire', 'PUBG Mobile', 'Genshin Impact', 'Valorant', 'FF Max', 'Higgs Domino', 'Ragnarok']
 };
 
-let currentCategory = '';
-let selectedLogo = null;
+let kategoriAktif = 'operator'; // Default kategori
+let logoTerpilih = null;
 
-// Buka Modal
-function openLogoModal(category) {
-    currentCategory = category;
-    selectedLogo = null;
+// ✅ HANYA FUNGSI INI YANG MEMBUKA MODAL (saat klik tombol Logo)
+function bukaMenuLogo() {
     const modal = document.getElementById('logoModal');
-    const title = document.getElementById('modalTitle');
+    const judul = document.getElementById('modalTitle');
     const grid = document.getElementById('logoGrid');
-    
-    title.textContent = `Logo ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-    grid.innerHTML = '';
-    
-    logoData[category].forEach(name => {
-        const item = document.createElement('div');
-        item.className = 'border-2 border-gray-200 dark:border-gray-600 rounded p-2 text-center cursor-pointer hover:border-blue-500 transition';
-        item.innerHTML = `
-            <div class="w-10 h-10 mx-auto bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs font-bold">${name.slice(0,2)}</div>
-            <p class="text-xs mt-1 truncate">${name}</p>
-        `;
-        item.onclick = () => selectLogo(item, name);
-        grid.appendChild(item);
-    });
-    
+
+    judul.textContent = `Logo ${kategoriAktif.charAt(0).toUpperCase() + kategoriAktif.slice(1)}`;
+    tampilkanDaftarLogo(kategoriAktif);
     modal.classList.remove('hidden');
 }
 
-// Pilih Logo
-function selectLogo(element, name) {
-    document.querySelectorAll('#logoGrid > div').forEach(el => el.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/30'));
-    element.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/30');
-    selectedLogo = name;
+// Pilih kategori (hanya ganti pilihan, TIDAK buka modal)
+function pilihKategori(kategori) {
+    kategoriAktif = kategori;
+    // Tandai tombol aktif
+    ['operator', 'ewallet', 'game'].forEach(kat => {
+        const btn = document.getElementById(`btn-${kat}`);
+        btn.classList.toggle('ring-2', kat === kategori);
+        btn.classList.toggle('ring-offset-2', kat === kategori);
+        btn.classList.toggle('ring-gray-400', kat === kategori);
+    });
 }
 
-// Simpan Logo
-function saveSelectedLogo() {
-    if (!selectedLogo) {
-        alert('Silakan pilih logo terlebih dahulu!');
-        return;
-    }
-    console.log(`Tersimpan: Kategori ${currentCategory} -> ${selectedLogo}`);
-    closeLogoModal();
+// Tampilkan daftar logo di dalam modal
+function tampilkanDaftarLogo(kategori) {
+    const grid = document.getElementById('logoGrid');
+    grid.innerHTML = '';
+
+    dataLogo[kategori].forEach(nama => {
+        const item = document.createElement('div');
+        item.className = 'border-2 border-gray-200 rounded p-2 text-center cursor-pointer hover:border-blue-500 transition';
+        item.innerHTML = `
+            <div class="w-10 h-10 mx-auto bg-gray-100 rounded flex items-center justify-center text-xs font-bold">${nama.slice(0,2)}</div>
+            <p class="text-xs mt-1 truncate">${nama}</p>
+        `;
+        item.onclick = () => pilihItemLogo(item, nama);
+        grid.appendChild(item);
+    });
 }
 
-// Tutup Modal
-function closeLogoModal() {
+// Pilih logo di dalam modal
+function pilihItemLogo(elemen, nama) {
+    document.querySelectorAll('#logoGrid > div').forEach(el => el.classList.remove('border-blue-500', 'bg-blue-50'));
+    elemen.classList.add('border-blue-500', 'bg-blue-50');
+    logoTerpilih = nama;
+}
+
+// Simpan logo
+function simpanLogoTerpilih() {
+    if (!logoTerpilih) return alert('Pilih logo dulu!');
+    console.log('Disimpan:', kategoriAktif, logoTerpilih);
+    tutupModalLogo();
+}
+
+// Tutup modal
+function tutupModalLogo() {
     document.getElementById('logoModal').classList.add('hidden');
-    currentCategory = '';
-    selectedLogo = null;
+    logoTerpilih = null;
 }
 
-// Perbaikan: Hapus Peringatan Salah Perubahan
-let lastSavedState = '';
-function checkChanges() {
-    const currentState = document.body.innerHTML;
-    // Hanya tampilkan peringatan jika ada perubahan nyata
-    if (currentState !== lastSavedState) {
-        window.onbeforeunload = (e) => {
-            e.preventDefault();
-            e.returnValue = '';
-        };
-    } else {
-        window.onbeforeunload = null;
-    }
-}
-
-// Inisialisasi status awal
-document.addEventListener('DOMContentLoaded', () => {
-    lastSavedState = document.body.innerHTML;
-});
 
 
  // ==================================================
