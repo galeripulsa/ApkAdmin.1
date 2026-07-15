@@ -660,18 +660,6 @@ body{
 }
 
 /* 🎁🎁🎁🎁🎁🎁🎁 */
-/* Opsional: Scrollbar kustom grid logo */
-#logoGrid::-webkit-scrollbar {
-    width: 6px;
-}
-#logoGrid::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-}
-.dark #logoGrid::-webkit-scrollbar-thumb {
-    background: #475569;
-}
-
 
 </style>
 
@@ -947,29 +935,6 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-
-    <!-- Baris 4: TOMBOL LOGO UTAMA -->
-    <div onclick="bukaMenuLogo()" class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:shadow-md transition">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        <span>Logo</span>
-    </div>
-    <div class="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center gap-2">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
-       
-
-<!-- HAPUS TOMBOL LOGO DUPLIKAT DI SINI -->
-
-<!-- Bagian Bawah: Logo Produk -->
-<div class="px-4 pb-6">
-    <h4 class="text-gray-700 font-semibold mb-3">Logo Produk</h4>
-    <div class="grid grid-cols-3 gap-3">
-        <button onclick="pilihKategori('operator')" id="btn-operator" class="py-3 rounded-lg text-white font-medium bg-blue-500">Operator</button>
-        <button onclick="pilihKategori('ewallet')" id="btn-ewallet" class="py-3 rounded-lg text-white font-medium bg-green-500">E-Wallet</button>
-        <button onclick="pilihKategori('game')" id="btn-game" class="py-3 rounded-lg text-white font-medium bg-purple-500">Game</button>
-    </div>
-</div>
-
-
 
 <script>
 window.onerror = function(message, source, line, column){
@@ -2589,76 +2554,6 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// Data & Status
-const dataLogo = {
-    operator: ['Telkomsel', 'Indosat', 'XL', 'Tri', 'Smartfren', 'By.U', 'Live.On', 'Smart'],
-    ewallet: ['DANA', 'OVO', 'GoPay', 'ShopeePay', 'LinkAja', 'Jenius', 'Sakuku', 'Doku'],
-    game: ['Mobile Legends', 'Free Fire', 'PUBG Mobile', 'Genshin Impact', 'Valorant', 'FF Max', 'Higgs Domino', 'Ragnarok']
-};
-
-let kategoriAktif = 'operator'; // Default kategori
-let logoTerpilih = null;
-
-// ✅ HANYA FUNGSI INI YANG MEMBUKA MODAL (saat klik tombol Logo)
-function bukaMenuLogo() {
-    const modal = document.getElementById('logoModal');
-    const judul = document.getElementById('modalTitle');
-    const grid = document.getElementById('logoGrid');
-
-    judul.textContent = `Logo ${kategoriAktif.charAt(0).toUpperCase() + kategoriAktif.slice(1)}`;
-    tampilkanDaftarLogo(kategoriAktif);
-    modal.classList.remove('hidden');
-}
-
-// Pilih kategori (hanya ganti pilihan, TIDAK buka modal)
-function pilihKategori(kategori) {
-    kategoriAktif = kategori;
-    // Tandai tombol aktif
-    ['operator', 'ewallet', 'game'].forEach(kat => {
-        const btn = document.getElementById(`btn-${kat}`);
-        btn.classList.toggle('ring-2', kat === kategori);
-        btn.classList.toggle('ring-offset-2', kat === kategori);
-        btn.classList.toggle('ring-gray-400', kat === kategori);
-    });
-}
-
-// Tampilkan daftar logo di dalam modal
-function tampilkanDaftarLogo(kategori) {
-    const grid = document.getElementById('logoGrid');
-    grid.innerHTML = '';
-
-    dataLogo[kategori].forEach(nama => {
-        const item = document.createElement('div');
-        item.className = 'border-2 border-gray-200 rounded p-2 text-center cursor-pointer hover:border-blue-500 transition';
-        item.innerHTML = `
-            <div class="w-10 h-10 mx-auto bg-gray-100 rounded flex items-center justify-center text-xs font-bold">${nama.slice(0,2)}</div>
-            <p class="text-xs mt-1 truncate">${nama}</p>
-        `;
-        item.onclick = () => pilihItemLogo(item, nama);
-        grid.appendChild(item);
-    });
-}
-
-// Pilih logo di dalam modal
-function pilihItemLogo(elemen, nama) {
-    document.querySelectorAll('#logoGrid > div').forEach(el => el.classList.remove('border-blue-500', 'bg-blue-50'));
-    elemen.classList.add('border-blue-500', 'bg-blue-50');
-    logoTerpilih = nama;
-}
-
-// Simpan logo
-function simpanLogoTerpilih() {
-    if (!logoTerpilih) return alert('Pilih logo dulu!');
-    console.log('Disimpan:', kategoriAktif, logoTerpilih);
-    tutupModalLogo();
-}
-
-// Tutup modal
-function tutupModalLogo() {
-    document.getElementById('logoModal').classList.add('hidden');
-    logoTerpilih = null;
-}
-
 
 
  // ==================================================
