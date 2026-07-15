@@ -660,19 +660,7 @@ body{
 }
 
 /* 🎁🎁🎁🎁🎁🎁🎁 */
-.menu-btn.active {
-  background-color: #3b82f6;
-  color: white;
-}
 
-.menu-content.hidden {
-  display: none;
-}
-
-.cat-btn.active {
-  background-color: #3b82f6;
-  color: white;
-}
 
 </style>
 
@@ -948,90 +936,6 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
-<!-- HEADER APLIKASI -->
-<div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 mb-6 flex items-center gap-4 shadow-lg">
-  <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-3xl text-blue-500">🛡️</div>
-  <div>
-    <h1 class="text-2xl font-bold text-white">Apk Admin</h1>
-    <p class="text-white/90 text-lg">Global Server (GS) V.01</p>
-  </div>
-</div>
-
-<!-- GRID MENU UTAMA (TETAP SESUAI TAMPILAN KAMU) -->
-<div class="grid grid-cols-2 gap-4">
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">🖥️</div>
-    <span class="font-medium">Setup Server</span>
-  </button>
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">💾</div>
-    <span class="font-medium">Setup Center</span>
-  </button>
-
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">🔲</div>
-    <span class="font-medium">Menu Transaksi</span>
-  </button>
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">📱</div>
-    <span class="font-medium">Prabayar</span>
-  </button>
-
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">💳</div>
-    <span class="font-medium">Pascabayar</span>
-  </button>
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">📄</div>
-    <span class="font-medium">Format Request</span>
-  </button>
-
-  <!-- TOMBOL LOGO BIRU (DITAMBAHKAN ID UNTUK FUNGSI KLIK) -->
-  <button id="btnLogo" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-md flex flex-col items-center gap-2">
-    <div class="text-3xl">🖼️</div>
-    <span class="font-medium">Logo</span>
-  </button>
-
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">🔑</div>
-    <span class="font-medium">OTP</span>
-  </button>
-
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">⭐</div>
-    <span class="font-medium">Poin</span>
-  </button>
-  <button class="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center gap-2">
-    <div class="text-3xl">👥</div>
-    <span class="font-medium">Downline</span>
-  </button>
-</div>
-
-<!-- MODAL PILIH KATEGORI LOGO (BARU DITAMBAHKAN, SEMBUNYI AWALNYA) -->
-<div id="modalKategoriLogo" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold">Pilih Kategori Logo</h2>
-      <button id="tutupModalLogo" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-    </div>
-
-    <div class="space-y-3">
-      <button class="kategori-btn w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium">
-        📡 Prabayar
-      </button>
-      <button class="kategori-btn w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium">
-        📞 Pascabayar
-      </button>
-      <button class="kategori-btn w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium">
-        💳 E-Wallet
-      </button>
-      <button class="kategori-btn w-full text-left px-5 py-4 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all font-medium">
-        🎮 Voucher Game
-      </button>
-    </div>
-  </div>
-</div>
-
 
 <script>
 window.onerror = function(message, source, line, column){
@@ -2651,22 +2555,6 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
-// AMBIL ELEMEN
-const tombolLogo = document.getElementById('btnLogo');
-const modal = document.getElementById('modalKategoriLogo');
-const tombolTutup = document.getElementById('tutupModalLogo');
-
-tombolLogo.addEventListener('click', () => modal.classList.remove('hidden'));
-tombolTutup.addEventListener('click', () => modal.classList.add('hidden'));
-modal.addEventListener('click', e => e.target === modal && modal.classList.add('hidden'));
-
-document.querySelectorAll('.kategori-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    alert(`Anda pilih: ${btn.textContent.trim()}`);
-    modal.classList.add('hidden');
-  });
-});
-
 
 
  // ==================================================
