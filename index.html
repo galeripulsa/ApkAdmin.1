@@ -660,6 +660,17 @@ body{
 }
 
 /* 🎁🎁🎁🎁🎁🎁🎁 */
+/* Opsional: Scrollbar kustom grid logo */
+#logoGrid::-webkit-scrollbar {
+    width: 6px;
+}
+#logoGrid::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.dark #logoGrid::-webkit-scrollbar-thumb {
+    background: #475569;
+}
 
 
 </style>
@@ -936,6 +947,31 @@ body{
 </div>
 
 <!-- 🎁🎁🎁🎁🎁 -->
+<!-- Bagian Menu Logo -->
+<div class="p-4 border-b border-gray-200 dark:border-gray-700">
+    <h3 class="font-semibold text-gray-800 dark:text-white mb-3">Logo Produk</h3>
+    <div class="grid grid-cols-3 gap-2">
+        <button onclick="openLogoModal('operator')" class="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">Operator</button>
+        <button onclick="openLogoModal('ewallet')" class="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition">E-Wallet</button>
+        <button onclick="openLogoModal('game')" class="p-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition">Game</button>
+    </div>
+</div>
+
+<!-- Modal Pilih Logo -->
+<div id="logoModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h4 id="modalTitle" class="font-bold text-lg">Pilih Logo</h4>
+            <button onclick="closeLogoModal()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl">&times;</button>
+        </div>
+        <div id="logoGrid" class="p-4 grid grid-cols-4 gap-3 overflow-y-auto max-h-[50vh]"></div>
+        <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+            <button onclick="closeLogoModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded hover:bg-gray-400 dark:hover:bg-gray-600">Batal</button>
+            <button onclick="saveSelectedLogo()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Simpan</button>
+        </div>
+    </div>
+</div>
+
 
 <script>
 window.onerror = function(message, source, line, column){
@@ -2555,6 +2591,84 @@ document.addEventListener('input', function(e) {
 
 
 // ---  🎁🎁🎁🎁🎁🎁🎁 ---
+// Data Logo Terstruktur
+const logoData = {
+    operator: ['Telkomsel', 'Indosat', 'XL', 'Tri', 'Smartfren', 'By.U', 'Live.On', 'Smart'],
+    ewallet: ['DANA', 'OVO', 'GoPay', 'ShopeePay', 'LinkAja', 'Jenius', 'Sakuku', 'Doku'],
+    game: ['Mobile Legends', 'Free Fire', 'PUBG Mobile', 'Genshin Impact', 'Valorant', 'FF Max', 'Higgs Domino', 'Ragnarok']
+};
+
+let currentCategory = '';
+let selectedLogo = null;
+
+// Buka Modal
+function openLogoModal(category) {
+    currentCategory = category;
+    selectedLogo = null;
+    const modal = document.getElementById('logoModal');
+    const title = document.getElementById('modalTitle');
+    const grid = document.getElementById('logoGrid');
+    
+    title.textContent = `Logo ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+    grid.innerHTML = '';
+    
+    logoData[category].forEach(name => {
+        const item = document.createElement('div');
+        item.className = 'border-2 border-gray-200 dark:border-gray-600 rounded p-2 text-center cursor-pointer hover:border-blue-500 transition';
+        item.innerHTML = `
+            <div class="w-10 h-10 mx-auto bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs font-bold">${name.slice(0,2)}</div>
+            <p class="text-xs mt-1 truncate">${name}</p>
+        `;
+        item.onclick = () => selectLogo(item, name);
+        grid.appendChild(item);
+    });
+    
+    modal.classList.remove('hidden');
+}
+
+// Pilih Logo
+function selectLogo(element, name) {
+    document.querySelectorAll('#logoGrid > div').forEach(el => el.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/30'));
+    element.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/30');
+    selectedLogo = name;
+}
+
+// Simpan Logo
+function saveSelectedLogo() {
+    if (!selectedLogo) {
+        alert('Silakan pilih logo terlebih dahulu!');
+        return;
+    }
+    console.log(`Tersimpan: Kategori ${currentCategory} -> ${selectedLogo}`);
+    closeLogoModal();
+}
+
+// Tutup Modal
+function closeLogoModal() {
+    document.getElementById('logoModal').classList.add('hidden');
+    currentCategory = '';
+    selectedLogo = null;
+}
+
+// Perbaikan: Hapus Peringatan Salah Perubahan
+let lastSavedState = '';
+function checkChanges() {
+    const currentState = document.body.innerHTML;
+    // Hanya tampilkan peringatan jika ada perubahan nyata
+    if (currentState !== lastSavedState) {
+        window.onbeforeunload = (e) => {
+            e.preventDefault();
+            e.returnValue = '';
+        };
+    } else {
+        window.onbeforeunload = null;
+    }
+}
+
+// Inisialisasi status awal
+document.addEventListener('DOMContentLoaded', () => {
+    lastSavedState = document.body.innerHTML;
+});
 
 
  // ==================================================
